@@ -1,7 +1,7 @@
 <template>
   <div>
     <router-view v-if="isAuth" />
-    <Register v-else/>
+    <Login v-else/>
   </div>
 </template>
 

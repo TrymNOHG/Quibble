@@ -68,7 +68,7 @@ export default {
     });
 
     const { value: username } = useField("username");
-    const {value: passwrd} = useField("password");
+    const { value: passwrd } = useField("password");
 
     const submit = handleSubmit(async () => {
       const userData = {
@@ -111,24 +111,20 @@ h2 {
   align-items: center;
   justify-content: center;
   margin: 25px 10px 10px 20px;
-
 }
 
 .input-field {
-  text-align: left;
   width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
   box-sizing: border-box;
   font-size: 16px;
-
 }
 
 .submit_form {
   padding: 40px;
   width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -140,7 +136,6 @@ h2 {
 }
 
 .submit_button {
-  position: relative;
   margin-top: 20px;
   align-self: center;
   width: 100%;
