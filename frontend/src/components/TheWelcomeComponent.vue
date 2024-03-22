@@ -4,7 +4,14 @@
     <div class="page_info">
       <div></div>
       <div class="join_game_box">
-        <basic_input class="pin_input" label="GAME PIN"/>
+        <input
+            type="text"
+            required
+            v-model.trim="gamepin"
+            name="GamePin"
+            class="input-field"
+            placeholder="Game Pin"
+        />
         <div class="button_div">
           <div class="btn" aria-label="Start button">Start Game</div>
         </div>
@@ -22,16 +29,28 @@
 </template>
 
 <script>
-import Basic_input from "@/components/BasicComponents/basic_input.vue";
-
 export default {
   name: "WelcomeComponent",
-  components: {Basic_input}
+  components: {},
+
+  setup() {
+    const gamepin = ""
+
+    return {
+      gamepin
+    }
+  }
+
 };
 </script>
 
 
 <style scoped>
+
+#text {
+
+}
+
 .welcome_div {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;

@@ -17,7 +17,6 @@ export default {
 
 <style scoped>
 div {
-  margin-top: 50px;
   display: flex;
   justify-content: center;
   align-items: center;

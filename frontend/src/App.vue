@@ -1,7 +1,7 @@
 <template>
   <div>
     <router-view v-if="isAuth" />
-    <Login v-else />
+    <Register v-else/>
   </div>
 </template>
 
@@ -9,17 +9,18 @@
 import { useRoute, useRouter } from 'vue-router';
 import TheWelcomeComponent from "@/components/TheWelcomeComponent.vue";
 import Login from "@/views/LoginView.vue";
+import Register from "@/views/RegisterView.vue";
 
 export default {
-  components: {Login, TheWelcomeComponent },
+  components: {Register, Login, TheWelcomeComponent },
 
   setup() {
     const router = useRouter();
     const route = useRoute();
     const isAuth = false;
 
-    if (!isAuth && route.path !== '/login') {
-      router.push('/login');
+    if (!isAuth && route.path !== '/register') {
+      router.push('/register');
     }
 
     return { isAuth };
