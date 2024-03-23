@@ -5,6 +5,11 @@ import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * The Question class represents a question for a given quiz.
@@ -50,10 +55,17 @@ public class Question {
     @Schema(description = "The difficulty of the question.")
     private Difficulty difficulty;
 
+    @OneToMany(mappedBy = "question")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @ToString.Exclude
+    @Schema(description = "The quiz's history.")
+    private Set<MultipleChoice> choices = new HashSet<>();
+
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "quiz_id")
     @ToString.Exclude
     @Schema(description = "The quiz the question belongs to.")
     private Quiz quiz;
+
 
 }

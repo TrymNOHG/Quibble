@@ -2,6 +2,7 @@ package edu.ntnu.idatt2105.backend.model.quiz;
 
 import edu.ntnu.idatt2105.backend.model.category.QuizCategory;
 import edu.ntnu.idatt2105.backend.model.quiz.question.Question;
+import edu.ntnu.idatt2105.backend.model.users.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
@@ -44,6 +45,12 @@ public class Quiz {
     @NonNull
     @Schema(description = "The description of the quiz.")
     private String quizDescription;
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    @ToString.Exclude
+    @Schema(description = "The user who created the quiz.")
+    private User admin;
 
     @OneToMany(mappedBy = "quiz")
     @OnDelete(action = OnDeleteAction.CASCADE)

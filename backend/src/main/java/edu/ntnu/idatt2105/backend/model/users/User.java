@@ -1,5 +1,6 @@
 package edu.ntnu.idatt2105.backend.model.users;
 
+import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
 import edu.ntnu.idatt2105.backend.model.quiz.QuizAuthor;
 import edu.ntnu.idatt2105.backend.model.quiz.QuizFeedback;
 import edu.ntnu.idatt2105.backend.model.quiz.QuizHistory;
@@ -58,6 +59,12 @@ public class User implements UserDetails {
     @Column(name = "profile_picture")
     @Schema(description = "A link to the user's profile picture.")
     private String profilePicLink;
+
+    @OneToMany(mappedBy = "admin")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @ToString.Exclude
+    @Schema(description = "The quizzes created by the user.")
+    private Set<Quiz> quizzesOwned = new HashSet<>();
 
     @OneToMany(mappedBy = "user")
     @OnDelete(action = OnDeleteAction.CASCADE)

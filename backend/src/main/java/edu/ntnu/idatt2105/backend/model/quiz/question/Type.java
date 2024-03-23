@@ -13,5 +13,6 @@ public enum Type {
     TRUE_FALSE,
     MATCHING,
     FILL_IN_BLANK,
-    FLASHCARD
+    FLASHCARD,
+    RANKING
 }
