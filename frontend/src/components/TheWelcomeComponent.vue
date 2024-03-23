@@ -9,8 +9,10 @@
             required
             v-model.trim="gamepin"
             name="GamePin"
-            class="input-field"
-            placeholder="Game Pin"
+            class="pin_input"
+            placeholder="GAME PIN"
+            @focus="hide_txt"
+            @blur="show_txt"
         />
         <div class="button_div">
           <div class="btn" aria-label="Start button">Start Game</div>
@@ -30,13 +32,29 @@
 
 <script>
 export default {
-  name: "WelcomeComponent",
+  name: "welcome_page",
   components: {},
 
   setup() {
     const gamepin = ""
 
+    const hide_txt = () => {
+      const inputField = document.querySelector('.pin_input');
+      if (inputField) {
+        inputField.placeholder = '';
+      }
+    };
+
+    const show_txt = () => {
+      const inputField = document.querySelector('.pin_input');
+      if (inputField) {
+        inputField.placeholder = 'GAME PIN';
+      }
+    };
+
     return {
+      hide_txt,
+      show_txt,
       gamepin
     }
   }
@@ -46,11 +64,6 @@ export default {
 
 
 <style scoped>
-
-#text {
-
-}
-
 .welcome_div {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -69,16 +82,25 @@ export default {
   justify-content: center;
 }
 
+.pin_input::placeholder {
+  font-size: 120%;
+  color: #8521b0;
+  opacity: 75%;
+}
+
 .join_game_box {
   padding: 10%;
   border-radius: 5px;
-  width: 100%;
   background: white;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .pin_input {
   border-radius: 5px;
+  width: 100%;
+  height: 50px;
+  text-align: center;
+  color: #8521b0;
 }
 
 .button_div {

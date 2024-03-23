@@ -8,7 +8,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'front_page',
+      name: 'welcome_page',
       component: TheWelcomeComponent,
       //meta: {requiresAuth: false}
     },

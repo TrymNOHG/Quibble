@@ -47,11 +47,14 @@ import * as yup from "yup";
 import { useField, useForm } from "vee-validate";
 import Basic_button from "@/components/BasicComponents/basic_button.vue";
 import { ref } from "vue";
+import router from "@/router/index.js";
+import {useUserStore} from "@/stores/counter.js";
 
 export default {
   components: { Basic_button },
 
   setup() {
+    const store = useUserStore();
     const submitMessage = ref("");
 
     const validationSchema = yup.object({
@@ -76,7 +79,21 @@ export default {
         passwrd: passwrd.value,
       };
 
-      // Handle login action
+      await loginUser(userData)
+          .then(async (response) => {
+            if (response !== undefined) {
+              store.setToken(response.data.token);
+              await store.fetchUserData();
+              await router.push("/fridges?appTour=true");
+            }
+          })
+          .catch((error) => {
+            submitMessage.value = "register_error";
+            setTimeout(() => {
+              submitMessage.value = "";
+            }, 2000);
+            console.warn("error", error);
+          });
     });
 
     const has_err = () => {
