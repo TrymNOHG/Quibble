@@ -155,6 +155,7 @@ h2 {
   border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 10px;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.25);
+  margin-top: 2.5%;
 }
 
 .submit_button {
@@ -170,5 +171,13 @@ h2 {
 .error-message {
   font-size: 12px;
   color: red;
+}
+
+@media only screen and (max-width: 428px) {
+  .submit_form {
+    margin-top: 25%;
+    padding: 20px;
+    width: 90%;
+  }
 }
 </style>
