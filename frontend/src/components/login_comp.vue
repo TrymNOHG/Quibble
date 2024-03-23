@@ -8,7 +8,7 @@
             type="text"
             required
             v-model.trim="username"
-            name="Username"
+            name="username"
             class="input-field"
             aria-labelledby="usernameLabel"
             :class="{ 'error': errors && errors['username'] }"
@@ -23,7 +23,7 @@
             type="password"
             required
             v-model.trim="passwrd"
-            name="Password"
+            name="password"
             class="input-field"
             aria-labelledby="passwordLabel"
             :class="{ 'error': errors && errors['password'] }"
@@ -45,13 +45,18 @@
 <script>
 import * as yup from "yup";
 import { useField, useForm } from "vee-validate";
-import Basic_button from "@/components/BasicComponents/basic_button.vue";
+import { useUserStore } from "@/stores/counter.js";
 import { ref } from "vue";
-import router from "@/router/index.js";
-import {useUserStore} from "@/stores/counter.js";
+import router from "@/router";
+import { loginUser } from "@/services/UserService";
+import { RouterLink } from 'vue-router'
+import Basic_button from "@/components/BasicComponents/basic_button.vue";
 
 export default {
-  components: { Basic_button },
+  components: {
+    Basic_button,
+    RouterLink,
+  },
 
   setup() {
     const store = useUserStore();

@@ -8,7 +8,7 @@
             type="email"
             required
             v-model.trim="email"
-            name="Email"
+            name="email"
             class="input-field"
             aria-labelledby="emailLabel"
             :class="{ 'error': errors && errors['email'] }"
@@ -23,7 +23,7 @@
             type="text"
             required
             v-model.trim="username"
-            name="Username"
+            name="username"
             class="input-field"
             aria-labelledby="usernameLabel"
             :class="{ 'error': errors && errors['username'] }"
@@ -38,7 +38,7 @@
             type="password"
             required
             v-model.trim="passwrd"
-            name="passwrd"
+            name="password"
             class="input-field"
             aria-labelledby="passwordLabel"
             :class="{ 'error': errors && errors['passwrd'] }"
@@ -53,7 +53,7 @@
             type="password"
             required
             v-model.trim="conf_passwrd"
-            name="conf_passwrd"
+            name="conf_password"
             class="input-field"
             aria-labelledby="conf_passwordLabel"
             :class="{ 'error': errors && errors['conf_passwrd'] }"
@@ -185,7 +185,7 @@ h2 {
 
 .submit_form {
   padding: 40px;
-  width: 100%;
+  width: 20%;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -195,6 +195,7 @@ h2 {
   border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 10px;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.25);
+  margin-top: 2.5%;
 }
 
 .submit_button {
@@ -209,5 +210,13 @@ h2 {
 .error-message {
   font-size: 12px;
   color: red;
+}
+
+@media only screen and (max-width: 428px) {
+  .submit_form {
+    padding: 10px;
+    width: 90%;
+    margin-top: 25%;
+  }
 }
 </style>

@@ -12,7 +12,18 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 /* add icons to the library */
+import {
+    faPuzzlePiece,
+    faHouse,
+    faUserCircle, faCirclePlus,
+} from "@fortawesome/free-solid-svg-icons";
 
+library.add(
+    faHouse,
+    faUserCircle,
+    faPuzzlePiece,
+    faCirclePlus
+)
 
 
 /* Imports fr multiple languages */

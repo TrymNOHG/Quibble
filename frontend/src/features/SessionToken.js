@@ -1,5 +1,5 @@
-import { useLoggedInStore } from "@/store/store";
-import router from "@/router/router";
+import { useUserStore } from "@/stores/counter.js";
+import router from "@/router/index.js";
 
 let mockToken = null;
 
@@ -12,7 +12,7 @@ export default async function sessionToken() {
         return mockToken;
     }
 
-    const sessionToken = useLoggedInStore().getSessionToken;
+    const sessionToken = useUserStore().getToken;
     if (sessionToken === null) {
         alert("Log in to access your profile!"); //TODO: make better
         await router.push("/login");

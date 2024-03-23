@@ -36,7 +36,9 @@ export const useUserStore = defineStore('storeUser', {
 
   getters: {
     getUserData() {return this.user},
-    isAuth() {return this.sessionToken !== null}
+    isAuth() {return this.sessionToken !== null},
+    getToken() {return this.sessionToken}
+
   },
 
   persist: {
