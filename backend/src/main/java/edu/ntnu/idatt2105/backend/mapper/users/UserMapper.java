@@ -17,6 +17,9 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
+    //TODO: create method to retrieve profilePicture from server.
+
+    @Mapping(target = "profilePicture", source = "")
     UserLoadDTO userToUserLoadDTO(User user);
 
     // Make a mapper for DTO to user, when registering.

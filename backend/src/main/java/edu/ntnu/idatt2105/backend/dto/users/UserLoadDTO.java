@@ -23,6 +23,6 @@ import java.util.Set;
  */
 @Builder
 public record UserLoadDTO(@NonNull Long userId, @NonNull String username, @NonNull String email,
-                          @NonNull Set<QuizHistory> quizHistory, @NonNull Set<QuizFeedback> feedbacks,
-                          @NonNull Set<QuizAuthor> quizzes) {
+                          byte @NonNull [] profilePicture, @NonNull Set<QuizHistory> quizHistory,
+                          @NonNull Set<QuizFeedback> feedbacks, @NonNull Set<QuizAuthor> quizzes) {
 }
