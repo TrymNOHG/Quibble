@@ -37,6 +37,9 @@
             class="submit_button"
             :button_text="'Login'"
         />
+        <h4>
+          <router-link to="/register">Dont have an account?</router-link>
+        </h4>
       </div>
     </form>
   </div>
@@ -132,7 +135,7 @@ h2 {
   text-align: left;
   align-items: center;
   justify-content: center;
-  margin: 25px 10px 10px 20px;
+  margin: 15px 10px 10px 20px;
 }
 
 .input-field {
@@ -145,7 +148,7 @@ h2 {
 }
 
 .submit_form {
-  padding: 40px;
+  padding: 20px;
   width: 100%;
   display: flex;
   flex-direction: column;

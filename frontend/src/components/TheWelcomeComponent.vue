@@ -70,8 +70,8 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
-  min-height: 100vh;
+  height: 80%;
+  min-height: 80vh;
 }
 
 .page_info {
@@ -132,7 +132,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 25%;
+  margin-top: 15%;
   grid-row: 3;
 }
 </style>

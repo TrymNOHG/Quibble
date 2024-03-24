@@ -67,6 +67,9 @@
             class="submit_button"
             :button_text="'Register'"
         />
+        <h4>
+          <router-link to="/login">Already have an account?</router-link>
+        </h4>
       </div>
     </form>
   </div>

@@ -69,7 +69,7 @@ header {
 .header_text {
   color: white;
   font-weight: bold;
-  margin-left: 10%;
+  margin-left: 15%;
   text-decoration: none !important;
 }
 

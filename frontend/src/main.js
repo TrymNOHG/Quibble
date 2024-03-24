@@ -15,14 +15,15 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
     faPuzzlePiece,
     faHouse,
-    faUserCircle, faCirclePlus,
+    faUserCircle, faCirclePlus, faSearch, faMagnifyingGlass,
 } from "@fortawesome/free-solid-svg-icons";
 
 library.add(
     faHouse,
     faUserCircle,
     faPuzzlePiece,
-    faCirclePlus
+    faCirclePlus,
+    faMagnifyingGlass
 )
 
 
