@@ -32,7 +32,7 @@ const quizzes = ref([
     name: "Quiz 1",
     difficulty: "Easy",
     description: "Test your knowledge with Quiz 1",
-    image: "path/to/image1.jpg",
+    image: "https://via.placeholder.com/150", // Placeholder image URL
     question_list: [
       "Question 1",
       "Question 2",
@@ -43,7 +43,7 @@ const quizzes = ref([
     name: "Quiz 2",
     difficulty: "Medium",
     description: "Test your knowledge with Quiz 2",
-    image: "path/to/image2.jpg",
+    image: "https://via.placeholder.com/150", // Placeholder image URL
     question_list: [
       "Question 1",
       "Question 2",
@@ -51,10 +51,10 @@ const quizzes = ref([
     ]
   },
   {
-    name: "Quiz 3",
-    difficulty: "Hard",
-    description: "Test your knowledge with Quiz 3",
-    image: "path/to/image3.jpg",
+    name: "Quiz 2",
+    difficulty: "Medium",
+    description: "Test your knowledge with Quiz 2",
+    image: "https://via.placeholder.com/150", // Placeholder image URL
     question_list: [
       "Question 1",
       "Question 2",
@@ -62,10 +62,10 @@ const quizzes = ref([
     ]
   },
   {
-    name: "Quiz 3",
-    difficulty: "Hard",
-    description: "Test your knowledge with Quiz 3",
-    image: "path/to/image3.jpg",
+    name: "Quiz 2",
+    difficulty: "Medium",
+    description: "Test your knowledge with Quiz 2",
+    image: "https://via.placeholder.com/150", // Placeholder image URL
     question_list: [
       "Question 1",
       "Question 2",
@@ -73,27 +73,16 @@ const quizzes = ref([
     ]
   },
   {
-    name: "Quiz 3",
-    difficulty: "Hard",
-    description: "Test your knowledge with Quiz 3",
-    image: "path/to/image3.jpg",
+    name: "Quiz 2",
+    difficulty: "Medium",
+    description: "Test your knowledge with Quiz 2",
+    image: "https://via.placeholder.com/150", // Placeholder image URL
     question_list: [
       "Question 1",
       "Question 2",
       "Question 3"
     ]
   },
-  {
-    name: "Quiz 3",
-    difficulty: "Hard",
-    description: "Test your knowledge with Quiz 3",
-    image: "path/to/image3.jpg",
-    question_list: [
-      "Question 1",
-      "Question 2",
-      "Question 3"
-    ]
-  }
 ]);
 </script>
 
@@ -103,7 +92,7 @@ const quizzes = ref([
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-top: 2%;
+  margin-top: 1%;
 }
 
 .searchbar {
@@ -114,8 +103,21 @@ const quizzes = ref([
 .search_query {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  margin: 2% 2% 80px;
   z-index: 0;
+}
+
+@media only screen and (max-width: 428px) {
+  .search_query {
+    display: grid;
+    grid-template-columns: 1fr;
+    margin: 2%;
+    z-index: 0;
+  }
+
+  .searchbar {
+    width: 100%;
+    align-self: center;
+  }
 }
 
 </style>
