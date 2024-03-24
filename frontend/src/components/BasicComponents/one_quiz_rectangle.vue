@@ -30,25 +30,20 @@ export default {
 
 <style scoped>
 .rectangle {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  margin: 10px;
-  background-color: #f0f0f0;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease-in-out;
+  padding-top: 5%;
+  margin-right: 50px;
 }
 
 .rectangle:hover {
   transform: translateY(-5px);
+  transition: 0.5s;
 }
 
 .card {
-  width: 250px;
+  width: 300px;
+  height: 200px;
   padding: 20px;
-  background-color: #fff;
+  background-color: white;
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

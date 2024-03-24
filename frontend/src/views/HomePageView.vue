@@ -60,6 +60,39 @@ const quizzes = ref([
       "Question 2",
       "Question 3"
     ]
+  },
+  {
+    name: "Quiz 3",
+    difficulty: "Hard",
+    description: "Test your knowledge with Quiz 3",
+    image: "path/to/image3.jpg",
+    question_list: [
+      "Question 1",
+      "Question 2",
+      "Question 3"
+    ]
+  },
+  {
+    name: "Quiz 3",
+    difficulty: "Hard",
+    description: "Test your knowledge with Quiz 3",
+    image: "path/to/image3.jpg",
+    question_list: [
+      "Question 1",
+      "Question 2",
+      "Question 3"
+    ]
+  },
+  {
+    name: "Quiz 3",
+    difficulty: "Hard",
+    description: "Test your knowledge with Quiz 3",
+    image: "path/to/image3.jpg",
+    question_list: [
+      "Question 1",
+      "Question 2",
+      "Question 3"
+    ]
   }
 ]);
 </script>
@@ -79,6 +112,10 @@ const quizzes = ref([
 }
 
 .search_query {
-  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  margin: 2% 2% 80px;
+  z-index: 0;
 }
+
 </style>
