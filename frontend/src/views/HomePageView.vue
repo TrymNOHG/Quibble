@@ -1,34 +1,36 @@
 <template>
   <div class="homepage-format">
     <div class="searchbar">
-      <searchbar
-
-      />
-    </div>
-
-    <div class="quiz_view">
-      <recommended
-
+      <SearchInput
+          v-model="searchInput"
+          @update:modelValue="handleSearchInput"
       />
     </div>
   </div>
 </template>
 
-
 <script setup>
+import SearchInput from "@/components/searchbar.vue";
+import {ref} from 'vue';
 
-import Searchbar from "@/components/searchbar.vue";
-import recommended from "@/components/recommended_comp.vue";
+const searchInput = ref('');
+
+function handleSearchInput(value) {
+  console.log('Search input changed:', value);
+}
 </script>
 
-
 <style scoped>
-
 .homepage-format {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  justify-items: center;
+  margin-top: 2%;
 }
 
+.searchbar {
+  width: 100%;
+  align-self: center;
+}
 </style>
