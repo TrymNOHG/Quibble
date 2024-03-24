@@ -6,6 +6,12 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * This controller provides the private endpoint for history.
+ *
+ * @author Trym Hamer Gudvangen
+ * @version 1.0 24.03.2024
+ */
 @RestController
 @EnableAutoConfiguration
 @RequiredArgsConstructor

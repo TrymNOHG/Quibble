@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 /**
  * This interface outlines the various functionality the private endpoint for user's should have.
  * An authorized user should be able to update and delete their profile.
+ *
+ * @author Trym Hamer Gudvangen
+ * @version 1.0 24.03.2024
  */
 public interface IUserController {
 

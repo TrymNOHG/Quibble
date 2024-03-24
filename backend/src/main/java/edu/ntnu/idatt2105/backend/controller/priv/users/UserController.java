@@ -10,6 +10,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * This controller provides the private endpoint for users.
+ *
+ * @author Trym Hamer Gudvangen
+ * @version 1.0 24.03.2024
+ */
 @RestController
 @EnableAutoConfiguration
 @RequiredArgsConstructor
