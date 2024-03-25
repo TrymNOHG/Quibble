@@ -14,17 +14,17 @@ import java.util.List;
  * @author Trym Hamer Gudvangen
  * @version 1.0 24.03.2024
  */
-@Mapper(componentModel = "spring")
-public interface UserMapper {
-
-    //TODO: create method to retrieve profilePicture from server.
-
-    @Mapping(target = "profilePicture", source = "")
-    UserLoadDTO userToUserLoadDTO(User user);
-
-    // Make a mapper for DTO to user, when registering.
-
-    @Mapping(target = "users", source = "users", qualifiedByName = "userToUserLoadDTO")
-    MultipleUserDTO userToMultipleUserLoadDTO(List<User> users);
-
-}
+//@Mapper(componentModel = "spring")
+//public interface UserMapper {
+//
+//    //TODO: create method to retrieve profilePicture from server.
+//
+//    @Mapping(target = "profilePicture", source = "")
+//    UserLoadDTO userToUserLoadDTO(User user);
+//
+//    // Make a mapper for DTO to user, when registering.
+//
+//    @Mapping(target = "users", source = "users", qualifiedByName = "userToUserLoadDTO")
+//    MultipleUserDTO userToMultipleUserLoadDTO(List<User> users);
+//
+//}
