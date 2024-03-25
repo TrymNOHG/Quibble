@@ -1,7 +1,7 @@
 package edu.ntnu.idatt2105.backend.controller.priv.history;
 
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
-import edu.ntnu.idatt2105.backend.model.quiz.QuizAuthor;
+import edu.ntnu.idatt2105.backend.dto.quiz.history.QuizHistoryDTO;
 import edu.ntnu.idatt2105.backend.model.quiz.QuizHistory;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -39,13 +39,13 @@ public interface IHistoryController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful addition of event.",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = QuizAuthor.class)) }),
+                            schema = @Schema(implementation = QuizHistory.class)) }),
             @ApiResponse(responseCode = "403", description = "Unauthorized addition of event.",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = QuizAuthor.class)) })
+                            schema = @Schema(implementation = QuizHistory.class)) })
     }
     )
-    ResponseEntity<QuizLoadDTO> addHistoricalEvent(@RequestBody @NonNull QuizHistory historicalEvent,
+    ResponseEntity<QuizLoadDTO> addHistoricalEvent(@RequestBody @NonNull QuizHistoryDTO historicalEvent,
                                                    @NonNull Authentication authentication);
 
     /**
@@ -62,10 +62,10 @@ public interface IHistoryController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful retrieval of events.",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = QuizAuthor.class)) }),
+                            schema = @Schema(implementation = QuizHistory.class)) }),
             @ApiResponse(responseCode = "403", description = "Unauthorized retrieval of events.",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = QuizAuthor.class)) })
+                            schema = @Schema(implementation = QuizHistory.class)) })
     }
     )
     ResponseEntity<QuizLoadDTO> getAllHistoricalEvent(@PathVariable @NonNull Long userId,

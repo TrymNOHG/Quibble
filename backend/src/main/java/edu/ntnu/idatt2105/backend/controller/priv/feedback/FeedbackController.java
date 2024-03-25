@@ -1,8 +1,14 @@
 package edu.ntnu.idatt2105.backend.controller.priv.feedback;
 
+import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.feedback.QuizFeedbackDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.feedback.QuizFeedbackUpdateDTO;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,5 +23,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Slf4j
 @RequestMapping(value = "/api/v1/private/feedback")
-public class FeedbackController {
+public class FeedbackController implements IFeedbackController {
+    @Override
+    public ResponseEntity<QuizLoadDTO> addFeedback(@NonNull QuizFeedbackDTO newFeedback, @NonNull Authentication authentication) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<QuizLoadDTO> updateFeedback(@NonNull QuizFeedbackUpdateDTO updatedFeedback, @NonNull Authentication authentication) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<QuizLoadDTO> deleteFeedback(@NonNull Long quizId, @NonNull Authentication authentication) {
+        return null;
+    }
 }

@@ -24,8 +24,6 @@ import org.springframework.web.bind.annotation.*;
  */
 public interface IQuizController {
 
-    // Create new quiz, delete quiz, add new collaborator, add/update/remove question
-
     /**
      * This method creates a new quiz.
      *
@@ -113,7 +111,7 @@ public interface IQuizController {
      * @return ResponseEntity showing whether the operation was successful.
      */
     @DeleteMapping(
-            value="/delete/collaborator",
+            value="/delete/{userId}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -127,7 +125,7 @@ public interface IQuizController {
                             schema = @Schema(implementation = QuizAuthor.class)) })
     }
     )
-    ResponseEntity<QuizLoadDTO> removeCollaborator(@RequestBody @NonNull QuizAuthorDTO collaborator,
+    ResponseEntity<QuizLoadDTO> removeCollaborator(@PathVariable @NonNull Long userId,
                                                 @NonNull Authentication authentication);
 
 }
