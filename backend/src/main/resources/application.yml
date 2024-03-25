@@ -22,9 +22,9 @@ logging:
       springframework:
         web: INFO
         security: TRACE
-#jwt:
-#  rsa-private-key: classpath:certificates/privateKey.pem
-#  rsa-public-key: classpath:certificates/publicKey.pem
+jwt:
+  rsa-private-key: classpath:certificates/privateKey.pem
+  rsa-public-key: classpath:certificates/publicKey.pem
 
 springdoc:
   api-docs:

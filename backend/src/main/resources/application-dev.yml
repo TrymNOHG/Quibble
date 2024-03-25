@@ -5,3 +5,4 @@ spring:
     username: root
     password: yourpassword
     driver-class-name: com.mysql.cj.jdbc.Driver
+

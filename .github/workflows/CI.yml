@@ -1,0 +1,86 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-backend:
+    runs-on: ubuntu-latest
+    container: maven:eclipse-temurin
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build backend
+        run: |
+          cd backend
+          mvn install -B -DskipTests
+
+  build-frontend:
+    runs-on: ubuntu-latest
+    container: node:16
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm install
+          npm run build
+
+  unit-test-backend:
+    runs-on: ubuntu-latest
+    container: maven:eclipse-temurin
+    steps:
+      - uses: actions/checkout@v2
+      - name: Unit test backend
+        run: |
+          cd backend
+          mvn clean test
+
+  unit-test-frontend:
+    runs-on: ubuntu-latest
+    container: node:16
+    steps:
+      - uses: actions/checkout@v2
+      - name: Unit test frontend
+        run: |
+          cd frontend
+          npm install
+          npm run test:unit
+
+  e2e-test-frontend:
+    runs-on: ubuntu-latest
+    container: cypress/base:16.13.0
+    steps:
+      - uses: actions/checkout@v2
+      - name: E2E test frontend
+        run: |
+          cd frontend
+          npm install
+          npx vite --port 4173 &
+          sleep 10
+          npx cypress run --e2e
+
+  deploy-javadoc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Deploy Javadoc
+        run: |
+          mkdir .public
+          cp -r javadoc/* .public
+          mv .public public
+      - uses: actions/upload-artifact@v2
+        with:
+          name: public
+          path: public

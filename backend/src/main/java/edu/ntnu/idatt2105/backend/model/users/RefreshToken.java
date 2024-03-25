@@ -20,9 +20,9 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @Entity
-@Table(name = "tokens")
+@Table(name = "refresh_tokens")
 @Schema(description = "A user's token, used for authorization when interacting with the application.")
-public class Token {
+public class RefreshToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,24 +30,14 @@ public class Token {
     @Schema(description = "The unique identifier for the token.")
     private Long tokenId;
 
-    @Column(name = "token", length = 64, nullable = false)
+    @Column(name = "token", length = 10000, nullable = false)
     @NonNull
     @Schema(description = "The actual token value, must be non-null.")
     private String token;
 
-    @Column(name = "time_created", length = 64, nullable = false)
-    @NonNull
-    @Schema(description = "When the token was created, must be non-null.")
-    private LocalDateTime timeCreated;
-
-    @Column(name = "time_expired", length = 64, nullable = false)
-    @NonNull
-    @Schema(description = "When the token was expires, must be non-null.")
-    private LocalDateTime timeExpired;
-
-    @Column(name = "time_confirmed", length = 64)
-    @Schema(description = "Confirmation time of the token.")
-    private LocalDateTime timeConfirmed;
+    @Column(name = "revoked", nullable = false)
+    @Schema(description = "Whether the token has been revoked or not.")
+    private boolean revoked;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
@@ -55,6 +45,5 @@ public class Token {
     @ToString.Exclude
     @Schema(description = "The user the token is connected to.")
     private User user;
-
 
 }
