@@ -9,5 +9,7 @@ package edu.ntnu.idatt2105.backend.controller.pub.feedback;
 public interface IFeedbackController {
 
     // Show all feedback for a given quiz.
+    // Get feedback by user, by quiz (could require a look at user preferences)
+
 
 }

@@ -1,7 +1,7 @@
 package edu.ntnu.idatt2105.backend.controller.priv.history;
 
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
-import edu.ntnu.idatt2105.backend.model.quiz.QuizHistory;
+import edu.ntnu.idatt2105.backend.dto.quiz.history.QuizHistoryDTO;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/api/v1/private/history")
 public class HistoryController implements IHistoryController{
     @Override
-    public ResponseEntity<QuizLoadDTO> addHistoricalEvent(@NonNull QuizHistory historicalEvent, @NonNull Authentication authentication) {
+    public ResponseEntity<QuizLoadDTO> addHistoricalEvent(@NonNull QuizHistoryDTO historicalEvent, @NonNull Authentication authentication) {
         return null;
     }
 

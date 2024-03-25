@@ -48,7 +48,9 @@ public class QuizController implements IQuizController{
     }
 
     @Override
-    public ResponseEntity<QuizLoadDTO> removeCollaborator(@NonNull QuizAuthorDTO collaborator, @NonNull Authentication authentication) {
+    public ResponseEntity<QuizLoadDTO> removeCollaborator(@NonNull Long userId, @NonNull Authentication authentication) {
         return null;
     }
+
+
 }
