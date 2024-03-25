@@ -4,6 +4,7 @@ import edu.ntnu.idatt2105.backend.dto.users.UserUpdateDTO;
 import edu.ntnu.idatt2105.backend.service.users.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -25,9 +26,10 @@ public class UserController implements IUserController{
 
     private final UserService userService;
 
+    //TODO: add exception handling.
     @Override
-    public ResponseEntity<String> updateUser(UserUpdateDTO userUpdateDTO, Authentication authentication) {
-        //TODO: fill in.
+    public ResponseEntity<String> updateUser(@NotNull UserUpdateDTO userUpdateDTO, @NotNull Authentication authentication) {
+
         return null;
     }
 

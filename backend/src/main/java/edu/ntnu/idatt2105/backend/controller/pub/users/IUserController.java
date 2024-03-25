@@ -7,4 +7,7 @@ package edu.ntnu.idatt2105.backend.controller.pub.users;
  * @version 1.0 24.03.2024
  */
 public interface IUserController {
+
+    // Load basic info, Find user by search
+
 }

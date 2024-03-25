@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.NonNull;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -43,7 +44,7 @@ public interface IUserController {
                             schema = @Schema(implementation = User.class)) })
     }
     )
-    ResponseEntity<String> updateUser(@RequestBody UserUpdateDTO userUpdateDTO, Authentication authentication);
+    ResponseEntity<String> updateUser(@RequestBody @NonNull UserUpdateDTO userUpdateDTO, @NonNull Authentication authentication);
 
 
     /**

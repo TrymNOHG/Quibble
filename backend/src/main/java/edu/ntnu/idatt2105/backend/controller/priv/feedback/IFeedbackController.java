@@ -7,4 +7,8 @@ package edu.ntnu.idatt2105.backend.controller.priv.feedback;
  * @version 1.0 24.03.2024
  */
 public interface IFeedbackController {
+
+    // Update feedback, delete feedback, add new feedback
+
+
 }
