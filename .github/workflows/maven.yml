@@ -67,7 +67,7 @@ jobs:
         run: |
           cd frontend
           npm install
-          npx vite --port 5173 &
+          npx vite --port 4173 &
           sleep 10
           npx cypress run --e2e
 
