@@ -1,6 +1,6 @@
 <template>
   <div class="rectangle">
-    <router-link :to="'/quiz?' + quiz.name">
+    <router-link :to="'/quiz?' + quiz.name" @click="setCurrentQuiz()">
       <div class="card">
         <div class="content">
           <img class="card_image" :src="quiz.image" alt="quiz image"/>
@@ -15,6 +15,8 @@
 </template>
 
 <script>
+import {useQuizStore} from "@/stores/counter.js";
+
 export default {
   props: {
     quiz: {
@@ -27,8 +29,23 @@ export default {
         question_list: Array,
       })
     }
+  },
+
+  setup() {
+    const quizStore = useQuizStore();
+
+    return {
+      quizStore,
+    }
+  },
+
+  methods: {
+    setCurrentQuiz() {
+      this.quizStore.setCurrentQuizById(this.quiz.quizId);
+    }
   }
 }
+
 </script>
 
 <style scoped>

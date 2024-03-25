@@ -18,21 +18,37 @@
 
 <script setup>
 import SearchInput from "@/components/searchbar.vue";
-import {ref} from 'vue';
+import {onMounted, ref} from 'vue';
 import One_quiz_rectangle from "@/components/BasicComponents/one_quiz_rectangle.vue";
+import {useQuizStore} from "@/stores/counter.js";
 
 const searchInput = ref('');
 
-function handleSearchInput(value) {
-  console.log('Search input changed:', value);
+async function handleSearchInput(value) {
+  if (value.length >= 3) {
+    console.log('Search input changed:', value);
+    quizzes.value = await useQuizStore().searchQuizzes(value);
+  } else {
+    await useQuizStore().setAllQuizzes();
+    quizzes.value = useQuizStore().allQuiz;
+  }
 }
+
+/*
+onMounted(() => {
+  useQuizStore().setAllQuizzes();
+  quizzes.value = useQuizStore().allQuiz;
+});
+
+ */
+
 
 const quizzes = ref([
   {
     name: "Quiz 1",
     difficulty: "Easy",
     description: "Test your knowledge with Quiz 1",
-    image: "https://via.placeholder.com/150", // Placeholder image URL
+    image: "https://via.placeholder.com/150",
     question_list: [
       "Question 1",
       "Question 2",
@@ -84,6 +100,8 @@ const quizzes = ref([
     ]
   },
 ]);
+
+
 </script>
 
 <style scoped>
