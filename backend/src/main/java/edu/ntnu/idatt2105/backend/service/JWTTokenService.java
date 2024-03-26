@@ -1,48 +1,65 @@
 package edu.ntnu.idatt2105.backend.service;
 
+import edu.ntnu.idatt2105.backend.config.UserConfig;
 import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
+import io.jsonwebtoken.io.IOException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.jwt.JwtClaimsSet;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-
-
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Service
 public class JWTTokenService {
 
-    private final JwtEncoder jwtEncoder;
-
-    public String generateToken(Authentication authentication) {
-        JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("quibble")
-                .issuedAt(Instant.now())
-                .expiresAt(Instant.now().plusSeconds(60*15)) // Expires in 15 min
-                .subject(authentication.getName())
-                .build();
-        return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+    final private UserRepository userRepository;
+    /**
+     * Gets the email from a JWT token.
+     *
+     * @param jwt The JWT token.
+     * @return The enail of the user.
+     */
+    public String getUserEmail(Jwt jwt) {
+        return jwt.getSubject();
     }
 
     /**
-     * Generates a refresh token. The refresh token is valid for 7 days and can be used to generate new access tokens.
+     * Gets the user id from a JWT token.
      *
-     * @param authentication The authentication object containing the user details.
-     * @return The refresh token.
+     * @param jwt The JWT token.
+     * @return The user id.
      */
-    public String generateRefreshToken(Authentication authentication) {
-        JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("quibble")
-                .issuedAt(Instant.now())
-                .expiresAt(Instant.now().plusSeconds(7 * 24 * 60 * 60)) // Expires in 7 days
-                .subject(authentication.getName())
-                .claim("scope", "REFRESH_TOKEN")
-                .build();
-        return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+    public String getUserId(Jwt jwt) {
+        return jwt.getClaim("id");
     }
 
+    /**
+     * Gets the user details from the email.
+     *
+     * @param email The email of the user.
+     * @return The user details.
+     * @throws IOException If the user is not found.
+     */
+    public UserDetails getUserDetails(String email) throws IOException {
+        return userRepository
+                .findByEmail(email)
+                .map(UserConfig::new)
+                .orElseThrow(()-> new IOException("User not found"));
+    }
+
+    /**
+     * Checks if the token is valid. The token is valid if it is not expired and the subject
+     * is the same as the email of the user.
+     *
+     * @param jwtToken The JWT token.
+     * @param userDetails The user details.
+     * @return True if the token is valid, false otherwise.
+     */
+    public boolean isTokenValid(Jwt jwtToken, UserDetails userDetails) {
+        return Objects.requireNonNull(jwtToken.getExpiresAt()).isAfter(Instant.now())
+                && jwtToken.getSubject().equals(userDetails.getUsername());
+    }
 }

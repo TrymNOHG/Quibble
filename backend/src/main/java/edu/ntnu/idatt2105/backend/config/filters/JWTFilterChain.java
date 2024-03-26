@@ -1,6 +1,6 @@
 package edu.ntnu.idatt2105.backend.config.filters;
 
-import edu.ntnu.idatt2105.backend.config.JWTTokenComponent;
+import edu.ntnu.idatt2105.backend.service.JWTTokenService;
 import edu.ntnu.idatt2105.backend.dto.RSAKeyPairDTO;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -22,6 +22,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 /**
  * Filter that checks if the request has a valid JWT token.
@@ -29,8 +30,9 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JWTFilterChain extends OncePerRequestFilter {
 
-    private final JWTTokenComponent jwtTokenService;
+    private final JWTTokenService jwtTokenService;
     private final RSAKeyPairDTO rsaKeyPairDTO;
+    private final Logger log = Logger.getLogger(JWTFilterChain.class.getName());
 
     /**
      * Checks if the request has a valid JWT token. If it does, it sets the security context with the user details.
@@ -47,19 +49,22 @@ public class JWTFilterChain extends OncePerRequestFilter {
             @NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain filterChain
     ) throws ServletException, IOException {
         try{
+            log.info("Filtering request");
             String authenticationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
             if(!authenticationHeader.startsWith("Bearer ")){ // If no token, go to next filter.
+                log.info("No token found");
                 filterChain.doFilter(request, response);
                 return;
             }
+            log.info("Token found");
 
             final String token = authenticationHeader.substring(7);
             final Jwt jwtToken = NimbusJwtDecoder.withPublicKey(rsaKeyPairDTO.rsaPublicKey()).build().decode(token);
-            final String username = jwtTokenService.getUserName(jwtToken);
+            final String email = jwtTokenService.getUserEmail(jwtToken);
 
-            if(!username.isEmpty() && SecurityContextHolder.getContext().getAuthentication() == null){
-                UserDetails userDetails = jwtTokenService.getUserDetails(username);
+            if(!email.isEmpty() && SecurityContextHolder.getContext().getAuthentication() == null){
+                UserDetails userDetails = jwtTokenService.getUserDetails(email);
                 if(jwtTokenService.isTokenValid(jwtToken, userDetails)){
 
                     UsernamePasswordAuthenticationToken newToken = new UsernamePasswordAuthenticationToken(
@@ -67,6 +72,7 @@ public class JWTFilterChain extends OncePerRequestFilter {
                             null,
                             userDetails.getAuthorities()
                     );
+
                     newToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                     SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
@@ -78,8 +84,6 @@ public class JWTFilterChain extends OncePerRequestFilter {
             filterChain.doFilter(request,response);
         }catch (JwtValidationException jwtValidationException){
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,jwtValidationException.getMessage());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
     }
 }

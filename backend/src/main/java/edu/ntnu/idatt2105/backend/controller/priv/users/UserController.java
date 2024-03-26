@@ -1,7 +1,6 @@
 package edu.ntnu.idatt2105.backend.controller.priv.users;
 
 import edu.ntnu.idatt2105.backend.dto.users.UserUpdateDTO;
-import edu.ntnu.idatt2105.backend.service.users.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/api/v1/private/users")
 public class UserController implements IUserController{
 
-    private final UserService userService;
 
     @Override
     public ResponseEntity<String> updateUser(UserUpdateDTO userUpdateDTO, Authentication authentication) {

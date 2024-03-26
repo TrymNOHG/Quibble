@@ -9,6 +9,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * This class is a configuration class for the user. It implements UserDetails and is used to get the user details.
+ *
+ * @author brage
+ * @version 1.0 26.03.2024
+ */
 @RequiredArgsConstructor
 public class UserConfig implements UserDetails {
 
@@ -16,9 +22,8 @@ public class UserConfig implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("USER"));
+        return List.of(new SimpleGrantedAuthority("USER")); // There is no "admin" functionality in the application
     }
-
 
     @Override
     public String getPassword() {
@@ -27,7 +32,7 @@ public class UserConfig implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return user.getEmail();
     }
 
     @Override
