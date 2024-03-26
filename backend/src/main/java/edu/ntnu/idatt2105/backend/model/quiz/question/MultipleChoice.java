@@ -13,7 +13,6 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor
@@ -28,10 +27,10 @@ public class MultipleChoice {
     @Schema(description = "The unique identifier for the multiple choice answer.")
     private Long multipleChoiceId;
 
-    @Column(name = "option", nullable = false)
+    @Column(name = "altenrative", nullable = false)
     @NonNull
     @Schema(description = "An option to the question.")
-    private String option;
+    private String alternative;
 
     @Column(name = "is_correct", nullable = false)
     @NonNull

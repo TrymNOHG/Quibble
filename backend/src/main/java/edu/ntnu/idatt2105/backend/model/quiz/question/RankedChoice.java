@@ -13,7 +13,6 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor
@@ -32,10 +31,10 @@ public class RankedChoice {
     @Schema(description = "The position of the ranking.")
     private int position;
 
-    @Column(name = "option", nullable = false)
+    @Column(name = "alternative", nullable = false)
     @NonNull
     @Schema(description = "An option to the question.")
-    private String option;
+    private String alternative;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "question_id")
