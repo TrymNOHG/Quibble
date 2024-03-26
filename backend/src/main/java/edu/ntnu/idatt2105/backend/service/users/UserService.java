@@ -14,6 +14,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Service class for getting user information from their email.
+ *
+ * @author Trym Hamer Gudvangen, Brage Kvamme
+ * @version 1.0 26.03.2024
+ */
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
@@ -40,7 +46,7 @@ public class UserService implements UserDetailsService {
     }
 
     public void deleteUser(Long userId) {
-        // Check that user is actually user.
+        // TODO: Check that user is actually user.
         userRepository.deleteById(userId);
     }
 
