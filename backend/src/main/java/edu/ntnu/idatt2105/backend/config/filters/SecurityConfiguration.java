@@ -12,7 +12,7 @@ import edu.ntnu.idatt2105.backend.config.JWTTokenComponent;
 import edu.ntnu.idatt2105.backend.dto.RSAKeyPairDTO;
 import edu.ntnu.idatt2105.backend.repo.users.RefreshTokenRepository;
 import edu.ntnu.idatt2105.backend.service.LogoutHandlerService;
-import edu.ntnu.idatt2105.backend.service.UserService;
+import edu.ntnu.idatt2105.backend.service.users.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

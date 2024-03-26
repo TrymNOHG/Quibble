@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Trym Hamer Gudvangen
  * @version 1.0 24.03.2024
  */
-@RestController
+@RestController("privateQuizController")
 @EnableAutoConfiguration
 @RequiredArgsConstructor
 @Slf4j
