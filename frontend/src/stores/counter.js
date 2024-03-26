@@ -97,18 +97,9 @@ export const useQuizStore = defineStore('storeUser', {
     },
 
     resetCurrentQuiz() {
-      this.currentFridge = {
-        "QuizId": null,
-        "Name": "quiz",
-        "Difficulty": "",
-        "Description": "",
-        "Image": "",
-        "Questions": [],
-      }
+      this.currentQuiz = null
       this.isSuperUser = false;
     },
-
-
   },
 })
 
