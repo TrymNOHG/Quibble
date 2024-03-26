@@ -13,6 +13,9 @@
           :quiz="quiz"
       />
     </div>
+    <div
+        id="inf_scroll"
+    />
   </div>
 </template>
 
@@ -22,7 +25,37 @@ import {onMounted, ref} from 'vue';
 import One_quiz_rectangle from "@/components/BasicComponents/one_quiz_rectangle.vue";
 import {useQuizStore} from "@/stores/counter.js";
 
-const searchInput = ref('');
+const searchInput =  ref('');
+const quizList = ref([]);
+
+/*
+  beforeMount() {
+   useQuizStore().setAllQuizzes();
+   quizzes.value = useQuizStore().allQuiz;a
+},
+   */
+
+async function getNextQuiz() {
+  window.onscroll = () => {
+    let bottomOfWindow = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight;
+    if (bottomOfWindow) {
+      const newQuizzes = [
+        {
+          name: "New Quiz 1",
+          difficulty: "Hard",
+          description: "Test your knowledge with New Quiz 1",
+          image: "https://via.placeholder.com/150",
+          question_list: [
+            "Question 1",
+            "Question 2",
+            "Question 3"
+          ]
+        },
+      ];
+      quizzes.value = [...quizzes.value, ...newQuizzes];
+    }
+  };
+}
 
 async function handleSearchInput(value) {
   if (value.length >= 3) {
@@ -34,16 +67,11 @@ async function handleSearchInput(value) {
   }
 }
 
-/*
 onMounted(() => {
-  useQuizStore().setAllQuizzes();
-  quizzes.value = useQuizStore().allQuiz;
+  getNextQuiz();
 });
 
- */
-
-
-const quizzes = ref([
+let quizzes = ref([
   {
     name: "Quiz 1",
     difficulty: "Easy",
