@@ -4,35 +4,35 @@
       <SearchInput
           v-model="searchInput"
           @update:modelValue="handleSearchInput"
+          @difficultySelected = "handleDifficulty"
       />
     </div>
     <div class="search_query">
       <One_quiz_rectangle
-          v-for="(quiz, index) in quizzes"
+          v-for="(quiz, index) in displayedQuizzes"
           :key="index"
           :quiz="quiz"
       />
     </div>
-    <div
-        id="inf_scroll"
-    />
+    <div id="inf_scroll"/>
   </div>
 </template>
 
 <script setup>
 import SearchInput from "@/components/searchbar.vue";
-import {onMounted, ref} from 'vue';
+import {onBeforeMount, onMounted, ref} from 'vue';
 import One_quiz_rectangle from "@/components/BasicComponents/one_quiz_rectangle.vue";
 import {useQuizStore} from "@/stores/counter.js";
 
 const searchInput =  ref('');
+const recommendedQuizzes = ref([])
+let displayedQuizzes = ref([]);
 
-/*
-  beforeMount() {
-   useQuizStore().setAllQuizzes();
-   quizzes.value = useQuizStore().allQuiz;a
-},
-   */
+onBeforeMount(() => {
+  useQuizStore().setAllQuizzes();
+  recommendedQuizzes.value = test_quizzes.value;
+  displayedQuizzes.value = test_quizzes.value;
+})
 
 async function getNextQuiz() {
   window.onscroll = () => {
@@ -55,18 +55,50 @@ async function getNextQuiz() {
           ]
         },
       ];
-      quizzes.value = [...quizzes.value, ...newQuizzes];
+      displayedQuizzes.value = [...displayedQuizzes.value, ...newQuizzes];
     }
   };
 }
 
-async function handleSearchInput(value) {
-  if (value.length >= 3) {
-    console.log('Search input changed:', value);
-    quizzes.value = await useQuizStore().searchQuizzes(value);
+async function handleDifficulty(difficulty) {
+  if (difficulty === "") {
+    displayedQuizzes.value = recommendedQuizzes.value;
+  }
+  else {
+    const filtered = recommendedQuizzes.value.filter(quiz => quiz.difficulty === difficulty);
+    displayedQuizzes.value = filtered;
+  }
+}
+
+async function handleSearchInput(searchword) {
+  if (searchword.length >= 3) {
+    //displayedQuizzes.value = await useQuizStore().searchQuizzes(searchword);
+    let newQuizzelist = [{
+          name: "Quiz 1",
+          difficulty: "Easy",
+          description: "Test your knowledge with Quiz 1",
+          image: "https://via.placeholder.com/150",
+          question_list: [
+            "Question 1",
+            "Question 2",
+            "Question 3"
+          ]
+        },
+        {
+          name: "Quiz 2",
+          difficulty: "Medium",
+          description: "Test your knowledge with Quiz 2",
+          image: "https://via.placeholder.com/150", // Placeholder image URL
+          question_list: [
+            "Question 1",
+            "Question 2",
+            "Question 3"
+          ]
+        }];
+    displayedQuizzes.value = newQuizzelist;
   } else {
-    await useQuizStore().setAllQuizzes();
-    quizzes.value = useQuizStore().allQuiz;
+    let newQuizzelist = recommendedQuizzes.value;
+    displayedQuizzes.value = newQuizzelist;
   }
 }
 
@@ -74,7 +106,7 @@ onMounted(() => {
   getNextQuiz();
 });
 
-let quizzes = ref([
+let test_quizzes = ref([
   {
     name: "Quiz 1",
     difficulty: "Easy",
@@ -110,18 +142,7 @@ let quizzes = ref([
   },
   {
     name: "Quiz 2",
-    difficulty: "Medium",
-    description: "Test your knowledge with Quiz 2",
-    image: "https://via.placeholder.com/150", // Placeholder image URL
-    question_list: [
-      "Question 1",
-      "Question 2",
-      "Question 3"
-    ]
-  },
-  {
-    name: "Quiz 2",
-    difficulty: "Medium",
+    difficulty: "Hard",
     description: "Test your knowledge with Quiz 2",
     image: "https://via.placeholder.com/150", // Placeholder image URL
     question_list: [

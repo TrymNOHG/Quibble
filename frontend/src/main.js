@@ -15,7 +15,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
     faPuzzlePiece,
     faHouse,
-    faUserCircle, faCirclePlus, faSearch, faMagnifyingGlass,
+    faUserCircle, faCirclePlus, faSearch, faMagnifyingGlass, faBars,
 } from "@fortawesome/free-solid-svg-icons";
 
 library.add(
@@ -23,7 +23,8 @@ library.add(
     faUserCircle,
     faPuzzlePiece,
     faCirclePlus,
-    faMagnifyingGlass
+    faMagnifyingGlass,
+    faBars
 )
 
 
