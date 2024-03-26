@@ -21,17 +21,7 @@ export const getUser = async () => {
 
 export const checkSuperUser = async (quizId) => {
     return axios.get(`${BASE_URL}/superuser`, {
-        params : { quizId },
-        headers: {
-            Authorization: `Bearer ${await sessionToken()}`,
-        },
-    })
-}
-
-
-// set in another service
-export const getRecommendedQuizList = async () => {
-    return axios.get(`${BASE_URL}/quiz/getRecommended`, {
+        data : { quizId },
         headers: {
             Authorization: `Bearer ${await sessionToken()}`,
         },
@@ -40,17 +30,18 @@ export const getRecommendedQuizList = async () => {
 
 export const getSearchedQuizzes = async (searchword) => {
     return axios.get(`${BASE_URL}/quiz/searchQuiz`, {
-        params: { searchword },
-        headers: {
-            Authorization: `Bearer ${await sessionToken()}`,
-        },
+        data: { searchword },
     })
 }
 
-export const getMoreQuizzes = async () => {
+export const getMoreQuizzes = async (diff) => {
     return axios.get(`${BASE_URL}/quiz/moreQuizzes`, {
-        headers: {
-            Authorization: `Bearer ${await sessionToken()}`,
-        },
+        data: { diff }
+    })
+}
+
+export const getQuizzesByDifficulty = async (diff) => {
+    return axios.get(`${BASE_URL}/quiz/QuizzDiff`, {
+        data: { diff }
     })
 }

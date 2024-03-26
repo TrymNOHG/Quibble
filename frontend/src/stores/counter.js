@@ -1,9 +1,7 @@
-import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import {
   checkSuperUser,
-  getMoreQuizzes,
-  getRecommendedQuizList,
+  getMoreQuizzes, getQuizzesByDifficulty,
   getSearchedQuizzes,
   getUser
 } from "@/services/UserService.js";
@@ -88,8 +86,8 @@ export const useQuizStore = defineStore('storeUser', {
     },
 
 
-    async setAllQuizzes() {
-      this.allQuiz = getRecommendedQuizList();
+    async setAllQuizzes(difficulty) {
+      this.allQuiz = getQuizzesByDifficulty(difficulty);
       return this.allQuiz;
     },
 
@@ -102,8 +100,8 @@ export const useQuizStore = defineStore('storeUser', {
       }
     },
 
-    async fetchMoreQuizzes(fridgeId) {
-      await getMoreQuizzes(fridgeId).then(response => {
+    async fetchMoreQuizzes(diff) {
+      await getMoreQuizzes(diff).then(response => {
         this.newQuizzes = []
         this.newQuizzes = response.data;
       })
