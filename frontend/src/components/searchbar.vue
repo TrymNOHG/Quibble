@@ -8,7 +8,7 @@
         name="searchbar"
         class="input-field"
         aria-labelledby="searchLabel"
-        placeholder="Search ..."
+        :placeholder="$t('placeholders.SEARCH')"
         @input="$emit('update:modelValue', $event.target.value)"
     />
     <div class="search-filter-icon">
@@ -22,24 +22,25 @@
       <font-awesome-icon class="filter_bar" icon="fa-bars" @click="toggleDropdownPhone"/>
       <div class="dropdown" @click="toggleDropdown" v-if="!dropdownPhone">
         <div class="dropdown-content" v-show="true">
-          <div @click="selectDifficulty('')">All Difficulties</div>
-          <div @click="selectDifficulty('Easy')">Easy</div>
-          <div @click="selectDifficulty('Medium')">Medium</div>
-          <div @click="selectDifficulty('Hard')">Hard</div>
+          <div @click="selectDifficulty('')">{{ $t('buttons.ALL_DIFFICULTIES') }}</div>
+          <div @click="selectDifficulty('Easy')">{{ $t('dropdown_options.EASY') }}</div>
+          <div @click="selectDifficulty('Medium')">{{ $t('dropdown_options.MEDIUM') }}</div>
+          <div @click="selectDifficulty('Hard')">{{ $t('dropdown_options.HARD') }}</div>
         </div>
       </div>
     </div>
     <div class="dropdown" @click="toggleDropdown" v-if="!showFilter">
-      {{ selectedDifficulty ? selectedDifficulty : 'All Difficulties' }}
+      {{ selectedDifficulty ? selectedDifficulty : $t('buttons.ALL_DIFFICULTIES') }}
       <div class="dropdown-content" v-show="dropdownOpen">
-        <div @click="selectDifficulty('')">All Difficulties</div>
-        <div @click="selectDifficulty('Easy')">Easy</div>
-        <div @click="selectDifficulty('Medium')">Medium</div>
-        <div @click="selectDifficulty('Hard')">Hard</div>
+        <div @click="selectDifficulty('')">{{ $t('buttons.ALL_DIFFICULTIES') }}</div>
+        <div @click="selectDifficulty('Easy')">{{ $t('dropdown_options.EASY') }}</div>
+        <div @click="selectDifficulty('Medium')">{{ $t('dropdown_options.MEDIUM') }}</div>
+        <div @click="selectDifficulty('Hard')">{{ $t('dropdown_options.HARD') }}</div>
       </div>
     </div>
   </div>
 </template>
+
 
 <script setup>
 import {getCurrentInstance, onMounted, ref} from "vue";

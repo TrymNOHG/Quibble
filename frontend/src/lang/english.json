@@ -1,14 +1,47 @@
 {
+  "titles": {
+    "REGISTER": "Register"
+  },
   "placeholders": {
-    "GAME_PIN": "GAME PIN"
+    "EMAIL": "Email",
+    "GAME_PIN": "GAME PIN",
+    "USERNAME": "Username",
+    "PASSWORD": "Password",
+    "SEARCH": "Search ...",
+    "CONFIRM_PASSWORD": "Confirm Password"
   },
+
   "buttons": {
-    "START_GAME": "Start Game"
+    "LOGIN": "Login",
+    "START_GAME": "Start Game",
+    "ALL_DIFFICULTIES": "All Difficulties",
+    "REGISTER": "Register"
   },
+
   "login_register_text": {
     "LOGIN_MESSAGE": "Here you can",
     "LOGIN": "log in",
     "OR": "or",
-    "REGISTER": "register for free"
+    "REGISTER": "register for free",
+    "NO_ACCOUNT_MESSAGE": "Don't have an account?"
+  },
+
+  "quiz_card": {
+    "QUESTIONS_LABEL": "Questions"
+  },
+
+  "error_messages": {
+    "USERNAME_REQUIRED": "Username is required",
+    "PASSWORD_REQUIRED": "Password is required"
+  },
+
+  "messages": {
+    "ALREADY_HAVE_ACCOUNT": "Already have an account?"
+  },
+
+  "dropdown_options": {
+    "EASY": "Easy",
+    "MEDIUM": "Medium",
+    "HARD": "Hard"
   }
 }

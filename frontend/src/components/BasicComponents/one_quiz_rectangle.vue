@@ -6,7 +6,7 @@
           <img class="card_image" :src="quiz.image" alt="quiz image"/>
           <div class="information">
             <h4 class="quiz-name">{{ quiz.name }}</h4>
-            <p class="quiz-details">Questions: {{ quiz.question_list.length }}</p>
+            <p class="quiz-details">{{$t("quiz_card.QUESTIONS_LABEL")}}: {{ quiz.question_list.length }}</p>
           </div>
         </div>
       </div>
@@ -16,7 +16,6 @@
 
 <script>
 import {useQuizStore} from "@/stores/counter.js";
-
 export default {
   props: {
     quiz: {
