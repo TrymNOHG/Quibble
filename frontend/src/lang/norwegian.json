@@ -1,3 +1,14 @@
 {
-
+  "placeholders": {
+    "GAME_PIN": "SPILL-PIN"
+  },
+  "buttons": {
+    "START_GAME": "Start Spillet"
+  },
+  "login_register_text": {
+    "LOGIN_MESSAGE": "Her kan du",
+    "LOGIN": "logge deg inn",
+    "OR": "eller",
+    "REGISTER": "registrer deg gratis"
+  }
 }

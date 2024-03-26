@@ -1,3 +1,14 @@
 {
-
+  "placeholders": {
+    "GAME_PIN": "GAME PIN"
+  },
+  "buttons": {
+    "START_GAME": "Start Game"
+  },
+  "login_register_text": {
+    "LOGIN_MESSAGE": "Here you can",
+    "LOGIN": "log in",
+    "OR": "or",
+    "REGISTER": "register for free"
+  }
 }
