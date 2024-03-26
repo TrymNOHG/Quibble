@@ -1,4 +1,4 @@
-package edu.ntnu.idatt2105.backend.dto;
+package edu.ntnu.idatt2105.backend.dto.users;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;

@@ -51,7 +51,7 @@ import { useField, useForm } from "vee-validate";
 import { useUserStore } from "@/stores/counter.js";
 import { ref } from "vue";
 import router from "@/router";
-import { loginUser } from "@/services/UserService";
+import { loginUser } from "@/api/services/UserService";
 import { RouterLink } from 'vue-router'
 import Basic_button from "@/components/BasicComponents/basic_button.vue";
 

@@ -1,7 +1,7 @@
 package edu.ntnu.idatt2105.backend.config.filters;
 
 import edu.ntnu.idatt2105.backend.config.JWTTokenComponent;
-import edu.ntnu.idatt2105.backend.dto.RSAKeyPairDTO;
+import edu.ntnu.idatt2105.backend.dto.security.RSAKeyPairDTO;
 import edu.ntnu.idatt2105.backend.repo.users.RefreshTokenRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

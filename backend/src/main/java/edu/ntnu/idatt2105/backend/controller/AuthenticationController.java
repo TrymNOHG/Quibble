@@ -1,6 +1,6 @@
 package edu.ntnu.idatt2105.backend.controller;
 
-import edu.ntnu.idatt2105.backend.dto.UserRegisterDTO;
+import edu.ntnu.idatt2105.backend.dto.users.UserRegisterDTO;
 import edu.ntnu.idatt2105.backend.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;

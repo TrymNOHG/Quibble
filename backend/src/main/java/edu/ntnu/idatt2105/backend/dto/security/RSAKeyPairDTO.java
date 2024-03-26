@@ -1,4 +1,4 @@
-package edu.ntnu.idatt2105.backend.dto;
+package edu.ntnu.idatt2105.backend.dto.security;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

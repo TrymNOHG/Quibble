@@ -1,8 +1,8 @@
 package edu.ntnu.idatt2105.backend.service;
 
-import edu.ntnu.idatt2105.backend.dto.AuthenticationResponseDTO;
-import edu.ntnu.idatt2105.backend.dto.TokenType;
-import edu.ntnu.idatt2105.backend.dto.UserRegisterDTO;
+import edu.ntnu.idatt2105.backend.dto.security.AuthenticationResponseDTO;
+import edu.ntnu.idatt2105.backend.dto.security.TokenType;
+import edu.ntnu.idatt2105.backend.dto.users.UserRegisterDTO;
 import edu.ntnu.idatt2105.backend.model.users.RefreshToken;
 import edu.ntnu.idatt2105.backend.model.users.User;
 import edu.ntnu.idatt2105.backend.repo.users.RefreshTokenRepository;

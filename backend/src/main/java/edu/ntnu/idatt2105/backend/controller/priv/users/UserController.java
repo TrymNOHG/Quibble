@@ -6,8 +6,6 @@ import edu.ntnu.idatt2105.backend.service.users.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -28,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController implements IUserController{
 
     private final UserService userService;
-
 
     @Override
     public ResponseEntity<UserLoadDTO> updateUser(@NotNull UserUpdateDTO userUpdateDTO, @NotNull Authentication authentication) {

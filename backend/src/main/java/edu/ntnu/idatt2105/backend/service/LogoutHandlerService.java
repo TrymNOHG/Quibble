@@ -1,6 +1,5 @@
 package edu.ntnu.idatt2105.backend.service;
 
-import edu.ntnu.idatt2105.backend.dto.TokenType;
 import edu.ntnu.idatt2105.backend.repo.users.RefreshTokenRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

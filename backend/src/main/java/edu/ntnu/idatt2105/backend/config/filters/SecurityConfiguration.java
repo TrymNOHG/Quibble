@@ -9,7 +9,7 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import edu.ntnu.idatt2105.backend.config.JWTTokenComponent;
-import edu.ntnu.idatt2105.backend.dto.RSAKeyPairDTO;
+import edu.ntnu.idatt2105.backend.dto.security.RSAKeyPairDTO;
 import edu.ntnu.idatt2105.backend.repo.users.RefreshTokenRepository;
 import edu.ntnu.idatt2105.backend.service.LogoutHandlerService;
 import edu.ntnu.idatt2105.backend.service.users.UserService;

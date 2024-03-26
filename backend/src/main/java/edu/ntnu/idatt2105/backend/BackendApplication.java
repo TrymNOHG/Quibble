@@ -1,6 +1,6 @@
 package edu.ntnu.idatt2105.backend;
 
-import edu.ntnu.idatt2105.backend.dto.RSAKeyPairDTO;
+import edu.ntnu.idatt2105.backend.dto.security.RSAKeyPairDTO;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
