@@ -67,4 +67,4 @@ dist-ssr
 *.sw?
 
 # Database
-db/*
+**/db/*
