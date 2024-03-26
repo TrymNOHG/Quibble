@@ -12,26 +12,15 @@
     "test:e2e:dev": "start-server-and-test 'vite dev --port 4173' http://localhost:4173 'cypress open --e2e'"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^6.5.1",
-    "@fortawesome/free-solid-svg-icons": "^6.5.1",
-    "@fortawesome/vue-fontawesome": "^3.0.6",
-    "axios": "^1.6.8",
     "pinia": "^2.1.7",
-    "pinia-plugin-persistedstate": "^3.2.1",
-    "vee-validate": "^4.12.6",
     "vue": "^3.4.21",
-    "vue-i18n": "^9.10.2",
-    "vue-router": "^4.3.0",
-    "vue3-storage": "^0.1.11",
-    "yup": "^1.4.0"
+    "vue-router": "^4.3.0"
   },
   "devDependencies": {
-    "@openapitools/openapi-generator-cli": "^2.13.1",
     "@vitejs/plugin-vue": "^5.0.4",
     "@vue/test-utils": "^2.4.5",
     "cypress": "^13.7.0",
     "jsdom": "^24.0.0",
-    "openapi": "^1.0.1",
     "start-server-and-test": "^2.0.3",
     "vite": "^5.1.6",
     "vitest": "^1.4.0"
