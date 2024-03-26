@@ -1,5 +1,6 @@
-mkdir backend/src/main/resources/certificates
-
+if [ ! -d "backend/src/main/resources/certificates" ]; then
+	mkdir "backend/src/main/resources/certificates"
+fi
 cd backend/src/main/resources/certificates || exit
 
 # Check if the file exists

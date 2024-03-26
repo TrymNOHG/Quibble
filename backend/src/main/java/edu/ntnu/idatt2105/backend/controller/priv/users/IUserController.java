@@ -1,5 +1,6 @@
 package edu.ntnu.idatt2105.backend.controller.priv.users;
 
+import edu.ntnu.idatt2105.backend.dto.users.UserLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.users.UserUpdateDTO;
 import edu.ntnu.idatt2105.backend.model.users.User;
 import io.swagger.v3.oas.annotations.Operation;
@@ -7,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.NonNull;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -43,7 +45,7 @@ public interface IUserController {
                             schema = @Schema(implementation = User.class)) })
     }
     )
-    ResponseEntity<String> updateUser(@RequestBody UserUpdateDTO userUpdateDTO, Authentication authentication);
+    ResponseEntity<UserLoadDTO> updateUser(@RequestBody @NonNull UserUpdateDTO userUpdateDTO, @NonNull Authentication authentication);
 
 
     /**
