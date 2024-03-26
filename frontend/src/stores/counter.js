@@ -1,6 +1,12 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import {checkSuperUser, getRecommendedQuizList, getSearchedQuizzes, getUser} from "@/services/UserService.js";
+import {
+  checkSuperUser,
+  getMoreQuizzes,
+  getRecommendedQuizList,
+  getSearchedQuizzes,
+  getUser
+} from "@/services/UserService.js";
 
 export const useUserStore = defineStore('storeUser', {
 
@@ -94,6 +100,14 @@ export const useQuizStore = defineStore('storeUser', {
       } catch (e) {
         console.error(e)
       }
+    },
+
+    async fetchMoreQuizzes(fridgeId) {
+      await getMoreQuizzes(fridgeId).then(response => {
+        this.newQuizzes = []
+        this.newQuizzes = response.data;
+      })
+      return this.newQuizzes;
     },
 
     resetCurrentQuiz() {

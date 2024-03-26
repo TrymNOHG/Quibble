@@ -26,7 +26,6 @@ import One_quiz_rectangle from "@/components/BasicComponents/one_quiz_rectangle.
 import {useQuizStore} from "@/stores/counter.js";
 
 const searchInput =  ref('');
-const quizList = ref([]);
 
 /*
   beforeMount() {
@@ -39,6 +38,10 @@ async function getNextQuiz() {
   window.onscroll = () => {
     let bottomOfWindow = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight;
     if (bottomOfWindow) {
+      /*
+      const newQuizzes = useQuizStore().getMoreQuizzes();
+      quizzes.value = [...newQuizzes]
+       */
       const newQuizzes = [
         {
           name: "New Quiz 1",

@@ -46,3 +46,11 @@ export const getSearchedQuizzes = async (searchword) => {
         },
     })
 }
+
+export const getMoreQuizzes = async () => {
+    return axios.get(`${BASE_URL}/quiz/moreQuizzes`, {
+        headers: {
+            Authorization: `Bearer ${await sessionToken()}`,
+        },
+    })
+}
