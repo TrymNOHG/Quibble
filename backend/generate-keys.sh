@@ -1,3 +1,5 @@
+mkdir backend/src/main/resources/certificates
+
 cd backend/src/main/resources/certificates || exit
 
 # Check if the file exists
