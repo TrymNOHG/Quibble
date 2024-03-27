@@ -7,12 +7,12 @@
     </div>
     <div class="header"></div>
     <div class="questions_list">
-      <div class="buttons">
+      <div class="buttons bottomline">
         <button>new question</button>
+        <h2 class="question_text">Question List</h2>
         <button>import question</button>
       </div>
       <div class="encap_List">
-        <h2 class="question_text">Question List</h2>
         <question-list
             class="list"
             v-for="q in questions"
@@ -40,7 +40,8 @@ const questions = [
 
 <style>
 .question_text{
-  margin-left: 10%;
+  font-size: 25px;
+  font-weight: bold;
 }
 
 .encap_List{
@@ -67,6 +68,10 @@ const questions = [
   border-width: 0 0 1px 0;
   border-style: solid;
   border-color: #cccccc;
+}
+
+.bottomline{
+  margin-bottom: 0;
 }
 
 button{

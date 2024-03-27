@@ -26,10 +26,6 @@ const props = defineProps({
   }
 });
 
-const editAuthor = (author) => {
-  // Handle edit action
-};
-
 const deleteAuthor = (author) => {
   // Handle delete action
 };
@@ -79,16 +75,6 @@ span {
   align-items: center;
   justify-content: space-between;
   margin-left: 50%;
-  cursor: pointer;
-}
-
-#pen {
-  margin-right: 25%;
-}
-
-#pen:hover {
-  scale: 1.25;
-  color: lawngreen;
   cursor: pointer;
 }
 
