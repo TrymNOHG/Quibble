@@ -55,7 +55,6 @@ coverage
 .DS_Store
 dist
 dist-ssr
-coverage
 *.local
 
 /cypress/videos/
@@ -64,7 +63,6 @@ coverage
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
-.idea
 *.suo
 *.ntvs*
 *.njsproj
