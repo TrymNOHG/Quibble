@@ -1,7 +1,7 @@
 package edu.ntnu.idatt2105.backend.service;
 
 import edu.ntnu.idatt2105.backend.config.UserConfig;
-import edu.ntnu.idatt2105.backend.dto.RSAKeyPairDTO;
+import edu.ntnu.idatt2105.backend.dto.security.RSAKeyPairDTO;
 import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
 import io.jsonwebtoken.io.IOException;
 import lombok.RequiredArgsConstructor;

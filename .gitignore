@@ -41,6 +41,8 @@ build/
 
 ##Frontend
 
+
+
 # Logs
 logs
 *.log
@@ -56,6 +58,7 @@ coverage
 dist
 dist-ssr
 *.local
+package-lock.json
 
 /cypress/videos/
 /cypress/screenshots/

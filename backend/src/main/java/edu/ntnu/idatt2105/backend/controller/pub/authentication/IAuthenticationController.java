@@ -1,7 +1,7 @@
 package edu.ntnu.idatt2105.backend.controller.pub.authentication;
 
-import edu.ntnu.idatt2105.backend.dto.AuthenticationResponseDTO;
-import edu.ntnu.idatt2105.backend.dto.UserRegisterDTO;
+import edu.ntnu.idatt2105.backend.dto.security.AuthenticationResponseDTO;
+import edu.ntnu.idatt2105.backend.dto.users.UserRegisterDTO;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
