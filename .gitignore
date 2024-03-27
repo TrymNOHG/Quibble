@@ -6,6 +6,9 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+## DB
+/db/**
+
 ### STS ###
 .apt_generated
 .classpath
@@ -38,6 +41,8 @@ build/
 
 ##Frontend
 
+
+
 # Logs
 logs
 *.log
@@ -53,6 +58,7 @@ coverage
 dist
 dist-ssr
 *.local
+package-lock.json
 
 /cypress/videos/
 /cypress/screenshots/
