@@ -1,11 +1,13 @@
 package edu.ntnu.idatt2105.backend.service;
 
 import edu.ntnu.idatt2105.backend.config.UserConfig;
+import edu.ntnu.idatt2105.backend.dto.RSAKeyPairDTO;
 import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
 import io.jsonwebtoken.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -16,6 +18,8 @@ import java.util.Objects;
 public class JWTTokenService {
 
     final private UserRepository userRepository;
+    final private RSAKeyPairDTO rsaKeyPairDTO;
+
     /**
      * Gets the email from a JWT token.
      *
@@ -24,6 +28,16 @@ public class JWTTokenService {
      */
     public String getUserEmail(Jwt jwt) {
         return jwt.getSubject();
+    }
+
+    /**
+     * Gets the JWT token object from a string containing the jwt.
+     *
+     * @param token The JWT token as a string.
+     * @return The JWT token.
+     */
+    public Jwt getJwt(String token) {
+        return NimbusJwtDecoder.withPublicKey(rsaKeyPairDTO.rsaPublicKey()).build().decode(token);
     }
 
     /**
@@ -46,6 +60,20 @@ public class JWTTokenService {
     public UserDetails getUserDetails(String email) throws IOException {
         return userRepository
                 .findByEmail(email)
+                .map(UserConfig::new)
+                .orElseThrow(()-> new IOException("User not found"));
+    }
+
+    /**
+     * Gets the user details from the user id.
+     *
+     * @param userId The id of the user.
+     * @return The user details.
+     * @throws IOException If the user is not found.
+     */
+    public UserDetails getUserDetails(long userId) throws IOException {
+        return userRepository
+                .findById(userId)
                 .map(UserConfig::new)
                 .orElseThrow(()-> new IOException("User not found"));
     }

@@ -176,9 +176,9 @@ public class AuthenticationService {
      * @param authorizationHeader The authorization header containing the refresh token.
      * @return AuthenticationResponseDTO containing the access token.
      */
-    public Object getAccessTokenFromRefreshToken(String authorizationHeader) {
+    public AuthenticationResponseDTO getAccessTokenFromRefreshToken(String authorizationHeader) {
         if(!authorizationHeader.startsWith("Bearer ")){
-            return new ResponseStatusException(HttpStatus.BAD_REQUEST, "No bearer token found in header");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No bearer token found in header");
         }
 
         final String refreshToken = authorizationHeader.substring(7);
