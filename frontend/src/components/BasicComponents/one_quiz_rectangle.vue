@@ -1,6 +1,6 @@
 <template>
   <div class="rectangle">
-    <router-link :to="'/quiz?' + quiz.name" @click="setCurrentQuiz()">
+    <router-link :to="'/quiz/current'" @click="setCurrentQuiz()">
       <div class="card">
         <div class="content">
           <img class="card_image" :src="quiz.image" alt="quiz image"/>
@@ -21,6 +21,7 @@ export default {
     quiz: {
       type: Object,
       default: () => ({
+        quizId: Number,
         name: String,
         difficulty: String,
         description: String,
@@ -40,7 +41,7 @@ export default {
 
   methods: {
     setCurrentQuiz() {
-      this.quizStore.setCurrentQuizById(this.quiz.quizId);
+      this.quizStore.setCurrentQuizById(this.quiz);
     }
   }
 }

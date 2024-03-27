@@ -70,14 +70,10 @@ export const useQuizStore = defineStore('storeUser', {
   },
 
   actions: {
-    async setCurrentQuizById(QuizId) {
-      for(let quiz of this.allQuiz) {
-        if(quiz.QuizId === QuizId) {
-          this.currentQuiz = quiz;
-          this.isSuperUser = await this.checkSuperUser(QuizId)
-          return;
-        }
-      }
+    async setCurrentQuizById(quiz) {
+      this.currentQuiz = quiz;
+      console.log(this.currentQuiz)
+      return this.currentQuiz;
     },
 
     async searchQuizzes(searchword) {

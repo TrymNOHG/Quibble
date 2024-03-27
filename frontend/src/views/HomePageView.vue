@@ -45,6 +45,7 @@ async function getNextQuiz() {
        */
       const newQuizzes = [
         {
+          quizId: 99,
           name: "New Quiz 1",
           difficulty: "Hard",
           description: "Test your knowledge with New Quiz 1",
@@ -56,6 +57,7 @@ async function getNextQuiz() {
           ]
         },
         {
+          quizId: 98,
           name: "Quiz 2",
           difficulty: "Medium",
           description: "Test your knowledge with Quiz 2",
@@ -67,6 +69,7 @@ async function getNextQuiz() {
           ]
         },
         {
+          quizId: 97,
           name: "Quiz 2",
           difficulty: "Medium",
           description: "Test your knowledge with Quiz 2",
@@ -78,6 +81,7 @@ async function getNextQuiz() {
           ]
         },
         {
+          quizId: 96,
           name: "Quiz 2",
           difficulty: "Medium",
           description: "Test your knowledge with Quiz 2",
@@ -88,6 +92,7 @@ async function getNextQuiz() {
             "Question 3"
           ]
         }, {
+          quizId: 95,
           name: "Quiz 2",
           difficulty: "Medium",
           description: "Test your knowledge with Quiz 2",
@@ -98,6 +103,7 @@ async function getNextQuiz() {
             "Question 3"
           ]
         }, {
+          quizId: 94,
           name: "Quiz 2",
           difficulty: "Medium",
           description: "Test your knowledge with Quiz 2",
@@ -108,6 +114,7 @@ async function getNextQuiz() {
             "Question 3"
           ]
         }, {
+          quizId: 93,
           name: "Quiz 2",
           difficulty: "Medium",
           description: "Test your knowledge with Quiz 2",
@@ -119,6 +126,7 @@ async function getNextQuiz() {
           ]
         },
         {
+          quizId: 92,
           name: "Quiz 2",
           difficulty: "Medium",
           description: "Test your knowledge with Quiz 2",
@@ -129,6 +137,7 @@ async function getNextQuiz() {
             "Question 3"
           ]
         }, {
+          quizId: 91,
           name: "Quiz 2",
           difficulty: "Medium",
           description: "Test your knowledge with Quiz 2",
@@ -162,6 +171,7 @@ async function handleSearchInput(searchword) {
   if (searchword.length >= 3) {
     //displayedQuizzes.value = await useQuizStore().searchQuizzes(searchword);
     displayedQuizzes.value = [{
+      quizId: 85,
       name: "Quiz 1",
       difficulty: "Easy",
       description: "Test your knowledge with Quiz 1",
@@ -173,6 +183,7 @@ async function handleSearchInput(searchword) {
       ]
     },
       {
+        quizId: 82,
         name: "Quiz 2",
         difficulty: "Medium",
         description: "Test your knowledge with Quiz 2",
@@ -195,6 +206,7 @@ onMounted(() => {
 
 let test_quizzes = ref([
   {
+    quizId: 1,
     name: "Quiz 1",
     difficulty: "Easy",
     description: "Test your knowledge with Quiz 1",
@@ -206,6 +218,7 @@ let test_quizzes = ref([
     ]
   },
   {
+    quizId: 2,
     name: "Quiz 2",
     difficulty: "Medium",
     description: "Test your knowledge with Quiz 2",
@@ -217,6 +230,7 @@ let test_quizzes = ref([
     ]
   },
   {
+    quizId: 3,
     name: "Quiz 2",
     difficulty: "Medium",
     description: "Test your knowledge with Quiz 2",
@@ -228,17 +242,7 @@ let test_quizzes = ref([
     ]
   },
   {
-    name: "Quiz 2",
-    difficulty: "Hard",
-    description: "Test your knowledge with Quiz 2",
-    image: "https://via.placeholder.com/150", // Placeholder image URL
-    question_list: [
-      "Question 1",
-      "Question 2",
-      "Question 3"
-    ]
-  },
-  {
+    quizId: 4,
     name: "Quiz 2",
     difficulty: "Medium",
     description: "Test your knowledge with Quiz 2",
@@ -250,6 +254,7 @@ let test_quizzes = ref([
     ]
   },
   {
+    quizId: 5,
     name: "Quiz 2",
     difficulty: "Medium",
     description: "Test your knowledge with Quiz 2",
@@ -261,6 +266,7 @@ let test_quizzes = ref([
     ]
   },
   {
+    quizId: 6,
     name: "Quiz 2",
     difficulty: "Medium",
     description: "Test your knowledge with Quiz 2",
@@ -272,6 +278,7 @@ let test_quizzes = ref([
     ]
   },
   {
+    quizId: 7,
     name: "Quiz 2",
     difficulty: "Medium",
     description: "Test your knowledge with Quiz 2",
@@ -283,6 +290,7 @@ let test_quizzes = ref([
     ]
   },
   {
+    quizId: 8,
     name: "Quiz 2",
     difficulty: "Medium",
     description: "Test your knowledge with Quiz 2",
@@ -294,17 +302,7 @@ let test_quizzes = ref([
     ]
   },
   {
-    name: "Quiz 2",
-    difficulty: "Medium",
-    description: "Test your knowledge with Quiz 2",
-    image: "https://via.placeholder.com/150", // Placeholder image URL
-    question_list: [
-      "Question 1",
-      "Question 2",
-      "Question 3"
-    ]
-  },
-  {
+    quizId: 9,
     name: "Quiz 2",
     difficulty: "Medium",
     description: "Test your knowledge with Quiz 2",
