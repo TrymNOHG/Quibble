@@ -6,5 +6,10 @@ package edu.ntnu.idatt2105.backend.controller.pub.feedback;
  * @author Trym Hamer Gudvangen
  * @version 1.0 24.03.2024
  */
-public interface IFeedbackControllerPub {
+public interface IFeedbackController {
+
+    // Show all feedback for a given quiz.
+    // Get feedback by user, by quiz (could require a look at user preferences)
+
+
 }

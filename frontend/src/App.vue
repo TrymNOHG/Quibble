@@ -1,85 +1,139 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+    <router-link to="/home" aria-label="Go to Home page">
+      <img
+          id="logo"
+          alt="Logo, and routerlink to homepage"
+          src="@/assets/images/logov1.png"/>
+    </router-link>
+    <router-link class="header_text" to="/home">
+      <h1 class="header_text">Quibble</h1>
+    </router-link>
+    <nav>
+      <ul>
+        <router-link to="/home">
+          <li>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
+              <font-awesome-icon class="icon" icon="fa-solid fa-home"/>
+          </li>
+        </router-link>
+        <router-link to="/quiz">
+          <li>
+            <font-awesome-icon class="icon" icon="fa-solid fa-puzzle-piece"/>
+          </li>
+        </router-link>
+        <router-link to="/myquiz">
+          <li>
+            <font-awesome-icon class="icon" icon="fa-solid fa-circle-plus" />
+          </li>
+        </router-link>
+        <router-link to="/login">
+          <li>
+            <font-awesome-icon class="icon" icon="fa-solid fa-circle-user" />
+          </li>
+        </router-link>
+      </ul>
+    </nav>
   </header>
-
-  <RouterView />
+  <RouterView/>
 </template>
 
-<style scoped>
+<script>
+import { useRoute, useRouter } from 'vue-router';
+import TheWelcomeComponent from "@/components/TheWelcomeComponent.vue";
+import Login from "@/views/LoginView.vue";
+import Register from "@/views/RegisterView.vue";
+
+export default {
+  components: {Register, Login, TheWelcomeComponent },
+}
+</script>
+
+<style>
+
 header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
+  background-color: #8521b0;
   width: 100%;
-  font-size: 12px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  align-content: center;
+  justify-content: space-between;
+}
+
+#logo {
+  width: 100px;
+  height: 100px;
+}
+
+.header_text {
+  color: white;
+  font-weight: bold;
+  margin-left: 15%;
+  text-decoration: none !important;
+}
+
+
+nav ul {
+  list-style: none;
+  display: flex;
+}
+
+li {
+  color: white;
   text-align: center;
-  margin-top: 2rem;
+  margin: 10px;
+  justify-content: space-between;
+  align-content: center;
+  background-color: rgba(19, 155, 250, 0.88);
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
 }
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
+li:hover {
+  filter: invert(100%) sepia(50%) saturate(100%) hue-rotate(180deg) brightness(250%) contrast(100%);
+  transform: translateY(-5%);
+  cursor: pointer;
 }
 
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
+.icon {
+  scale: 2;
+  color: white;
 }
 
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
+@media only screen and (max-width: 428px) {
   header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #8521b0;
+    z-index: 1;
   }
 
   nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
+    padding: 10px;
+  }
 
-    padding: 1rem 0;
-    margin-top: 1rem;
+  .header_text {
+    display: none;
+  }
+
+  #logo {
+    display: none;
+  }
+
+  ul{
+    padding: 0;
+  }
+
+  li {
+    padding: 8px;
   }
 }
+
 </style>

@@ -6,5 +6,9 @@ package edu.ntnu.idatt2105.backend.controller.pub.quiz;
  * @author Trym Hamer Gudvangen
  * @version 1.0 24.03.2024
  */
-public interface IQuizControllerPub {
+public interface IQuizController {
+
+    // Load quiz, Load multiple quiz by search, load collaborators, Load single question
+
+
 }

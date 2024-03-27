@@ -12,6 +12,7 @@ spring:
     show-sql: true
     properties:
       hibernate:
+#        dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
 
 logging:
@@ -27,7 +28,7 @@ jwt:
 
 springdoc:
   api-docs:
-    path: /docs
+    path: /swagger/api-docs
   swagger-ui:
     path: /swagger
     operations-sorter: method
