@@ -8,8 +8,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 /**
- * This class is responsible for inserting dummy data into the database on startup.
+ * This class is responsible for inserting dummy data into the database on startup. If the data is already there, don't
+ * insert it.
  *
+ * @author brage
+ * @version 1.0 26.03.2024
  */
 @RequiredArgsConstructor
 @Component

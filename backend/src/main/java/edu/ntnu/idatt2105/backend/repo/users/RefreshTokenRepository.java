@@ -32,5 +32,5 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long
      * @param username The user's username.
      * @return A list of tokens.
      */
-    List<RefreshToken> findAllByUser_Username(String username);
+    List<RefreshToken> findByUser(User username);
 }
