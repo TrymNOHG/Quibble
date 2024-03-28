@@ -5,15 +5,17 @@
         <img class="quiz-img" :src="quiz.Image" alt="Quiz Image"/>
       </div>
       <div class="quiz-details">
-        <h2>{{ quiz.Name }}</h2>
-        <p><strong>Difficulty:</strong> {{ quiz.Difficulty }}</p>
-        <p>{{ quiz.Description }}</p>
+        <div class="quiz-details">
+          <h2>{{ $t('titles.REGISTER') }}</h2>
+          <p><strong>{{ $t('dropdown_options.DIFFICULTY') }}:</strong> {{ $t('dropdown_options.' + quiz.Difficulty.toUpperCase()) }}</p>
+          <p>{{ $t('quiz_card.QUESTIONS_LABEL') }}: {{ quiz.question_list.length }}</p>
+          <p>{{ $t('quiz_card.DESCRIPTION') }}: {{ quiz.Description }}</p>
+        </div>
       </div>
     </div>
-
     <div class="authors">
       <div class="header">
-        <h2>Authors:</h2>
+        <h2>{{ $t('titles.AUTHORS') }}:</h2>
         <font-awesome-icon
             id="add"
             icon="fa-solid fa-circle-plus"
@@ -29,13 +31,13 @@
       />
       <div class="popup" v-if="showPopup">
         <div class="popup-content">
-          <h3>Add New Author</h3>
+          <h3>{{ $t('titles.ADD_NEW_AUTHOR') }}</h3>
           <div class="input-group">
-            <input type="text" placeholder="Username" v-model="newAuthor.username"/>
+            <input type="text" :placeholder="$t('placeholders.USERNAME')" v-model="newAuthor.username"/>
           </div>
           <div class="button-group">
-            <button @click="addAuthor">Add Author</button>
-            <button @click="closePopup">Cancel</button>
+            <button @click="addAuthor">{{ $t('buttons.ADD_AUTHOR') }}</button>
+            <button @click="closePopup">{{ $t('buttons.CANCEL') }}</button>
           </div>
         </div>
       </div>

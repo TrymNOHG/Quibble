@@ -3,10 +3,10 @@
     <div class="modal-overlay" v-if="showPopupProp">
       <div class="popup">
         <div class="popup-content">
-          <h3>Do you want to delete this?</h3>
+          <h3>{{ $t('delete_modal.TITLE') }}</h3>
           <div class="button-group">
-            <button @click="deleteAuthor(author)">Yes</button>
-            <button @click="closePopup">No</button>
+            <button @click="deleteAuthor(author)">{{ $t('delete_modal.YES') }}</button>
+            <button @click="closePopup">{{ $t('delete_modal.NO') }}</button>
           </div>
         </div>
       </div>

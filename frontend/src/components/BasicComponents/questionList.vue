@@ -3,17 +3,17 @@
     <div class="modal-overlay" v-if="showPopupProp">
       <div class="popup">
         <div class="popup-content">
-          <h3>Do you want to delete this?</h3>
+          <h3>{{ $t('delete_modal.TITLE') }}</h3>
           <div class="button-group">
-            <button @click="deleteQuestion(question)">Yes</button>
-            <button @click="closePopup">No</button>
+            <button @click="deleteQuestion(question)">{{ $t('delete_modal.YES') }}</button>
+            <button @click="closePopup">{{ $t('delete_modal.NO') }}</button>
           </div>
         </div>
       </div>
     </div>
     <div class="question-item">
       <div class="question-info">
-        <router-link to="/edit/question" class="router">
+        <router-link :to="$t('routes.EDIT_QUESTION')" class="router">
           <span>{{ question.question }}</span>
         </router-link>
         <div class="actions">

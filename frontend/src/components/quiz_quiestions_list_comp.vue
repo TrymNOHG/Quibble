@@ -1,16 +1,16 @@
 <template>
   <div class="comp">
     <div class="buttons">
-      <button>one-player</button>
-      <button>multi-player</button>
-      <button v-if="isAuthor">delete quiz</button>
+      <button>{{ $t('buttons.ONE_PLAYER') }}</button>
+      <button>{{ $t('buttons.MULTI_PLAYER') }}</button>
+      <button v-if="isAuthor">{{ $t('buttons.DELETE_QUIZ') }}</button>
     </div>
     <div class="header"></div>
     <div class="questions_list">
       <div class="buttons bottomline" >
-        <button v-if="isEditor || isAuthor">new question</button>
-        <h2 class="question_text">Question List</h2>
-        <button v-if="isEditor || isAuthor">import question</button>
+        <button v-if="isEditor || isAuthor">{{ $t('buttons.NEW_QUESTION') }}</button>
+        <h2 class="question_text">{{ $t('titles.QUESTION_LIST') }}</h2>
+        <button v-if="isEditor || isAuthor">{{ $t('buttons.IMPORT_QUESTION') }}</button>
       </div>
       <div class="encap_List">
         <question-list
@@ -23,7 +23,6 @@
     </div>
   </div>
 </template>
-
 
 <script>
 import QuestionList from "@/components/BasicComponents/questionList.vue";
