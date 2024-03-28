@@ -1,7 +1,7 @@
 <template>
   <div class="page_format">
     <quiz_info_comp class="info" :quiz="quiz"/>
-    <quiz_questions_list_comp class="btn_questionList"/>
+    <quiz_questions_list_comp class="btn_questionList" :quiz="quiz"/>
   </div>
 </template>
 
@@ -42,6 +42,20 @@ const quiz = store.currentQuiz;
   height: 100%;
   width: 100%;
   background: white;
+}
+
+@media only screen and (max-width: 428px) {
+  .page_format {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    min-height: 900px;
+    margin-bottom: 25%;
+  }
+
+  .info{
+    margin-bottom: 10%;
+  }
 }
 
 </style>

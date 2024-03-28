@@ -57,22 +57,76 @@ export const useQuizStore = defineStore('storeUser', {
   state: () => {
     return {
       allQuiz: [],
+      allAuthors: [{
+          id: 1,
+          username: 'Author 1'},
+        {
+          id: 2,
+          username: 'Author 2'},
+        {
+          id: 3,
+          username: 'Author 3'}],
+
       currentQuiz: {
         QuizId: null,
         Name: "",
         Difficulty: "",
         Description: "",
         Image: "",
-        Questions: [],
+        question_list: [
+          {
+            id: null,
+            question: "",
+            answer: "",
+            type: ""
+          },
+        ],
       },
-      isSuperUser: false
+      isAuth: false,
+      isEditor: false,
     }
   },
 
   actions: {
+    async deleteQuestion(question_id) {
+      for (let index = 0; index < this.currentQuiz.question_list.length; index++) {
+        if (question_id === this.currentQuiz.question_list[index].id) {
+          this.currentQuiz.question_list.splice(index, 1);
+          /*
+          TODO: fjerne q i backend
+          response = deleteQuestion(q.id)
+          this.currentQuiz.Questions = response;
+           */
+          break;
+        }
+      }
+      return this.currentQuiz.question_list;
+    },
+
+    async deleteAuth(auth) {
+      for (let index = 0; index < this.allAuthors.length; index++) {
+        if (auth.id === this.allAuthors[index].id) {
+          this.allAuthors.splice(index, 1);
+          /*
+          TODO: fjerne auth i backend
+          response = removeAuth(author.username // author-id)
+          this.allAuthors = response;
+           */
+          break;
+        }
+      }
+      console.log("KL")
+    },
+
     async setCurrentQuizById(quiz) {
+      console.log(quiz)
       this.currentQuiz = quiz;
-      console.log(this.currentQuiz)
+      this.isAuth = true;
+      this.isEditor = true;
+      /*
+      TODO: Sjekke opp mot backend
+      isAuth og isEditor burde sjekkes opp mot axioscall til backend
+       */
       return this.currentQuiz;
     },
 
@@ -81,6 +135,15 @@ export const useQuizStore = defineStore('storeUser', {
       return this.allQuiz;
     },
 
+    async addAuthor(newAuthor) {
+      this.allAuthors.push({id: 4, username: newAuthor.username})
+      /*
+      TODO: legge til user i backend og returne den nye listen fra backend
+      setNewAuthor(newAuthor)
+      fetchAuthors(this.currentQuiz.quizId)
+      */
+      return this.allAuthors;
+    },
 
     async setAllQuizzes(difficulty) {
       this.allQuiz = getQuizzesByDifficulty(difficulty);
@@ -106,7 +169,8 @@ export const useQuizStore = defineStore('storeUser', {
 
     resetCurrentQuiz() {
       this.currentQuiz = null
-      this.isSuperUser = false;
+      this.isAuth = false;
+      this.isEditor = false;
     },
   },
 })

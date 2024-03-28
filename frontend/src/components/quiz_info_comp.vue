@@ -2,36 +2,36 @@
   <div class="quiz">
     <div class="quiz-info">
       <div class="img">
-        <img class="quiz-img" :src="quiz.image" alt="Quiz Image"/>
+        <img class="quiz-img" :src="quiz.Image" alt="Quiz Image"/>
       </div>
       <div class="quiz-details">
-        <h2>{{ quiz.name }}</h2>
-        <p><strong>Difficulty:</strong> {{ quiz.difficulty }}</p>
-        <p>{{ quiz.description }}</p>
+        <h2>{{ quiz.Name }}</h2>
+        <p><strong>Difficulty:</strong> {{ quiz.Difficulty }}</p>
+        <p>{{ quiz.Description }}</p>
       </div>
     </div>
 
     <div class="authors">
       <div class="header">
         <h2>Authors:</h2>
-        <font-awesome-icon id="add" icon="fa-solid fa-circle-plus" @click="showPopUP()"/>
+        <font-awesome-icon
+            id="add"
+            icon="fa-solid fa-circle-plus"
+            @click="showPopUP()"
+            v-if="isEditor || isAuthor"
+        />
       </div>
       <listing_comp
           v-for="(a, index) in quizAuthors"
           :key="index"
           :author="a"
+          @deleteAuthor="deleteAuthor(a)"
       />
       <div class="popup" v-if="showPopup">
         <div class="popup-content">
           <h3>Add New Author</h3>
           <div class="input-group">
             <input type="text" placeholder="Username" v-model="newAuthor.username"/>
-          </div>
-          <div class="input-group">
-            <select v-model="newAuthor.role">
-              <option value="editor">Editor</option>
-              <option value="author">Author</option>
-            </select>
           </div>
           <div class="button-group">
             <button @click="addAuthor">Add Author</button>
@@ -44,46 +44,56 @@
 </template>
 
 <script>
-import { onMounted, ref } from "vue";
+import { ref } from "vue";
 import { useQuizStore } from "@/stores/counter.js";
 import Listing_comp from "@/components/BasicComponents/authorList.vue";
 import QuestionList from "@/components/BasicComponents/questionList.vue";
 
 export default {
   components: {QuestionList, Listing_comp },
+
+  props: {
+    quiz: {
+      QuizId: null,
+      Name: "",
+      Difficulty: "",
+      Description: "",
+      Image: "",
+      question_list: [
+        { id: null,
+          question: "",
+          answer: "",
+          type: "" },
+      ],
+    },
+  },
+
   setup() {
-    const quizStore = useQuizStore();
-    const quiz = ref({});
     const showPopup = ref(false);
+    const store = useQuizStore();
 
-    onMounted(() => {
-      quiz.value = quizStore.currentQuiz;
-    });
+    const isAuthor = ref(store.isAuth);
+    const isEditor = ref(store.isEditor);
+    let quizAuthors = ref(store.allAuthors)
 
-    const quizAuthors = [{
-      id: 1,
-      username: 'Author 1'
-    },
-      {
-        id: 2,
-        username: 'Author 2'
-    },
-      {
-        id: 3,
-        username: 'Author 3'
-    }];
 
     const newAuthor = {
       username: '',
       role: 'editor'
     };
 
+    const deleteAuthor = (author) => {
+      quizAuthors = store.deleteAuth(author);
+    };
+
     const addAuthor = () => {
       console.log('Adding new author:', newAuthor);
+      quizAuthors = store.addAuthor(newAuthor);
       newAuthor.username = '';
       newAuthor.role = 'editor';
       showPopup.value = false;
     };
+
     const closePopup = () => {
       newAuthor.username = '';
       newAuthor.role = 'editor';
@@ -95,13 +105,15 @@ export default {
     };
 
     return {
-      quiz,
       quizAuthors,
+      deleteAuthor,
       showPopUP,
       showPopup,
       addAuthor,
       closePopup,
-      newAuthor
+      newAuthor,
+      isEditor,
+      isAuthor
     };
   }
 }
@@ -210,5 +222,11 @@ export default {
 
 .authors {
   margin-top: 10px;
+}
+
+@media only screen and (max-width: 428px) {
+  .popup-content {
+    width: 80%;
+  }
 }
 </style>

@@ -3,20 +3,21 @@
     <div class="buttons">
       <button>one-player</button>
       <button>multi-player</button>
-      <button>delete quiz</button>
+      <button v-if="isAuthor">delete quiz</button>
     </div>
     <div class="header"></div>
     <div class="questions_list">
-      <div class="buttons bottomline">
-        <button>new question</button>
+      <div class="buttons bottomline" >
+        <button v-if="isEditor || isAuthor">new question</button>
         <h2 class="question_text">Question List</h2>
-        <button>import question</button>
+        <button v-if="isEditor || isAuthor">import question</button>
       </div>
       <div class="encap_List">
         <question-list
             class="list"
-            v-for="q in questions"
+            v-for="q in question_list"
             :question="q"
+            @deleteQuestion="deleteQuestion(q.id)"
         />
       </div>
     </div>
@@ -24,16 +25,34 @@
 </template>
 
 
-<script setup>
+<script>
 import QuestionList from "@/components/BasicComponents/questionList.vue";
+import {ref} from "vue";
+import {useQuizStore} from "@/stores/counter.js";
 
-const questions = [
-  { id: 1, question: "What is your name?", answer: "John", type: "text" },
-  { id: 2, question: "How old are you?", answer: "25", type: "number" },
-  { id: 3, question: "What is your favorite color?", answer: "Blue", type: "text" },
-  { id: 3, question: "What is your favorite color?", answer: "Blue", type: "text" },
-  { id: 3, question: "What is your favorite color?", answer: "Blue", type: "text" },
-];
+
+export default {
+  components: {QuestionList},
+
+  setup() {
+    const store = useQuizStore();
+    const isAuthor = ref(store.isAuth);
+    const isEditor = ref(store.isEditor);
+    let question_list = ref(store.currentQuiz.question_list);
+
+    const deleteQuestion = (questionId) => {
+      store.deleteQuestion(questionId);
+    };
+
+    return {
+      isAuthor,
+      isEditor,
+      question_list,
+      deleteQuestion,
+    }
+  }
+}
+
 
 </script>
 
@@ -53,7 +72,7 @@ const questions = [
 }
 
 .list {
-  margin-left: 20%;
+  margin-left: 18%;
   width: 80%;
 }
 
@@ -62,7 +81,7 @@ const questions = [
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  margin: 5%;
+  margin: 2%;
 }
 
 .header {
@@ -94,5 +113,12 @@ button:hover {
   scale: 1.05;
   cursor: pointer;
   background-color: #7e1f9c;
+}
+
+@media only screen and (max-width: 428px) {
+  button {
+    width: 80px;
+    height: 50px;
+  }
 }
 </style>

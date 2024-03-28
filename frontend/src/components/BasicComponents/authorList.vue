@@ -5,7 +5,7 @@
         <div class="popup-content">
           <h3>Do you want to delete this?</h3>
           <div class="button-group">
-            <button @click="deleteAuthor">Yes</button>
+            <button @click="deleteAuthor(author)">Yes</button>
             <button @click="closePopup">No</button>
           </div>
         </div>
@@ -16,14 +16,15 @@
         <span>{{ author.username }}</span>
       </router-link>
       <div class="actions">
-        <font-awesome-icon class="trash-icon" icon="fa-solid fa-trash" @click="showPopupProp = true" />
+        <font-awesome-icon class="trash-icon" icon="fa-solid fa-trash" @click="showPopupProp = true" v-if="isEditor || isAuth"/>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { ref } from "vue";
+import {ref, getCurrentInstance} from "vue";
+import {useQuizStore} from "@/stores/counter.js";
 
 export default {
   props: {
@@ -38,10 +39,14 @@ export default {
   },
 
   setup() {
+    const store = useQuizStore();
     const showPopupProp = ref(false);
+    const { emit } = getCurrentInstance();
+    const isAuth = ref(store.isAuth)
+    const isEditor = ref(store.isEditor)
 
-    const deleteAuthor = () => {
-      // Handle delete action
+    const deleteAuthor = (author) => {
+      emit("deleteAuthor", author);
       showPopupProp.value = false;
     };
 
@@ -52,7 +57,9 @@ export default {
     return {
       showPopupProp,
       deleteAuthor,
-      closePopup
+      closePopup,
+      isAuth,
+      isEditor
     };
   }
 }

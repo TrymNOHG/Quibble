@@ -5,7 +5,7 @@
         <div class="popup-content">
           <h3>Do you want to delete this?</h3>
           <div class="button-group">
-            <button @click="deleteAuthor">Yes</button>
+            <button @click="deleteQuestion(question)">Yes</button>
             <button @click="closePopup">No</button>
           </div>
         </div>
@@ -21,6 +21,7 @@
               class="icon"
               icon="fa-solid fa-trash"
               @click="showPopupProp = true"
+              v-if="isAuth || isEditor"
           />
         </div>
       </div>
@@ -29,16 +30,16 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import {ref, getCurrentInstance} from "vue";
+import {useQuizStore} from "@/stores/counter.js";
 
 export default {
   props: {
     question: {
       type: Object,
       default: () => ({
-        Id: Number,
+        id: Number,
         question: String,
-        difficulty: String,
         answer: String,
         type: String,
       })
@@ -46,21 +47,26 @@ export default {
   },
 
   setup() {
+    const store = useQuizStore();
     const showPopupProp = ref(false);
+    const { emit } = getCurrentInstance();
+    const isAuth = ref(store.isAuth)
+    const isEditor = ref(store.isEditor)
 
-    const deleteAuthor = () => {
-      // Handle delete action
+    const deleteQuestion = (question) => {
+      emit("deleteQuestion", question.id);
       showPopupProp.value = false;
     };
-
     const closePopup = () => {
       showPopupProp.value = false;
     };
 
     return {
       showPopupProp,
-      deleteAuthor,
-      closePopup
+      deleteQuestion,
+      closePopup,
+      isEditor,
+      isAuth
     };
   }
 }

@@ -3,9 +3,9 @@
     <router-link :to="'/quiz/current'" @click="setCurrentQuiz()">
       <div class="card">
         <div class="content">
-          <img class="card_image" :src="quiz.image" alt="quiz image"/>
+          <img class="card_image" :src="quiz.Image" alt="quiz image"/>
           <div class="information">
-            <h4 class="quiz-name">{{ quiz.name }}</h4>
+            <h4 class="quiz-name">{{ quiz.Name }}</h4>
             <p class="quiz-details">{{$t("quiz_card.QUESTIONS_LABEL")}}: {{ quiz.question_list.length }}</p>
           </div>
         </div>
@@ -21,11 +21,11 @@ export default {
     quiz: {
       type: Object,
       default: () => ({
-        quizId: Number,
-        name: String,
-        difficulty: String,
-        description: String,
-        image: String,
+        QuizId: Number,
+        Name: String,
+        Difficulty: String,
+        Description: String,
+        Image: String,
         question_list: Array,
       })
     }

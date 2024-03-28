@@ -45,107 +45,63 @@ async function getNextQuiz() {
        */
       const newQuizzes = [
         {
-          quizId: 99,
-          name: "New Quiz 1",
-          difficulty: "Hard",
-          description: "Test your knowledge with New Quiz 1",
-          image: "https://via.placeholder.com/150",
+          QuizId: 5,
+          Name: "Quiz 5",
+          Difficulty: "Medium",
+          Description: "Test your knowledge with Quiz 5",
+          Image: "https://via.placeholder.com/150",
           question_list: [
-            "Question 1",
-            "Question 2",
-            "Question 3"
+            { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
+            { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
+            { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
           ]
         },
         {
-          quizId: 98,
-          name: "Quiz 2",
-          difficulty: "Medium",
-          description: "Test your knowledge with Quiz 2",
-          image: "https://via.placeholder.com/150", // Placeholder image URL
+          QuizId: 6,
+          Name: "Quiz 6",
+          Difficulty: "Hard",
+          Description: "Test your knowledge with Quiz 6",
+          Image: "https://via.placeholder.com/150",
           question_list: [
-            "Question 1",
-            "Question 2",
-            "Question 3"
+            { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
+            { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
+            { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
           ]
         },
         {
-          quizId: 97,
-          name: "Quiz 2",
-          difficulty: "Medium",
-          description: "Test your knowledge with Quiz 2",
-          image: "https://via.placeholder.com/150", // Placeholder image URL
+          QuizId: 7,
+          Name: "Quiz 7",
+          Difficulty: "Easy",
+          Description: "Test your knowledge with Quiz 7",
+          Image: "https://via.placeholder.com/150",
           question_list: [
-            "Question 1",
-            "Question 2",
-            "Question 3"
+            { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
+            { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
+            { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
           ]
         },
         {
-          quizId: 96,
-          name: "Quiz 2",
-          difficulty: "Medium",
-          description: "Test your knowledge with Quiz 2",
-          image: "https://via.placeholder.com/150", // Placeholder image URL
+          QuizId: 8,
+          Name: "Quiz 8",
+          Difficulty: "Medium",
+          Description: "Test your knowledge with Quiz 8",
+          Image: "https://via.placeholder.com/150",
           question_list: [
-            "Question 1",
-            "Question 2",
-            "Question 3"
-          ]
-        }, {
-          quizId: 95,
-          name: "Quiz 2",
-          difficulty: "Medium",
-          description: "Test your knowledge with Quiz 2",
-          image: "https://via.placeholder.com/150", // Placeholder image URL
-          question_list: [
-            "Question 1",
-            "Question 2",
-            "Question 3"
-          ]
-        }, {
-          quizId: 94,
-          name: "Quiz 2",
-          difficulty: "Medium",
-          description: "Test your knowledge with Quiz 2",
-          image: "https://via.placeholder.com/150", // Placeholder image URL
-          question_list: [
-            "Question 1",
-            "Question 2",
-            "Question 3"
-          ]
-        }, {
-          quizId: 93,
-          name: "Quiz 2",
-          difficulty: "Medium",
-          description: "Test your knowledge with Quiz 2",
-          image: "https://via.placeholder.com/150", // Placeholder image URL
-          question_list: [
-            "Question 1",
-            "Question 2",
-            "Question 3"
+            { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
+            { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
+            { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
           ]
         },
         {
-          quizId: 92,
-          name: "Quiz 2",
-          difficulty: "Medium",
-          description: "Test your knowledge with Quiz 2",
-          image: "https://via.placeholder.com/150", // Placeholder image URL
+          QuizId: 9,
+          Name: "Quiz 9",
+          Difficulty: "Hard",
+          Description: "Test your knowledge with Quiz 9",
+          Image: "https://via.placeholder.com/150",
           question_list: [
-            "Question 1",
-            "Question 2",
-            "Question 3"
-          ]
-        }, {
-          quizId: 91,
-          name: "Quiz 2",
-          difficulty: "Medium",
-          description: "Test your knowledge with Quiz 2",
-          image: "https://via.placeholder.com/150", // Placeholder image URL
-          question_list: [
-            "Question 1",
-            "Question 2",
-            "Question 3"
+            { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
+            { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
+            { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
           ]
         },
       ];
@@ -162,7 +118,7 @@ async function handleDifficulty(difficulty) {
   }
   else {
     //const filtered = useQuizStore().getRecommendedDifficulty(difficulty_selected);
-    const filtered = recommendedQuizzes.value.filter(quiz => quiz.difficulty === difficulty);
+    const filtered = recommendedQuizzes.value.filter(quiz => quiz.Difficulty === difficulty);
     displayedQuizzes.value = filtered;
   }
 }
@@ -170,30 +126,66 @@ async function handleDifficulty(difficulty) {
 async function handleSearchInput(searchword) {
   if (searchword.length >= 3) {
     //displayedQuizzes.value = await useQuizStore().searchQuizzes(searchword);
-    displayedQuizzes.value = [{
-      quizId: 85,
-      name: "Quiz 1",
-      difficulty: "Easy",
-      description: "Test your knowledge with Quiz 1",
-      image: "https://via.placeholder.com/150",
+    displayedQuizzes.value = [  {
+      QuizId: 5,
+      Name: "Quiz 5",
+      Difficulty: "Medium",
+      Description: "Test your knowledge with Quiz 5",
+      Image: "https://via.placeholder.com/150",
       question_list: [
-        "Question 1",
-        "Question 2",
-        "Question 3"
+        { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
+        { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
+        { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
       ]
     },
       {
-        quizId: 82,
-        name: "Quiz 2",
-        difficulty: "Medium",
-        description: "Test your knowledge with Quiz 2",
-        image: "https://via.placeholder.com/150", // Placeholder image URL
+        QuizId: 6,
+        Name: "Quiz 6",
+        Difficulty: "Hard",
+        Description: "Test your knowledge with Quiz 6",
+        Image: "https://via.placeholder.com/150",
         question_list: [
-          "Question 1",
-          "Question 2",
-          "Question 3"
+          { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
+          { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
+          { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
         ]
-      }];
+      },
+      {
+        QuizId: 7,
+        Name: "Quiz 7",
+        Difficulty: "Easy",
+        Description: "Test your knowledge with Quiz 7",
+        Image: "https://via.placeholder.com/150",
+        question_list: [
+          { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
+          { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
+          { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
+        ]
+      },
+      {
+        QuizId: 8,
+        Name: "Quiz 8",
+        Difficulty: "Medium",
+        Description: "Test your knowledge with Quiz 8",
+        Image: "https://via.placeholder.com/150",
+        question_list: [
+          { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
+          { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
+          { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
+        ]
+      },
+      {
+        QuizId: 9,
+        Name: "Quiz 9",
+        Difficulty: "Hard",
+        Description: "Test your knowledge with Quiz 9",
+        Image: "https://via.placeholder.com/150",
+        question_list: [
+          { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
+          { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
+          { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
+        ]
+      },];
   } else {
     let newQuizzelist = recommendedQuizzes.value;
     displayedQuizzes.value = newQuizzelist;
@@ -206,115 +198,114 @@ onMounted(() => {
 
 let test_quizzes = ref([
   {
-    quizId: 1,
-    name: "Quiz 1",
-    difficulty: "Easy",
-    description: "Test your knowledge with Quiz 1",
-    image: "https://via.placeholder.com/150",
+    QuizId: 1,
+    Name: "Quiz 1",
+    Difficulty: "Easy",
+    Description: "Test your knowledge with Quiz 1",
+    Image: "https://via.placeholder.com/150",
     question_list: [
-      "Question 1",
-      "Question 2",
-      "Question 3"
+      { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
+      { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
+      { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
     ]
   },
   {
-    quizId: 2,
-    name: "Quiz 2",
-    difficulty: "Medium",
-    description: "Test your knowledge with Quiz 2",
-    image: "https://via.placeholder.com/150", // Placeholder image URL
+    QuizId: 2,
+    Name: "Quiz 2",
+    Difficulty: "Medium",
+    Description: "Test your knowledge with Quiz 2",
+    Image: "https://via.placeholder.com/150",
     question_list: [
-      "Question 1",
-      "Question 2",
-      "Question 3"
+      { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
+      { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
+      { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
     ]
   },
   {
-    quizId: 3,
-    name: "Quiz 2",
-    difficulty: "Medium",
-    description: "Test your knowledge with Quiz 2",
-    image: "https://via.placeholder.com/150", // Placeholder image URL
+    QuizId: 3,
+    Name: "Quiz 3",
+    Difficulty: "Hard",
+    Description: "Test your knowledge with Quiz 3",
+    Image: "https://via.placeholder.com/150",
     question_list: [
-      "Question 1",
-      "Question 2",
-      "Question 3"
+      { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
+      { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
+      { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
     ]
   },
   {
-    quizId: 4,
-    name: "Quiz 2",
-    difficulty: "Medium",
-    description: "Test your knowledge with Quiz 2",
-    image: "https://via.placeholder.com/150", // Placeholder image URL
+    QuizId: 4,
+    Name: "Quiz 4",
+    Difficulty: "Easy",
+    Description: "Test your knowledge with Quiz 4",
+    Image: "https://via.placeholder.com/150",
     question_list: [
-      "Question 1",
-      "Question 2",
-      "Question 3"
+      { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
+      { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
+      { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
     ]
   },
   {
-    quizId: 5,
-    name: "Quiz 2",
-    difficulty: "Medium",
-    description: "Test your knowledge with Quiz 2",
-    image: "https://via.placeholder.com/150", // Placeholder image URL
+    QuizId: 5,
+    Name: "Quiz 5",
+    Difficulty: "Medium",
+    Description: "Test your knowledge with Quiz 5",
+    Image: "https://via.placeholder.com/150",
     question_list: [
-      "Question 1",
-      "Question 2",
-      "Question 3"
+      { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
+      { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
+      { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
     ]
   },
   {
-    quizId: 6,
-    name: "Quiz 2",
-    difficulty: "Medium",
-    description: "Test your knowledge with Quiz 2",
-    image: "https://via.placeholder.com/150", // Placeholder image URL
+    QuizId: 6,
+    Name: "Quiz 6",
+    Difficulty: "Hard",
+    Description: "Test your knowledge with Quiz 6",
+    Image: "https://via.placeholder.com/150",
     question_list: [
-      "Question 1",
-      "Question 2",
-      "Question 3"
+      { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
+      { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
+      { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
     ]
   },
   {
-    quizId: 7,
-    name: "Quiz 2",
-    difficulty: "Medium",
-    description: "Test your knowledge with Quiz 2",
-    image: "https://via.placeholder.com/150", // Placeholder image URL
+    QuizId: 7,
+    Name: "Quiz 7",
+    Difficulty: "Easy",
+    Description: "Test your knowledge with Quiz 7",
+    Image: "https://via.placeholder.com/150",
     question_list: [
-      "Question 1",
-      "Question 2",
-      "Question 3"
+      { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
+      { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
+      { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
     ]
   },
   {
-    quizId: 8,
-    name: "Quiz 2",
-    difficulty: "Medium",
-    description: "Test your knowledge with Quiz 2",
-    image: "https://via.placeholder.com/150", // Placeholder image URL
+    QuizId: 8,
+    Name: "Quiz 8",
+    Difficulty: "Medium",
+    Description: "Test your knowledge with Quiz 8",
+    Image: "https://via.placeholder.com/150",
     question_list: [
-      "Question 1",
-      "Question 2",
-      "Question 3"
+      { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
+      { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
+      { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
     ]
   },
   {
-    quizId: 9,
-    name: "Quiz 2",
-    difficulty: "Medium",
-    description: "Test your knowledge with Quiz 2",
-    image: "https://via.placeholder.com/150", // Placeholder image URL
+    QuizId: 9,
+    Name: "Quiz 9",
+    Difficulty: "Hard",
+    Description: "Test your knowledge with Quiz 9",
+    Image: "https://via.placeholder.com/150",
     question_list: [
-      "Question 1",
-      "Question 2",
-      "Question 3"
+      { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
+      { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
+      { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
     ]
   },
 ]);
-
 
 </script>
 
