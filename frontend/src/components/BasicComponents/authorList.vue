@@ -1,86 +1,147 @@
 <template>
-  <div class="author-list">
-    <ul>
-      <li v-for="(author, index) in authors" :key="index">
-        <div class="author-info">
-          <router-link to="/userprofile" class="author-link">
-            <span>{{ author }}</span>
-          </router-link>
-          <div class="actions">
-            <!--<font-awesome-icon id="pen" icon="fa-solid fa-pen-to-square" @click="editAuthor(author)"/>-->
-            <font-awesome-icon id="trash" icon="fa-solid fa-trash" @click="deleteAuthor(author)" />
+  <div>
+    <div class="modal-overlay" v-if="showPopupProp">
+      <div class="popup">
+        <div class="popup-content">
+          <h3>Do you want to delete this?</h3>
+          <div class="button-group">
+            <button @click="deleteAuthor">Yes</button>
+            <button @click="closePopup">No</button>
           </div>
         </div>
-      </li>
-    </ul>
+      </div>
+    </div>
+    <div class="author-info">
+      <router-link :to="'/userprofile'" class="author-link">
+        <span>{{ author.username }}</span>
+      </router-link>
+      <div class="actions">
+        <font-awesome-icon class="trash-icon" icon="fa-solid fa-trash" @click="showPopupProp = true" />
+      </div>
+    </div>
   </div>
 </template>
 
-<script setup>
-import { defineProps } from 'vue';
+<script>
+import { ref } from "vue";
 
-const props = defineProps({
-  authors: {
-    type: Array,
-    required: true
+export default {
+  props: {
+    author: {
+      type: Object,
+      required: true,
+      default: () => ({
+        id: Number,
+        username: String,
+      })
+    }
+  },
+
+  setup() {
+    const showPopupProp = ref(false);
+
+    const deleteAuthor = () => {
+      // Handle delete action
+      showPopupProp.value = false;
+    };
+
+    const closePopup = () => {
+      showPopupProp.value = false;
+    };
+
+    return {
+      showPopupProp,
+      deleteAuthor,
+      closePopup
+    };
   }
-});
-
-const deleteAuthor = (author) => {
-  // Handle delete action
-};
+}
 </script>
 
 <style scoped>
-.author-list {
-  margin-top: 5%;
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
 }
 
-.author-list ul {
-  list-style-type: none;
-  padding: 0;
+.popup {
+  background-color: #fefefe;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.author-list li {
-  width: 100%;
-  color: white;
-  text-align: center;
-  margin-bottom: 3%;
-  justify-content: space-between;
-  align-content: center;
-  background-color: rgba(19, 155, 250, 0.88);
-  height: 60px;
-  border-radius: 10px;
+.popup-content {
+  display: flex;
+  flex-direction: column;
 }
 
-.author-info {
+.button-group {
   display: flex;
   justify-content: space-evenly;
-  align-items: center;
-  width: 100%;
+  margin-top: 10px;
 }
 
-span {
-  font-weight: bold;
+.button-group button{
+  width: 50%;
 }
 
 .author-link {
   text-decoration: none;
+  color: black;
+}
+
+.trash-icon:hover {
+  color: red;
+  scale: 1.25;
+  cursor: pointer;
+}
+
+.author-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #4991fa;
+  padding: 10px;
+  border-radius: 5px;
+  width: 80%;
+  height: 50px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 2%;
+  color: white;
+}
+
+.author-info:hover {
+  transition: 0.5s;
+  transform: translateY(-5px);
+}
+
+span {
+  font-weight: bold;
   color: white;
 }
 
 .actions {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-left: 50%;
+  align-content: center;
+}
+
+.actions font-awesome-icon {
+  margin-left: 10px;
   cursor: pointer;
 }
 
-#trash:hover {
+.actions font-awesome-icon:hover {
   scale: 1.25;
   color: #ff001e;
-  cursor: pointer;
 }
 </style>

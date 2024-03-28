@@ -16,7 +16,11 @@
         <h2>Authors:</h2>
         <font-awesome-icon id="add" icon="fa-solid fa-circle-plus" @click="showPopUP()"/>
       </div>
-      <listing_comp :authors="quizAuthors"/>
+      <listing_comp
+          v-for="(a, index) in quizAuthors"
+          :key="index"
+          :author="a"
+      />
       <div class="popup" v-if="showPopup">
         <div class="popup-content">
           <h3>Add New Author</h3>
@@ -43,9 +47,10 @@
 import { onMounted, ref } from "vue";
 import { useQuizStore } from "@/stores/counter.js";
 import Listing_comp from "@/components/BasicComponents/authorList.vue";
+import QuestionList from "@/components/BasicComponents/questionList.vue";
 
 export default {
-  components: { Listing_comp },
+  components: {QuestionList, Listing_comp },
   setup() {
     const quizStore = useQuizStore();
     const quiz = ref({});
@@ -55,7 +60,18 @@ export default {
       quiz.value = quizStore.currentQuiz;
     });
 
-    const quizAuthors = ['Author 1', 'Author 2', 'Author 3'];
+    const quizAuthors = [{
+      id: 1,
+      username: 'Author 1'
+    },
+      {
+        id: 2,
+        username: 'Author 2'
+    },
+      {
+        id: 3,
+        username: 'Author 3'
+    }];
 
     const newAuthor = {
       username: '',

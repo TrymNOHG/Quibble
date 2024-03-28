@@ -46,13 +46,15 @@ const questions = [
 
 .encap_List{
   margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
 }
 
 .list {
-  display: flex;
-  flex-direction: column;
-  align-content: center;
-  align-items: center;
+  margin-left: 20%;
+  width: 80%;
 }
 
 .buttons {

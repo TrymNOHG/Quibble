@@ -1,26 +1,37 @@
 <template>
-  <div class="question-item">
-    <div class="question-info">
-      <router-link to="/edit/question" class="router">
-        <span>{{ question.question }}</span>
-      </router-link>
-      <div class="actions">
-        <font-awesome-icon
-            class="icon"
-            icon="fa-solid fa-trash"
-            @click="showPopup = true"
-        />
-        <delete_comp :showPopupProp="showPopup" @update:showPopupProp="showPopup = $event" />
+  <div>
+    <div class="modal-overlay" v-if="showPopupProp">
+      <div class="popup">
+        <div class="popup-content">
+          <h3>Do you want to delete this?</h3>
+          <div class="button-group">
+            <button @click="deleteAuthor">Yes</button>
+            <button @click="closePopup">No</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="question-item">
+      <div class="question-info">
+        <router-link to="/edit/question" class="router">
+          <span>{{ question.question }}</span>
+        </router-link>
+        <div class="actions">
+          <font-awesome-icon
+              class="icon"
+              icon="fa-solid fa-trash"
+              @click="showPopupProp = true"
+          />
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import Delete_comp from "@/components/BasicComponents/delete_comp.vue";
+import { ref } from "vue";
 
 export default {
-  components: {Delete_comp},
   props: {
     question: {
       type: Object,
@@ -34,23 +45,65 @@ export default {
     }
   },
 
-  data() {
-    return {
-      showPopup: false
+  setup() {
+    const showPopupProp = ref(false);
+
+    const deleteAuthor = () => {
+      // Handle delete action
+      showPopupProp.value = false;
     };
-  },
 
-  methods: {
-    deleteQuestion() {
+    const closePopup = () => {
+      showPopupProp.value = false;
+    };
 
-    }
+    return {
+      showPopupProp,
+      deleteAuthor,
+      closePopup
+    };
   }
 }
 
 </script>
 
-<style scoped>
-.router{
+<style>
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.popup {
+  background-color: #fefefe;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.popup-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 10px;
+}
+
+.button-group button{
+  width: 50%;
+}
+
+.router {
   text-decoration: none;
   color: black;
 }
@@ -77,7 +130,7 @@ export default {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.question-info:hover{
+.question-info:hover {
   transition: 0.5s;
   transform: translateY(-5px);
 }
