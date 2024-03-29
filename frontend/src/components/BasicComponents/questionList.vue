@@ -18,7 +18,7 @@
         </router-link>
         <div class="actions">
           <font-awesome-icon
-              class="icon"
+              class="icon_trash"
               icon="fa-solid fa-trash"
               @click="showPopupProp = true"
               v-if="isAuth || isEditor"
@@ -74,6 +74,20 @@ export default {
 </script>
 
 <style>
+button{
+  width: 15%;
+  height: 35px;
+  color: white;
+  text-align: center;
+  margin-bottom: 3%;
+  justify-content: space-between;
+  align-content: center;
+  background-color: #b22fe8;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -114,7 +128,7 @@ export default {
   color: black;
 }
 
-.icon:hover {
+.icon_trash:hover {
   color: red;
   scale: 1.25;
   cursor: pointer;

@@ -61,7 +61,7 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
 .btn {
   width: 15%;
   height: 35px;
@@ -128,8 +128,6 @@ button{
   font-size: 14px;
   transition: background-color 0.3s;
 }
-
-
 
 button:hover {
   scale: 1.05;

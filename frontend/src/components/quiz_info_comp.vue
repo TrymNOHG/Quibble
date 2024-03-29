@@ -122,6 +122,20 @@ export default {
 </script>
 
 <style scoped>
+button{
+  width: 15%;
+  height: 35px;
+  color: white;
+  text-align: center;
+  margin-bottom: 3%;
+  justify-content: space-between;
+  align-content: center;
+  background-color: #b22fe8;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
 .popup {
   position: fixed;
   top: 0;
