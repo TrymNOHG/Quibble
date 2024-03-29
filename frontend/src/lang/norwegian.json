@@ -21,7 +21,9 @@
     "IMPORT_QUESTION": "Importer Spørsmål",
     "ALL_DIFFICULTIES": "Vanskelighetsgrader",
     "ADD_AUTHOR": "Legg til forfatter",
-    "CANCEL": "Avbryt"
+    "CANCEL": "Avbryt",
+    "REGISTER": "Registrer",
+    "LOGIN": "Login"
   },
   "login_register_text": {
     "LOGIN_MESSAGE": "Her kan du",

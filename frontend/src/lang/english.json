@@ -21,7 +21,9 @@
     "IMPORT_QUESTION": "Import Question",
     "ALL_DIFFICULTIES": "All difficulties",
     "ADD_AUTHOR": "Add Author",
-    "CANCEL": "Cancel"
+    "CANCEL": "Cancel",
+    "REGISTER": "Register",
+    "LOGIN": "Login"
   },
 
   "login_register_text": {
