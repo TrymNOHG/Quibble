@@ -52,7 +52,7 @@ export const useUserStore = defineStore('storeUser', {
 })
 
 
-export const useQuizStore = defineStore('storeUser', {
+export const useQuizStore = defineStore('storeQuiz', {
 
   state: () => {
     return {
@@ -88,6 +88,14 @@ export const useQuizStore = defineStore('storeUser', {
   },
 
   actions: {
+    async deleteCurrentQuiz() {
+      /*
+      TODO: axioscall
+      deleteQuizById(this.currentQuiz.quizId)
+      */
+    },
+
+
     async deleteQuestion(question_id) {
       for (let index = 0; index < this.currentQuiz.question_list.length; index++) {
         if (question_id === this.currentQuiz.question_list[index].id) {
@@ -175,3 +183,42 @@ export const useQuizStore = defineStore('storeUser', {
   },
 })
 
+export const useQuizCreateStore = defineStore('storeQuizCreate', {
+  state: () => {
+    return {
+      currentQuiz: {
+        QuizId: null,
+        Name: "TemplateQuiz",
+        Difficulty: "Medium",
+        Description: "Template quiz, change the quiz as wanted",
+        Image: "https://via.placeholder.com/150",
+        question_list: [
+          {
+            id: null,
+            question: "What is your name?",
+            answer: "John",
+            answers: ["pencil", "book", "John", "quiz"],
+            type: "MultipleChoice"
+          },
+          {
+            id: null,
+            question: "Are you 21 years old?",
+            answer: "Yes",
+            answers: ["Yes", "No"],
+            type: "TrueFalse"
+          },
+          {
+            id: null,
+            question: "What is in the center of the milky way",
+            answer: "Black Hole",
+            answers: ["Sun", "Earth", "Venus", "Black Hole"],
+            type: "MultipleChoice"
+          },
+        ],
+      },
+    }
+  },
+
+
+
+})

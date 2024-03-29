@@ -31,6 +31,7 @@ let difficulty_selected = ref('');
 
 onBeforeMount(() => {
   //useQuizStore().setAllQuizzes();
+  //TODO: get quizzes from backend
   recommendedQuizzes.value = test_quizzes.value;
   displayedQuizzes.value = test_quizzes.value;
 })
@@ -40,6 +41,7 @@ async function getNextQuiz() {
     let bottomOfWindow = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight;
     if (bottomOfWindow) {
       /*
+      TODO: get quizzes from backend
       const newQuizzes = useQuizStore().getMoreQuizzes(difficulty_selected);
       quizzes.value = [...newQuizzes]
        */
@@ -113,10 +115,12 @@ async function getNextQuiz() {
 async function handleDifficulty(difficulty) {
   difficulty_selected = difficulty
   if (difficulty === "") {
+    //TODO: get quizzes from backend
     //const filtered = useQuizStore().getRecommendedDifficulty(difficulty_selected);
     displayedQuizzes.value = recommendedQuizzes.value;
   }
   else {
+    //TODO: get quizzes from backend
     //const filtered = useQuizStore().getRecommendedDifficulty(difficulty_selected);
     const filtered = recommendedQuizzes.value.filter(quiz => quiz.Difficulty === difficulty);
     displayedQuizzes.value = filtered;
@@ -125,6 +129,7 @@ async function handleDifficulty(difficulty) {
 
 async function handleSearchInput(searchword) {
   if (searchword.length >= 3) {
+    //TODO: get quizzes from backend
     //displayedQuizzes.value = await useQuizStore().searchQuizzes(searchword);
     displayedQuizzes.value = [  {
       QuizId: 5,

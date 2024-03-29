@@ -3,7 +3,7 @@
     <div class="buttons">
       <button>{{ $t('buttons.ONE_PLAYER') }}</button>
       <button>{{ $t('buttons.MULTI_PLAYER') }}</button>
-      <button v-if="isAuthor">{{ $t('buttons.DELETE_QUIZ') }}</button>
+      <router-link class="btn" to="/home" v-if="isAuthor" @click="deleteQuiz()">{{ $t('buttons.DELETE_QUIZ') }}</router-link>
     </div>
     <div class="header"></div>
     <div class="questions_list">
@@ -43,7 +43,12 @@ export default {
       store.deleteQuestion(questionId);
     };
 
+    const deleteQuiz = () => {
+      store.deleteCurrentQuiz();
+    }
+
     return {
+      deleteQuiz,
       isAuthor,
       isEditor,
       question_list,
@@ -57,6 +62,22 @@ export default {
 
 
 <style>
+.btn {
+  width: 15%;
+  height: 35px;
+  color: white;
+  text-align: center;
+  margin-bottom: 3%;
+  justify-content: space-between;
+  align-content: center;
+  background-color: #b22fe8;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: background-color 0.3s;
+  text-decoration: none;
+  border: 2px solid black;
+}
+
 .question_text{
   font-size: 25px;
   font-weight: bold;
@@ -107,6 +128,8 @@ button{
   font-size: 14px;
   transition: background-color 0.3s;
 }
+
+
 
 button:hover {
   scale: 1.05;
