@@ -10,20 +10,20 @@
             v-model.trim="gamepin"
             name="GamePin"
             class="pin_input"
-            placeholder="GAME PIN"
+            :placeholder="$t('placeholders.GAME_PIN')"
             @focus="hide_txt"
             @blur="show_txt"
         />
         <div class="button_div">
-          <div class="btn" aria-label="Start button">Start Game</div>
+          <div class="btn" aria-label="Start button">{{ $t('buttons.START_GAME') }}</div>
         </div>
       </div>
       <div class="login_register_text">
         <h4>
-          Her kan du
-          <router-link to="/login">logge deg inn</router-link>,
-          eller
-          <router-link to="/register">registrer deg gratis</router-link>
+          {{ $t('login_register_text.LOGIN_MESSAGE') }}
+          <router-link to="/login">{{ $t('login_register_text.LOGIN') }}</router-link>,
+          {{ $t('login_register_text.OR') }}
+          <router-link to="/register">{{ $t('login_register_text.REGISTER') }}</router-link>
         </h4>
       </div>
     </div>
@@ -31,12 +31,16 @@
 </template>
 
 <script>
+import { useI18n } from 'vue-i18n';
+
 export default {
   name: "welcome_page",
   components: {},
 
   setup() {
-    const gamepin = ""
+    const { t } = useI18n();
+
+    const gamepin = "";
 
     const hide_txt = () => {
       const inputField = document.querySelector('.pin_input');
@@ -48,7 +52,7 @@ export default {
     const show_txt = () => {
       const inputField = document.querySelector('.pin_input');
       if (inputField) {
-        inputField.placeholder = 'GAME PIN';
+        inputField.placeholder = t('placeholders.GAME_PIN');
       }
     };
 
@@ -58,10 +62,8 @@ export default {
       gamepin
     }
   }
-
 };
 </script>
-
 
 <style scoped>
 .welcome_div {
@@ -134,5 +136,11 @@ export default {
   justify-content: center;
   margin-top: 15%;
   grid-row: 3;
+}
+
+@media only screen and (max-width: 428px) {
+  .page_info {
+    grid-template-rows: 1fr 1fr 1fr;
+  }
 }
 </style>

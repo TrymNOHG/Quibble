@@ -1,9 +1,9 @@
 <template>
   <div class="submit_form">
-    <h2>Register</h2>
+    <h2>{{ $t('titles.REGISTER') }}</h2>
     <form @submit.prevent="submit" :class="{ 'has-errors': has_err }">
       <div class="input_fields">
-        <label for="email">Email</label>
+        <label for="email">{{ $t('placeholders.EMAIL') }}</label>
         <input
             type="email"
             required
@@ -12,13 +12,13 @@
             class="input-field"
             aria-labelledby="emailLabel"
             :class="{ 'error': errors && errors['email'] }"
-            placeholder="Emaile"
+            :placeholder="$t('placeholders.EMAIL')"
         />
         <div v-if="errors && errors['email']" class="error-message">
           {{ errors["email"] }}
         </div>
 
-        <label for="username">Username</label>
+        <label for="username">{{ $t('placeholders.USERNAME') }}</label>
         <input
             type="text"
             required
@@ -27,13 +27,13 @@
             class="input-field"
             aria-labelledby="usernameLabel"
             :class="{ 'error': errors && errors['username'] }"
-            placeholder="Username"
+            :placeholder="$t('placeholders.USERNAME')"
         />
         <div v-if="errors && errors['username']" class="error-message">
-          {{ $t(errors["username"]) }}
+          {{ errors["username"] }}
         </div>
 
-        <label for="password">Password</label>
+        <label for="password">{{ $t('placeholders.PASSWORD') }}</label>
         <input
             type="password"
             required
@@ -42,13 +42,13 @@
             class="input-field"
             aria-labelledby="passwordLabel"
             :class="{ 'error': errors && errors['passwrd'] }"
-            placeholder="Password"
+            :placeholder="$t('placeholders.PASSWORD')"
         />
         <div v-if="errors && errors['passwrd']" class="error-message">
           {{ errors["passwrd"] }}
         </div>
 
-        <label for="confirm password">Confirm Password</label>
+        <label for="confirm password">{{ $t('placeholders.CONFIRM_PASSWORD') }}</label>
         <input
             type="password"
             required
@@ -57,7 +57,7 @@
             class="input-field"
             aria-labelledby="conf_passwordLabel"
             :class="{ 'error': errors && errors['conf_passwrd'] }"
-            placeholder="Confirm Passoword"
+            :placeholder="$t('placeholders.CONFIRM_PASSWORD')"
         />
         <div v-if="errors && errors['conf_passwrd']" class="error-message">
           {{ errors["conf_passwrd"] }}
@@ -65,15 +65,16 @@
 
         <basic_button
             class="submit_button"
-            :button_text="'Register'"
+            :button_text="$t('buttons.REGISTER')"
         />
         <h4>
-          <router-link to="/login">Already have an account?</router-link>
+          <router-link to="/login">{{ $t('messages.ALREADY_HAVE_ACCOUNT') }}</router-link>
         </h4>
       </div>
     </form>
   </div>
 </template>
+
 
 <script>
 import * as yup from "yup";

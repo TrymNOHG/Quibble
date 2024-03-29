@@ -1,3 +1,41 @@
 {
-
+  "titles": {
+    "REGISTER": "Registrer"
+  },
+  "placeholders": {
+    "EMAIL": "Email",
+    "GAME_PIN": "SPILLPIN",
+    "USERNAME": "Brukernavn",
+    "PASSWORD": "Passord",
+    "SEARCH": "Søk ...",
+    "CONFIRM_PASSWORD": "Bekreft Passord"
+  },
+  "buttons": {
+    "START_GAME": "Start spill",
+    "LOGIN": "Login",
+    "ALL_DIFFICULTIES": "Vanskelighetsgrad",
+    "REGISTER": "Registrer"
+  },
+  "login_register_text": {
+    "LOGIN_MESSAGE": "Her kan du",
+    "LOGIN": "logge deg inn",
+    "OR": "eller",
+    "REGISTER": "registrer deg gratis",
+    "NO_ACCOUNT_MESSAGE": "Har du ikke en konto?"
+  },
+  "quiz_card": {
+    "QUESTIONS_LABEL": "Spørsmål"
+  },
+  "messages": {
+    "ALREADY_HAVE_ACCOUNT": "Har bruker fra før?"
+  },
+  "error_messages": {
+    "USERNAME_REQUIRED": "Brukernavn er påkrevd",
+    "PASSWORD_REQUIRED": "Passord er påkrevd"
+  },
+  "dropdown_options": {
+    "EASY": "Enkel",
+    "MEDIUM": "Medium",
+    "HARD": "Vanskelig"
+  }
 }

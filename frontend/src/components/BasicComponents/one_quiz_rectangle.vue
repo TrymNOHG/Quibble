@@ -1,16 +1,21 @@
 <template>
   <div class="rectangle">
-    <router-link :to="'/quiz?' + quiz.name">
+    <router-link :to="'/quiz?' + quiz.name" @click="setCurrentQuiz()">
       <div class="card">
-        <img :src="quiz.image" alt="quiz image"/>
-        <h4 class="quiz-desc">{{ quiz.name }}</h4>
-        <h4 class="quiz-desc">{{ quiz.description }}</h4>
+        <div class="content">
+          <img class="card_image" :src="quiz.image" alt="quiz image"/>
+          <div class="information">
+            <h4 class="quiz-name">{{ quiz.name }}</h4>
+            <p class="quiz-details">{{$t("quiz_card.QUESTIONS_LABEL")}}: {{ quiz.question_list.length }}</p>
+          </div>
+        </div>
       </div>
     </router-link>
   </div>
 </template>
 
 <script>
+import {useQuizStore} from "@/stores/counter.js";
 export default {
   props: {
     quiz: {
@@ -23,12 +28,27 @@ export default {
         question_list: Array,
       })
     }
+  },
+
+  setup() {
+    const quizStore = useQuizStore();
+
+    return {
+      quizStore,
+    }
+  },
+
+  methods: {
+    setCurrentQuiz() {
+      this.quizStore.setCurrentQuizById(this.quiz.quizId);
+    }
   }
 }
 
 </script>
 
 <style scoped>
+
 .rectangle {
   padding-top: 5%;
   margin-right: 50px;
@@ -41,23 +61,77 @@ export default {
 
 .card {
   width: 300px;
-  height: 200px;
+  height: 260px;
   padding: 20px;
   background-color: white;
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-.card img {
-  width: 100%;
-  border-radius: 10px;
-  margin-bottom: 10px;
+.card .content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.quiz-desc {
+.information {
+  text-align: center;
+}
+
+.information .quiz-name {
   font-size: 18px;
   font-weight: bold;
   margin-bottom: 5px;
 }
 
+.information .quiz-details {
+  font-size: 14px;
+  bottom: 0;
+  left: 0;
+  margin: 0;
+}
+
+.quiz-details{
+  text-align: right;
+  text-decoration: none;
+}
+
+.card img {
+  width: 100%;
+  max-height: 50%;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+@media only screen and (max-width: 428px) {
+  .rectangle {
+    padding-top: 5%;
+    margin: 0;
+  }
+
+  .card {
+    width: 280px;
+    height: 210px;
+    margin: 0;
+  }
+
+  .quiz-name,
+  .quiz-details {
+    font-size: 12px;
+  }
+
+  .card_image{
+    padding: 0;
+    width: 280px;
+    height: 250px;
+  }
+
+  .quiz-details {
+    display: none;
+  }
+}
 </style>
