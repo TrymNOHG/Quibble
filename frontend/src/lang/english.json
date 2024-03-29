@@ -23,7 +23,8 @@
     "ADD_AUTHOR": "Add Author",
     "CANCEL": "Cancel",
     "REGISTER": "Register",
-    "LOGIN": "Login"
+    "LOGIN": "Login",
+    "START_GAME": "START SPILL"
   },
 
   "login_register_text": {

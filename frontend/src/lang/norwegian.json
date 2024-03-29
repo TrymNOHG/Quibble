@@ -23,7 +23,8 @@
     "ADD_AUTHOR": "Legg til forfatter",
     "CANCEL": "Avbryt",
     "REGISTER": "Registrer",
-    "LOGIN": "Login"
+    "LOGIN": "Login",
+    "START_GAME": "START GAME"
   },
   "login_register_text": {
     "LOGIN_MESSAGE": "Her kan du",

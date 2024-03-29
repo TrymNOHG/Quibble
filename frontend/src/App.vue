@@ -17,6 +17,11 @@
               <font-awesome-icon class="icon" icon="fa-solid fa-home"/>
           </li>
         </router-link>
+        <router-link to="/">
+          <li>
+            <font-awesome-icon class="icon" icon="fa-solid fa-play" />
+          </li>
+        </router-link>
         <router-link to="/quiz">
           <li>
             <font-awesome-icon class="icon" icon="fa-solid fa-puzzle-piece"/>
@@ -129,6 +134,8 @@ li:hover {
 
   li {
     padding: 8px;
+    width: 50px;
+    height: 50px;
   }
 }
 
