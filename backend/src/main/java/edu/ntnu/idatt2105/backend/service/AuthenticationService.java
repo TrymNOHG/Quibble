@@ -215,4 +215,5 @@ public class AuthenticationService {
                 email, password, List.of(new SimpleGrantedAuthority("USER"))
         );
     }
+
 }

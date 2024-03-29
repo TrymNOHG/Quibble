@@ -1,10 +1,15 @@
 package edu.ntnu.idatt2105.backend.dto.websocket;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotNull;
 
+/**
+ * DTO for creating a game. This is used when a user wants to create a game.
+ *
+ * @param jwt The jwt of the user that wants to create a game.
+ * @param quizId The id of the quiz that the game should be based on.
+ */
 public record CreateGameDTO(
-        @JsonProperty String jwt,
-        @JsonProperty long userId,
-        @JsonProperty long quizId
-) {
-}
+        @NotNull @JsonProperty String jwt,
+        @NotNull @JsonProperty long quizId
+) { }

@@ -83,5 +83,5 @@ public class User {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ToString.Exclude
     @Schema(description = "The user's collaborations on quizzes.")
-    private Set<QuizAuthor> quizzes = new HashSet<>();
+    private Set<QuizAuthor> collaborators = new HashSet<>();
 }

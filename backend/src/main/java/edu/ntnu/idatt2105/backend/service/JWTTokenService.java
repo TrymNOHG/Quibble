@@ -31,6 +31,16 @@ public class JWTTokenService {
     }
 
     /**
+     * Gets the email from a JWT token as a string.
+     *
+     * @param token The JWT token as a string.
+     * @return The email of the user.
+     */
+    public String getUserEmail(String token) {
+        return getJwt(token).getSubject();
+    }
+
+    /**
      * Gets the JWT token object from a string containing the jwt.
      *
      * @param token The JWT token as a string.
@@ -86,8 +96,18 @@ public class JWTTokenService {
      * @param userDetails The user details.
      * @return True if the token is valid, false otherwise.
      */
-    public boolean isTokenValid(Jwt jwtToken, UserDetails userDetails) {
+    public boolean isValidToken(Jwt jwtToken, UserDetails userDetails) {
         return Objects.requireNonNull(jwtToken.getExpiresAt()).isAfter(Instant.now())
                 && jwtToken.getSubject().equals(userDetails.getUsername());
+    }
+
+    /**
+     * Checks if the token is valid. The token is valid if it is not expired.
+     *
+     * @param jwtToken The JWT token.
+     * @return True if the token is valid, false otherwise.
+     */
+    public boolean isValidToken(Jwt jwtToken) {
+        return Objects.requireNonNull(jwtToken.getExpiresAt()).isAfter(Instant.now());
     }
 }

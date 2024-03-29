@@ -95,7 +95,7 @@
             <version>0.12.2</version>
         </dependency>
 
-        <!--        Mappers-->
+        <!--Mappers-->
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
@@ -126,8 +126,6 @@
             <version>3.0.0</version>
         </dependency>
 
-
-
         <!--Websocket-->
         <dependency>
             <groupId>com.corundumstudio.socketio</groupId>
@@ -135,6 +133,7 @@
             <version>2.0.9</version> <!-- Check for the latest version -->
         </dependency>
 
+        <!--testing dependencies-->
         <dependency>
             <groupId>org.junit.vintage</groupId>
             <artifactId>junit-vintage-engine</artifactId>
@@ -153,6 +152,7 @@
             <version>5.2.0</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>

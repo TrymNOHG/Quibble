@@ -4,6 +4,7 @@ import edu.ntnu.idatt2105.backend.config.UserConfig;
 import edu.ntnu.idatt2105.backend.controller.priv.users.UserController;
 import edu.ntnu.idatt2105.backend.dto.users.UserLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.users.UserUpdateDTO;
+import edu.ntnu.idatt2105.backend.model.users.User;
 import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -28,14 +29,32 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository
-                .findByEmail(username) // FindByEmail is used as the username in the authentication object is the email.
+                .findByEmail(email) // FindByEmail is used as the username in the authentication object is the email.
                 .map(UserConfig::new)
-                .orElseThrow(() -> new UsernameNotFoundException("User " + username + " not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("User " + email + " not found"));
+    }
+
+    /**
+     * Get user by their email.
+     *
+     * @param email The email of the user.
+     * @return The user.
+     */
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(
+                () -> new UsernameNotFoundException("User " + email + " not found")
+        );
     }
 
 
+    /**
+     * Update user information.
+     *
+     * @param userUpdateDTO The updated user information.
+     * @return The updated user.
+     */
     @Transactional
     public UserLoadDTO updateUser(UserUpdateDTO userUpdateDTO) {
         LOGGER.info(String.format("%s wants to update.", userUpdateDTO));
@@ -45,6 +64,11 @@ public class UserService implements UserDetailsService {
         return null;
     }
 
+    /**
+     * Delete a user.
+     *
+     * @param userId The id of the user.
+     */
     public void deleteUser(Long userId) {
         // TODO: Check that user is actually user.
         userRepository.deleteById(userId);

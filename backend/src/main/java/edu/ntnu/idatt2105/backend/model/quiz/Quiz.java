@@ -41,7 +41,6 @@ public class Quiz {
     private String quizName;
 
     @Column(name = "quiz_desc", length = 255)
-    @NonNull
     @Schema(description = "The description of the quiz.")
     private String quizDescription;
 
@@ -86,5 +85,4 @@ public class Quiz {
     @ToString.Exclude
     @Schema(description = "The quiz's keywords.")
     private Set<QuizKeyword> keywords = new HashSet<>();
-
 }
