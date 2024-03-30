@@ -17,6 +17,11 @@
               <font-awesome-icon class="icon" icon="fa-solid fa-home"/>
           </li>
         </router-link>
+        <router-link to="/">
+          <li>
+            <font-awesome-icon class="icon" icon="fa-solid fa-play" />
+          </li>
+        </router-link>
         <router-link to="/quiz">
           <li>
             <font-awesome-icon class="icon" icon="fa-solid fa-puzzle-piece"/>
@@ -39,18 +44,14 @@
 </template>
 
 <script>
-import { useRoute, useRouter } from 'vue-router';
 import TheWelcomeComponent from "@/components/TheWelcomeComponent.vue";
-import Login from "@/views/LoginView.vue";
-import Register from "@/views/RegisterView.vue";
 
 export default {
-  components: {Register, Login, TheWelcomeComponent },
+  components: { TheWelcomeComponent },
 }
 </script>
 
-<style>
-
+<style scoped>
 header {
   background-color: #8521b0;
   width: 100%;
@@ -81,10 +82,10 @@ nav ul {
 
 li {
   color: white;
-  text-align: center;
+  display: flex; /* Ensure flexbox is being used */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
   margin: 10px;
-  justify-content: space-between;
-  align-content: center;
   background-color: rgba(19, 155, 250, 0.88);
   width: 60px;
   height: 60px;
@@ -133,6 +134,8 @@ li:hover {
 
   li {
     padding: 8px;
+    width: 50px;
+    height: 50px;
   }
 }
 

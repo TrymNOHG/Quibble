@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +26,7 @@ import java.util.logging.Logger;
 @RestController("privateQuizController")
 @EnableAutoConfiguration
 @RequiredArgsConstructor
+@CrossOrigin("*")
 @Slf4j
 @RequestMapping(value = "/api/v1/private/quiz")
 public class QuizController implements IQuizController{

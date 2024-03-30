@@ -1,3 +1,58 @@
 {
-
+  "titles": {
+    "REGISTER": "Registrer",
+    "AUTHORS": "Forfattere",
+    "ADD_NEW_AUTHOR": "Legg til ny forfatter",
+    "QUESTION_LIST": "Spørsmålsliste"
+  },
+  "placeholders": {
+    "EMAIL": "Email",
+    "GAME_PIN": "Spillpin",
+    "USERNAME": "Brukernavn",
+    "PASSWORD": "Passord",
+    "SEARCH": "Søk ...",
+    "CONFIRM_PASSWORD": "Bekreft passord"
+  },
+  "buttons": {
+    "ONE_PLAYER": "Enkeltspiller",
+    "MULTI_PLAYER": "Flerspiller",
+    "DELETE_QUIZ": "Slett Quiz",
+    "NEW_QUESTION": "Nytt Spørsmål",
+    "IMPORT_QUESTION": "Importer Spørsmål",
+    "ALL_DIFFICULTIES": "Vanskelighetsgrader",
+    "ADD_AUTHOR": "Legg til forfatter",
+    "CANCEL": "Avbryt",
+    "REGISTER": "Registrer",
+    "LOGIN": "Login",
+    "START_GAME": "START GAME"
+  },
+  "login_register_text": {
+    "LOGIN_MESSAGE": "Her kan du",
+    "LOGIN": "logge deg inn",
+    "OR": "eller",
+    "REGISTER": "registrere deg gratis",
+    "NO_ACCOUNT_MESSAGE": "Har du ikke en konto?"
+  },
+  "quiz_card": {
+    "QUESTIONS_LABEL": "Spørsmål",
+    "DESCRIPTION": "Beskrivelse"
+  },
+  "messages": {
+    "ALREADY_HAVE_ACCOUNT": "Har du allerede en konto?"
+  },
+  "error_messages": {
+    "USERNAME_REQUIRED": "Brukernavn er påkrevd",
+    "PASSWORD_REQUIRED": "Passord er påkrevd"
+  },
+  "dropdown_options": {
+    "DIFFICULTY": "Vanskelighetsgrad",
+    "EASY": "Enkel",
+    "MEDIUM": "Medium",
+    "HARD": "Vanskelig"
+  },
+  "delete_modal": {
+    "TITLE": "Vil du slette dette?",
+    "YES": "Ja",
+    "NO": "Nei"
+  }
 }

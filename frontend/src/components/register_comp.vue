@@ -1,9 +1,9 @@
 <template>
   <div class="submit_form">
-    <h2>Register</h2>
+    <h2>{{ $t('titles.REGISTER') }}</h2>
     <form @submit.prevent="submit" :class="{ 'has-errors': has_err }">
       <div class="input_fields">
-        <label for="email">Email</label>
+        <label for="email">{{ $t('placeholders.EMAIL') }}</label>
         <input
             type="email"
             required
@@ -12,13 +12,13 @@
             class="input-field"
             aria-labelledby="emailLabel"
             :class="{ 'error': errors && errors['email'] }"
-            placeholder="Emaile"
+            :placeholder="$t('placeholders.EMAIL')"
         />
         <div v-if="errors && errors['email']" class="error-message">
           {{ errors["email"] }}
         </div>
 
-        <label for="username">Username</label>
+        <label for="username">{{ $t('placeholders.USERNAME') }}</label>
         <input
             type="text"
             required
@@ -27,53 +27,55 @@
             class="input-field"
             aria-labelledby="usernameLabel"
             :class="{ 'error': errors && errors['username'] }"
-            placeholder="Username"
+            :placeholder="$t('placeholders.USERNAME')"
         />
         <div v-if="errors && errors['username']" class="error-message">
-          {{ $t(errors["username"]) }}
+          {{ errors["username"] }}
         </div>
 
-        <label for="password">Password</label>
+        <label for="password">{{ $t('placeholders.PASSWORD') }}</label>
         <input
             type="password"
             required
-            v-model.trim="passwrd"
+            v-model.trim="password"
             name="password"
             class="input-field"
             aria-labelledby="passwordLabel"
-            :class="{ 'error': errors && errors['passwrd'] }"
-            placeholder="Password"
+            :class="{ 'error': errors && errors['password'] }"
+            :placeholder="$t('placeholders.PASSWORD')"
         />
-        <div v-if="errors && errors['passwrd']" class="error-message">
-          {{ errors["passwrd"] }}
+        <div v-if="errors && errors['password']" class="error-message">
+          {{ errors["password"] }}
         </div>
 
-        <label for="confirm password">Confirm Password</label>
+        <label for="confirm password">{{ $t('placeholders.CONFIRM_PASSWORD') }}</label>
         <input
             type="password"
             required
-            v-model.trim="conf_passwrd"
+            v-model.trim="conf_password"
             name="conf_password"
             class="input-field"
             aria-labelledby="conf_passwordLabel"
-            :class="{ 'error': errors && errors['conf_passwrd'] }"
-            placeholder="Confirm Passoword"
+            :class="{ 'error': errors && errors['conf_password'] }"
+            :placeholder="$t('placeholders.CONFIRM_PASSWORD')"
         />
-        <div v-if="errors && errors['conf_passwrd']" class="error-message">
-          {{ errors["conf_passwrd"] }}
+        <div v-if="errors && errors['conf_password']" class="error-message">
+          {{ errors["conf_password"] }}
         </div>
 
         <basic_button
             class="submit_button"
-            :button_text="'Register'"
+            @click="submit"
+            :button_text="$t('buttons.REGISTER')"
         />
         <h4>
-          <router-link to="/login">Already have an account?</router-link>
+          <router-link to="/login">{{ $t('messages.ALREADY_HAVE_ACCOUNT') }}</router-link>
         </h4>
       </div>
     </form>
   </div>
 </template>
+
 
 <script>
 import * as yup from "yup";
@@ -82,6 +84,7 @@ import Basic_button from "@/components/BasicComponents/basic_button.vue";
 import { ref } from "vue";
 import router from "@/router/index.js";
 import {useUserStore} from "@/stores/counter.js";
+import {registerUser} from "@/services/UserService.js";
 
 export default {
   components: {Basic_button},
@@ -93,10 +96,10 @@ export default {
     const validationSchema = yup.object({
       email: yup.string().required("Email is required").email("Must be an valid email"),
       username: yup.string().required("Username is required"),
-      passwrd: yup.string().required("Password is required").min(8, "Password must be at least 8 characters"),
-      conf_passwrd: yup.string()
+      password: yup.string().required("Password is required").min(8, "Password must be at least 8 characters"),
+      conf_password: yup.string()
           .required("Confirm password")
-          .oneOf([yup.ref('passwrd'), null], 'Passwords must match')
+          .oneOf([yup.ref('password'), null], 'Passwords must match')
     });
 
     const {handleSubmit, errors, setFieldTouched, setFieldValue} = useForm({
@@ -104,23 +107,22 @@ export default {
       initialValues: {
         email: "",
         username: "",
-        passwrd: "",
-        conf_passwrd: "",
+        password: "",
+        conf_password: "",
       },
     });
 
     const {value: email} = useField("email")
     const {value: username} = useField("username");
-    const {value: passwrd} = useField("passwrd");
-    const {value: conf_passwrd} = useField("conf_passwrd");
+    const {value: password} = useField("password");
+    const {value: conf_password} = useField("conf_password");
 
 
     const submit = handleSubmit(async () => {
       const userData = {
         email: email.value,
-        user: username.value,
-        passwrd: passwrd.value,
-        conf_passwrd: conf_passwrd.value
+        username: username.value,
+        password: password.value,
       };
 
       await registerUser(userData)
@@ -128,7 +130,7 @@ export default {
           if (response !== undefined) {
             store.setToken(response.data.token);
             await store.fetchUserData();
-            await router.push("/fridges?appTour=true");
+            await router.push("/");
           }
         })
         .catch((error) => {
@@ -149,8 +151,8 @@ export default {
     return {
       email,
       username,
-      passwrd,
-      conf_passwrd,
+      password,
+      conf_password,
       errors,
       submit,
       validationSchema,

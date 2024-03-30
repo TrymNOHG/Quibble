@@ -53,6 +53,7 @@ public class AuthenticationService {
             User user = userRepository.findByEmail(authentication.getName()).orElseThrow(
                     ()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
             );
+            // Check username as well...
 
             String refreshToken = jwtTokenGenerationService.generateRefreshToken(user.getEmail());
 
@@ -73,6 +74,7 @@ public class AuthenticationService {
                     .tokenType(TokenType.Bearer).build();
 
         } catch (Exception e) {
+            log.warning(e.getMessage());
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong while getting token"
             );
@@ -91,30 +93,30 @@ public class AuthenticationService {
      */
     public AuthenticationResponseDTO registerUser(UserRegisterDTO userRegistrationDto,
                                                   HttpServletResponse httpServletResponse) {
-        try {
-            if (userRegistrationDto.username().length() < 3 || userRegistrationDto.username().length() > 64
-                    || userRegistrationDto.password().length() < 8 || userRegistrationDto.password().length() > 64) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "Username or password is invalid, too short or too long.");
-            }
+        if (userRegistrationDto.username().length() < 3 || userRegistrationDto.username().length() > 64
+                || userRegistrationDto.password().length() < 8 || userRegistrationDto.password().length() > 64) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Username or password is invalid, too short or too long.");
+        }
 
-            if (!userRegistrationDto.email().matches("^(.+)@(.+)$")) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email format");
-            }
+        if (!userRegistrationDto.email().matches("^(.+)@(.+)$")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email format");
+        }
 
-            String profilePicLink;
-            if (userRegistrationDto.profilePicLink() != null && !userRegistrationDto.profilePicLink().matches("^(http|https)://.*$")) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid profile picture link");
-            } else {
-                profilePicLink = "https://pbs.twimg.com/profile_images/740827537329229825/nAnThbbi_400x400.jpg";
-            }
+        String profilePicLink;
+        if (userRegistrationDto.profilePicLink() != null && !userRegistrationDto.profilePicLink().matches("^(http|https)://.*$")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid profile picture link");
+        } else {
+            profilePicLink = "https://pbs.twimg.com/profile_images/740827537329229825/nAnThbbi_400x400.jpg";
+        }
 
-            log.info("Registering user with email: " + userRegistrationDto.email());
-            if (userRepository.findByUsername(userRegistrationDto.username()).isPresent()
-                    || userRepository.findByEmail(userRegistrationDto.email()).isPresent()) {
-                log.info("User already exists");
-                throw new ResponseStatusException(HttpStatus.CONFLICT, "User Already Exist");
-            }
+        log.info("Registering user with email: " + userRegistrationDto.email());
+        if (userRepository.findByUsername(userRegistrationDto.username()).isPresent()
+                || userRepository.findByEmail(userRegistrationDto.email()).isPresent()) {
+            log.info("User already exists");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "User Already Exist");
+        }
+        try{
             log.info("User does not exist, creating a user object");
             log.info(userRegistrationDto.toString());
             log.info("Profilepiclink: " + profilePicLink);
