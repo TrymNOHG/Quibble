@@ -59,29 +59,34 @@ public class User {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ToString.Exclude
     @Schema(description = "The quizzes created by the user.")
+    @Builder.Default
     private Set<Quiz> quizzesOwned = new HashSet<>();
 
     @OneToMany(mappedBy = "user")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ToString.Exclude
     @Schema(description = "The user's tokens.")
+    @Builder.Default
     private Set<RefreshToken> refreshTokens = new HashSet<>();
 
     @OneToMany(mappedBy = "user")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ToString.Exclude
     @Schema(description = "The user's quiz history.")
+    @Builder.Default
     private Set<QuizHistory> quizHistory = new HashSet<>();
 
     @OneToMany(mappedBy = "user")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ToString.Exclude
     @Schema(description = "The user's feedbacks.")
+    @Builder.Default
     private Set<QuizFeedback> feedbacks = new HashSet<>();
 
     @OneToMany(mappedBy = "user")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ToString.Exclude
     @Schema(description = "The user's collaborations on quizzes.")
-    private Set<QuizAuthor> quizzes = new HashSet<>();
+    @Builder.Default
+    private Set<QuizAuthor> collaborators = new HashSet<>();
 }

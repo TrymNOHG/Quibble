@@ -6,7 +6,7 @@ package edu.ntnu.idatt2105.backend.model.quiz.question;
  * @author Trym Hamer Gudvangen
  * @version 1.0 23.03.2024
  */
-public enum Type {
+public enum QuestionType {
     MULTIPLE_CHOICE,
     SHORT_ANSWER,
     LONG_ANSWER,
