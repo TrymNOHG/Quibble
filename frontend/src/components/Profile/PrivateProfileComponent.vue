@@ -3,12 +3,12 @@
     <div class="profile-picture-container">
       <img :src="profileData.picture" alt="Profile Picture" class="profile-picture" />
       <div class="profile-picture-overlay">
-        <img class="editIcon" src="../assets/images/edit.svg" alt="Change" @click="onPictureChange" />
+        <img class="editIcon" src="@/assets/images/edit.svg" alt="Change" @click="onPictureChange" />
         <input id="picture" type="file" @change="onPictureChange" style="display: none;" />
         <img
             v-show="profileData.picture !== defaultPicture"
             class="deleteIcon"
-            src="../assets/images/delete-icn.svg"
+            src="@/assets/images/delete-icn.svg"
             alt="Delete"
             @click="onDeletePicture"
         />
