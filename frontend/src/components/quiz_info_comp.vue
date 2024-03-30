@@ -6,10 +6,17 @@
       </div>
       <div class="quiz-details">
         <div class="quiz-details">
-          <h2>{{ $t('titles.REGISTER') }}</h2>
-          <p><strong>{{ $t('dropdown_options.DIFFICULTY') }}:</strong> {{ $t('dropdown_options.' + quiz.Difficulty.toUpperCase()) }}</p>
-          <p>{{ $t('quiz_card.QUESTIONS_LABEL') }}: {{ quiz.question_list.length }}</p>
-          <p>{{ $t('quiz_card.DESCRIPTION') }}: {{ quiz.Description }}</p>
+          <h2>{{quiz.Name}}</h2>
+          <p>
+            <strong>{{ $t('dropdown_options.DIFFICULTY') }}:</strong>
+            {{ $t('dropdown_options.' + quiz.Difficulty.toUpperCase()) }}
+          </p>
+          <p>{{ $t('quiz_card.QUESTIONS_LABEL') }}:
+            {{ quiz.question_list.length }}
+          </p>
+          <p>{{ $t('quiz_card.DESCRIPTION') }}:
+            {{ quiz.Description }}
+          </p>
         </div>
       </div>
     </div>

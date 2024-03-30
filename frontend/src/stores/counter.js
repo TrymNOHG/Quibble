@@ -186,10 +186,10 @@ export const useQuizStore = defineStore('storeQuiz', {
 export const useQuizCreateStore = defineStore('storeQuizCreate', {
   state: () => {
     return {
-      currentQuiz: {
+      templateQuiz: {
         QuizId: null,
         Name: "TemplateQuiz",
-        Difficulty: "Medium",
+        Difficulty: "Easy",
         Description: "Template quiz, change the quiz as wanted",
         Image: "https://via.placeholder.com/150",
         question_list: [
@@ -216,9 +216,49 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
           },
         ],
       },
+
+      template_tags:{
+        tags: [
+            {
+              tag_desc: "disney",
+              type: "Category"
+            },
+            {
+              tag_desc: "movies",
+              type: "Keyword"
+            }
+        ]
+      }
     }
   },
 
+  actions: {
+    async deleteTag(tag) {
+      for (let index = 0; index < this.allAuthors.length; index++) {
+        if (auth.id === this.allAuthors[index].id) {
+          this.allAuthors.splice(index, 1);
+          /*
+          TODO: fjerne auth i backend
+          response = removeAuth(author.username // author-id)
+          this.allAuthors = response;
+           */
+          break;
+        }
+      }
+      console.log("KL")
+    },
 
+
+    async addTag(newTag) {
+      this.allAuthors.push({id: 4, username: newAuthor.username})
+      /*
+      TODO: legge til user i backend og returne den nye listen fra backend
+      setNewAuthor(newAuthor)
+      fetchAuthors(this.currentQuiz.quizId)
+      */
+      return this.allAuthors;
+    },
+
+  },
 
 })
