@@ -1,12 +1,12 @@
 <template>
   <div class="rectangle">
-    <router-link :to="'/quiz?' + quiz.name">
+    <router-link :to="'/quiz/current'" @click="setCurrentQuiz()">
       <div class="card">
         <div class="content">
-          <img class="card_image" :src="quiz.image" alt="quiz image"/>
+          <img class="card_image" :src="quiz.Image" alt="quiz image"/>
           <div class="information">
-            <h4 class="quiz-name">{{ quiz.name }}</h4>
-            <p class="quiz-details">Questions: {{ quiz.question_list.length }}</p>
+            <h4 class="quiz-name">{{ quiz.Name }}</h4>
+            <p class="quiz-details">{{$t("quiz_card.QUESTIONS_LABEL")}}: {{ quiz.question_list.length }}</p>
           </div>
         </div>
       </div>
@@ -15,20 +15,37 @@
 </template>
 
 <script>
+import {useQuizStore} from "@/stores/counter.js";
 export default {
   props: {
     quiz: {
       type: Object,
       default: () => ({
-        name: String,
-        difficulty: String,
-        description: String,
-        image: String,
+        QuizId: Number,
+        Name: String,
+        Difficulty: String,
+        Description: String,
+        Image: String,
         question_list: Array,
       })
     }
+  },
+
+  setup() {
+    const quizStore = useQuizStore();
+
+    return {
+      quizStore,
+    }
+  },
+
+  methods: {
+    setCurrentQuiz() {
+      this.quizStore.setCurrentQuizById(this.quiz);
+    }
   }
 }
+
 </script>
 
 <style scoped>

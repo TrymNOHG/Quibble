@@ -35,8 +35,6 @@
 
         <basic_button
             class="submit_button"
-            type="submit"
-            @click="submit"
             :button_text="'Login'"
         />
         <h4>
@@ -53,7 +51,7 @@ import { useField, useForm } from "vee-validate";
 import { useUserStore } from "@/stores/counter.js";
 import { ref } from "vue";
 import router from "@/router";
-import { loginUser } from "@/api/services/UserService";
+import { loginUser } from "@/services/UserService";
 import { RouterLink } from 'vue-router'
 import Basic_button from "@/components/BasicComponents/basic_button.vue";
 
@@ -137,7 +135,7 @@ h2 {
   text-align: left;
   align-items: center;
   justify-content: center;
-  margin: 15px 10px 10px 20px;
+  margin: 25px 10px 10px 20px;
 }
 
 .input-field {
@@ -150,8 +148,9 @@ h2 {
 }
 
 .submit_form {
-  padding: 20px;
-  width: 100%;
+  padding: 40px;
+  width: 20%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -165,7 +164,6 @@ h2 {
 
 .submit_button {
   margin-top: 20px;
-  align-self: center;
   width: 100%;
 }
 
@@ -180,9 +178,9 @@ h2 {
 
 @media only screen and (max-width: 428px) {
   .submit_form {
-    margin-top: 25%;
-    padding: 20px;
+    padding: 10px;
     width: 90%;
+    margin-top: 25%;
   }
 }
 </style>

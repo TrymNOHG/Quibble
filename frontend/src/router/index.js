@@ -3,6 +3,7 @@ import LoginView from "@/views/LoginView.vue";
 import RegisterView from "@/views/RegisterView.vue";
 import TheWelcomeComponent from "@/components/TheWelcomeComponent.vue";
 import HomePageView from "@/views/HomePageView.vue";
+import CurrentQuizView from "@/views/CurrentQuizView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,25 +14,30 @@ const router = createRouter({
         component: TheWelcomeComponent,
       },
       {
-        path: '/login',
-        name: 'login',
-        component: LoginView,
-      },
-      {
-          path: '/register',
-          name: 'register',
-          component: RegisterView,
+        path: '/register',
+        name: 'register',
+        component: RegisterView,
       },
       {
           path: '/home',
           name: 'homepage',
           component: HomePageView,
-      }
+      },
+      {
+          path: '/quiz/current',
+          name: 'CurrentQuiz',
+          component: CurrentQuizView
+      },
+      {
+          path: '/login',
+          name: 'Login',
+          component: LoginView,
+      },
   ]
 })
 
 // When auth fixed
-
+//TODO
 /*
 router.beforeEach((to, from, next) => {
   const userStore = useLoggedInStore();
