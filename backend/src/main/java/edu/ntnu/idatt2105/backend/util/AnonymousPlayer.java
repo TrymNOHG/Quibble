@@ -2,8 +2,14 @@ package edu.ntnu.idatt2105.backend.util;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class represents an anonymous player in the quiz game.
@@ -12,19 +18,10 @@ import java.util.List;
  * @author brage
  */
 @Data
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AnonymousPlayer {
-    private String username;
-    private int score;
-    private List<Boolean> answers;
-
-    /**
-     * Method for checking if the player has answered a question.
-     *
-     * @param questionIndex The index of the question to check if the player has answered.
-     * @return True if the player has answered the question, false if the player has not answered the question.
-     */
-    public boolean hasAnsweredQuestion(int questionIndex) {
-        return answers.get(questionIndex);
-    }
+    @NonNull private String username;
+    private int score = 0;
+    private Map<Integer, Boolean> correctAnswers = new HashMap<>();
+    private Map<Integer, Instant> answerTimes = new HashMap<>();
 }

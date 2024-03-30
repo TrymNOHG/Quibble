@@ -1,11 +1,16 @@
 package edu.ntnu.idatt2105.backend.service.websocket;
 
+import edu.ntnu.idatt2105.backend.dto.websocket.SendAlternativesDTO;
 import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
+import edu.ntnu.idatt2105.backend.model.quiz.question.MultipleChoice;
 import edu.ntnu.idatt2105.backend.model.quiz.question.Question;
 import edu.ntnu.idatt2105.backend.model.users.User;
 import edu.ntnu.idatt2105.backend.repo.quiz.QuizRepository;
+import edu.ntnu.idatt2105.backend.repo.quiz.question.MultipleChoiceRepository;
 import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
 import edu.ntnu.idatt2105.backend.service.JWTTokenService;
+import edu.ntnu.idatt2105.backend.service.quiz.QuestionService;
+import edu.ntnu.idatt2105.backend.service.quiz.QuizService;
 import edu.ntnu.idatt2105.backend.util.Game;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +31,7 @@ public class GameService {
     private final UserRepository userRepository;
     private final JWTTokenService jwtTokenService;
     private final QuizRepository quizRepository;
+    private final QuestionService questionService;
     Logger logger = Logger.getLogger(GameService.class.getName());
 
     /**
@@ -81,5 +87,16 @@ public class GameService {
 
     public boolean deleteAnonUserFromGame(UUID uuid) {
         return rooms.values().stream().anyMatch(game -> game.getAnonymousPlayers().remove(uuid) != null);
+    }
+
+    public SendAlternativesDTO getAlternatives(String code) {//TODO: flytt til QuestionService for å fikse error
+        Game game = rooms.get(code);
+        Question question = game.getQuestions().get(game.getQuestionIndex());
+        return questionService.getAlternatives(question.getQuestionId());
+    }
+
+    public void beginAnsweringTimer(String code) {
+        Game game = rooms.get(code);
+        game.startTimer();
     }
 }

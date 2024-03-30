@@ -3,26 +3,27 @@ package edu.ntnu.idatt2105.backend.service.websocket;
 import com.corundumstudio.socketio.AckRequest;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
-import edu.ntnu.idatt2105.backend.dto.quiz.QuestionStartedDTO;
-import edu.ntnu.idatt2105.backend.dto.websocket.CreateGameDTO;
-import edu.ntnu.idatt2105.backend.dto.websocket.JoinGameDTO;
-import edu.ntnu.idatt2105.backend.dto.websocket.GameValidationDTO;
-import edu.ntnu.idatt2105.backend.dto.websocket.SubmitAnswerDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.QuestionDTO;
+import edu.ntnu.idatt2105.backend.dto.websocket.*;
 import edu.ntnu.idatt2105.backend.model.quiz.question.MultipleChoice;
 import edu.ntnu.idatt2105.backend.model.quiz.question.Question;
 import edu.ntnu.idatt2105.backend.service.JWTTokenService;
+import edu.ntnu.idatt2105.backend.service.quiz.QuestionService;
 import edu.ntnu.idatt2105.backend.service.quiz.QuizService;
 import edu.ntnu.idatt2105.backend.service.users.UserService;
 import edu.ntnu.idatt2105.backend.util.Game;
 import jakarta.annotation.PostConstruct;
-import jakarta.annotation.PreDestroy;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+import org.springframework.core.env.Environment;
 
-import java.util.Objects;
-import java.util.Optional;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
 /**
@@ -61,12 +62,24 @@ public class SocketService {
     private final JWTTokenService jwtTokenService;
     private final QuizService quizService;
     private final UserService userService;
+    private final QuestionService questionService;
+    private final Environment env;
+
 
     /**
      * Inits the socket io service. All listeners are added.
      */
     @PostConstruct
     public void initSocketIoService() {
+        AtomicBoolean isTest = new AtomicBoolean(false);
+        Arrays.stream(env.getActiveProfiles()).forEach(env -> {
+            if (env.equals("test")) {
+                isTest.set(true);
+            }
+        });
+        if(isTest.get()) {
+            return;
+        }
         server.addConnectListener(this::onConnect);
         server.addDisconnectListener(this::onDisconnect);
         server.addEventListener("createGame", CreateGameDTO.class, this::createGame);
@@ -76,6 +89,7 @@ public class SocketService {
         server.addEventListener("answerQuestion", SubmitAnswerDTO.class, this::answerQuestion);
         server.addEventListener("revealAnswer", GameValidationDTO.class, this::revealAnswer);
         server.addEventListener("beginAnswering", GameValidationDTO.class, this::beginAnswering);
+        server.addEventListener("getScoreBoard", GameValidationDTO.class, this::getScoreBoard);
 
         server.start();
     }
@@ -101,6 +115,9 @@ public class SocketService {
         logger.info("a user disconnected: " + client.getSessionId());
         if(gameService.deleteAnonUserFromGame(client.getSessionId())) {
             logger.info("Anon player deleted from game: " + client.getSessionId());
+            String code = getRoomCode(client);
+            String username = gameService.getGame(code).getAnonymousPlayers().get(client.getSessionId()).getUsername();
+            server.getRoomOperations(code).sendEvent("playerLeft", username);
         }
 
         if(gameService.deleteGameFromUUID(client.getSessionId())) {
@@ -160,27 +177,30 @@ public class SocketService {
         boolean hasToken = data.jwt() != null;
         if (hasToken) { // Logged in user scenario
             Jwt jwt = jwtTokenService.getJwt(data.jwt());
-            if (!jwtTokenService.isValidToken(jwt))
-                throw new RuntimeException("Invalid token"); // Lag bedre exception
-            if (!game.addPlayer(userService.getUserByEmail(jwt.getSubject()))) {
-                logger.info("User is already in the game, rejoining! User email: " + jwt.getSubject());
+            if (!jwtTokenService.isValidToken(jwt)) {
+                client.sendEvent("invalidToken", "Invalid token");
+                return;
+            }
+            if (!game.addPlayer(userService.getUserByEmail(jwt.getSubject()), client.getSessionId())) {
+                logger.info("User is already in the game, rejoining! WebsocketID updated. User email: " + jwt.getSubject());
+            } else {
+                server.getRoomOperations("playerJoined", jwt.getSubject());
             }
             if (game.isStarted()) {
-                client.sendEvent("gameStarted", "The game has already started");
+                client.sendEvent("waitForQuestion", "The game has already started");
                 client.sendEvent("yourScore", game.getPlayers().stream().filter(
                         player -> player.getUser().getEmail().equals(jwt.getSubject())).findFirst().get().getScore()
                 );
             }
+
         } else { // Anonymous user scenario
             // Rejoining won't really work, as the user will have another session ID when rejoining.
             // Instead, cookies or some other temp storage could be a solution
-            if (!game.addPlayer(client.getSessionId(), data.username())) {
-                logger.info("Anon user is already in the game, rejoining! User session ID: "
-                        + client.getSessionId());
-            }
+            game.addPlayer(client.getSessionId(), data.username());
+            server.getRoomOperations("playerJoined", data.username());
+
         }
 
-        //TODO: debug
         logger.info("anon players " + game.getAnonymousPlayers().toString());
         logger.info("Logged in players" + game.getPlayers().toString());
 
@@ -197,13 +217,15 @@ public class SocketService {
      * @param data The data sent with the event
      * @param ackRequest The ack request
      */
-    private void startGame(SocketIOClient client, GameValidationDTO data, AckRequest ackRequest) {
+    @Transactional
+    public void startGame(SocketIOClient client, GameValidationDTO data, AckRequest ackRequest) {
         logger.info("startGame event received: " + data);
         Game game = validateIsHostAndReturnGame(client, data);
         if (game == null)
             return;
         game.startGame();
-        server.getRoomOperations(game.getCode()).sendEvent("gameStarted", "The game has started");
+        client.sendEvent("getQuestion", questionService.getQuestionDTIO(game.getCurrentQuestion().getQuestionId()));
+        server.getRoomOperations(game.getCode()).sendEvent("waitForQuestion", "The game is starting");
     }
 
     /**
@@ -224,12 +246,26 @@ public class SocketService {
         if (game.nextQuestion()) {
             // Send the question and alternatives to everyone in the room. The host can show the question on a screen.
             // The players can answer the question.
-            server.getRoomOperations(game.getCode()).sendEvent("questionStarted", getQuestionStartedDTO(game)); // TODO: Send the question here.
+            client.sendEvent(
+                    "getQuestion", questionService.getQuestionDTIO(game.getCurrentQuestion().getQuestionId())
+            );
+            server.getRoomOperations(game.getCode()).sendEvent(
+                    "waitForQuestion", "The question has started. Look at the screen!"
+            );
         } else {
             server.getRoomOperations(game.getCode()).sendEvent("gameEnded", "The game has ended");
         }
     }
 
+    /**
+     * This method is called when the "beginAnswering" event is received.
+     * It begins the answering phase of the game. The host can show the question on a screen and the players can answer
+     * the question.
+     *
+     * @param client The client that sent the event
+     * @param data The data sent with the event
+     * @param ackRequest The ack request
+     */
     private void beginAnswering(SocketIOClient client, GameValidationDTO data, AckRequest ackRequest) {
         logger.info("beginAnswering event received: " + data);
         Game game = validateIsHostAndReturnGame(client, data);
@@ -237,8 +273,9 @@ public class SocketService {
             client.sendEvent("gameDoesNotExist", data);
             return;
         }
-        String questionType = game.getCurrentQuestion().getQuestionType().toString();
-        server.getRoomOperations(game.getCode()).sendEvent("beginAnswering", questionType);
+        SendAlternativesDTO alternatives = gameService.getAlternatives(game.getCode());
+        gameService.beginAnsweringTimer(game.getCode());
+        server.getRoomOperations(game.getCode()).sendEvent("beginAnswering", alternatives);
     }
 
     /**
@@ -251,36 +288,40 @@ public class SocketService {
      * @param ackRequest The ack request
      */
     private void answerQuestion(SocketIOClient client, SubmitAnswerDTO data, AckRequest ackRequest) {
-//        boolean isPlayerSignedIn = data.jwt() != null;
-//
-//        logger.info("answerQuestion event received: " + data);
-//        String code = getRoomCode(client);
-//
-//        if (code.isEmpty()) {
-//            client.sendEvent("gameDoesNotExist", data);
-//            return;
-//        }
-//        Game game = gameService.getGame(code);
-//        if (isPlayerSignedIn) {
-//            Jwt jwt = jwtTokenService.getJwt(data.jwt());
-//            if (!jwtTokenService.isValidToken(jwt)) {
-//                client.sendEvent("invalidToken", "Invalid token");
-//                return;
-//            }
-//
-//
-//        } else {
-//            if (!game.answerQuestion(data, client.getSessionId())) {
-//                client.sendEvent("gameEnded", "The game has ended");
-//            }
-//        }
-//
-//
-//        if (game.answerQuestion(data)) {
-//           client.sendEvent("questionAnswered", "The question has been answered");
-//        } else {
-//            client.sendEvent("gameEnded", "The game has ended");
-//        }
+        boolean isPlayerSignedIn = data.jwt() != null;
+
+        logger.info("answerQuestion event received: " + data);
+        String code = getRoomCode(client);
+
+        if (code.isEmpty()) {
+            client.sendEvent("gameDoesNotExist", data);
+            return;
+        }
+        Game game = gameService.getGame(code);
+        String correctAnswer = questionService.getCorrectAnswer(game.getCurrentQuestion().getQuestionId());
+        if (isPlayerSignedIn) {
+            logger.info("Player is signed in ans answering a question");
+            Jwt jwt = jwtTokenService.getJwt(data.jwt());
+            if (!jwtTokenService.isValidToken(jwt)) {
+                client.sendEvent("invalidToken", "Invalid token");
+                return;
+            }
+            if (game.answerQuestion(data.answer(), jwt.getSubject(), correctAnswer)) {
+                logger.info("Player answered the question");
+                client.sendEvent("questionAnswered", "The question has been answered");
+            } else {
+                logger.info("Player did not answer the question");
+                client.sendEvent("questionAnswered", "Too late, or you have already answered the question");
+            }
+        } else {
+            if (game.answerQuestionAnon(data.answer(), client.getSessionId(), correctAnswer)) {
+                logger.info("Player answered the question");
+                client.sendEvent("questionAnswered", "The question has been answered");
+            } else {
+                logger.info("Player did not answer the question");
+                client.sendEvent("questionAnswered", "Too late, or you have already answered the question");
+            }
+        }
     }
 
     /**
@@ -297,25 +338,24 @@ public class SocketService {
         Game game = validateIsHostAndReturnGame(client, data);
         if (game == null)
             return;
-        server.getRoomOperations(game.getCode()).sendEvent("answerRevealed", game.getCurrentQuestion().getCorrectAnswer());
+        server.getAllClients().forEach(playerClient -> {
+            if (playerClient.getAllRooms().contains(game.getCode())) {
+                playerClient.sendEvent("answerRevealed", game.answeredCorrect(playerClient.getSessionId()));
+            }
+        });
     }
 
-
-
-    /**
-     * Converts a game to a QuestionStartedDTO. This is used to send the question to the clients.
-     *
-     * @param game The game to convert
-     * @return The converted game
-     */
-    private QuestionStartedDTO getQuestionStartedDTO(Game game) {
-        Question currentQuestion = game.getCurrentQuestion();
-        return QuestionStartedDTO.builder()
-                .question(currentQuestion.getQuestion())
-                .options(currentQuestion.getChoices().stream().map(MultipleChoice::getAlternative).toList())
-                .questionType(currentQuestion.getQuestionType().toString())
-                .difficulty(currentQuestion.getDifficulty().toString())
-                .build();
+    private void getScoreBoard(SocketIOClient client, GameValidationDTO data, AckRequest ackRequest) {
+        logger.info("getScoreBoard event received from client: " + client.getSessionId());
+        Game game = validateIsHostAndReturnGame(client, data);
+        if (game == null)
+            return;
+        LeaderboardDTO leaderboard = game.getLeaderboard();
+        client.sendEvent("getScoreBoard", leaderboard);
+        List<UUID> players = game.getAllPlayerUUIDs();
+        for (UUID player : players) {
+            server.getClient(player).sendEvent("yourScore", game.getPlayerScore(player));
+        }
     }
 
     /**
@@ -346,6 +386,7 @@ public class SocketService {
     }
 
     private String getRoomCode(SocketIOClient client) {
-        return client.getAllRooms().stream().filter(room -> !room.isBlank()).findFirst().orElseThrow();
+        logger.info("all rooms from lient " + client.getSessionId() + ": " + client.getAllRooms().toString());
+        return client.getAllRooms().stream().filter(room -> !room.isBlank()).findFirst().orElse(null);
     }
 }

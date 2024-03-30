@@ -18,6 +18,5 @@ import lombok.Builder;
 @Builder
 public record SubmitAnswerDTO(
         @Nullable @JsonProperty String jwt,
-        @Nullable @JsonProperty String username,
         @NotNull @JsonProperty String answer
 ) {}

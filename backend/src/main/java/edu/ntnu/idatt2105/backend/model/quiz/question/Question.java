@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -58,6 +59,7 @@ public class Question {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ToString.Exclude
     @Schema(description = "The quiz's history.")
+    @Builder.Default
     private Set<MultipleChoice> choices = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -65,17 +67,4 @@ public class Question {
     @ToString.Exclude
     @Schema(description = "The quiz the question belongs to.")
     private Quiz quiz;
-
-    /**
-     * Returns the correct answer for the question.
-     *
-     * @return the correct answer for the question
-     */
-    public String getCorrectAnswer() {
-        if(this.answer == null)
-            return this.choices.stream().filter(MultipleChoice::isCorrect).findFirst().orElseThrow(
-                    () -> new IllegalStateException("No correct answer found for question " + this.questionId)
-                    ).getAlternative();
-        return this.answer;
-    }
 }

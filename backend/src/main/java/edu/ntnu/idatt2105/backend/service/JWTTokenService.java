@@ -56,7 +56,7 @@ public class JWTTokenService {
      * @param jwt The JWT token.
      * @return The user id.
      */
-    public String getUserId(Jwt jwt) {
+    public long getUserId(Jwt jwt) {
         return jwt.getClaim("id");
     }
 

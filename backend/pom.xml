@@ -126,7 +126,7 @@
             <version>3.0.0</version>
         </dependency>
 
-        <!--Websocket-->
+        <!--Websocket server-->
         <dependency>
             <groupId>com.corundumstudio.socketio</groupId>
             <artifactId>netty-socketio</artifactId>

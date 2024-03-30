@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
@@ -19,6 +20,8 @@ import java.util.logging.Logger;
 public class SocketIoConfig {
     private final Logger logger = Logger.getLogger(SocketIoConfig.class.getName());
     private final Environment env;
+    private SocketIOServer socketIOServer;
+    private boolean isTesting = false;
 
     /**
      * Bean method for creating a socket.io server.
@@ -27,7 +30,11 @@ public class SocketIoConfig {
      */
     @Bean
     public SocketIOServer socketIOServer() {
-
+        AtomicBoolean isTest = new AtomicBoolean(false);
+        if(isTest.get()) {
+            isTesting = true;
+            return null;
+        }
         AtomicReference<String> host = new AtomicReference<>("localhost");
         Configuration config = new Configuration();
         Arrays.stream(env.getActiveProfiles()).forEach(env -> {
@@ -41,7 +48,8 @@ public class SocketIoConfig {
         config.setHostname(host.get());
         config.setPort(3000);
 
-        return new SocketIOServer(config);
+        socketIOServer = new SocketIOServer(config);
+        return socketIOServer;
     }
 
     /**
@@ -49,7 +57,9 @@ public class SocketIoConfig {
      */
     @PreDestroy
     public void stopSocketIOServer() {
+        if (isTesting)
+            return;
         logger.info("Stopping socket.io server");
-        socketIOServer().stop();
+        socketIOServer.stop();
     }
 }

@@ -4,26 +4,21 @@ import edu.ntnu.idatt2105.backend.model.users.User;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
-import java.util.List;
+import java.time.Instant;
+import java.util.*;
 
 /**
  * This class represents a player in the quiz game.
  */
 @Data
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class Player {
-    private User user;
-    private int score;
-    private List<Boolean> answers;
-
-    /**
-     * Method for checking if the player has answered a question.
-     *
-     * @param questionIndex The index of the question to check if the player has answered.
-     * @return True if the player has answered the question, false if the player has not answered the question.
-     */
-    public boolean hasAnsweredQuestion(int questionIndex) {
-        return answers.get(questionIndex);
-    }
+    @NonNull private User user;
+    @NonNull private UUID webSocketId;
+    private int score = 0;
+    private Map<Integer, Boolean> correctAnswers = new HashMap<>();
+    private Map<Integer, Instant> answerTimes = new HashMap<>();
 }

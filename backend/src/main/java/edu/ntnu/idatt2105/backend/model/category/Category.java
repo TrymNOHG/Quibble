@@ -47,6 +47,7 @@ public class Category {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ToString.Exclude
     @Schema(description = "The quiz's the category is a part of.")
+    @Builder.Default
     private Set<QuizCategory> quizCategories = new HashSet<>();
 
 }

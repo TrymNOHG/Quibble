@@ -54,35 +54,41 @@ public class Quiz {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ToString.Exclude
     @Schema(description = "The quiz's history.")
+    @Builder.Default
     private Set<QuizHistory> quizHistory = new HashSet<>();
 
     @OneToMany(mappedBy = "quiz")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ToString.Exclude
     @Schema(description = "The quiz's feedbacks.")
+    @Builder.Default
     private Set<QuizFeedback> feedbacks = new HashSet<>();
 
     @OneToMany(mappedBy = "quiz")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ToString.Exclude
     @Schema(description = "The collaborators on the quiz.")
+    @Builder.Default
     private Set<QuizAuthor> collaborators = new HashSet<>();
 
     @OneToMany(mappedBy = "quiz")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ToString.Exclude
     @Schema(description = "The quiz's categories.")
+    @Builder.Default
     private Set<QuizCategory> categories = new HashSet<>();
 
     @OneToMany(mappedBy = "quiz")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ToString.Exclude
     @Schema(description = "The quiz's questions.")
+    @Builder.Default
     private Set<Question> questions = new HashSet<>();
 
     @OneToMany(mappedBy = "quiz")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ToString.Exclude
     @Schema(description = "The quiz's keywords.")
+    @Builder.Default
     private Set<QuizKeyword> keywords = new HashSet<>();
 }
