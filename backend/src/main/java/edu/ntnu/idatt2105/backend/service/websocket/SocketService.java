@@ -299,8 +299,12 @@ public class SocketService {
         }
         Game game = gameService.getGame(code);
         String correctAnswer = questionService.getCorrectAnswer(game.getCurrentQuestion().getQuestionId());
+        logger.info("Correct answer: " + correctAnswer + ", your answer: " + data.answer());
+        if (game.everyoneAnswered()) {
+            server.getRoomOperations(code).sendEvent("everyoneAnswered", "Every user has answered the question");
+        }
         if (isPlayerSignedIn) {
-            logger.info("Player is signed in ans answering a question");
+            logger.info("Player is signed in and answering a question");
             Jwt jwt = jwtTokenService.getJwt(data.jwt());
             if (!jwtTokenService.isValidToken(jwt)) {
                 client.sendEvent("invalidToken", "Invalid token");
@@ -354,6 +358,7 @@ public class SocketService {
         client.sendEvent("getScoreBoard", leaderboard);
         List<UUID> players = game.getAllPlayerUUIDs();
         for (UUID player : players) {
+            logger.info("score of player: " +game.getPlayerScore(player));
             server.getClient(player).sendEvent("yourScore", game.getPlayerScore(player));
         }
     }

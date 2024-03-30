@@ -6,6 +6,7 @@ import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
 import edu.ntnu.idatt2105.backend.model.quiz.question.Question;
 import edu.ntnu.idatt2105.backend.model.users.User;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.antlr.v4.runtime.misc.Triple;
 
 import java.time.Instant;
@@ -16,6 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * This class represents a room in the quiz game.
  */
 @Data
+@Slf4j
 public class Game {
     private String code;
     private final List<Player> players = new ArrayList<>();
@@ -123,23 +125,28 @@ public class Game {
         Instant now = Instant.now();
         AnonymousPlayer anonPlayer = anonymousPlayers.get(userId);
         if (anonPlayer.getAnswerTimes().get(questionIndex) != null) {
+            log.info("Already answered");
             return false;
         }
         anonPlayer.getAnswerTimes().put(questionIndex, now);
         float seconds = now.getEpochSecond() - answerStart.get(questionIndex).getEpochSecond();
         if (seconds > maxQuestionTime) {
+            log.info("Answered too late");
             return false;
         }
         if (answer.equals(correctAnswer)) {
             if(anonPlayer.getCorrectAnswers().containsKey(questionIndex)){
+                log.info("Already answered");
                 return false;
             }
             anonPlayer.getCorrectAnswers().put(questionIndex, true);
             anonPlayer.setScore((int) (anonPlayer.getScore() + (1000 * (1 - seconds / maxQuestionTime))));
+            log.info("Question answered correctly, you got " + (int) (1000 * (1 - seconds / maxQuestionTime)) + " points!");
         } else {
+            log.info("Question answered incorrectly");
             anonPlayer.getCorrectAnswers().put(questionIndex, false);
         }
-        return false;
+        return true;
 
     }
 
@@ -212,5 +219,19 @@ public class Game {
             }
         }
         return anonymousPlayers.get(player).getScore();
+    }
+
+    public boolean everyoneAnswered() {
+        for (Player player : players) {
+            if (player.getAnswerTimes().containsKey(questionIndex)) {
+                return false;
+            }
+        }
+        for (AnonymousPlayer player : anonymousPlayers.values()) {
+            if (player.getAnswerTimes().containsKey(questionIndex)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

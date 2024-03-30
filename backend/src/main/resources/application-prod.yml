@@ -4,4 +4,3 @@ spring:
     url: jdbc:mysql://db:3306/db
     username: root
     password: yourpassword
-    driver-class-name: com.mysql.cj.jdbc.Driver
