@@ -26,11 +26,11 @@ services:
     depends_on:
       - db
     restart: on-failure
-  vuejs:
-    depends_on:
-      - app
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    ports:
-      - "5173:80"
+  #vuejs:
+  #  depends_on:
+  #    - app
+  #  build:
+  #    context: ./frontend
+  #    dockerfile: Dockerfile
+  #  ports:
+  #    - "5173:80"

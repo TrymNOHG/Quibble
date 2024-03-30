@@ -1,3 +1,59 @@
 {
+  "titles": {
+    "REGISTER": "Register",
+    "AUTHORS": "Authors",
+    "ADD_NEW_AUTHOR": "Add New Author",
+    "QUESTION_LIST": "Question List"
+  },
+  "placeholders": {
+    "EMAIL": "Email",
+    "GAME_PIN": "Game Pin",
+    "USERNAME": "Username",
+    "PASSWORD": "Password",
+    "SEARCH": "Search ...",
+    "CONFIRM_PASSWORD": "Confirm Password"
+  },
+  "buttons": {
+    "ONE_PLAYER": "One Player",
+    "MULTI_PLAYER": "Multi Player",
+    "DELETE_QUIZ": "Delete Quiz",
+    "NEW_QUESTION": "New Question",
+    "IMPORT_QUESTION": "Import Question",
+    "ALL_DIFFICULTIES": "All difficulties",
+    "ADD_AUTHOR": "Add Author",
+    "CANCEL": "Cancel",
+    "REGISTER": "Register",
+    "LOGIN": "Login",
+    "START_GAME": "START SPILL"
+  },
 
+  "login_register_text": {
+    "LOGIN_MESSAGE": "Here you can",
+    "LOGIN": "log in",
+    "OR": "or",
+    "REGISTER": "register for free",
+    "NO_ACCOUNT_MESSAGE": "Don't have an account?"
+  },
+  "quiz_card": {
+    "QUESTIONS_LABEL": "Questions",
+    "DESCRIPTION": "Description"
+  },
+  "messages": {
+    "ALREADY_HAVE_ACCOUNT": "Already have an account?"
+  },
+  "error_messages": {
+    "USERNAME_REQUIRED": "Username is required",
+    "PASSWORD_REQUIRED": "Password is required"
+  },
+  "dropdown_options": {
+    "DIFFICULTY": "Difficulty",
+    "EASY": "Easy",
+    "MEDIUM": "Medium",
+    "HARD": "Hard"
+  },
+  "delete_modal": {
+    "TITLE": "Do you want to delete this?",
+    "YES": "Yes",
+    "NO": "No"
+  }
 }

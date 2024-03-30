@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController("publicUserController")
 @EnableAutoConfiguration
 @RequiredArgsConstructor
+@CrossOrigin("*")
 @Slf4j
 @RequestMapping(value = "/api/v1/public/users")
 public class UserController implements IUserController {
@@ -35,6 +37,7 @@ public class UserController implements IUserController {
 
     @Override
     public ResponseEntity<Object> login(UserLoginDTO user) {
+
         //TODO: check both email and username. For login.
         return null;
     }
