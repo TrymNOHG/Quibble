@@ -1,6 +1,7 @@
 package edu.ntnu.idatt2105.backend.dto.security;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 
 /**
