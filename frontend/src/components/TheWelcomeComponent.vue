@@ -139,8 +139,26 @@ export default {
 }
 
 @media only screen and (max-width: 428px) {
+  .welcome_div {
+    height: auto;
+  }
+
+  .join_game_box{
+    height: 150px;
+    width: 300px;
+  }
+
   .page_info {
-    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 2fr 1fr;
+  }
+
+  .pin_input {
+    height: 40px;
+  }
+
+  .btn {
+    height: 35px;
   }
 }
+
 </style>

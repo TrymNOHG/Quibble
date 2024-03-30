@@ -1,5 +1,6 @@
 package edu.ntnu.idatt2105.backend.controller.pub.authentication;
 
+import edu.ntnu.idatt2105.backend.dto.users.UserRegisterDTO;
 import edu.ntnu.idatt2105.backend.dto.security.AuthenticationResponseDTO;
 import edu.ntnu.idatt2105.backend.dto.users.UserRegisterDTO;
 import edu.ntnu.idatt2105.backend.service.AuthenticationService;
@@ -32,10 +33,10 @@ import java.util.logging.Logger;
  * @author brage
  * @version 1.0 24.03.2024
  */
-@CrossOrigin("*")
-@RequiredArgsConstructor
-@RestController
 @RequestMapping("/api/v1/public/auth")
+@RestController
+@RequiredArgsConstructor
+@CrossOrigin("*")
 @SecurityScheme(
         name = "basicAuth",
         type = SecuritySchemeType.HTTP,
@@ -76,15 +77,17 @@ public class AuthenticationController implements IAuthenticationController {
     )
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponseDTO> login(Authentication authentication, HttpServletResponse httpServletResponse) {
-        logger.info("Starting login process.");
-        return ResponseEntity.ok(authenticationService.getTokensFromAuth(authentication, httpServletResponse));
+        logger.info("Starting Login Process.");
+        AuthenticationResponseDTO authenticationResponseDTO = authenticationService.getTokensFromAuth(authentication, httpServletResponse);
+        logger.info("Login Process Completed.");
+        return ResponseEntity.ok(authenticationResponseDTO);
     }
 
     /**
      * Endpoint for signing up. This endpoint registers a new user and returns the access and refresh token.
      * The access token is returned in the response body and the refresh token is returned as a cookie.
      *
-     * @param userRegisterDto The user register dto
+     * @param userRegisterDTO The user register dto
      * @param httpServletResponse The http response
      * @param bindingResult The binding result
      * @return The access token
@@ -98,16 +101,19 @@ public class AuthenticationController implements IAuthenticationController {
                     Registers a new user and returns the access and refresh tokens. The access token is returned in the response body, and the refresh token is returned as a cookie. Provide user registration details in the request body.
                     """)
     @PostMapping("/signup")
-    public ResponseEntity<AuthenticationResponseDTO> signup(@Valid @RequestBody UserRegisterDTO userRegisterDto,
+    public ResponseEntity<AuthenticationResponseDTO> signup(@Valid @RequestBody UserRegisterDTO userRegisterDTO,
                                           HttpServletResponse httpServletResponse, BindingResult bindingResult){
-        logger.info("Calls signup endpoint");
+        logger.info("Calling signup endpoint");
         if (bindingResult.hasErrors()) {
             List<String> e = bindingResult.getAllErrors().stream()
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)
                     .toList();
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.toString());
         }
-        return ResponseEntity.ok(authenticationService.registerUser(userRegisterDto,httpServletResponse));
+
+        AuthenticationResponseDTO authenticationResponseDTO = authenticationService.registerUser(userRegisterDTO,httpServletResponse);
+        logger.info("Sign-up Process Completed.");
+        return ResponseEntity.ok(authenticationResponseDTO);
     }
 
     /**

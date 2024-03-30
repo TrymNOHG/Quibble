@@ -17,6 +17,11 @@
               <font-awesome-icon class="icon" icon="fa-solid fa-home"/>
           </li>
         </router-link>
+        <router-link to="/">
+          <li>
+            <font-awesome-icon class="icon" icon="fa-solid fa-play" />
+          </li>
+        </router-link>
         <router-link to="/quiz">
           <li>
             <font-awesome-icon class="icon" icon="fa-solid fa-puzzle-piece"/>
@@ -39,14 +44,14 @@
 </template>
 
 <script>
-import { useRoute, useRouter } from 'vue-router';
+import TheWelcomeComponent from "@/components/TheWelcomeComponent.vue";
 
 export default {
+  components: { TheWelcomeComponent },
 }
 </script>
 
-<style>
-
+<style scoped>
 header {
   background-color: #8521b0;
   width: 100%;
@@ -129,6 +134,8 @@ li:hover {
 
   li {
     padding: 8px;
+    width: 50px;
+    height: 50px;
   }
 }
 

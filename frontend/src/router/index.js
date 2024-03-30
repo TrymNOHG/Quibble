@@ -1,10 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import LoginView from "@/views/LoginView.vue";
 import RegisterView from "@/views/RegisterView.vue";
 import TheWelcomeComponent from "@/components/TheWelcomeComponent.vue";
 import Quiz_comp from "@/components/QuizPlaing/Quiz_comp.vue";
 import HomePageView from "@/views/HomePageView.vue";
+import CurrentQuizView from "@/views/CurrentQuizView.vue";
 import {useUserStore} from "@/stores/counter.js";
-import LoginView from "@/views/LoginView.vue";
 import ProfileView from "@/views/PrivateProfileView.vue";
 
 const router = createRouter({
@@ -23,16 +24,20 @@ const router = createRouter({
         meta: { requiresAuth: false }
       },
       {
-        path: '/login',
-        name: 'login',
-        component: LoginView,
-        meta: { requiresAuth: false }
-      },
-      {
           path: '/home',
           name: 'homepage',
           component: HomePageView,
           meta: { requiresAuth: true }
+      },
+      {
+          path: '/quiz/current',
+          name: 'CurrentQuiz',
+          component: CurrentQuizView
+      },
+      {
+          path: '/login',
+          name: 'Login',
+          component: LoginView,
       },
         {
             path: '/quiz',
@@ -51,13 +56,15 @@ const router = createRouter({
 })
 
 // When auth fixed
-
+//TODO
 /*
 router.beforeEach((to, from, next) => {
     const store = useUserStore();
     const isAuthenticated = store.isAuth
 
   const notRequiresAuth = to.matched.some(record => record.meta.requiresAuth === false);
+  const requiresCurrentFridge = to.matched.some(record => record.meta.requiresCurrentFridge === true);
+
 
   if (to.matched.length === 0) {
     next({ path: '/' });
@@ -72,6 +79,7 @@ router.beforeEach((to, from, next) => {
       if (!isAuthenticated) {
           next({path: '/'});
       }
+    }
   }
 });
 */
