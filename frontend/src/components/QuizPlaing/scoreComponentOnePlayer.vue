@@ -2,7 +2,6 @@
   <div class="score-container single-player">
     <h2>Your Score</h2>
     <div class="score-item">
-      <span class="player-number">{{ player.rank }}</span>
       <img :src="player.image" class="player-image" alt="Player Profile" />
       <div class="player-details">
         <span class="player-name">{{ player.name }}</span>
@@ -11,6 +10,7 @@
     </div>
   </div>
 </template>
+
 
 <script>
 export default {
@@ -22,6 +22,7 @@ export default {
   }
 }
 </script>
+
 
 <style scoped>
 .score-container {
@@ -37,13 +38,14 @@ export default {
 
 .single-player h2 {
   margin-bottom: 20px;
-  color: #CC00FF; /* Using the same color for consistency */
-  text-transform: uppercase; /* Making the header stand out */
+  color: #CC00FF;
+  text-transform: uppercase;
 }
 
 .score-item {
   display: flex;
   align-items: center;
+  justify-content: center; /* Center items for a cleaner look */
   background-color: #CC00FF;
   color: #fff;
   padding: 20px;
@@ -51,33 +53,27 @@ export default {
   border-radius: 5px;
 }
 
-.player-number {
-  font-size: 3em; /* Large font size for ranking */
-  font-weight: bold;
-  margin-right: 15px;
-}
-
 .player-image {
-  width: 100px; /* Slightly larger image for single player */
-  height: 100px;
+  width: 120px; /* Increased size for focus */
+  height: 120px;
   border-radius: 50%;
-  border: 4px solid #fff; /* White border around the image */
-  margin-right: 15px;
+  border: 4px solid #fff;
+  margin-right: 20px; /* Increased spacing */
 }
 
 .player-details {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center; /* Center-aligned for single-player focus */
 }
 
 .player-name {
-  font-size: 1.5em; /* Larger font size for better readability */
-  margin-bottom: 5px;
+  font-size: 2em;
+  margin-bottom: 10px; /* Increased spacing */
 }
 
 .player-score {
-  font-size: 2em; /* Even larger font size for the score */
+  font-size: 2.5em; /* Larger font size for emphasis */
   font-weight: bold;
 }
 </style>

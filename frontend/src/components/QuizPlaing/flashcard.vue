@@ -29,7 +29,7 @@
 
 
 <script>
-import { ref, watch, onMounted } from 'vue';
+import {ref, watch, onMounted, onUnmounted} from 'vue';
 
 export default {
   props: {
@@ -120,6 +120,10 @@ export default {
       correctSound.loop = false;
       wrongSound.loop = false;
       timerSound.loop = false;
+    });
+
+    onUnmounted(() => {
+      stopTimer();
     });
 
     return {

@@ -17,9 +17,9 @@
 </template>
 
 <script>
-import FlashCard from '@/components/flashcard.vue';
-import ScoreComponent from '@/components/scoreComponent.vue';
-import ScoreComponentOnePlayer from "@/components/scoreComponentOnePlayer.vue";
+import FlashCard from '@/components/QuizPlaing/flashcard.vue';
+import ScoreComponent from '@/components/QuizPlaing/scoreComponent.vue';
+import ScoreComponentOnePlayer from "@/components/QuizPlaing/scoreComponentOnePlayer.vue";
 
 export default {
   components: {
