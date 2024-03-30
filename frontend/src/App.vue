@@ -39,14 +39,14 @@
 </template>
 
 <script>
-import { useRoute, useRouter } from 'vue-router';
-import TheWelcomeComponent from "@/components/TheWelcomeComponent.vue";
-import Login from "@/views/LoginView.vue";
-import Register from "@/views/RegisterView.vue";
-
-export default {
-  components: {Register, Login, TheWelcomeComponent },
-}
+// import { useRoute, useRouter } from 'vue-router';
+// import TheWelcomeComponent from "@/components/TheWelcomeComponent.vue";
+// import LoginView from "@/views/LoginView.vue";
+// import RegisterView from "@/views/RegisterView.vue";
+//
+// export default {
+//   components: {RegisterView, LoginView, TheWelcomeComponent },
+// }
 </script>
 
 <style>

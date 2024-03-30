@@ -65,6 +65,8 @@
 
         <basic_button
             class="submit_button"
+            type="submit"
+            @click="submit"
             :button_text="'Register'"
         />
         <h4>
@@ -82,6 +84,7 @@ import Basic_button from "@/components/BasicComponents/basic_button.vue";
 import { ref } from "vue";
 import router from "@/router/index.js";
 import {useUserStore} from "@/stores/counter.js";
+import {registerUser} from "@/api/services/UserService.js";
 
 export default {
   components: {Basic_button},
@@ -122,7 +125,7 @@ export default {
         passwrd: passwrd.value,
         conf_passwrd: conf_passwrd.value
       };
-
+      console.log("qwerqwer")
       await registerUser(userData)
         .then(async (response) => {
           if (response !== undefined) {
@@ -138,7 +141,6 @@ export default {
           }, 2000);
           console.warn("error", error);
         });
-
     });
 
     const has_err = () => {

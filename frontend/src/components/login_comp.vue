@@ -35,6 +35,8 @@
 
         <basic_button
             class="submit_button"
+            type="submit"
+            @click="submit"
             :button_text="'Login'"
         />
         <h4>
