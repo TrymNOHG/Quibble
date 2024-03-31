@@ -71,7 +71,6 @@ router.beforeEach((to, from, next) => {
   const notRequiresAuth = to.matched.some(record => record.meta.requiresAuth === false);
   const requiresCurrentFridge = to.matched.some(record => record.meta.requiresCurrentFridge === true);
 
-
   if (to.matched.length === 0) {
     next({ path: '/' });
   }

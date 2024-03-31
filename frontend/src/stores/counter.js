@@ -78,6 +78,8 @@ export const useQuizStore = defineStore('storeQuiz', {
             id: null,
             question: "",
             answer: "",
+            answers: [],
+            correctAnswers: [],
             type: ""
           },
         ],
@@ -95,6 +97,26 @@ export const useQuizStore = defineStore('storeQuiz', {
       */
     },
 
+    async editQuestion(editedQuestion){
+      /*
+      TODO: axioscall
+      editQuestionById(this.currentQuiz.quizId, editedQuestion.id)
+      */
+    },
+
+    async addQuestion(newQuestion){
+      /*
+      TODO: axioscall
+      addQuestion(this.currentQuiz.quizId, newQuestion)
+      */
+    },
+
+    async addQuiz() {
+      /*
+      TODO: axioscall
+      addQuizById(user.id, this.currentQuiz.quizId)
+      */
+    },
 
     async deleteQuestion(question_id) {
       for (let index = 0; index < this.currentQuiz.question_list.length; index++) {
@@ -235,28 +257,12 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
 
   actions: {
     async deleteTag(tag) {
-      for (let index = 0; index < this.allAuthors.length; index++) {
-        if (auth.id === this.allAuthors[index].id) {
-          this.allAuthors.splice(index, 1);
-          /*
-          TODO: fjerne auth i backend
-          response = removeAuth(author.username // author-id)
-          this.allAuthors = response;
-           */
-          break;
-        }
-      }
+
     },
 
 
     async addTag(newTag) {
-      this.allAuthors.push({id: 4, username: newAuthor.username})
-      /*
-      TODO: legge til user i backend og returne den nye listen fra backend
-      setNewAuthor(newAuthor)
-      fetchAuthors(this.currentQuiz.quizId)
-      */
-      return this.allAuthors;
+
     },
 
     async createQuiz(questions) {

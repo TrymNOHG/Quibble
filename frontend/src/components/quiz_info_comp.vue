@@ -226,8 +226,13 @@ button{
 }
 
 .quiz-img {
-  width: 150px;
-  height: auto;
+  margin-top: 10px;
+  background-color: rgba(205, 205, 205, 0.96);
+  border-radius: 10px;
+  height: 200px;
+  width: 320px;
+  margin-right: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .quiz-details {

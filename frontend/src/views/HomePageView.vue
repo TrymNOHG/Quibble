@@ -203,112 +203,100 @@ onMounted(() => {
 
 let test_quizzes = ref([
   {
-    QuizId: 1,
-    Name: "Quiz 1",
+    QuizId: null,
+    Name: "TemplateQuiz",
     Difficulty: "Easy",
-    Description: "Test your knowledge with Quiz 1",
+    Description: "Template quiz, change the quiz as wanted",
     Image: "https://via.placeholder.com/150",
     question_list: [
-      { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
-      { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
-      { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
-    ]
+      {
+        id: 1,
+        question: "What is your question?",
+        answer: "John",
+        answers: ["pencil", "book", "John", "quiz"],
+        correctAnswers: [false, true, false, false],
+        type: "multiplechoice"
+      },
+      {
+        id: 2,
+        question: "Are you 21 years old?",
+        answer: "true",
+        answers: ["true", "false"],
+        type: "truefalse"
+      },
+      {
+        id: 3,
+        question: "What is in the center of the milky way",
+        answer: "Black Hole",
+        answers: ["Sun", "Earth", "Venus", "Black Hole"],
+        correctAnswers: [false, true, false, false],
+        type: "multiplechoice"
+      },
+    ],
   },
   {
-    QuizId: 2,
-    Name: "Quiz 2",
+    QuizId: null,
+    Name: "AnotherQuiz",
     Difficulty: "Medium",
-    Description: "Test your knowledge with Quiz 2",
+    Description: "Another quiz description",
     Image: "https://via.placeholder.com/150",
     question_list: [
-      { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
-      { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
-      { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
-    ]
+      {
+        id: 1,
+        question: "What is your question?",
+        answer: "John",
+        answers: ["pencil", "book", "John", "quiz"],
+        correctAnswers: [false, true, false, false],
+        type: "multiplechoice"
+      },
+      {
+        id: 2,
+        question: "Are you 21 years old?",
+        answer: "true",
+        answers: ["true", "false"],
+        type: "truefalse"
+      },
+      {
+        id: 3,
+        question: "What is in the center of the milky way",
+        answer: "Black Hole",
+        answers: ["Sun", "Earth", "Venus", "Black Hole"],
+        correctAnswers: [false, true, false, false],
+        type: "multiplechoice"
+      },
+    ],
   },
   {
-    QuizId: 3,
-    Name: "Quiz 3",
+    QuizId: null,
+    Name: "YetAnotherQuiz",
     Difficulty: "Hard",
-    Description: "Test your knowledge with Quiz 3",
+    Description: "Yet another quiz description",
     Image: "https://via.placeholder.com/150",
     question_list: [
-      { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
-      { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
-      { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
-    ]
-  },
-  {
-    QuizId: 4,
-    Name: "Quiz 4",
-    Difficulty: "Easy",
-    Description: "Test your knowledge with Quiz 4",
-    Image: "https://via.placeholder.com/150",
-    question_list: [
-      { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
-      { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
-      { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
-    ]
-  },
-  {
-    QuizId: 5,
-    Name: "Quiz 5",
-    Difficulty: "Medium",
-    Description: "Test your knowledge with Quiz 5",
-    Image: "https://via.placeholder.com/150",
-    question_list: [
-      { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
-      { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
-      { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
-    ]
-  },
-  {
-    QuizId: 6,
-    Name: "Quiz 6",
-    Difficulty: "Hard",
-    Description: "Test your knowledge with Quiz 6",
-    Image: "https://via.placeholder.com/150",
-    question_list: [
-      { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
-      { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
-      { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
-    ]
-  },
-  {
-    QuizId: 7,
-    Name: "Quiz 7",
-    Difficulty: "Easy",
-    Description: "Test your knowledge with Quiz 7",
-    Image: "https://via.placeholder.com/150",
-    question_list: [
-      { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
-      { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
-      { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
-    ]
-  },
-  {
-    QuizId: 8,
-    Name: "Quiz 8",
-    Difficulty: "Medium",
-    Description: "Test your knowledge with Quiz 8",
-    Image: "https://via.placeholder.com/150",
-    question_list: [
-      { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
-      { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
-      { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
-    ]
-  },
-  {
-    QuizId: 9,
-    Name: "Quiz 9",
-    Difficulty: "Hard",
-    Description: "Test your knowledge with Quiz 9",
-    Image: "https://via.placeholder.com/150",
-    question_list: [
-      { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
-      { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
-      { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
-    ]
+      {
+        id: 1,
+        question: "What is your question?",
+        answer: "John",
+        answers: ["pencil", "book", "John", "quiz"],
+        correctAnswers: [false, true, false, false],
+        type: "multiplechoice"
+      },
+      {
+        id: 2,
+        question: "Are you 21 years old?",
+        answer: "true",
+        answers: ["true", "false"],
+        type: "truefalse"
+      },
+      {
+        id: 3,
+        question: "What is in the center of the milky way",
+        answer: "Black Hole",
+        answers: ["Sun", "Earth", "Venus", "Black Hole"],
+        correctAnswers: [false, true, false, false],
+        type: "multiplechoice"
+      },
+    ],
   },
 ]);
 

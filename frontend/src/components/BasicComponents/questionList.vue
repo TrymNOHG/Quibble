@@ -13,10 +13,15 @@
     </div>
     <div class="question-item">
       <div class="question-info">
-        <router-link :to="$t('routes.EDIT_QUESTION')" class="router">
-          <span>{{ question.question }}</span>
-        </router-link>
+        <span>{{ question.question }}</span>
         <div class="actions">
+          <font-awesome-icon
+              class="icon_edit"
+              id="add"
+              icon="fa-solid fa-pen-to-square"
+              @click="editQuestion"
+              v-if="isAuth || isEditor"
+          />
           <font-awesome-icon
               class="icon_trash"
               icon="fa-solid fa-trash"
@@ -61,7 +66,12 @@ export default {
       showPopupProp.value = false;
     };
 
+    const editQuestion = (question) => {
+      emit("editQuestion", question);
+    }
+
     return {
+      editQuestion,
       showPopupProp,
       deleteQuestion,
       closePopup,
@@ -74,6 +84,15 @@ export default {
 </script>
 
 <style>
+#add {
+  margin-right: 20%;
+}
+
+#add:hover {
+  scale: 1.2;
+  color: rgba(113,218,17,0.96);
+}
+
 button{
   width: 15%;
   height: 35px;
