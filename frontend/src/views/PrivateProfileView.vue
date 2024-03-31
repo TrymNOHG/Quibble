@@ -18,14 +18,12 @@
 <script>
 import PrivateProfileComponent from "@/components/Profile/PrivateProfileComponent.vue";
 import {useUserStore} from "@/stores/counter.js"; // Ensure this matches your imported component file name
-import { getPictureFromUser } from "@/services/ImageService"
 export default {
   name: "ProfileView",
   components: { PrivateProfileComponent },
 
   methods: {
-    async loadUserData() {
-      console.log(useUserStore().getUserData)
+    loadUserData() {
       return useUserStore().getUserData
     },
     handleUpdateUserProfile(userData) {

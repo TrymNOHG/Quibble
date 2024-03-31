@@ -1,7 +1,7 @@
 <template>
   <div class="user-profile">
     <div class="profile-profilePicture-container">
-      <img :src="getPictureFromUser('2', 'profile_pic.PNG')" alt="Profile profilePicture" class="profile-profilePicture" />
+      <img :src="profileData.profilePicture" alt="Profile profilePicture" class="profile-profilePicture" />
       <div class="profile-profilePicture-overlay">
         <img class="editIcon" src="@/assets/images/edit.svg" alt="Change" @click="onprofilePictureChange" />
         <input id="profilePicture" type="file" @change="onprofilePictureChange" style="display: none;" />
@@ -92,11 +92,9 @@ import * as yup from "yup";
 import { useField, useForm } from "vee-validate";
 import router from "@/router/index.js";
 import {useUserStore} from "@/stores/counter.js";
-import { getPictureFromUser } from  "@/services/ImageService"
 
 export default {
   name: 'UserProfile',
-  methods: {getPictureFromUser},
   components: { BasicButton },
   props: {
     profileData: {

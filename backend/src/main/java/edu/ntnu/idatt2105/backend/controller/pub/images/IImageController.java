@@ -1,5 +1,6 @@
 package edu.ntnu.idatt2105.backend.controller.pub.images;
 
+import edu.ntnu.idatt2105.backend.dto.images.ImageLoadDTO;
 import edu.ntnu.idatt2105.backend.model.users.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+
+import java.io.IOException;
 
 public interface IImageController {
 
@@ -33,7 +36,7 @@ public interface IImageController {
                             schema = @Schema(implementation = User.class)) }),
     }
     )
-    ResponseEntity<Resource> getImage(@PathVariable @NonNull String userId, @PathVariable @NonNull String imagePath);
+    ResponseEntity<ImageLoadDTO> getImage(@PathVariable @NonNull String userId, @PathVariable @NonNull String imagePath) throws IOException;
 
     /**
      * This method retrieves a photo from the server.
@@ -50,7 +53,7 @@ public interface IImageController {
                             schema = @Schema(implementation = User.class)) }),
     }
     )
-    ResponseEntity<Resource> getImage(@PathVariable @NonNull String imagePath);
+    ResponseEntity<ImageLoadDTO> getImage(@PathVariable @NonNull String imagePath) throws IOException;
 
 
 }

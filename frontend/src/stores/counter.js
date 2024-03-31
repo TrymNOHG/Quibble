@@ -28,15 +28,15 @@ export const useUserStore = defineStore('storeUser', {
 
     async fetchUserData() {
       await getUser()
-          .then(async response => {
+          .then(response => {
             this.user = response.data
-            const profilePicture = await getPictureFromUser(response.data.userId, response.data.profilePicture)
-            const imageBase64 = btoa(
-                new Uint8Array(profilePicture)
-                    .reduce((data, byte) => data + String.fromCharCode(byte), '')
-            );
-            console.log(imageBase64)
-            this.user.profilePicture = "data:image/jpeg;base64," + imageBase64
+            getPictureFromUser('2', 'profile_pic.PNG').then(response =>{
+              this.user.profilePicture = `data:${response.data.contentType};base64,${response.data.image}`;
+              console.log(response)
+              console.log(this.user.profilePicture)
+            }).catch(e => {
+              console.log(e)
+            });
           }).catch(error  => {
             console.warn("error", error)
           })

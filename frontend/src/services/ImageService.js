@@ -3,9 +3,7 @@ import axios from "axios"
 const BASE_URL = "http://localhost:8080/api/v1"
 
 export const getPictureFromUser = async (userId, pictureLink) => {
-    return axios.get(`${BASE_URL}/public/image/${userId}/${pictureLink}`, {
-        responseType: 'arraybuffer'
-    });
+    return axios.get(`${BASE_URL}/public/image/${userId}/${pictureLink}`);
 }
 
 // axios.get('http://localhost:8080/images/user123/avatar.jpg', )
