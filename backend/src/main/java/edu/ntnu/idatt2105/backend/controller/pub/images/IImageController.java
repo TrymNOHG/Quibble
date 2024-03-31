@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.NonNull;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -16,6 +17,23 @@ public interface IImageController {
 
     // Retrieve images using link.
 
+
+    /**
+     * This method retrieves a photo from the server.
+     *
+     * @return ResponseEntity showing whether the operation was successful.
+     */
+    @GetMapping(
+            value="/{userId}/{imagePath}"
+    )
+    @Operation(summary = "This method retrieves a photo from the server.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful retrieval of photo.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = User.class)) }),
+    }
+    )
+    ResponseEntity<Resource> getImage(@PathVariable @NonNull String userId, @PathVariable @NonNull String imagePath);
 
     /**
      * This method retrieves a photo from the server.

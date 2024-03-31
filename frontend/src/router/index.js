@@ -27,7 +27,7 @@ const router = createRouter({
           path: '/home',
           name: 'homepage',
           component: HomePageView,
-          meta: { requiresAuth: true }
+          meta: { requiresAuth: false }
       },
       {
           path: '/quiz/current',
@@ -56,14 +56,11 @@ const router = createRouter({
   ]
 })
 
-// When auth fixed
-//TODO
 router.beforeEach((to, from, next) => {
     const store = useUserStore();
     const isAuthenticated = store.isAuth
 
     const notRequiresAuth = to.matched.some(record => record.meta.requiresAuth === false);
-
     if (to.matched.length === 0) {
         next({ path: '/' });
     }
@@ -78,6 +75,7 @@ router.beforeEach((to, from, next) => {
           next({path: '/login'});
       }
     }
+    next();
 });
 
 

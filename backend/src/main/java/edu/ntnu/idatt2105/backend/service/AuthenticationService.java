@@ -110,7 +110,7 @@ public class AuthenticationService {
         if (userRegistrationDto.profilePicLink() != null && !userRegistrationDto.profilePicLink().matches("^(http|https)://.*$")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid profile picture link");
         } else {
-            profilePicLink = "src/main/resources/images/profile_pic.PNG";
+            profilePicLink = "profile_pic.PNG";
         }
 
         log.info("Registering user with email: " + userRegistrationDto.email());

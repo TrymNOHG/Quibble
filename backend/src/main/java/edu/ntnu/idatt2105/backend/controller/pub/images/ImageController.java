@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,8 +30,23 @@ public class ImageController implements IImageController{
     private final ImageService imageService;
 
     @Override
-    public ResponseEntity<Resource> getImage(@NonNull String imagePath) {
+    public ResponseEntity<Resource> getImage(@NonNull String userId, @NonNull String imagePath) {
        log.info("Retrieving image with path : " + imagePath);
-       return ResponseEntity.ok().body(imageService.loadImage(imagePath));
+       String fullPath = userId + "/" + imagePath;
+       Resource imageResource = imageService.loadImage(fullPath);
+       return ResponseEntity.ok().header(
+               HttpHeaders.CONTENT_DISPOSITION,
+               "attachment; filename=\"" + imageResource.getFilename() + "\""
+       ).body(imageResource);
+    }
+
+    @Override
+    public ResponseEntity<Resource> getImage(@NonNull String imagePath) {
+        log.info("Retrieving image with path : " + imagePath);
+        Resource imageResource = imageService.loadImage(imagePath);
+        return ResponseEntity.ok().header(
+                HttpHeaders.CONTENT_DISPOSITION,
+                "attachment; filename=\"" + imageResource.getFilename() + "\""
+        ).body(imageResource);
     }
 }

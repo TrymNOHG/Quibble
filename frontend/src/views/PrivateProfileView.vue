@@ -10,18 +10,24 @@
         @toggleChangePassword="handleToggleChangePassword"
         @updateShowActivity="handleUpdateShowActivity"
         @updateShowFeedbackOnProfile="handleUpdateShowFeedbackOnProfile"
+        :profile-data="loadUserData()"
     />
   </div>
 </template>
 
 <script>
-import PrivateProfileComponent from "@/components/Profile/PrivateProfileComponent.vue"; // Ensure this matches your imported component file name
-
+import PrivateProfileComponent from "@/components/Profile/PrivateProfileComponent.vue";
+import {useUserStore} from "@/stores/counter.js"; // Ensure this matches your imported component file name
+import { getPictureFromUser } from "@/services/ImageService"
 export default {
   name: "ProfileView",
   components: { PrivateProfileComponent },
 
   methods: {
+    async loadUserData() {
+      console.log(useUserStore().getUserData)
+      return useUserStore().getUserData
+    },
     handleUpdateUserProfile(userData) {
       console.log("Updating user profile with:", userData);
       // Implement your logic here to update the user profile
@@ -33,8 +39,8 @@ export default {
     },
 
     handleLogout() {
-      console.log("Logging out");
-      // Implement your logout logic here
+      useUserStore().logoutUser()
+
     },
 
     handleChangePicture(file) {
