@@ -78,6 +78,12 @@ export default {
   border: 2px solid black;
 }
 
+.btn:hover {
+  scale: 1.05;
+  cursor: pointer;
+  background-color: #7e1f9c;
+}
+
 .question_text{
   font-size: 25px;
   font-weight: bold;

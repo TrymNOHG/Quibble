@@ -123,7 +123,6 @@ export const useQuizStore = defineStore('storeQuiz', {
           break;
         }
       }
-      console.log("KL")
     },
 
     async setCurrentQuizById(quiz) {
@@ -194,25 +193,27 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
         Image: "https://via.placeholder.com/150",
         question_list: [
           {
-            id: null,
-            question: "What is your name?",
+            id: 1,
+            question: "What is your question?",
             answer: "John",
             answers: ["pencil", "book", "John", "quiz"],
-            type: "MultipleChoice"
+            correctAnswers: [false, true, false, false],
+            type: "multiplechoice"
           },
           {
-            id: null,
+            id: 2,
             question: "Are you 21 years old?",
-            answer: "Yes",
-            answers: ["Yes", "No"],
-            type: "TrueFalse"
+            answer: "true",
+            answers: ["true", "false"],
+            type: "truefalse"
           },
           {
-            id: null,
+            id: 3,
             question: "What is in the center of the milky way",
             answer: "Black Hole",
             answers: ["Sun", "Earth", "Venus", "Black Hole"],
-            type: "MultipleChoice"
+            correctAnswers: [false, true, false, false],
+            type: "multiplechoice"
           },
         ],
       },
@@ -245,7 +246,6 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
           break;
         }
       }
-      console.log("KL")
     },
 
 
@@ -259,6 +259,9 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
       return this.allAuthors;
     },
 
+    async createQuiz(questions) {
+      this.templateQuiz.question_list = questions.value;
+      console.log(this.templateQuiz)
+    },
   },
-
 })

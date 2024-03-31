@@ -49,11 +49,43 @@
     "DIFFICULTY": "Difficulty",
     "EASY": "Easy",
     "MEDIUM": "Medium",
-    "HARD": "Hard"
+    "HARD": "Hard",
+    "CATEGORY":  "Category",
+    "KEYWORD": "Keyword"
   },
   "delete_modal": {
     "TITLE": "Do you want to delete this?",
     "YES": "Yes",
     "NO": "No"
+  },
+
+  "quiz_details": {
+    "header_txt": "Quiz Details",
+    "image_label": "Image",
+    "image_best_resolution": "(best with 1280x720)",
+    "name_label": "Name:",
+    "difficulty_label": "Difficulty:",
+    "description_label": "Description:",
+    "tags_categories_header": "Tags & Categories:",
+    "add_tag_category": "Add tag or category",
+    "tag_label": "Tag",
+    "type_label": "Type",
+    "add_button": "Add",
+    "cancel_button": "Cancel"
+  },
+
+  "new_question": {
+    "title": "New Question",
+    "question_label": "Question Name",
+    "type_label": "Question Type",
+    "true_false_option": "True or False",
+    "multiple_choice_option": "Multiple Choice",
+    "answer_label": "Answer",
+    "true_option": "True",
+    "false_option": "False",
+    "create_button": "Create",
+    "cancel_button": "Cancel",
+    "create_quiz_button": "Create Quiz"
   }
 }
+

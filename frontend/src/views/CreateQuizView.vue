@@ -1,7 +1,14 @@
 <template>
   <div class="page_format">
-    <quiz_create_info class="info" :template_quiz="quiz" :template_tags="tags"/>
-    <quiz_create_question class="btn_questionList" :template_quiz="quiz"/>
+    <quiz_create_info
+        class="info"
+        :template_quiz="quiz"
+        :template_tags="tags"
+    />
+    <quiz_create_question
+        class="btn_questionList"
+        :template_quiz="quiz"
+    />
   </div>
 </template>
 

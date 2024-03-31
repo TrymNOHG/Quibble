@@ -13,10 +13,14 @@
     </div>
     <div class="question-item">
       <div class="question-info">
-        <router-link :to="$t('routes.EDIT_QUESTION')" class="router">
-          <span>{{ question.question }}</span>
-        </router-link>
+        <span>{{ question.question }}</span>
         <div class="actions">
+          <font-awesome-icon
+              class="icon_edit"
+              id="add"
+              icon="fa-solid fa-pen-to-square"
+              @click="editQuestion"
+          />
           <font-awesome-icon
               class="icon_trash"
               icon="fa-solid fa-trash"
@@ -31,8 +35,10 @@
 <script>
 import {ref, getCurrentInstance} from "vue";
 import {useQuizStore} from "@/stores/counter.js";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 export default {
+  components: {FontAwesomeIcon},
   props: {
     question: {
       type: Object,
@@ -46,25 +52,27 @@ export default {
   },
 
   setup() {
-    const store = useQuizStore();
     const showPopupProp = ref(false);
     const { emit } = getCurrentInstance();
-    const isAuth = ref(store.isAuth)
-    const isEditor = ref(store.isEditor)
+
     const deleteQuestion = (question) => {
       emit("deleteQuestion", question.id);
       showPopupProp.value = false;
     };
+
+    const editQuestion = (question) => {
+      emit("editQuestion", question);
+    }
+
     const closePopup = () => {
       showPopupProp.value = false;
     };
 
     return {
       showPopupProp,
+      editQuestion,
       deleteQuestion,
       closePopup,
-      isEditor,
-      isAuth
     };
   }
 }
@@ -72,6 +80,15 @@ export default {
 </script>
 
 <style>
+#add {
+  margin-right: 20%;
+}
+
+#add:hover {
+  scale: 1.2;
+  color: rgba(113,218,17,0.96);
+}
+
 button{
   width: 15%;
   height: 35px;
@@ -121,15 +138,14 @@ button{
   width: 50%;
 }
 
-.router {
-  text-decoration: none;
-  color: black;
-}
-
 .icon_trash:hover {
   color: red;
   scale: 1.25;
   cursor: pointer;
+}
+
+.icon_trash {
+  margin-right: 20%;
 }
 
 .question-item {
@@ -170,5 +186,9 @@ span {
 .actions font-awesome-icon:hover {
   scale: 1.25;
   color: #ff001e;
+}
+
+.bottom {
+
 }
 </style>

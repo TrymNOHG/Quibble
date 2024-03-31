@@ -1,36 +1,37 @@
 <template>
   <div class="quiz">
-    <h1 class="header_txt">Quiz Details</h1>
+    <h1 class="header_txt">{{ $t('quiz_details.header_txt') }}</h1>
     <div class="quiz-info">
       <div class="img">
         <input class="img_input" type="file" @change="handleImageUpload">
         <div class="image_container">
-          <img v-if="template_quiz.Image" :src="template_quiz.Image" alt="Quiz Image" class="uploaded-image">
+          <img v-if="template_quiz.Image" :src="template_quiz.Image" :alt="$t('quiz_details.image_label')" class="uploaded-image">
         </div>
         <div>
-          <h2>Image</h2> <h4>(best with 1280x720)</h4>
+          <h2>{{ $t('quiz_details.image_label') }}</h2>
+          <h4>{{ $t('quiz_details.image_best_resolution') }}</h4>
         </div>
       </div>
       <div class="quiz-details">
-        <label for="quizName" class="quiz-label">Name:</label>
+        <label for="quizName" class="quiz-label">{{ $t('quiz_details.name_label') }}</label>
         <input class="input-area" type="text" id="quizName" v-model="template_quiz.Name">
-        <label for="difficulty" class="quiz-label">Difficulty:</label>
+        <label for="difficulty" class="quiz-label">{{ $t('quiz_details.difficulty_label') }}</label>
         <select class="input-area" id="difficulty" v-model="template_quiz.Difficulty">
-          <option value="Easy">Easy</option>
-          <option value="Medium">Medium</option>
-          <option value="Hard">Hard</option>
+          <option value="Easy">{{ $t('dropdown_options.EASY') }}</option>
+          <option value="Medium">{{ $t('dropdown_options.MEDIUM') }}</option>
+          <option value="Hard">{{ $t('dropdown_options.HARD') }}</option>
         </select>
-        <label for="description" class="quiz-label">Description:</label>
+        <label for="description" class="quiz-label">{{ $t('quiz_details.description_label') }}</label>
         <textarea class="input-area" id="description" v-model="template_quiz.Description"></textarea>
       </div>
     </div>
     <div class="tags">
       <div class="header">
-        <h2>Tags & Categories:</h2>
+        <h2>{{ $t('quiz_details.tags_categories_header') }}</h2>
         <font-awesome-icon
             id="add"
             icon="fa-solid fa-circle-plus"
-            @click="showPopUP()"
+            @click="showPopup = true"
         />
       </div>
       <tag_list
@@ -41,19 +42,19 @@
       />
       <div class="popup" v-if="showPopup">
         <div class="popup-content">
-          <h3>Add tag or category</h3>
+          <h3>{{ $t('quiz_details.add_tag_category') }}</h3>
           <div class="input-group">
-            <span class="add-span">Tag</span>
+            <span class="add-span">{{ $t('quiz_details.tag_label') }}</span>
             <input type="text" v-model="newTag.tag_desc"/>
-            <span class="add-span">Type</span>
-            <select class="add-area" id="difficulty" v-model="newTag.type">
-              <option value="Category">Category</option>
-              <option value="Keyword">Keyword</option>
+            <span class="add-span">{{ $t('quiz_details.type_label') }}</span>
+            <select class="add-area" v-model="newTag.type">
+              <option value="Category">{{ $t('dropdown_options.CATEGORY') }}</option>
+              <option value="Keyword">{{ $t('dropdown_options.KEYWORD') }}</option>
             </select>
           </div>
           <div class="button-group">
-            <button @click="addTag">Add</button>
-            <button @click="closePopup">{{ $t('buttons.CANCEL') }}</button>
+            <button @click="addTag">{{ $t('quiz_details.add_button') }}</button>
+            <button @click="closePopup">{{ $t('quiz_details.cancel_button') }}</button>
           </div>
         </div>
       </div>
@@ -62,19 +63,18 @@
 </template>
 
 <script>
-import {ref} from "vue";
+import { ref } from "vue";
 import Tag_list from "@/components/create_quiz/tag_list.vue";
-import {useQuizCreateStore} from "@/stores/counter.js";
+import { useQuizCreateStore } from "@/stores/counter.js";
 
 export default {
-  components: {Tag_list},
+  components: { Tag_list },
 
   setup() {
     const showPopup = ref(false);
     const store = useQuizCreateStore();
-    const template_quiz =ref(store.templateQuiz);
+    const template_quiz = ref(store.templateQuiz);
     const template_tags = ref(store.template_tags);
-
 
     const newTag = ref({
       tag_desc: '',
@@ -94,6 +94,13 @@ export default {
 
     const addTag = () => {
       if (newTag.value.tag_desc.trim() !== '') {
+        for (const tag of template_tags.value.tags) {
+          if (tag.tag_desc === newTag.value.tag_desc) {
+            console.log("Tag already exists");
+            return;
+          }
+        }
+
         template_tags.value.tags.push({ ...newTag.value });
         newTag.value.tag_desc = '';
         newTag.value.type = 'Category';
@@ -114,10 +121,6 @@ export default {
       showPopup.value = false;
     };
 
-    const showPopUP = () => {
-      showPopup.value = true;
-    };
-
     return {
       template_quiz,
       template_tags,
@@ -125,7 +128,6 @@ export default {
       addTag,
       deleteTag,
       closePopup,
-      showPopUP,
       showPopup,
       newTag
     };
@@ -133,16 +135,10 @@ export default {
 }
 </script>
 
-
 <style scoped>
-
-.add-area {
-  margin-top: 2%;
-}
 .input-area {
-  height: 30px;
-  width: 250px;
-  font-size: 15px;
+  height: 40px;
+  width: 80%;
 }
 
 .quiz-label {
@@ -159,17 +155,11 @@ export default {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s;
 }
 
-#description{
-  height: 50px;
-  width: 250px;
-}
-
-.image_container{
+.image_container {
   margin-top: 10px;
-  background-color: rgba(205,205,205,0.96);
+  background-color: rgba(205, 205, 205, 0.96);
   border-radius: 10px;
   height: 200px;
   width: 320px;
@@ -194,7 +184,6 @@ button {
   background-color: #b22fe8;
   border-radius: 5px;
   font-size: 14px;
-  transition: background-color 0.3s;
 }
 
 .popup {
@@ -249,14 +238,14 @@ button {
   align-items: center;
 }
 
-#add {
-  scale: 1.5;
-}
-
 #add:hover {
-  scale: 1.8;
+  scale: 2.2;
   cursor: pointer;
   color: #71da11;
+}
+
+#add {
+  scale: 2;
 }
 
 .quiz {
@@ -279,40 +268,10 @@ button {
   margin-top: 5%;
   display: flex;
   flex-direction: column;
-
-}
-
-.quiz-details h2 {
-  margin-top: 0;
-  margin-bottom: 10px;
-}
-
-.quiz-details p {
-  margin: 0 0 10px;
 }
 
 .tags {
   margin-top: 10px;
-}
-
-.input-group textarea {
-  width: 100%;
-  height: 100px;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  resize: vertical;
-  font-size: 14px;
-}
-
-.input-group input[type="file"] {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 14px;
-  background-color: #f9f9f9;
-  cursor: pointer;
 }
 
 .input-group select::-ms-expand {
@@ -324,5 +283,4 @@ button {
     width: 80%;
   }
 }
-
 </style>

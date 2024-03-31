@@ -7,7 +7,7 @@
 <script>
 import Register_comp from "@/components/register_comp.vue";
 export default {
-  name: "Register",
+  question: "Register",
   components: {
     Register_comp
   }

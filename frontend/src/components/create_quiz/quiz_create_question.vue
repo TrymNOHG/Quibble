@@ -1,45 +1,50 @@
 <template>
-  <div class="modal-overlay" v-if="addNewQuestion">
+  <div class="modal-overlay" v-if="addNewQuestion || editQuestion">
     <div class="popup">
       <div class="popup-content">
-        <h2>New Question</h2>
+        <h2>{{ $t('new_question.title') }}</h2>
         <div class="popup_input">
-          <label for="question">Question Name:</label>
-          <input class="input" type="text" v-model="newQuestion.name" id="question">
+          <label for="question">{{ $t('new_question.question_label') }}:</label>
+          <input class="input" type="text" v-model="newQuestion.question" id="question">
         </div>
         <div class="popup_input">
-          <label for="question_type">Question Type:</label>
+          <label for="question_type">{{ $t('new_question.type_label') }}:</label>
           <select class="input" v-model="newQuestion.type" id="question_type">
-            <option class="input" value="truefalse">True or False</option>
-            <option class="input" value="multiplechoice">Multiple Choice</option>
+            <option class="input" value="truefalse">{{ $t('new_question.true_false_option') }}</option>
+            <option class="input" value="multiplechoice">{{ $t('new_question.multiple_choice_option') }}</option>
           </select>
         </div>
         <div class="truefalse" v-if="newQuestion.type==='truefalse'">
           <div class="popup_input">
-            <label for="answer">Answer:</label>
+            <label for="answer">{{ $t('new_question.answer_label') }}:</label>
             <select class="input-truefalse" v-model="newQuestion.answer" id="answer">
-              <option class="input" value="true">True</option>
-              <option class="input" value="false">False</option>
+              <option class="input" value="true">{{ $t('new_question.true_option') }}</option>
+              <option class="input" value="false">{{ $t('new_question.false_option') }}</option>
             </select>
           </div>
         </div>
         <div class="multiple" v-else-if="newQuestion.type==='multiplechoice'">
           <div v-for="(answer, index) in newQuestion.answers" :key="index" class="answer-option">
-            <label :for="'answer' + index">Answer {{ index + 1 }}</label>
+            <label :for="'answer' + index">{{ $t('new_question.answer_label') }} {{ index + 1 }}</label>
             <input type="text" v-model="newQuestion.answers[index]" :id="'answer' + index" class="input answer">
             <input type="checkbox" v-model="newQuestion.correctAnswers[index]">
           </div>
         </div>
         <div class="button-group">
-          <button class="popbtn" @click="createQuestion()">Create</button>
-          <button class="popbtn" @click="cancelCreate">Cancle</button>
+          <div v-if="addNewQuestion" class="popdiv">
+            <button class="createdit" @click="createQuestion()">{{ $t('new_question.create_button') }}</button>
+          </div>
+          <div v-else-if="editQuestion" class="popdiv">
+            <button class="createdit" @click="addEdit()">Edit</button>
+          </div>
+          <button class="popbtn" @click="cancelCreate">{{ $t('new_question.cancel_button') }}</button>
         </div>
       </div>
     </div>
   </div>
   <div class="comp">
     <div class="buttons">
-      <router-link class="btn" to="/myquiz" @click="createQuiz()">Create Quiz</router-link>
+      <router-link class="btn" to="/myquiz" @click="createQuiz()">{{ $t('new_question.create_quiz_button') }}</router-link>
       <font-awesome-icon
           id="add"
           icon="fa-solid fa-circle-plus"
@@ -55,59 +60,134 @@
             class="list"
             v-for="q in question_list"
             :question="q"
-            @deleteQuestion="deleteQuestion(q.id)"
+            @deleteQuestion="deleteQuestion(q)"
+            @editQuestion="showEdit(q)"
         />
       </div>
     </div>
   </div>
 </template>
 
+
 <script>
-import QuestionList from "@/components/BasicComponents/questionList.vue";
-import {ref} from "vue";
-import {useQuizCreateStore} from "@/stores/counter.js";
+import { ref } from 'vue';
+import { useQuizCreateStore } from '@/stores/counter.js';
 import QuestionCreateList from "@/components/create_quiz/question-create-list.vue";
 
-
 export default {
-  components: {QuestionCreateList, QuestionList},
+  components: { QuestionCreateList },
 
   setup() {
     const store = useQuizCreateStore();
     const addNewQuestion = ref(false);
-    let question_list = ref(store.templateQuiz.question_list);
+    const editQuestion = ref(false);
+    const question_list = ref(store.templateQuiz.question_list);
 
-    let newQuestion = ref({
-      name: '',
-      type: 'true_false',
-      answer: 'true',
-      answers: ['Option 1', 'Option 2', 'Option 3', 'Option 4'],
-      correctAnswers: [false, false, false, false]
+    const newQuestion = ref({
+      id: ref('null'),
+      question: ref(''),
+      answer: ref('true'),
+      answers: ref(['Option 1', 'Option 2', 'Option 3', 'Option 4']),
+      correctAnswers: ref([false, false, false, false]),
+      type: ref('truefalse')
     });
 
+    const createQuestion = () => {
+      question_list.value.push({
+        question: newQuestion.value.question,
+        answer: newQuestion.value.answer,
+        answers: newQuestion.value.answers.slice(),
+        correctAnswers: newQuestion.value.correctAnswers.slice(),
+        type: newQuestion.value.type
+      });
+      addNewQuestion.value = false;
+      editQuestion.value = false;
+    };
+
     const cancelCreate = () => {
-      newQuestion.value.name = '';
-      newQuestion.value.type = 'true_false';
+      newQuestion.value.question = '';
+      newQuestion.value.type = 'truefalse';
       newQuestion.value.answer = 'true';
       newQuestion.value.answers = ['Option 1', 'Option 2', 'Option 3', 'Option 4'];
       newQuestion.value.correctAnswers = [false, false, false, false];
       addNewQuestion.value = false;
+      editQuestion.value = false;
     };
+
+    const showEdit = (question) => {
+      newQuestion.value.id = question.id;
+      newQuestion.value.question = question.question;
+      newQuestion.value.type = question.type;
+      newQuestion.value.answer = question.answer;
+      newQuestion.value.answers = question.answers.slice();
+      newQuestion.value.correctAnswers = (question.type === "truefalse") ? null : question.correctAnswers.slice();
+      editQuestion.value = true;
+    };
+
+    const deleteQuestion = (question) => {
+      const index = question_list.value.indexOf(question);
+      if (index !== -1) {
+        question_list.value.splice(index, 1);
+      }
+    };
+
+    const addEdit = () => {
+      for (let i = 0; i < question_list.value.length; i++) {
+        if (question_list.value[i].id === newQuestion.value.id){
+          question_list.value[i].question = newQuestion.value.question;
+          question_list.value[i].answer = newQuestion.value.answer;
+          question_list.value[i].answers = newQuestion.value.answers.slice();
+          question_list.value[i].correctAnswers = newQuestion.value.correctAnswers
+          !== null ? newQuestion.value.correctAnswers.slice() : null;
+          question_list.value[i].type = newQuestion.value.type;
+          break;
+        }
+      }
+      newQuestion.value.question = '';
+      newQuestion.value.type = 'truefalse';
+      newQuestion.value.answer = 'true';
+      newQuestion.value.answers = ['Option 1', 'Option 2', 'Option 3', 'Option 4'];
+      newQuestion.value.correctAnswers = [false, false, false, false];
+      addNewQuestion.value = false;
+      editQuestion.value = false;
+    }
+
+    const createQuiz = () => {
+      store.createQuiz(question_list);
+    }
 
     return {
       question_list,
+      createQuestion,
+      addEdit,
+      editQuestion,
+      deleteQuestion,
       cancelCreate,
       addNewQuestion,
       newQuestion,
-    }
+      showEdit,
+      createQuiz
+    };
   }
-}
-
+};
 
 </script>
 
 
 <style scoped>
+
+.popup-content{
+  width: 350px
+}
+
+.popdiv {
+  width: 35%;
+}
+
+.createdit{
+  width: 100%
+}
+
 .popbtn {
   width: 35%;
 }
@@ -148,8 +228,8 @@ export default {
 
 .answer-option {
   display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
+  align-items: center;
+  margin: 0 0 5% 0;
 }
 
 .answer-option input[type="checkbox"] {
@@ -170,8 +250,14 @@ export default {
   border: 2px solid black;
 }
 
+.btn:hover {
+  scale: 1.05;
+  cursor: pointer;
+  background-color: #7e1f9c;
+}
+
 .encap_List{
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   display: flex;
   flex-direction: column;
   justify-content: center;
