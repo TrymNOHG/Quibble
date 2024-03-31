@@ -115,7 +115,6 @@ public class SecurityConfiguration {
                         new JWTFilterChain(jwtTokenService, rsaKeyPairDTO),
                         UsernamePasswordAuthenticationFilter.class
                 )
-                .httpBasic(withDefaults())
                 .build();
     }
 
@@ -137,7 +136,7 @@ public class SecurityConfiguration {
                 .addFilterBefore(new JWTRefreshFilterChain(
                         rsaKeyPairDTO, refreshTokenRepository, jwtTokenService
                 ), UsernamePasswordAuthenticationFilter.class)
-                .httpBasic(withDefaults())
+                .httpBasic(withDefaults()) // Correct?
                 .build();
     }
 

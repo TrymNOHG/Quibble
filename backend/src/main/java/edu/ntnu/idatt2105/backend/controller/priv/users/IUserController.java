@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -69,5 +70,26 @@ public interface IUserController {
     }
     )
     ResponseEntity<String> deleteUser(Authentication authentication);
+
+    /**
+     * This method retrieves a given user's own information.
+     *
+     * @return ResponseEntity showing whether the operation was successful.
+     */
+    @GetMapping(
+            value="/get"
+    )
+    @Operation(summary = "This method retrieves the user's information.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful retrieval of user.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = User.class)) }),
+            @ApiResponse(responseCode = "403", description = "Unauthorized retrieval of user.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = User.class)) })
+    }
+    )
+    ResponseEntity<Object> getUser(Authentication authentication);
+
 
 }
