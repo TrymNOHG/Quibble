@@ -15,7 +15,7 @@ import java.util.Map;
  * This class represents an anonymous player in the quiz game.
  *
  * @version 1.0 28.03.2024
- * @author brage
+ * @author Brage Halvorsen Kvamme
  */
 @Data
 @RequiredArgsConstructor

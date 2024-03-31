@@ -11,6 +11,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.logging.Logger;
 
+/**
+ * Service class for handling questions.
+ *
+ * @version 1.0 31.05.2021
+ * @author brage
+ * @see Question
+ */
 @Service
 @RequiredArgsConstructor
 public class QuestionService {

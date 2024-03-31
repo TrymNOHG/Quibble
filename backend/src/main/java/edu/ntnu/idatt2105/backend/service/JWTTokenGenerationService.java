@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 /**
  * Service class for generating JWT tokens.
  *
- * @author brage
+ * @author Brage Halvorsen Kvamme
  * @version 1.1 26.03.2024
  */
 @RequiredArgsConstructor

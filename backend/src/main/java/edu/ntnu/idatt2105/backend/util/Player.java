@@ -11,7 +11,10 @@ import java.time.Instant;
 import java.util.*;
 
 /**
- * This class represents a player in the quiz game.
+ * This class represents a signed in player in the quiz game.
+ *
+ * @version 1.0 31.03.2024
+ * @author Brage Halvorsen Kvamme
  */
 @Data
 @RequiredArgsConstructor

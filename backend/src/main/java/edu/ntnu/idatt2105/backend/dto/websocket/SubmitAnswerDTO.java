@@ -12,8 +12,10 @@ import lombok.Builder;
  * it from the websocket client session id.
  *
  * @param jwt The jwt of the user that wants to submit an answer.
- * @param username The username of the user that wants to submit an answer.
  * @param answer The answer the user wants to submit.
+ *
+ * @version 1.0 31.03.2024
+ * @author Brage Halvorsen Kvamme
  */
 @Builder
 public record SubmitAnswerDTO(

@@ -14,6 +14,9 @@ import java.util.logging.Logger;
 
 /**
  * Class for configuring and setting the parameters of the socket.io server.
+ *
+ * @author Brage Halvorsen Kvamme
+ * @version 1.3 30.03.2024
  */
 @org.springframework.context.annotation.Configuration
 @RequiredArgsConstructor
