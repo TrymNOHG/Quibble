@@ -35,7 +35,7 @@
             <button class="createdit" @click="createQuestion()">{{ $t('new_question.create_button') }}</button>
           </div>
           <div v-else-if="editQuestion" class="popdiv">
-            <button class="createdit" @click="addEdit()">Edit</button>
+            <button class="createdit" @click="addEdit()">{{ $t('new_question.edit_button') }}</button>
           </div>
           <button class="popbtn" @click="cancelCreate">{{ $t('new_question.cancel_button') }}</button>
         </div>

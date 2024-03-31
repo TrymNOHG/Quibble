@@ -17,7 +17,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/vue-fontawesome": "^3.0.6",
     "axios": "^1.6.8",
-    "fileupload": "^1.0.0",
+    "fileupload": "^0.2.2",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.1",
     "primevue": "^3.50.0",

@@ -3,7 +3,8 @@
     "REGISTER": "Register",
     "AUTHORS": "Authors",
     "ADD_NEW_AUTHOR": "Add New Author",
-    "QUESTION_LIST": "Question List"
+    "QUESTION_LIST": "Question List",
+    "LOGIN": "Login"
   },
   "placeholders": {
     "EMAIL": "Email",
@@ -85,7 +86,8 @@
     "false_option": "False",
     "create_button": "Create",
     "cancel_button": "Cancel",
-    "create_quiz_button": "Create Quiz"
+    "create_quiz_button": "Create Quiz",
+    "edit_button": "Edit"
   }
 }
 

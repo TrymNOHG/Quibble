@@ -3,7 +3,8 @@
     "REGISTER": "Registrer",
     "AUTHORS": "Forfattere",
     "ADD_NEW_AUTHOR": "Legg til ny forfatter",
-    "QUESTION_LIST": "Spørsmålsliste"
+    "QUESTION_LIST": "Spørsmålsliste",
+    "LOGIN": "Login"
   },
   "placeholders": {
     "EMAIL": "Email",
@@ -83,6 +84,7 @@
     "false_option": "Usant",
     "create_button": "Opprett",
     "cancel_button": "Avbryt",
-    "create_quiz_button": "Opprett Quiz"
+    "create_quiz_button": "Opprett Quiz",
+    "edit_button": "Endre"
   }
 }

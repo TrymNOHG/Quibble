@@ -1,9 +1,9 @@
 <template>
   <div class="submit_form">
-    <h2>Login</h2>
+    <h2>{{ $t('titles.LOGIN') }}</h2>
     <form @submit.prevent="submit" :class="{ 'has-errors': has_err }">
       <div class="input_fields">
-        <label for="username">Username</label>
+        <label for="username">{{ $t('placeholders.USERNAME') }}</label>
         <input
             type="text"
             required
@@ -12,13 +12,13 @@
             class="input-field"
             aria-labelledby="usernameLabel"
             :class="{ 'error': errors && errors['username'] }"
-            placeholder="Username"
+            :placeholder="$t('placeholders.USERNAME')"
         />
         <div v-if="errors && errors['username']" class="error-message">
           {{ errors["username"] }}
         </div>
 
-        <label for="password">Password</label>
+        <label for="password">{{ $t('placeholders.PASSWORD') }}</label>
         <input
             type="password"
             required
@@ -27,7 +27,7 @@
             class="input-field"
             aria-labelledby="passwordLabel"
             :class="{ 'error': errors && errors['password'] }"
-            placeholder="Password"
+            :placeholder="$t('placeholders.PASSWORD')"
         />
         <div v-if="errors && errors['password']" class="error-message">
           {{ errors["password"] }}
@@ -36,10 +36,10 @@
         <basic_button
             class="submit_button"
             @click="submit"
-            :button_text="'Login'"
+            :button_text="$t('buttons.LOGIN')"
         />
         <h4>
-          <router-link to="/register">Dont have an account?</router-link>
+          <router-link to="/register">{{ $t('login_register_text.NO_ACCOUNT_MESSAGE') }}</router-link>
         </h4>
       </div>
     </form>
@@ -55,6 +55,8 @@ import router from "@/router";
 import { loginUser } from "@/services/UserService";
 import { RouterLink } from 'vue-router'
 import Basic_button from "@/components/BasicComponents/basic_button.vue";
+import {useI18n} from "vue-i18n";
+import i18n from "@/lang/i18n.js";
 
 export default {
   components: {
@@ -65,11 +67,13 @@ export default {
   setup() {
     const store = useUserStore();
     const submitMessage = ref("");
+    const { t } = useI18n();
 
     const validationSchema = yup.object({
-      username: yup.string().required("Username is required"),
-      password: yup.string().required("Password is required").min(8, "Password must be at least 8 characters"),
+      username: yup.string().required(t("error_messages.USERNAME_REQUIRED")),
+      password: yup.string().required(t("error_messages.PASSWORD_REQUIRED")).min(8, "Password must be at least 8 characters"),
     });
+
 
     const { handleSubmit, errors, setFieldTouched, setFieldValue } = useForm({
       validationSchema,
@@ -114,6 +118,7 @@ export default {
 
     return {
       username,
+      t,
       password,
       errors,
       submit,
