@@ -25,13 +25,6 @@ export const registerUser = async (userRegisterDTO) => {
     return axios.post(`${BASE_URL}/public/auth/signup`, userRegisterDTO);
 }
 
-export const getUser = async () => {
-    return axios.get(`${BASE_URL}/user/get/info`, {
-        headers: {
-            Authorization: `Bearer ${await sessionToken()}`,
-        },
-    })
-}
 
 export const checkSuperUser = async (quizId) => {
     return axios.get(`${BASE_URL}/superuser`, {
@@ -47,6 +40,14 @@ export const checkSuperUser = async (quizId) => {
 
 
 // Private Endpoints
+
+export const getUser = async () => {
+    return axios.get(`${BASE_URL}/private/users/get`, {
+        headers: {
+            Authorization: `Bearer ${await sessionToken()}`,
+        },
+    })
+}
 
 // let userUpdateDTO = {
 //     'userId' : '',

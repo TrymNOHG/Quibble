@@ -2,7 +2,7 @@ spring:
   application:
     name: backend
   profiles:
-    active: dev
+    active: test
   servlet:
     multipart:
       max-file-size: 10MB
@@ -33,5 +33,3 @@ springdoc:
     path: /swagger
     operations-sorter: method
   packages-to-scan: edu.ntnu.idatt2105.backend.controller
-
-

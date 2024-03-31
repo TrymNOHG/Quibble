@@ -28,7 +28,7 @@ const router = createRouter({
           path: '/home',
           name: 'homepage',
           component: HomePageView,
-          meta: { requiresAuth: true }
+          meta: { requiresAuth: false }
       },
       {
           path: '/quiz/current',
@@ -39,6 +39,7 @@ const router = createRouter({
           path: '/login',
           name: 'Login',
           component: LoginView,
+          meta: { requiresAuth: false }
       },
       {
           path: '/quiz',
@@ -61,33 +62,27 @@ const router = createRouter({
   ]
 })
 
-// When auth fixed
-//TODO
-/*
 router.beforeEach((to, from, next) => {
     const store = useUserStore();
     const isAuthenticated = store.isAuth
 
-  const notRequiresAuth = to.matched.some(record => record.meta.requiresAuth === false);
-  const requiresCurrentFridge = to.matched.some(record => record.meta.requiresCurrentFridge === true);
-
-  if (to.matched.length === 0) {
-    next({ path: '/' });
-  }
-  else if (notRequiresAuth) {
-    if (['/', '/register', '/login'].includes(to.path) && isAuthenticated) {
-      next({ path: '/home' });
-    } else {
-      next();
+    const notRequiresAuth = to.matched.some(record => record.meta.requiresAuth === false);
+    if (to.matched.length === 0) {
+        next({ path: '/' });
     }
-  } else {
+    else if (notRequiresAuth) {
+        if (['/', '/register', '/login'].includes(to.path) && isAuthenticated) {
+          next({ path: '/home' });
+        } else {
+            next();
+        }
+    } else {
       if (!isAuthenticated) {
-          next({path: '/'});
+          next({path: '/login'});
       }
     }
-  }
+    next();
 });
-*/
 
 
 export default router

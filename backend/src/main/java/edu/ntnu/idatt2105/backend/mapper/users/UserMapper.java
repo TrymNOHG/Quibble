@@ -2,9 +2,11 @@ package edu.ntnu.idatt2105.backend.mapper.users;
 
 import edu.ntnu.idatt2105.backend.dto.users.MultipleUserDTO;
 import edu.ntnu.idatt2105.backend.dto.users.UserLoadDTO;
+import edu.ntnu.idatt2105.backend.mapper.quiz.QuizHistoryMapper;
 import edu.ntnu.idatt2105.backend.model.users.User;
+import edu.ntnu.idatt2105.backend.service.images.ImageService;
+import edu.ntnu.idatt2105.backend.mapper.quiz.QuizFeedbackMapper;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 import java.util.List;
 
@@ -14,17 +16,25 @@ import java.util.List;
  * @author Trym Hamer Gudvangen
  * @version 1.0 24.03.2024
  */
-//@Mapper(componentModel = "spring")
-//public interface UserMapper {
-//
-//    //TODO: create method to retrieve profilePicture from server.
-//
-//    @Mapping(target = "profilePicture", source = "")
-//    UserLoadDTO userToUserLoadDTO(User user);
-//
-//    // Make a mapper for DTO to user, when registering.
-//
-//    @Mapping(target = "users", source = "users", qualifiedByName = "userToUserLoadDTO")
-//    MultipleUserDTO userToMultipleUserLoadDTO(List<User> users);
-//
-//}
+@Mapper(componentModel = "spring")
+public interface UserMapper {
+    ImageService imageService = new ImageService();
+
+    default UserLoadDTO userToUserLoadDTO(User user) {
+        return UserLoadDTO.builder()
+                .userId(user.getUserId())
+                .email(user.getEmail())
+                .username(user.getUsername())
+//                .feedbacks(QuizFeedbackMapper.INSTANCE.multipleQuizFeedbackToDTO(user.getFeedbacks()))
+                .profilePicture(imageService.loadImage(user.getProfilePicLink()).toString())
+//                .quizHistory(QuizHistoryMapper.INSTANCE.multipleQuizHistoryToDTO(user.getQuizHistory()))
+                .build();
+    }
+
+    default MultipleUserDTO userToMultipleUserLoadDTO(List<User> users) {
+        List<UserLoadDTO> userLoadDTOS =  users.stream().map(this::userToUserLoadDTO).toList();
+        return MultipleUserDTO.builder().users(userLoadDTOS).build();
+    }
+
+
+}

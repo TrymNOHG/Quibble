@@ -12,9 +12,10 @@ export const useUserStore = defineStore('storeUser', {
     return{
       sessionToken: null,
       user: {
-        userID: "",
+        userId: "",
         username: "",
         email: "",
+        profilePictureLink : ""
       }
     }
   },

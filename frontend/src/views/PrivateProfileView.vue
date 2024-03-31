@@ -15,8 +15,8 @@
 </template>
 
 <script>
-import PrivateProfileComponent from "@/components/Profile/PrivateProfileComponent.vue"; // Ensure this matches your imported component file name
-
+import PrivateProfileComponent from "@/components/Profile/PrivateProfileComponent.vue";
+import {useUserStore} from "@/stores/counter.js"; // Ensure this matches your imported component file name
 export default {
   name: "ProfileView",
   components: { PrivateProfileComponent },
@@ -33,8 +33,8 @@ export default {
     },
 
     handleLogout() {
-      console.log("Logging out");
-      // Implement your logout logic here
+      useUserStore().logoutUser()
+
     },
 
     handleChangePicture(file) {

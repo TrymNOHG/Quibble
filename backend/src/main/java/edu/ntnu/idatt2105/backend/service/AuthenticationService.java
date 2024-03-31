@@ -7,6 +7,7 @@ import edu.ntnu.idatt2105.backend.model.users.RefreshToken;
 import edu.ntnu.idatt2105.backend.model.users.User;
 import edu.ntnu.idatt2105.backend.repo.users.RefreshTokenRepository;
 import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
+import edu.ntnu.idatt2105.backend.service.images.ImageService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,7 @@ public class AuthenticationService {
     private final JWTTokenGenerationService jwtTokenGenerationService;
     private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ImageService imageService;
 
     private final Logger log = Logger.getLogger(AuthenticationService.class.getName());
 
@@ -93,6 +95,7 @@ public class AuthenticationService {
      */
     public AuthenticationResponseDTO registerUser(UserRegisterDTO userRegistrationDto,
                                                   HttpServletResponse httpServletResponse) {
+
         if (userRegistrationDto.username().length() < 3 || userRegistrationDto.username().length() > 64
                 || userRegistrationDto.password().length() < 8 || userRegistrationDto.password().length() > 64) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -107,7 +110,7 @@ public class AuthenticationService {
         if (userRegistrationDto.profilePicLink() != null && !userRegistrationDto.profilePicLink().matches("^(http|https)://.*$")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid profile picture link");
         } else {
-            profilePicLink = "https://pbs.twimg.com/profile_images/740827537329229825/nAnThbbi_400x400.jpg";
+            profilePicLink = "src/main/resources/images/profile_pic.PNG";
         }
 
         log.info("Registering user with email: " + userRegistrationDto.email());
@@ -129,6 +132,9 @@ public class AuthenticationService {
             log.info("User object created successfully");
             Authentication authentication = createAuthenticationObject(newUser);
             User savedUser = userRepository.save(newUser);
+
+            log.info("Creating image directory for user.");
+            imageService.initializeUserDir(savedUser.getUserId());
 
             String accessToken = jwtTokenGenerationService.generateToken(savedUser.getEmail());
             String refreshToken = jwtTokenGenerationService.generateRefreshToken(savedUser.getEmail());
