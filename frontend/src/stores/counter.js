@@ -90,6 +90,19 @@ export const useQuizStore = defineStore('storeQuiz', {
   },
 
   actions: {
+    async loadQuizzes(searchword, difficulty, pageIndex, numberOfQuizzes) {
+      /*
+      try {
+        const response = await fetchQuizzes(searchword, difficulty, pageIndex, numberOfQuizzes);
+        this.allQuizzes = [ ...response.content ];
+        return this.allQuizzes;
+      } catch (error) {
+          console.error("Failed to load previous page:", error);
+          pageIndex.value--;
+      }
+       */
+    },
+
     async deleteCurrentQuiz() {
       /*
       TODO: axioscall
@@ -159,11 +172,6 @@ export const useQuizStore = defineStore('storeQuiz', {
       return this.currentQuiz;
     },
 
-    async searchQuizzes(searchword) {
-      this.allQuiz = getSearchedQuizzes(searchword);
-      return this.allQuiz;
-    },
-
     async addAuthor(newAuthor) {
       this.allAuthors.push({id: 4, username: newAuthor.username})
       /*
@@ -172,28 +180,6 @@ export const useQuizStore = defineStore('storeQuiz', {
       fetchAuthors(this.currentQuiz.quizId)
       */
       return this.allAuthors;
-    },
-
-    async setAllQuizzes(difficulty) {
-      this.allQuiz = getQuizzesByDifficulty(difficulty);
-      return this.allQuiz;
-    },
-
-    async checkSuperUser(quizId) {
-      try {
-        const response = await checkSuperUser(quizId);
-        return response.data
-      } catch (e) {
-        console.error(e)
-      }
-    },
-
-    async fetchMoreQuizzes(diff) {
-      await getMoreQuizzes(diff).then(response => {
-        this.newQuizzes = []
-        this.newQuizzes = response.data;
-      })
-      return this.newQuizzes;
     },
 
     resetCurrentQuiz() {
