@@ -42,24 +42,6 @@ export const checkSuperUser = async (quizId) => {
     })
 }
 
-export const getSearchedQuizzes = async (searchword) => {
-    return axios.get(`${BASE_URL}/quiz/searchQuiz`, {
-        data: { searchword },
-    })
-}
-
-export const getMoreQuizzes = async (diff) => {
-    return axios.get(`${BASE_URL}/quiz/moreQuizzes`, {
-        data: { diff }
-    })
-}
-
-export const getQuizzesByDifficulty = async (diff) => {
-    return axios.get(`${BASE_URL}/quiz/QuizzDiff`, {
-        data: { diff }
-    })
-}
-
 // Public Endpoints
 
 

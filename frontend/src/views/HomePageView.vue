@@ -87,101 +87,43 @@ onMounted(() => {
 
 let test_quizzes = ref([
   {
-    QuizId: null,
-    Name: "TemplateQuiz",
-    Difficulty: "Easy",
-    Description: "Template quiz, change the quiz as wanted",
-    Image: "https://via.placeholder.com/150",
-    question_list: [
+    QuizId: 2,
+    quizName: "Demo Quiz",
+    quizDifficulty: "Medium",
+    quizDescription: "This is a demo quiz for testing purposes",
+    admin_id: 456,
+    feedbacks: new Set(["Feedback 1", "Feedback 2", "Feedback 3"]),
+    collaborators: new Set(["Collaborator 1", "Collaborator 2", "Collaborator 3"]),
+    categories: new Set(["Category 1", "Category 2", "Category 3"]),
+    questions: [
       {
         id: 1,
-        question: "What is your question?",
-        answer: "John",
-        answers: ["pencil", "book", "John", "quiz"],
-        correctAnswers: [false, true, false, false],
-        type: "multiplechoice"
+        question: "What is 2 + 2?",
+        answer: "4",
+        difficulty: "Medium",
+        questionType: "multiplechoice",
+        options: ["2", "3", "4", "5"]
       },
       {
         id: 2,
-        question: "Are you 21 years old?",
-        answer: "true",
-        answers: ["true", "false"],
-        type: "truefalse"
+        question: "What is the capital of France?",
+        answer: "Paris",
+        difficulty: "Medium",
+        questionType: "multiplechoice",
+        options: ["London", "Paris", "Berlin", "Dublin"]
       },
       {
         id: 3,
-        question: "What is in the center of the milky way",
-        answer: "Black Hole",
-        answers: ["Sun", "Earth", "Venus", "Black Hole"],
-        correctAnswers: [false, true, false, false],
-        type: "multiplechoice"
-      },
+        question: "Is the earth flat?",
+        answer: "No",
+        difficulty: "Medium",
+        questionType: "truefalse",
+        options: []
+      }
     ],
-  },
-  {
-    QuizId: null,
-    Name: "AnotherQuiz",
-    Difficulty: "Medium",
-    Description: "Another quiz description",
-    Image: "https://via.placeholder.com/150",
-    question_list: [
-      {
-        id: 1,
-        question: "What is your question?",
-        answer: "John",
-        answers: ["pencil", "book", "John", "quiz"],
-        correctAnswers: [false, true, false, false],
-        type: "multiplechoice"
-      },
-      {
-        id: 2,
-        question: "Are you 21 years old?",
-        answer: "true",
-        answers: ["true", "false"],
-        type: "truefalse"
-      },
-      {
-        id: 3,
-        question: "What is in the center of the milky way",
-        answer: "Black Hole",
-        answers: ["Sun", "Earth", "Venus", "Black Hole"],
-        correctAnswers: [false, true, false, false],
-        type: "multiplechoice"
-      },
-    ],
-  },
-  {
-    QuizId: null,
-    Name: "YetAnotherQuiz",
-    Difficulty: "Hard",
-    Description: "Yet another quiz description",
-    Image: "https://via.placeholder.com/150",
-    question_list: [
-      {
-        id: 1,
-        question: "What is your question?",
-        answer: "John",
-        answers: ["pencil", "book", "John", "quiz"],
-        correctAnswers: [false, true, false, false],
-        type: "multiplechoice"
-      },
-      {
-        id: 2,
-        question: "Are you 21 years old?",
-        answer: "true",
-        answers: ["true", "false"],
-        type: "truefalse"
-      },
-      {
-        id: 3,
-        question: "What is in the center of the milky way",
-        answer: "Black Hole",
-        answers: ["Sun", "Earth", "Venus", "Black Hole"],
-        correctAnswers: [false, true, false, false],
-        type: "multiplechoice"
-      },
-    ],
-  },
+    keywords: new Set(["Keyword 1", "Keyword 2", "Keyword 3"]),
+    Image: "https://via.placeholder.com/150"
+  }
 ]);
 
 </script>

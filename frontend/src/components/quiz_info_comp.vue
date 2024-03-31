@@ -6,16 +6,16 @@
       </div>
       <div class="quiz-details">
         <div class="quiz-details">
-          <h2>{{quiz.Name}}</h2>
+          <h2>{{quiz.quizName}}</h2>
           <p>
             <strong>{{ $t('dropdown_options.DIFFICULTY') }}:</strong>
-            {{ $t('dropdown_options.' + quiz.Difficulty.toUpperCase()) }}
+            {{ $t('dropdown_options.' + quiz.quizDifficulty.toUpperCase()) }}
           </p>
           <p>{{ $t('quiz_card.QUESTIONS_LABEL') }}:
-            {{ quiz.question_list.length }}
+            {{ quiz.questions.length }}
           </p>
           <p>{{ $t('quiz_card.DESCRIPTION') }}:
-            {{ quiz.Description }}
+            {{ quiz.quizDescription }}
           </p>
         </div>
       </div>
@@ -31,7 +31,7 @@
         />
       </div>
       <listing_comp
-          v-for="(a, index) in quizAuthors"
+          v-for="(a, index) in quiz.collaborators"
           :key="index"
           :author="a"
           @deleteAuthor="deleteAuthor(a)"
@@ -63,18 +63,21 @@ export default {
 
   props: {
     quiz: {
-      QuizId: null,
-      Name: "",
-      Difficulty: "",
-      Description: "",
-      Image: "",
-      question_list: [
-        { id: null,
-          question: "",
-          answer: "",
-          type: "" },
-      ],
-    },
+      type: Object,
+      default: () => ({
+        QuizId: Number,
+        quizName: String,
+        quizDifficulty: String,
+        quizDescription: String,
+        admin_id: Number,
+        feedbacks: Set,
+        collaborators: Set,
+        categories: Set,
+        questions: Set,
+        keywords: Set,
+        Image: String,
+      })
+    }
   },
 
   setup() {
