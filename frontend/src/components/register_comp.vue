@@ -37,34 +37,35 @@
         <input
             type="password"
             required
-            v-model.trim="passwrd"
+            v-model.trim="password"
             name="password"
             class="input-field"
             aria-labelledby="passwordLabel"
-            :class="{ 'error': errors && errors['passwrd'] }"
+            :class="{ 'error': errors && errors['password'] }"
             :placeholder="$t('placeholders.PASSWORD')"
         />
-        <div v-if="errors && errors['passwrd']" class="error-message">
-          {{ errors["passwrd"] }}
+        <div v-if="errors && errors['password']" class="error-message">
+          {{ errors["password"] }}
         </div>
 
         <label for="confirm password">{{ $t('placeholders.CONFIRM_PASSWORD') }}</label>
         <input
             type="password"
             required
-            v-model.trim="conf_passwrd"
+            v-model.trim="conf_password"
             name="conf_password"
             class="input-field"
             aria-labelledby="conf_passwordLabel"
-            :class="{ 'error': errors && errors['conf_passwrd'] }"
+            :class="{ 'error': errors && errors['conf_password'] }"
             :placeholder="$t('placeholders.CONFIRM_PASSWORD')"
         />
-        <div v-if="errors && errors['conf_passwrd']" class="error-message">
-          {{ errors["conf_passwrd"] }}
+        <div v-if="errors && errors['conf_password']" class="error-message">
+          {{ errors["conf_password"] }}
         </div>
 
         <basic_button
             class="submit_button"
+            @click="submit"
             :button_text="$t('buttons.REGISTER')"
         />
         <h4>
@@ -83,6 +84,7 @@ import Basic_button from "@/components/BasicComponents/basic_button.vue";
 import { ref } from "vue";
 import router from "@/router/index.js";
 import {useUserStore} from "@/stores/counter.js";
+import {registerUser} from "@/services/UserService.js";
 
 export default {
   components: {Basic_button},
@@ -94,10 +96,10 @@ export default {
     const validationSchema = yup.object({
       email: yup.string().required("Email is required").email("Must be an valid email"),
       username: yup.string().required("Username is required"),
-      passwrd: yup.string().required("Password is required").min(8, "Password must be at least 8 characters"),
-      conf_passwrd: yup.string()
+      password: yup.string().required("Password is required").min(8, "Password must be at least 8 characters"),
+      conf_password: yup.string()
           .required("Confirm password")
-          .oneOf([yup.ref('passwrd'), null], 'Passwords must match')
+          .oneOf([yup.ref('password'), null], 'Passwords must match')
     });
 
     const {handleSubmit, errors, setFieldTouched, setFieldValue} = useForm({
@@ -105,23 +107,22 @@ export default {
       initialValues: {
         email: "",
         username: "",
-        passwrd: "",
-        conf_passwrd: "",
+        password: "",
+        conf_password: "",
       },
     });
 
     const {value: email} = useField("email")
     const {value: username} = useField("username");
-    const {value: passwrd} = useField("passwrd");
-    const {value: conf_passwrd} = useField("conf_passwrd");
+    const {value: password} = useField("password");
+    const {value: conf_password} = useField("conf_password");
 
 
     const submit = handleSubmit(async () => {
       const userData = {
         email: email.value,
-        user: username.value,
-        passwrd: passwrd.value,
-        conf_passwrd: conf_passwrd.value
+        username: username.value,
+        password: password.value,
       };
 
       await registerUser(userData)
@@ -129,7 +130,7 @@ export default {
           if (response !== undefined) {
             store.setToken(response.data.token);
             await store.fetchUserData();
-            await router.push("/fridges?appTour=true");
+            await router.push("/");
           }
         })
         .catch((error) => {
@@ -150,8 +151,8 @@ export default {
     return {
       email,
       username,
-      passwrd,
-      conf_passwrd,
+      password,
+      conf_password,
       errors,
       submit,
       validationSchema,

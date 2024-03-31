@@ -82,10 +82,10 @@ nav ul {
 
 li {
   color: white;
-  text-align: center;
+  display: flex; /* Ensure flexbox is being used */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
   margin: 10px;
-  justify-content: space-between;
-  align-content: center;
   background-color: rgba(19, 155, 250, 0.88);
   width: 60px;
   height: 60px;

@@ -1,6 +1,5 @@
 package edu.ntnu.idatt2105.backend.config.filters;
 
-import edu.ntnu.idatt2105.backend.service.AuthenticationService;
 import edu.ntnu.idatt2105.backend.service.JWTTokenService;
 import edu.ntnu.idatt2105.backend.dto.security.RSAKeyPairDTO;
 import edu.ntnu.idatt2105.backend.repo.users.RefreshTokenRepository;
@@ -84,10 +83,10 @@ public class JWTRefreshFilterChain extends OncePerRequestFilter {
                         .map(refreshToken -> !refreshToken.isRevoked())
                         .orElse(false);
                 log.info("Is refresh token valid in database: " + isRefreshTokenValidInDatabase);
-                log.info("Is token valid: " + jwtTokenService.isTokenValid(jwtRefreshToken, userDetails));
+                log.info("Is token valid: " + jwtTokenService.isValidToken(jwtRefreshToken, userDetails));
                 log.info("Userdetails username "+userDetails.getUsername());
 
-                if (jwtTokenService.isTokenValid(jwtRefreshToken, userDetails) && isRefreshTokenValidInDatabase) {
+                if (jwtTokenService.isValidToken(jwtRefreshToken, userDetails) && isRefreshTokenValidInDatabase) {
                     log.info("Setting security context with user details from refresh token.");
                     SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
 

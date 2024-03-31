@@ -22,7 +22,7 @@
         <input
             type="password"
             required
-            v-model.trim="passwrd"
+            v-model.trim="password"
             name="password"
             class="input-field"
             aria-labelledby="passwordLabel"
@@ -35,6 +35,7 @@
 
         <basic_button
             class="submit_button"
+            @click="submit"
             :button_text="'Login'"
         />
         <h4>
@@ -79,20 +80,22 @@ export default {
     });
 
     const { value: username } = useField("username");
-    const { value: passwrd } = useField("password");
+    const { value: password } = useField("password");
 
     const submit = handleSubmit(async () => {
-      const userData = {
-        user: username.value,
-        passwrd: passwrd.value,
+      const userLoginDTO = {
+        emailOrUserName: username.value,
+        password: password.value,
       };
 
-      await loginUser(userData)
+      // Authorization: Basic
+
+      await loginUser(userLoginDTO)
           .then(async (response) => {
             if (response !== undefined) {
               store.setToken(response.data.token);
               await store.fetchUserData();
-              await router.push("/fridges?appTour=true");
+              await router.push("/home");
             }
           })
           .catch((error) => {
@@ -111,7 +114,7 @@ export default {
 
     return {
       username,
-      passwrd,
+      password,
       errors,
       submit,
       validationSchema,

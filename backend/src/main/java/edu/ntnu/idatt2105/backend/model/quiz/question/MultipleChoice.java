@@ -33,7 +33,6 @@ public class MultipleChoice {
     private String alternative;
 
     @Column(name = "is_correct", nullable = false)
-    @NonNull
     @Schema(description = "Whether the option is correct.")
     private boolean isCorrect;
 

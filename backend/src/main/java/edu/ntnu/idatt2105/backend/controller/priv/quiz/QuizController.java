@@ -2,14 +2,19 @@ package edu.ntnu.idatt2105.backend.controller.priv.quiz;
 
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
+import edu.ntnu.idatt2105.backend.service.quiz.QuizService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.logging.Logger;
 
 /**
  * This controller provides the private endpoint for quiz.
@@ -20,12 +25,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController("privateQuizController")
 @EnableAutoConfiguration
 @RequiredArgsConstructor
+@CrossOrigin("*")
 @Slf4j
 @RequestMapping(value = "/api/v1/private/quiz")
 public class QuizController implements IQuizController{
+
+    private final QuizService quizService;
+    Logger logger = Logger.getLogger(QuizController.class.getName());
+
+    @PostMapping("/create")
     @Override
     public ResponseEntity<QuizLoadDTO> createQuiz(@NonNull String quizName, @NonNull Authentication authentication) {
-        return null;
+        logger.info("Authenicating user: " + authentication.getName());
+        return ResponseEntity.ok(quizService.createQuiz(quizName, authentication.getName()));
     }
 
     @Override

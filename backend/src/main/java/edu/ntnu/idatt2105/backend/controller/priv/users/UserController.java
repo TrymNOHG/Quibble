@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController("privateUserController")
 @EnableAutoConfiguration
 @RequiredArgsConstructor
+@CrossOrigin("*")
 @Slf4j
 @RequestMapping(value = "/api/v1/private/users")
 public class UserController implements IUserController{
