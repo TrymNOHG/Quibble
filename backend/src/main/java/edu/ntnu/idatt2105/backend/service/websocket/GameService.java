@@ -13,6 +13,7 @@ import edu.ntnu.idatt2105.backend.service.quiz.QuestionService;
 import edu.ntnu.idatt2105.backend.service.quiz.QuizService;
 import edu.ntnu.idatt2105.backend.util.Game;
 import jakarta.transaction.Transactional;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
