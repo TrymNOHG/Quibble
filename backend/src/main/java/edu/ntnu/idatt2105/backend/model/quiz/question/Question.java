@@ -3,8 +3,10 @@ package edu.ntnu.idatt2105.backend.model.quiz.question;
 
 import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -39,15 +41,14 @@ public class Question {
     @Schema(description = "The actual question.")
     private String question;
 
-    @Column(name = "answer", nullable = false)
-    @NonNull
+    @Column(name = "answer")
     @Schema(description = "The answer to the question.")
     private String answer;
 
     @Column(name = "type", nullable = false)
     @NonNull
     @Schema(description = "The type of question.")
-    private Type type;
+    private QuestionType questionType;
 
     @Column(name = "difficulty", nullable = false)
     @NonNull
@@ -58,6 +59,7 @@ public class Question {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ToString.Exclude
     @Schema(description = "The quiz's history.")
+    @Builder.Default
     private Set<MultipleChoice> choices = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -65,6 +67,4 @@ public class Question {
     @ToString.Exclude
     @Schema(description = "The quiz the question belongs to.")
     private Quiz quiz;
-
-
 }

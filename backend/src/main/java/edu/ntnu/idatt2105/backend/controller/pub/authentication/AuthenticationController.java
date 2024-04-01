@@ -2,7 +2,6 @@ package edu.ntnu.idatt2105.backend.controller.pub.authentication;
 
 import edu.ntnu.idatt2105.backend.dto.users.UserRegisterDTO;
 import edu.ntnu.idatt2105.backend.dto.security.AuthenticationResponseDTO;
-import edu.ntnu.idatt2105.backend.dto.users.UserRegisterDTO;
 import edu.ntnu.idatt2105.backend.service.AuthenticationService;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;

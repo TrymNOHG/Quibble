@@ -65,7 +65,7 @@ public class JWTFilterChain extends OncePerRequestFilter {
 
             if(!email.isEmpty() && SecurityContextHolder.getContext().getAuthentication() == null){
                 UserDetails userDetails = jwtTokenService.getUserDetails(email);
-                if(jwtTokenService.isTokenValid(jwtToken, userDetails)){
+                if(jwtTokenService.isValidToken(jwtToken, userDetails)){
 
                     UsernamePasswordAuthenticationToken newToken = new UsernamePasswordAuthenticationToken(
                             userDetails,

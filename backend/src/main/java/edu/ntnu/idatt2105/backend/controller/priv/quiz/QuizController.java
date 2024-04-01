@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.logging.Logger;
+
 /**
  * This controller provides the private endpoint for quiz.
  *
@@ -29,10 +31,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class QuizController implements IQuizController{
 
     private final QuizService quizService;
+    Logger logger = Logger.getLogger(QuizController.class.getName());
 
     @Override
     public ResponseEntity<QuizLoadDTO> createQuiz(@NonNull String quizName, @NonNull Authentication authentication) {
-        return null;
+        logger.info("Authenicating user: " + authentication.getName());
+        return ResponseEntity.ok(quizService.createQuiz(quizName, authentication.getName()));
     }
 
     @Override

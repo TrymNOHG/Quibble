@@ -58,7 +58,6 @@ public class SecurityConfiguration {
     private final String API_ENDPOINT_STRING = "/api/v1";
     private final String PUBLIC = "/public";
     private final String PRIVATE = "/private";
-    private final String AUTH = "/auth";
 
     /**
      * A common filter for the security filter chain.

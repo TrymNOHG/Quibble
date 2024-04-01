@@ -39,13 +39,19 @@ public class UserService implements UserDetailsService {
     private final ImageService imageService;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository
-                .findByEmail(username) // FindByEmail is used as the username in the authentication object is the email.
+                .findByEmail(email) // FindByEmail is used as the username in the authentication object is the email.
                 .map(UserConfig::new)
                 .orElseThrow(() -> new UsernameNotFoundException("User " + username + " not found"));
     }
 
+    /**
+     * Get user by their email.
+     *
+     * @param email The email of the user.
+     * @return The user.
+     */
     public UserLoadDTO getUserByEmail(String email) throws UsernameNotFoundException {
         LOGGER.info("Attempting to retrieve user information.");
         User user = userRepository
@@ -59,6 +65,12 @@ public class UserService implements UserDetailsService {
     }
 
 
+    /**
+     * Update user information.
+     *
+     * @param userUpdateDTO The updated user information.
+     * @return The updated user.
+     */
     @Transactional
     public UserLoadDTO updateUser(UserUpdateDTO userUpdateDTO) throws FileSystemException {
         LOGGER.info(String.format("%s wants to update.", userUpdateDTO));
@@ -93,6 +105,11 @@ public class UserService implements UserDetailsService {
         return null;
     }
 
+    /**
+     * Delete a user.
+     *
+     * @param userId The id of the user.
+     */
     public void deleteUser(Long userId) throws IOException {
         // TODO: Check that user is actually user.
         userRepository.deleteById(userId);
