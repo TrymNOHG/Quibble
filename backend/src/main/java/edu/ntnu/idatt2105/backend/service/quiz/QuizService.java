@@ -22,7 +22,9 @@ public class QuizService {
     }
 
     @Transactional
-    public QuizLoadDTO createQuiz(String quizName, String adminEmail) {
+    public QuizLoadDTO createQuiz(
+            String quizName,
+            String adminEmail) {
         User admin = userRepository.findByEmail(adminEmail)
                 .orElseThrow(() -> new IllegalArgumentException("User with email " + adminEmail + " not found"));
         Quiz quiz = Quiz.builder()

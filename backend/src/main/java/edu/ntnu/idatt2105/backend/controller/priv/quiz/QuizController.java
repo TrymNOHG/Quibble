@@ -33,7 +33,6 @@ public class QuizController implements IQuizController{
     private final QuizService quizService;
     Logger logger = Logger.getLogger(QuizController.class.getName());
 
-    @PostMapping("/create")
     @Override
     public ResponseEntity<QuizLoadDTO> createQuiz(@NonNull String quizName, @NonNull Authentication authentication) {
         logger.info("Authenicating user: " + authentication.getName());

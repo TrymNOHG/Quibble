@@ -81,7 +81,7 @@ export default {
     const store = useQuizCreateStore();
     const addNewQuestion = ref(false);
     const editQuestion = ref(false);
-    const question_list = ref(store.templateQuiz.question_list);
+    const question_list = ref(store.templateQuiz.questions);
 
     const newQuestion = ref({
       id: ref('null'),

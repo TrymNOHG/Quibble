@@ -14,7 +14,7 @@
     <div class="author-info">
       <router-link :to="'/userprofile'" class="author-link">
         <span>{{ tag.type }}:</span>
-        <span>{{tag.tag_desc}}</span>
+        <span>{{tag.name}}</span>
       </router-link>
       <div class="actions">
         <font-awesome-icon class="trash-icon" icon="fa-solid fa-trash" @click="showPopupProp = true"/>
@@ -33,18 +33,15 @@ export default {
       type: Object,
       required: true,
       default: () => ({
-        tag_desc: String,
+        name: String,
         type: String,
       })
     }
   },
 
   setup() {
-    const store = useQuizStore();
     const showPopupProp = ref(false);
     const { emit } = getCurrentInstance();
-    const isAuth = ref(store.isAuth)
-    const isEditor = ref(store.isEditor)
 
     const deleteTag = (tag) => {
       emit("deleteTag", tag);
@@ -59,8 +56,6 @@ export default {
       showPopupProp,
       deleteTag,
       closePopup,
-      isAuth,
-      isEditor
     };
   }
 }

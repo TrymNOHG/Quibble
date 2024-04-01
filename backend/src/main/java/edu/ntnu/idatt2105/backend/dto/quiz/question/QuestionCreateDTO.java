@@ -7,7 +7,10 @@ import org.springframework.lang.Nullable;
 
 import java.util.Set;
 
-public record QuestionCreateDTO(@NonNull Long quizId, @NonNull String question, @NonNull String answer,
-                                @NonNull QuestionType type, @NonNull Difficulty difficulty,
+public record QuestionCreateDTO(@NonNull Long quizId,
+                                @NonNull String question,
+                                @NonNull String answer,
+                                @NonNull QuestionType type,
+                                @NonNull Difficulty difficulty,
                                 @Nullable Set<MultipleChoiceDTO> choices) {
 }

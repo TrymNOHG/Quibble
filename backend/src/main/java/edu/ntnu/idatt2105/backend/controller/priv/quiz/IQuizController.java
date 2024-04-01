@@ -30,7 +30,7 @@ public interface IQuizController {
      * @return ResponseEntity showing whether the operation was successful.
      */
     @PostMapping(
-            value="/create/quiz",
+            value="/create/{quizName}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -44,7 +44,7 @@ public interface IQuizController {
                             schema = @Schema(implementation = Quiz.class)) })
     }
     )
-    ResponseEntity<QuizLoadDTO> createQuiz(@ParameterObject @RequestParam(name = "quizName") @NonNull String quizName,
+    ResponseEntity<QuizLoadDTO> createQuiz(@PathVariable @NonNull String quizName,
                                            @NonNull Authentication authentication);
 
     @PatchMapping(

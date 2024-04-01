@@ -14,15 +14,15 @@
       </div>
       <div class="quiz-details">
         <label for="quizName" class="quiz-label">{{ $t('quiz_details.name_label') }}</label>
-        <input class="input-area" type="text" id="quizName" v-model="template_quiz.Name">
+        <input class="input-area" type="text" id="quizName" v-model="template_quiz.quizName">
         <label for="difficulty" class="quiz-label">{{ $t('quiz_details.difficulty_label') }}</label>
-        <select class="input-area" id="difficulty" v-model="template_quiz.Difficulty">
+        <select class="input-area" id="difficulty" v-model="template_quiz.quizDifficulty">
           <option value="Easy">{{ $t('dropdown_options.EASY') }}</option>
           <option value="Medium">{{ $t('dropdown_options.MEDIUM') }}</option>
           <option value="Hard">{{ $t('dropdown_options.HARD') }}</option>
         </select>
         <label for="description" class="quiz-label">{{ $t('quiz_details.description_label') }}</label>
-        <textarea class="input-area" id="description" v-model="template_quiz.Description"></textarea>
+        <textarea class="input-area" id="description" v-model="template_quiz.quizDescription"></textarea>
       </div>
     </div>
     <div class="tags">
@@ -35,7 +35,7 @@
         />
       </div>
       <tag_list
-          v-for="(t, index) in template_tags.tags"
+          v-for="(t, index) in template_tags"
           :key="index"
           :tag="t"
           @deleteTag="deleteTag(t)"
@@ -74,10 +74,12 @@ export default {
     const showPopup = ref(false);
     const store = useQuizCreateStore();
     const template_quiz = ref(store.templateQuiz);
-    const template_tags = ref(store.template_tags);
-
+    const template_tags = ref([
+      ...template_quiz.value.categories.map(category => ({ id: category.id, name: category.name, type: 'Category' })),
+      ...template_quiz.value.keywords.map(keyword => ({ id: null, name: keyword, type: 'Keyword' }))
+    ]);
     const newTag = ref({
-      tag_desc: '',
+      name: '',
       type: 'Category'
     });
 

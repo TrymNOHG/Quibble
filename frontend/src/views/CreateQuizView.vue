@@ -2,12 +2,9 @@
   <div class="page_format">
     <quiz_create_info
         class="info"
-        :template_quiz="quiz"
-        :template_tags="tags"
     />
     <quiz_create_question
         class="btn_questionList"
-        :template_quiz="quiz"
     />
   </div>
 </template>
@@ -20,8 +17,6 @@ import Quiz_create_question from "@/components/create_quiz/quiz_create_question.
 
 const store = useQuizCreateStore();
 const quiz = store.templateQuiz;
-const tags = store.template_tags;
-
 
 </script>
 

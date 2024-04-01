@@ -1,11 +1,12 @@
 import { defineStore } from 'pinia'
 import {
-  checkSuperUser,
-  getMoreQuizzes, getQuizzesByDifficulty,
-  getSearchedQuizzes,
   getUser
 } from "@/services/UserService.js";
 import {getPictureFromUser} from "@/services/ImageService.js";
+
+import {
+  createQuiz
+} from "@/services/QuizService.js"
 
 export const useUserStore = defineStore('storeUser', {
 
@@ -68,23 +69,17 @@ export const useQuizStore = defineStore('storeQuiz', {
   state: () => {
     return {
       allQuiz: [],
-      allAuthors: [{
-          id: 1,
-          username: 'Author 1'},
-        {
-          id: 2,
-          username: 'Author 2'},
-        {
-          id: 3,
-          username: 'Author 3'}],
 
       currentQuiz: {
         QuizId: null,
-        Name: "",
-        Difficulty: "",
-        Description: "",
-        Image: "",
-        question_list: [
+        quizName: "",
+        quizDifficulty: "",
+        quizDescription: "",
+        admin_id: null,
+        feedback: [],
+        collaborators: [],
+        categories: [],
+        question: [
           {
             id: null,
             question: "",
@@ -94,9 +89,9 @@ export const useQuizStore = defineStore('storeQuiz', {
             type: ""
           },
         ],
+        keywords: [],
+        Image: "",
       },
-      isAuth: false,
-      isEditor: false,
     }
   },
 
@@ -174,8 +169,11 @@ export const useQuizStore = defineStore('storeQuiz', {
     async setCurrentQuizById(quiz) {
       console.log(quiz)
       this.currentQuiz = quiz;
-      this.isAuth = true;
-      this.isEditor = true;
+      if (useUserStore().user.userId === this.currentQuiz().QuizId){
+        this.isAuth = true;
+        this.isEditor = true;
+      }
+
       /*
       TODO: Sjekke opp mot backend
       isAuth og isEditor burde sjekkes opp mot axioscall til backend
@@ -206,11 +204,17 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
     return {
       templateQuiz: {
         QuizId: null,
-        Name: "TemplateQuiz",
-        Difficulty: "Easy",
-        Description: "Template quiz, change the quiz as wanted",
-        Image: "https://via.placeholder.com/150",
-        question_list: [
+        quizName: "TemplateQuiz",
+        quizDifficulty: "Easy",
+        quizDescription: "Template quiz, change the quiz as wanted",
+        admin_id: null,
+        feedbacks: [],
+        collaborators: [],
+        categories: [
+          { id: 1, name: "Science" },
+          { id: 2, name: "History" },
+        ],
+        questions: [
           {
             id: 1,
             question: "What is your question?",
@@ -235,20 +239,9 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
             type: "multiplechoice"
           },
         ],
+        keywords: [],
+        Image: "https://via.placeholder.com/150",
       },
-
-      template_tags:{
-        tags: [
-            {
-              tag_desc: "disney",
-              type: "Category"
-            },
-            {
-              tag_desc: "movies",
-              type: "Keyword"
-            }
-        ]
-      }
     }
   },
 
@@ -263,8 +256,17 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
     },
 
     async createQuiz(questions) {
+      let createdQuiz = null;
       this.templateQuiz.question_list = questions.value;
-      console.log(this.templateQuiz)
+
+      await createQuiz(quizLoadDTO.quizName)
+          .then(response => {
+            console.log(response)
+            createdQuiz = response;
+          }).catch(error => {
+            console.warn("error", error)
+          })
+
     },
   },
 })

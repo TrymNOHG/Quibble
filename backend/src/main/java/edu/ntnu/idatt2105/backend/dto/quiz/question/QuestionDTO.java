@@ -6,6 +6,11 @@ import lombok.NonNull;
 
 import java.util.Set;
 
-public record QuestionDTO(@NonNull Long questionId, String question, String answer,
-                          QuestionType type, Difficulty difficulty, Set<MultipleChoiceDTO> choices, @NonNull Long quizId) {
+public record QuestionDTO(@NonNull Long questionId,
+                          String question,
+                          String answer,
+                          QuestionType type,
+                          Difficulty difficulty,
+                          Set<MultipleChoiceDTO> choices,
+                          @NonNull Long quizId) {
 }
