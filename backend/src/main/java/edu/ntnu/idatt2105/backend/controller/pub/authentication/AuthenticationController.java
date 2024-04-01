@@ -29,7 +29,7 @@ import java.util.logging.Logger;
  * This controller provides the public endpoint for authentication. This controller is used for
  * login, signup and retrieval of access tokens from refresh tokens.
  *
- * @author brage
+ * @author Brage Halvorsen Kvamme
  * @version 1.0 24.03.2024
  */
 @RequestMapping("/api/v1/public/auth")

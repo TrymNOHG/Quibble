@@ -13,6 +13,7 @@ import edu.ntnu.idatt2105.backend.service.quiz.QuestionService;
 import edu.ntnu.idatt2105.backend.service.quiz.QuizService;
 import edu.ntnu.idatt2105.backend.util.Game;
 import jakarta.transaction.Transactional;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.Random;
 import java.util.logging.Logger;
 
+/**
+ * Service class for managing different instances of the Game class.
+ *
+ * @version 1.0 31.03.2021
+ * @author Brage Halvorsen Kvamme
+ * @see Game
+ */
 @Service
 @RequiredArgsConstructor
 public class GameService {
@@ -51,6 +59,14 @@ public class GameService {
         return code;
     }
 
+    /**
+     * Creates a game with a host, a quiz and a code. The game is then added to the rooms map.
+     *
+     * @param hostEmail The email of the host of the game.
+     * @param quizId The id of the quiz that the game is playing.
+     * @param hostUUID The UUID of the host of the game.
+     * @return The code of the game that was created.
+     */
     @Transactional
     public String createGame(String hostEmail, long quizId, UUID hostUUID) {
         logger.info("Creating game with host email: " + hostEmail);
@@ -66,6 +82,13 @@ public class GameService {
         return code;
     }
 
+    /**
+     * Adds a player to a game. If the player is already in the game, the player is not added.
+     *
+     * @param code The code of the game that the player is to be added to.
+     * @param jwt The JWT of the player that is to be added.
+     * @return True if the player was added, false if the player was already in the game.
+     */
     @Transactional
     public boolean isGameHost(String code, String jwt) {
         String email = jwtTokenService.getUserEmail(jwt);
@@ -73,28 +96,62 @@ public class GameService {
         return game.getHost().getEmail().equals(email);
     }
 
+    /**
+     * Gets the game from the game code.
+     *
+     * @param code The code of the game.
+     * @return The game with the given code.
+     */
     public Game getGame(String code) {
         return rooms.get(code);
     }
 
+    /**
+     * Removes a game from available games.
+     *
+     * @param code The code of the game to be removed.
+     */
     public void removeGame(String code) {
         rooms.remove(code);
     }
 
+    /**
+     * Deletes a game based on the UUID of the host.
+     *
+     * @param uuid The UUID of the host of the game to be deleted.
+     * @return True if the game was deleted, false if the game was not found.
+     */
     public boolean deleteGameFromUUID(UUID uuid) {
         return rooms.entrySet().removeIf(entry -> entry.getValue().getHostUUID().equals(uuid));
     }
 
+    /**
+     * Deletes an anonymous user from a game.
+     *
+     * @param uuid The UUID of the anonymous user to be deleted.
+     * @return True if the user was deleted, false if the user was not found.
+     */
     public boolean deleteAnonUserFromGame(UUID uuid) {
         return rooms.values().stream().anyMatch(game -> game.getAnonymousPlayers().remove(uuid) != null);
     }
 
-    public SendAlternativesDTO getAlternatives(String code) {//TODO: flytt til QuestionService for å fikse error
+    /**
+     * Gets the alternatives for a question. The question is the current question in the game with the given code.
+     *
+     * @param code The code of the game.
+     * @return The alternatives for the current question in the game.
+     */
+    public SendAlternativesDTO getAlternatives(String code) {
         Game game = rooms.get(code);
         Question question = game.getQuestions().get(game.getQuestionIndex());
         return questionService.getAlternatives(question.getQuestionId());
     }
 
+    /**
+     * Marks the time that a question started. This is used to calculate how long a player has to answer a question.
+     *
+     * @param code The code of the game.
+     */
     public void beginAnsweringTimer(String code) {
         Game game = rooms.get(code);
         game.startTimer();

@@ -13,6 +13,12 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.Objects;
 
+/**
+ * Service class for managing JWT tokens.
+ *
+ * @version 1.0 31.03.2024
+ * @author Brage Halvorsen Kvamme
+ */
 @RequiredArgsConstructor
 @Service
 public class JWTTokenService {
