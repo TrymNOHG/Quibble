@@ -5,12 +5,21 @@ import edu.ntnu.idatt2105.backend.dto.quiz.QuizUpdateDTO;
 import edu.ntnu.idatt2105.backend.exception.notfound.QuizNotFoundException;
 import edu.ntnu.idatt2105.backend.mapper.quiz.QuizMapper;
 import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
+import edu.ntnu.idatt2105.backend.model.users.User;
 import edu.ntnu.idatt2105.backend.repo.quiz.QuizRepository;
+import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+/**
+ * This service provides the logic for the Quiz entity.
+ *
+ * @author Trym Hamer Gudvangen
+ * @version 1.0 01.04.2024
+ */
 @Service
 @RequiredArgsConstructor
 public class QuizService {
@@ -18,6 +27,7 @@ public class QuizService {
     private final Logger LOGGER = LoggerFactory.getLogger(QuizService.class);
 
     private final QuizRepository quizRepository;
+    private final UserRepository userRepository;
     private final QuizMapper quizMapper;
 
     public QuizLoadDTO updateQuiz(QuizUpdateDTO quizUpdateDTO) {
@@ -36,9 +46,35 @@ public class QuizService {
             quiz.setQuizDescription(quizUpdateDTO.newDescription());
         }
 
+        if (quizUpdateDTO.difficulty() != null) {
+            LOGGER.info("Updating quiz difficulty");
+            quiz.setDifficulty(quizUpdateDTO.difficulty());
+        }
+
         Quiz savedQuiz = quizRepository.save(quiz);
 
         return quizMapper.quizToQuizLoadDTO(savedQuiz);
+    }
+
+    public Quiz getQuizById(long quizId) {
+        return quizRepository.findById(quizId)
+                .orElseThrow(() -> new IllegalArgumentException("Quiz with id " + quizId + " not found"));
+    }
+
+    @Transactional
+    public QuizLoadDTO createQuiz(String quizName, String adminEmail) {
+        User admin = userRepository.findByEmail(adminEmail)
+                .orElseThrow(() -> new IllegalArgumentException("User with email " + adminEmail + " not found"));
+        Quiz quiz = Quiz.builder()
+                .quizName(quizName)
+                .admin(admin)
+                .build();
+        quiz = quizRepository.save(quiz);
+        return QuizLoadDTO.builder()
+                .quizId(quiz.getQuizId())
+                .quizName(quiz.getQuizName())
+                .admin_id(admin.getUserId())
+                .build();
     }
 
 }

@@ -50,11 +50,6 @@ public class Question {
     @Schema(description = "The type of question.")
     private QuestionType questionType;
 
-    @Column(name = "difficulty", nullable = false)
-    @NonNull
-    @Schema(description = "The difficulty of the question.")
-    private Difficulty difficulty;
-
     @OneToMany(mappedBy = "question")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ToString.Exclude
