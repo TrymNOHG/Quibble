@@ -1,6 +1,7 @@
 package edu.ntnu.idatt2105.backend.controller.priv.quiz;
 
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.QuizUpdateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
 import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
 import edu.ntnu.idatt2105.backend.model.quiz.QuizAuthor;
@@ -48,7 +49,7 @@ public interface IQuizController {
                                            @NonNull Authentication authentication);
 
     @PatchMapping(
-            value="/update/{quizId}",
+            value="/update",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -63,7 +64,7 @@ public interface IQuizController {
                             schema = @Schema(implementation = Quiz.class)) })
     }
     )
-    ResponseEntity<QuizLoadDTO> updateQuiz(@PathVariable @NonNull Long quizId, @NonNull Authentication authentication);
+    ResponseEntity<QuizLoadDTO> updateQuiz(@RequestBody @NonNull QuizUpdateDTO quizUpdateDTO, @NonNull Authentication authentication);
 
     @DeleteMapping(
             value="/delete/{quizId}",

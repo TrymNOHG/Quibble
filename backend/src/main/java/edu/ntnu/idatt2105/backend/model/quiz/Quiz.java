@@ -1,6 +1,7 @@
 package edu.ntnu.idatt2105.backend.model.quiz;
 
 import edu.ntnu.idatt2105.backend.model.category.QuizCategory;
+import edu.ntnu.idatt2105.backend.model.quiz.question.Difficulty;
 import edu.ntnu.idatt2105.backend.model.quiz.question.Question;
 import edu.ntnu.idatt2105.backend.model.users.User;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -43,6 +44,11 @@ public class Quiz {
     @Column(name = "quiz_desc", length = 255)
     @Schema(description = "The description of the quiz.")
     private String quizDescription;
+
+    @Column(name = "difficulty", nullable = false)
+    @NonNull
+    @Schema(description = "The difficulty of the question.")
+    private Difficulty difficulty;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")

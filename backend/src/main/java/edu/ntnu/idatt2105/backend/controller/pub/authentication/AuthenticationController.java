@@ -79,7 +79,7 @@ public class AuthenticationController implements IAuthenticationController {
         logger.info("Starting Login Process.");
         AuthenticationResponseDTO authenticationResponseDTO = authenticationService.getTokensFromAuth(authentication, httpServletResponse);
         logger.info("Login Process Completed.");
-        return ResponseEntity.ok(authenticationResponseDTO);
+        return ResponseEntity.ok().body(authenticationResponseDTO);
     }
 
     /**

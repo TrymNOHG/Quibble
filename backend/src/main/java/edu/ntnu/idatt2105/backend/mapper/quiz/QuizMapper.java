@@ -11,11 +11,12 @@ import org.mapstruct.Mapping;
  * @author Trym Hamer Gudvangen
  * @version 1.0 24.03.2024
  */
-//@Mapper(componentModel = "spring")
-//public interface QuizMapper {
-//
-//
-//    @Mapping(target = "admin_id", source = "admin.user_id")
-//    QuizLoadDTO quizToQuizLoadDTO(Quiz quiz);
-//
-//}
+@Mapper(componentModel = "spring")
+public interface QuizMapper {
+
+    //TODO: multiple quizzes
+
+    @Mapping(target = "admin_id", source = "admin.userId")
+    QuizLoadDTO quizToQuizLoadDTO(Quiz quiz);
+
+}

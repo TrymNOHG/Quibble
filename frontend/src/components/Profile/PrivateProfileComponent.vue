@@ -1,24 +1,24 @@
 <template>
   <div class="user-profile">
-    <div class="profile-picture-container">
-      <img :src="profileData.picture" alt="Profile Picture" class="profile-picture" />
-      <div class="profile-picture-overlay">
-        <img class="editIcon" src="@/assets/images/edit.svg" alt="Change" @click="onPictureChange" />
-        <input id="picture" type="file" @change="onPictureChange" style="display: none;" />
+    <div class="profile-profilePicture-container">
+      <img :src="profileData.profilePicture" alt="Profile profilePicture" class="profile-profilePicture" />
+      <div class="profile-profilePicture-overlay">
+        <img class="editIcon" src="@/assets/images/edit.svg" alt="Change" @click="onprofilePictureChange" />
+        <input id="profilePicture" type="file" @change="onprofilePictureChange" style="display: none;" />
         <img
-            v-show="profileData.picture !== defaultPicture"
+            v-show="profileData.profilePicture !== defaultprofilePicture"
             class="deleteIcon"
             src="@/assets/images/delete-icn.svg"
             alt="Delete"
-            @click="onDeletePicture"
+            @click="onDeleteprofilePicture"
         />
       </div>
     </div>
 
     <div v-if="!isEditing && !isChangingPassword" class="info-section">
-      <p id="fullName"><strong>{{ $t("name") }}:</strong> {{ profileData.firstName + " " + profileData.lastName }}</p>
-      <p id="username"><strong>{{ $t("username") }}:</strong> {{ profileData.username }}</p>
-      <p id="email"><strong>{{ $t("email") }}:</strong> {{ profileData.email }}</p>
+<!--      <p id="fullName"><strong>{{ $t("name") }}:</strong> {{ profileData.firstName + " " + profileData.lastName }}</p>-->
+      <p id="username"><strong>{{ $t("Username") }}:</strong> {{ profileData.username }}</p>
+      <p id="email"><strong>{{ $t("Email") }}:</strong> {{ profileData.email }}</p>
       <div class="toggle-container">
         <label for="toggle-activity">Show Activity:</label>
         <input id="toggle-activity" type="checkbox" v-model="showActivity" class="toggle-input" />
@@ -33,16 +33,16 @@
     </div>
 
     <form v-else-if="isEditing" @submit.prevent="submitForm" :class="{ 'has-errors': Object.keys(errors).length > 0 }">
-      <div class="input-box">
-        <label for="firstName">First Name</label>
-        <input id="firstName" v-model="firstName" type="text" required />
-        <div v-if="errors.firstName" class="error-message">{{ errors.firstName }}</div>
-      </div>
-      <div class="input-box">
-        <label for="lastName">Last Name</label>
-        <input id="lastName" v-model="lastName" type="text" required />
-        <div v-if="errors.lastName" class="error-message">{{ errors.lastName }}</div>
-      </div>
+<!--      <div class="input-box">-->
+<!--        <label for="firstName">First Name</label>-->
+<!--        <input id="firstName" v-model="firstName" type="text" required />-->
+<!--        <div v-if="errors.firstName" class="error-message">{{ errors.firstName }}</div>-->
+<!--      </div>-->
+<!--      <div class="input-box">-->
+<!--        <label for="lastName">Last Name</label>-->
+<!--        <input id="lastName" v-model="lastName" type="text" required />-->
+<!--        <div v-if="errors.lastName" class="error-message">{{ errors.lastName }}</div>-->
+<!--      </div>-->
       <!-- Repeat for username and email fields -->
       <div class="input-box">
         <label for="username">Username</label>
@@ -90,6 +90,8 @@ import BasicButton from "@/components/BasicComponents/basic_button.vue";
 import {ref, watch, computed, toRefs} from 'vue';
 import * as yup from "yup";
 import { useField, useForm } from "vee-validate";
+import router from "@/router/index.js";
+import {useUserStore} from "@/stores/counter.js";
 
 export default {
   name: 'UserProfile',
@@ -99,11 +101,13 @@ export default {
       type: Object,
       required: true,
       default: () => ({
-        firstName: 'john',
-        lastName: 'doe',
+        // firstName: 'john',
+        // lastName: 'doe',
         username: 'johndoe',
         email: 'john@doe.org',
-        picture: 'https://placehold.co/600x400',
+        profilePicture: 'https://placehold.co/600x400',
+        showActivity: false,
+        showFeedback: false
       }),
     }
   },
@@ -112,20 +116,20 @@ export default {
     const { profileData } = toRefs(props);
     const isEditing = ref(false);
     const isChangingPassword = ref(false);
-    const showActivity = ref(false);
-    const showFeedbackOnProfile = ref(false);
+    const showActivity = ref(profileData.value.showActivity);
+    const showFeedbackOnProfile = ref(profileData.value.showFeedback);
     const hasErrors = ref(false);
     const passwordData = ref({
       oldPassword: '',
       newPassword: '',
       confirmPassword: '',
     });
-    const defaultPicture = computed(() => 'https://placehold.co/600x400');
+    const defaultprofilePicture = computed(() => 'https://placehold.co/600x400');
 
     // Form fields managed by vee-validate
     const validationSchema = yup.object({
-      firstName: yup.string().required("First name is required"),
-      lastName: yup.string().required("Last name is required"),
+      // firstName: yup.string().required("First name is required"),
+      // lastName: yup.string().required("Last name is required"),
       username: yup.string().required("Username is required"),
       email: yup.string().required("Email is required").email("Must be a valid email"),
     });
@@ -133,16 +137,16 @@ export default {
     const { handleSubmit, errors } = useForm({
       validationSchema,
       initialValues: {
-        firstName: profileData.value.firstName,
-        lastName: profileData.value.lastName,
+        // firstName: profileData.value.firstName,
+        // lastName: profileData.value.lastName,
         username: profileData.value.username,
         email: profileData.value.email,
       }
     });
 
     // Using `useField` with initialValues from `profileData`
-    const { value: firstName } = useField('firstName', yup.string().required("First name is required"), { initialValue: profileData.value.firstName });
-    const { value: lastName } = useField('lastName', yup.string().required("Last name is required"), { initialValue: profileData.value.lastName });
+    // const { value: firstName } = useField('firstName', yup.string().required("First name is required"), { initialValue: profileData.value.firstName });
+    // const { value: lastName } = useField('lastName', yup.string().required("Last name is required"), { initialValue: profileData.value.lastName });
     const { value: username } = useField('username', yup.string().required("Username is required"), { initialValue: profileData.value.username });
     const { value: email } = useField('email', yup.string().required("Email is required").email("Must be a valid email"), { initialValue: profileData.value.email });
 
@@ -174,7 +178,8 @@ export default {
     }
 
     function logout() {
-      emit('logout');
+      useUserStore().logoutUser()
+      router.push("/home");
     }
 
     async function emitUpdatePassword() {
@@ -189,18 +194,18 @@ export default {
       }
     }
 
-    function onPictureChange(event) {
+    function onprofilePictureChange(event) {
       const file = event.target.files[0];
-      if (file) emit('changePicture', file);
+      if (file) emit('changeprofilePicture', file);
     }
 
-    function onDeletePicture() {
-      emit('deletePicture', props.profileData.picture);
+    function onDeleteprofilePicture() {
+      emit('deleteprofilePicture', props.profileData.profilePicture);
     }
 
     return {
       hasErrors,
-      defaultPicture,
+      defaultprofilePicture,
       isEditing,
       isChangingPassword,
       passwordData,
@@ -211,10 +216,10 @@ export default {
       logout,
       toggleEdit,
       toggleChangePassword,
-      onPictureChange,
-      onDeletePicture,
-      firstName,
-      lastName,
+      onprofilePictureChange,
+      onDeleteprofilePicture,
+      // firstName,
+      // lastName,
       username,
       email,
       errors,
@@ -289,7 +294,7 @@ h1 {
   margin-bottom: 2rem;
 }
 
-.profile-picture-container {
+.profile-profilePicture-container {
   position: relative;
   display: flex;
   justify-content: center;
@@ -297,14 +302,14 @@ h1 {
   margin-bottom: 1rem;
 }
 
-.profile-picture {
+.profile-profilePicture {
   width: 150px;
   height: 150px;
   border-radius: 50%;
   object-fit: cover;
 }
 
-.profile-picture-overlay {
+.profile-profilePicture-overlay {
   position: absolute;
   width: 150px;
   height: 150px;
@@ -319,26 +324,26 @@ h1 {
   cursor: pointer;
 }
 
-.profile-picture-overlay img {
+.profile-profilePicture-overlay img {
   width: 24px;
   height: 24px;
   cursor: pointer;
 }
 
-.profile-picture-overlay img.editIcon {
+.profile-profilePicture-overlay img.editIcon {
   filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(300deg) brightness(100%) contrast(100%);
 }
 
-.profile-picture-overlay img.deleteIcon {
+.profile-profilePicture-overlay img.deleteIcon {
   filter: brightness(0) saturate(100%) invert(100%) sepia(100%) saturate(0%) hue-rotate(300deg) brightness(100%) contrast(100%);
 }
 
-.profile-picture-container:hover .profile-picture-overlay,
-.profile-picture-overlay:focus {
+.profile-profilePicture-container:hover .profile-profilePicture-overlay,
+.profile-profilePicture-overlay:focus {
   opacity: 1;
 }
 
-.profile-picture-overlay input[type="file"] {
+.profile-profilePicture-overlay input[type="file"] {
   display: none;
 }
 
@@ -422,12 +427,12 @@ button {
     font-size: 1.5rem;
   }
 
-  .profile-picture {
+  .profile-profilePicture {
     width: 100px;
     height: 100px;
   }
 
-  .profile-picture-overlay {
+  .profile-profilePicture-overlay {
     width: 100px;
     height: 100px;
   }
