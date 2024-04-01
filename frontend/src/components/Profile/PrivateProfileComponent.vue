@@ -29,7 +29,9 @@
       </div>
       <BasicButton class="basic-button edit-btn" @click="toggleEdit(true)" :button_text="$t('edit')"/>
       <BasicButton class="basic-button change-password-btn" @click="toggleChangePassword(true)" :button_text="$t('changePassword')"/>
-      <BasicButton class="basic-button logout-btn" @click="logout" :button_text="$t('logout')"/>
+      <BasicButton class="basic-button logout-btn" @click="logout" :button_text="$t('Logout')"/>
+      <BasicButton class="basic-button delete-btn" @click="deleteUser" :button_text="$t('Delete User')"/>
+
     </div>
 
     <form v-else-if="isEditing" @submit.prevent="submitForm" :class="{ 'has-errors': Object.keys(errors).length > 0 }">
@@ -182,6 +184,10 @@ export default {
       router.push("/home");
     }
 
+    const deleteUser = () => {
+      router.push("/home");
+    }
+
     async function emitUpdatePassword() {
       try {
         await passwordValidationSchema.validate({
@@ -214,6 +220,7 @@ export default {
       submitForm,
       emitUpdatePassword,
       logout,
+      deleteUser,
       toggleEdit,
       toggleChangePassword,
       onprofilePictureChange,

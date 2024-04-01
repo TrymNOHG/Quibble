@@ -1,7 +1,6 @@
 package edu.ntnu.idatt2105.backend.dto.quiz;
 
-import edu.ntnu.idatt2105.backend.model.quiz.question.Difficulty;
-import jakarta.validation.constraints.Null;
+import edu.ntnu.idatt2105.backend.model.quiz.Difficulty;
 import lombok.Builder;
 import lombok.NonNull;
 import org.springframework.lang.Nullable;

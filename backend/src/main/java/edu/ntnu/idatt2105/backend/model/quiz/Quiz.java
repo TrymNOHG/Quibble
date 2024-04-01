@@ -1,7 +1,6 @@
 package edu.ntnu.idatt2105.backend.model.quiz;
 
 import edu.ntnu.idatt2105.backend.model.category.QuizCategory;
-import edu.ntnu.idatt2105.backend.model.quiz.question.Difficulty;
 import edu.ntnu.idatt2105.backend.model.quiz.question.Question;
 import edu.ntnu.idatt2105.backend.model.users.User;
 import io.swagger.v3.oas.annotations.media.Schema;

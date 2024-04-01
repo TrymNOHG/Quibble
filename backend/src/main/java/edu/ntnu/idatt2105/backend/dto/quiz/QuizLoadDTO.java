@@ -4,7 +4,7 @@ import edu.ntnu.idatt2105.backend.model.category.QuizCategory;
 import edu.ntnu.idatt2105.backend.model.quiz.QuizAuthor;
 import edu.ntnu.idatt2105.backend.model.quiz.QuizFeedback;
 import edu.ntnu.idatt2105.backend.model.quiz.QuizKeyword;
-import edu.ntnu.idatt2105.backend.model.quiz.question.Difficulty;
+import edu.ntnu.idatt2105.backend.model.quiz.Difficulty;
 import edu.ntnu.idatt2105.backend.model.quiz.question.Question;
 import lombok.Builder;
 import lombok.NonNull;

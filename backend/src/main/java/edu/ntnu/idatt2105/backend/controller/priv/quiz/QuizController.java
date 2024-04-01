@@ -3,6 +3,7 @@ package edu.ntnu.idatt2105.backend.controller.priv.quiz;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizUpdateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionCreateDTO;
 import edu.ntnu.idatt2105.backend.service.quiz.QuizService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -62,6 +63,13 @@ public class QuizController implements IQuizController{
     @Override
     public ResponseEntity<QuizLoadDTO> removeCollaborator(@NonNull Long userId, @NonNull Authentication authentication) {
         return null;
+    }
+
+    @Override
+    public ResponseEntity<QuizLoadDTO> addQuestion(@NonNull QuestionCreateDTO questionCreateDTO, @NonNull Authentication authentication) {
+        //TODO: check that user is owner or collaborator
+        QuizLoadDTO quizLoadDTO = quizService.addQuestion(questionCreateDTO);
+        return ResponseEntity.ok(quizLoadDTO);
     }
 
 
