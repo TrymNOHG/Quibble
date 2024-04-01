@@ -1,14 +1,11 @@
 package edu.ntnu.idatt2105.backend.dto.quiz;
 
-import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
-import edu.ntnu.idatt2105.backend.dto.quiz.feedback.QuizFeedbackDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryLoadDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorLoadDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.feedback.QuizFeedbackLoadDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.keyword.QuizKeywordLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionDTO;
-import edu.ntnu.idatt2105.backend.model.category.QuizCategory;
-import edu.ntnu.idatt2105.backend.model.quiz.QuizAuthor;
-import edu.ntnu.idatt2105.backend.model.quiz.QuizFeedback;
-import edu.ntnu.idatt2105.backend.model.quiz.QuizKeyword;
 import edu.ntnu.idatt2105.backend.model.quiz.Difficulty;
-import edu.ntnu.idatt2105.backend.model.quiz.question.Question;
 import lombok.Builder;
 import lombok.NonNull;
 
@@ -28,6 +25,6 @@ import java.util.Set;
 @Builder
 public record QuizLoadDTO(
         @NonNull Long quizId, @NonNull String quizName, String quizDescription, @NonNull Difficulty difficulty,
-        @NonNull Long admin_id, Set<QuizFeedbackDTO> feedbacks, Set<QuizAuthorDTO> collaborators,
-        Set<QuizCategory> categories, Set<QuestionDTO> questions, Set<QuizKeyword> keywords
+        @NonNull Long admin_id, Set<QuizFeedbackLoadDTO> feedbacks, Set<QuizAuthorLoadDTO> collaborators,
+        Set<QuizCategoryLoadDTO> categories, Set<QuestionDTO> questions, Set<QuizKeywordLoadDTO> keywords
 ) {}

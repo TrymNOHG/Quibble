@@ -40,7 +40,6 @@ public class QuizService {
     private final QuestionRepository questionRepository;
     private final QuizMapper quizMapper;
     private final QuestionMapper questionMapper;
-    private final MultipleChoiceMapper multipleChoiceMapper;
     private final MultipleChoiceRepository multipleChoiceRepository;
 
     public QuizLoadDTO updateQuiz(QuizUpdateDTO quizUpdateDTO) {
@@ -135,7 +134,7 @@ public class QuizService {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new NotFoundException("Question"));
 
-        MultipleChoice multipleChoice = multipleChoiceMapper.multipleChoiceDTOToMultipleChoice(multipleChoiceDTO);
+        MultipleChoice multipleChoice = MultipleChoiceMapper.INSTANCE.multipleChoiceDTOToMultipleChoice(multipleChoiceDTO);
         multipleChoice.setQuestion(question);
         multipleChoiceRepository.save(multipleChoice);
     }
