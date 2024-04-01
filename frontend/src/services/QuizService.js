@@ -5,7 +5,8 @@ const BASE_URL = "http://localhost:8080/api/v1/private/quiz"
 
 export const createQuiz = async (quizName) => {
     try {
-        const response = await axios.post(`${BASE_URL}/create/${quizName}`, {},
+        const response = await axios.post(`${BASE_URL}/create/${quizName}`,
+            {},
             {
             headers: {
                 Authorization: `Bearer ${await sessionToken()}`,

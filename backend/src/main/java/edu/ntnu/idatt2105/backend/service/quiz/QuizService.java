@@ -1,5 +1,5 @@
 package edu.ntnu.idatt2105.backend.service.quiz;
-
+import edu.ntnu.idatt2105.backend.model.quiz.question.Difficulty;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizUpdateDTO;
 import edu.ntnu.idatt2105.backend.exception.notfound.QuizNotFoundException;
@@ -68,12 +68,14 @@ public class QuizService {
         Quiz quiz = Quiz.builder()
                 .quizName(quizName)
                 .admin(admin)
+                .difficulty(Difficulty.EASY)
                 .build();
         quiz = quizRepository.save(quiz);
         return QuizLoadDTO.builder()
                 .quizId(quiz.getQuizId())
                 .quizName(quiz.getQuizName())
                 .admin_id(admin.getUserId())
+                .difficulty(quiz.getDifficulty())
                 .build();
     }
 

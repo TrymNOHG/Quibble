@@ -265,7 +265,7 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
       let createdQuiz = null;
       this.templateQuiz.question_list = questions.value;
 
-      await createQuiz(quizLoadDTO.quizName)
+      await createQuiz(this.templateQuiz.quizName)
           .then(response => {
             console.log(response)
             createdQuiz = response;
