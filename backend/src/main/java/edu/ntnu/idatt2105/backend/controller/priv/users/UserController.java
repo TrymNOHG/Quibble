@@ -45,7 +45,7 @@ public class UserController implements IUserController{
 
     @Override
     public ResponseEntity<Object> getUser(Authentication authentication) {
-        UserLoadDTO userLoadDTO = userService.getUserByEmail(authentication.getName());
+        UserLoadDTO userLoadDTO = userService.getUserLoadDTOByEmail(authentication.getName());
         return ResponseEntity.ok(userLoadDTO);
     }
 

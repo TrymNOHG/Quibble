@@ -14,6 +14,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+/**
+ * This service provides the logic for the Quiz entity.
+ *
+ * @author Trym Hamer Gudvangen
+ * @version 1.0 01.04.2024
+ */
 @Service
 @RequiredArgsConstructor
 public class QuizService {

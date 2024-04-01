@@ -61,7 +61,22 @@ public class UserService implements UserDetailsService {
      * @param email The email of the user.
      * @return The user.
      */
-    public UserLoadDTO getUserByEmail(String email) throws UsernameNotFoundException {
+    public User getUserByEmail(String email) throws UsernameNotFoundException {
+        LOGGER.info("Attempting to retrieve user information.");
+        User user = userRepository
+                .findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User " + email + " not found"));
+        LOGGER.info("Successful retrieval of user info.");
+        return user;
+    }
+
+    /**
+     * Get user by their email.
+     *
+     * @param email The email of the user.
+     * @return The user.
+     */
+    public UserLoadDTO getUserLoadDTOByEmail(String email) throws UsernameNotFoundException {
         LOGGER.info("Attempting to retrieve user information.");
         User user = userRepository
                 .findByEmail(email)
