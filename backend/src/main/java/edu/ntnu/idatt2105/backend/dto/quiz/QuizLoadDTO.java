@@ -4,6 +4,7 @@ import edu.ntnu.idatt2105.backend.model.category.QuizCategory;
 import edu.ntnu.idatt2105.backend.model.quiz.QuizAuthor;
 import edu.ntnu.idatt2105.backend.model.quiz.QuizFeedback;
 import edu.ntnu.idatt2105.backend.model.quiz.QuizKeyword;
+import edu.ntnu.idatt2105.backend.model.quiz.question.Difficulty;
 import edu.ntnu.idatt2105.backend.model.quiz.question.Question;
 import lombok.Builder;
 import lombok.NonNull;
@@ -23,7 +24,7 @@ import java.util.Set;
  */
 @Builder
 public record QuizLoadDTO(
-        @NonNull Long quizId, @NonNull String quizName, String quizDescription,
+        @NonNull Long quizId, @NonNull String quizName, String quizDescription, @NonNull Difficulty difficulty,
         @NonNull Long admin_id, Set<QuizFeedback> feedbacks, Set<QuizAuthor> collaborators,
         Set<QuizCategory> categories, Set<Question> questions, Set<QuizKeyword> keywords
 ) {}

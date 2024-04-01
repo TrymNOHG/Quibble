@@ -43,7 +43,7 @@ public class UserService implements UserDetailsService {
         return userRepository
                 .findByEmail(email) // FindByEmail is used as the username in the authentication object is the email.
                 .map(UserConfig::new)
-                .orElseThrow(() -> new UsernameNotFoundException("User " + username + " not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("User " + email + " not found"));
     }
 
     /**
