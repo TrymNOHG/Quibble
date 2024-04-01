@@ -149,6 +149,6 @@ public interface IQuizController {
                             schema = @Schema(implementation = QuizAuthor.class)) })
     }
     )
-    ResponseEntity<QuizLoadDTO> addQuestion(@NonNull QuestionCreateDTO questionCreateDTO, @NonNull Authentication authentication);
+    ResponseEntity<QuizLoadDTO> addQuestion(@RequestBody @NonNull QuestionCreateDTO questionCreateDTO, @NonNull Authentication authentication);
 
 }

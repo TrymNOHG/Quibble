@@ -1,5 +1,8 @@
 package edu.ntnu.idatt2105.backend.dto.quiz;
 
+import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.feedback.QuizFeedbackDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionDTO;
 import edu.ntnu.idatt2105.backend.model.category.QuizCategory;
 import edu.ntnu.idatt2105.backend.model.quiz.QuizAuthor;
 import edu.ntnu.idatt2105.backend.model.quiz.QuizFeedback;
@@ -25,6 +28,6 @@ import java.util.Set;
 @Builder
 public record QuizLoadDTO(
         @NonNull Long quizId, @NonNull String quizName, String quizDescription, @NonNull Difficulty difficulty,
-        @NonNull Long admin_id, Set<QuizFeedback> feedbacks, Set<QuizAuthor> collaborators,
-        Set<QuizCategory> categories, Set<Question> questions, Set<QuizKeyword> keywords
+        @NonNull Long admin_id, Set<QuizFeedbackDTO> feedbacks, Set<QuizAuthorDTO> collaborators,
+        Set<QuizCategory> categories, Set<QuestionDTO> questions, Set<QuizKeyword> keywords
 ) {}
