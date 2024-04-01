@@ -10,6 +10,7 @@
         @toggleChangePassword="handleToggleChangePassword"
         @updateShowActivity="handleUpdateShowActivity"
         @updateShowFeedbackOnProfile="handleUpdateShowFeedbackOnProfile"
+        :profile-data="loadUserData()"
     />
   </div>
 </template>
@@ -22,6 +23,9 @@ export default {
   components: { PrivateProfileComponent },
 
   methods: {
+    loadUserData() {
+      return useUserStore().getUserData
+    },
     handleUpdateUserProfile(userData) {
       console.log("Updating user profile with:", userData);
       // Implement your logic here to update the user profile

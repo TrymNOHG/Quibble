@@ -1,9 +1,9 @@
 package edu.ntnu.idatt2105.backend.service.images;
 
+import edu.ntnu.idatt2105.backend.dto.images.ImageLoadDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.UrlResource;
+import org.springframework.core.io.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import org.springframework.core.io.Resource;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -101,18 +100,24 @@ public class ImageService {
      * This method loads a given image from the user's image directory.
      * @param path                      Path of the image.
      */
-    public Resource loadImage(String path) {
+    public ImageLoadDTO loadImage(String path) throws IOException {
         LOGGER.info("Attempting to retrieve the image.");
-        Path pathObject = Paths.get(STORAGE_DIRECTORY.toString()).resolve(path);
-        Resource image;
-        try {
-            image = new UrlResource(pathObject.toUri());
-        } catch (Exception ignored){
-            LOGGER.info("Oh oh.");
-            image = null;
-        }
+        Path pathObject = Paths.get(STORAGE_DIRECTORY.toString(), path);
+        byte[] image = Files.readAllBytes(pathObject);
+
+
+        String contentType = switch (path.split("\\.")[0]) {
+            case "jpg", "jpeg":
+                yield "image/jpeg";
+            case "png":
+                yield "image/png";
+            case "gif":
+                yield  "image/gif";
+            default:
+                yield "application/octet-stream";
+        };
         LOGGER.info("Image resource retrieved.");
-        return image;
+        return ImageLoadDTO.builder().image(image).contentType(contentType).build();
     }
 
     /**
@@ -123,6 +128,17 @@ public class ImageService {
     public boolean deleteImage(String filePath) throws IOException {
         LOGGER.info("Deleting image at " + filePath);
         return Files.deleteIfExists(Path.of(filePath));
+    }
+
+    public Resource getImageTest(String imageDirectory, String imageName) {
+        ResourceLoader resourceLoader = new DefaultResourceLoader();
+        Resource imageResource = resourceLoader.getResource("file:" + imageDirectory + "/" + imageName);
+
+        if (imageResource.exists() && imageResource.isReadable()) {
+            return imageResource;
+        } else {
+            return null; // Handle missing images
+        }
     }
 
 }

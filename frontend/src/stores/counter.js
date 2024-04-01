@@ -5,6 +5,7 @@ import {
   getSearchedQuizzes,
   getUser
 } from "@/services/UserService.js";
+import {getPictureFromUser} from "@/services/ImageService.js";
 
 export const useUserStore = defineStore('storeUser', {
 
@@ -15,7 +16,7 @@ export const useUserStore = defineStore('storeUser', {
         userId: "",
         username: "",
         email: "",
-        profilePictureLink : ""
+        profilePicture : ""
       }
     }
   },
@@ -28,7 +29,14 @@ export const useUserStore = defineStore('storeUser', {
     async fetchUserData() {
       await getUser()
           .then(response => {
-            this.user = response
+            this.user = response.data
+            getPictureFromUser('2', 'profile_pic.PNG').then(response =>{
+              this.user.profilePicture = `data:${response.data.contentType};base64,${response.data.image}`;
+              console.log(response)
+              console.log(this.user.profilePicture)
+            }).catch(e => {
+              console.log(e)
+            });
           }).catch(error  => {
             console.warn("error", error)
           })
@@ -37,13 +45,15 @@ export const useUserStore = defineStore('storeUser', {
     logoutUser() {
       localStorage.removeItem("sessionToken")
       localStorage.removeItem("user")
+      this.setToken(null)
       useQuizStore().resetCurrentQuiz()
+      //TODO: invalidate token in backend.
     }
   },
 
   getters: {
     getUserData() {return this.user},
-    isAuth() {return this.sessionToken !== null},
+    isAuth() {return this.sessionToken !== null}, //TODO: should check if token is valid...
     getToken() {return this.sessionToken}
   },
 
