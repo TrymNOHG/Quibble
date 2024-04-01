@@ -27,6 +27,8 @@ public interface UserMapper {
                 .username(user.getUsername())
 //                .feedbacks(QuizFeedbackMapper.INSTANCE.multipleQuizFeedbackToDTO(user.getFeedbacks()))
                 .profilePicture(user.getProfilePicLink())
+                .showActivity(user.isShowActivity())
+                .showFeedback(user.isShowFeedback())
 //                .quizHistory(QuizHistoryMapper.INSTANCE.multipleQuizHistoryToDTO(user.getQuizHistory()))
                 .build();
     }

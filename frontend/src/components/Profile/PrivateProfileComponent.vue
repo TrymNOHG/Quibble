@@ -17,8 +17,8 @@
 
     <div v-if="!isEditing && !isChangingPassword" class="info-section">
 <!--      <p id="fullName"><strong>{{ $t("name") }}:</strong> {{ profileData.firstName + " " + profileData.lastName }}</p>-->
-      <p id="username"><strong>{{ $t("username") }}:</strong> {{ profileData.username }}</p>
-      <p id="email"><strong>{{ $t("email") }}:</strong> {{ profileData.email }}</p>
+      <p id="username"><strong>{{ $t("Username") }}:</strong> {{ profileData.username }}</p>
+      <p id="email"><strong>{{ $t("Email") }}:</strong> {{ profileData.email }}</p>
       <div class="toggle-container">
         <label for="toggle-activity">Show Activity:</label>
         <input id="toggle-activity" type="checkbox" v-model="showActivity" class="toggle-input" />
@@ -106,6 +106,8 @@ export default {
         username: 'johndoe',
         email: 'john@doe.org',
         profilePicture: 'https://placehold.co/600x400',
+        showActivity: false,
+        showFeedback: false
       }),
     }
   },
@@ -114,8 +116,8 @@ export default {
     const { profileData } = toRefs(props);
     const isEditing = ref(false);
     const isChangingPassword = ref(false);
-    const showActivity = ref(false);
-    const showFeedbackOnProfile = ref(false);
+    const showActivity = ref(profileData.value.showActivity);
+    const showFeedbackOnProfile = ref(profileData.value.showFeedback);
     const hasErrors = ref(false);
     const passwordData = ref({
       oldPassword: '',

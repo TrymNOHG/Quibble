@@ -16,7 +16,9 @@ export const useUserStore = defineStore('storeUser', {
         userId: "",
         username: "",
         email: "",
-        profilePicture : ""
+        profilePicture : "",
+        showActivity: false,
+        showFeedback: false
       }
     }
   },
@@ -25,6 +27,12 @@ export const useUserStore = defineStore('storeUser', {
     setToken(value) {
       this.sessionToken = value
     },
+    setShowActivity(value) {
+      this.user.showActivity = value
+    },
+    setShowFeedback(value) {
+      this.user.showFeedback = value
+    },
 
     async fetchUserData() {
       await getUser()
@@ -32,8 +40,6 @@ export const useUserStore = defineStore('storeUser', {
             this.user = response.data
             getPictureFromUser('2', 'profile_pic.PNG').then(response =>{
               this.user.profilePicture = `data:${response.data.contentType};base64,${response.data.image}`;
-              console.log(response)
-              console.log(this.user.profilePicture)
             }).catch(e => {
               console.log(e)
             });
