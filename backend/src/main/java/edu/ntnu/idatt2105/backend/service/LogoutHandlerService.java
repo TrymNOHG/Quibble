@@ -18,7 +18,7 @@ import java.util.Optional;
 /**
  * This class handles the logout process.
  *
- * @author brage
+ * @author Brage Halvorsen Kvamme
  * @version 1.0 26.03.2024
  */
 @Service

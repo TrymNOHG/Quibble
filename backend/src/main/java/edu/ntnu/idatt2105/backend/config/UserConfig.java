@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * This class is a configuration class for the user. It implements UserDetails and is used to get the user details.
  *
- * @author brage
+ * @author Brage Halvorsen Kvamme
  * @version 1.0 26.03.2024
  */
 @RequiredArgsConstructor

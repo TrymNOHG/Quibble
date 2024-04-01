@@ -41,7 +41,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
  * Configures the security filter chain for the application. This application has a multitude of filter for different
  * endpoints. The filters are configured in a chain of filters.
  *
- * @author brage
+ * @author Brage Halvorsen Kvamme
  * @version 1.1 26.03.2024
  */
 @Configuration

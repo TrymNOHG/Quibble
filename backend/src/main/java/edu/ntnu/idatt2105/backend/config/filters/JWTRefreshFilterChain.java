@@ -31,8 +31,8 @@ import java.util.logging.Logger;
  * the user is in the database.
  * If the refresh token is valid, it sets the security context with the user details.
  *
- * @author brage
- * @version 1.0 26.03.2024
+ * @author Brage Halvorsen Kvamme
+ * @version 1.1 29.03.2024
  */
 @RequiredArgsConstructor
 public class JWTRefreshFilterChain extends OncePerRequestFilter {

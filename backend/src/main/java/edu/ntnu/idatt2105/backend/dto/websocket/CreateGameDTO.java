@@ -9,6 +9,9 @@ import lombok.Builder;
  *
  * @param jwt The jwt of the user that wants to create a game.
  * @param quizId The id of the quiz that the game should be based on.
+ *
+ * @version 1.0 31.03.2024
+ * @author Brage Halvorsen Kvamme
  */
 @Builder
 public record CreateGameDTO(

@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 /**
  * Service for handling authentication logic for the application.
  *
- * @author brage
+ * @author Brage Halvorsen Kvamme
  * @version 1.1 26.03.2024
  */
 @RequiredArgsConstructor
