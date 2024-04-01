@@ -49,6 +49,7 @@ import java.util.logging.Logger;
  * <p>- invalidToken
  * <p> Host:
  * <p>- gameCreated
+ * <p>- playerJoined
  * <p>- notHost
  * <p>- getQuestion
  * <p>- everyOneAnswered
