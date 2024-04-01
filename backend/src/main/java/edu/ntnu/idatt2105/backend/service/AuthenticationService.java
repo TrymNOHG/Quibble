@@ -128,6 +128,8 @@ public class AuthenticationService {
                     .username(userRegistrationDto.username())
                     .password(passwordEncoder.encode(userRegistrationDto.password()))
                     .profilePicLink(profilePicLink) // TODO: Nå kan man legge inn hva som helst av linker. Er det sketchy?
+                    .showActivity(true)
+                    .showFeedback(false)
                     .build();
             log.info("User object created successfully");
             Authentication authentication = createAuthenticationObject(newUser);

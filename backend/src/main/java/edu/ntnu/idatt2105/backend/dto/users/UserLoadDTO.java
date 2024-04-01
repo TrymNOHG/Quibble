@@ -21,6 +21,6 @@ import org.springframework.core.io.Resource;
  */
 @Builder
 public record UserLoadDTO(@NonNull Long userId, @NonNull String username, @NonNull String email,
-                          @NonNull String profilePicture){
+                          @NonNull String profilePicture, boolean showActivity, boolean showFeedback){
 
 }

@@ -31,6 +31,9 @@ import java.util.logging.Logger;
 public class QuizController implements IQuizController{
 
     private final QuizService quizService;
+
+
+    private final QuizService quizService;
     Logger logger = Logger.getLogger(QuizController.class.getName());
 
     @Override
@@ -40,8 +43,9 @@ public class QuizController implements IQuizController{
     }
 
     @Override
-    public ResponseEntity<QuizLoadDTO> updateQuiz(@NonNull Long quizId, @NonNull Authentication authentication) {
-        return null;
+    public ResponseEntity<QuizLoadDTO> updateQuiz(@NonNull QuizUpdateDTO quizUpdateDTO, @NonNull Authentication authentication) {
+        QuizLoadDTO quizLoadDTO = quizService.updateQuiz(quizUpdateDTO);
+        return ResponseEntity.ok(quizLoadDTO);
     }
 
     @Override

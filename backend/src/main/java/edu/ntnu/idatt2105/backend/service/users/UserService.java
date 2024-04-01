@@ -4,6 +4,8 @@ import edu.ntnu.idatt2105.backend.config.UserConfig;
 import edu.ntnu.idatt2105.backend.controller.priv.users.UserController;
 import edu.ntnu.idatt2105.backend.dto.users.UserLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.users.UserUpdateDTO;
+import edu.ntnu.idatt2105.backend.exception.exists.ExistsException;
+import edu.ntnu.idatt2105.backend.exception.exists.UserExistsException;
 import edu.ntnu.idatt2105.backend.mapper.users.UserMapper;
 import edu.ntnu.idatt2105.backend.model.users.User;
 import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.FileSystemException;
 
 /**
  * Service class for getting user information from their email.
@@ -57,10 +60,35 @@ public class UserService implements UserDetailsService {
 
 
     @Transactional
-    public UserLoadDTO updateUser(UserUpdateDTO userUpdateDTO) {
+    public UserLoadDTO updateUser(UserUpdateDTO userUpdateDTO) throws FileSystemException {
         LOGGER.info(String.format("%s wants to update.", userUpdateDTO));
-        // Check that user is updating self. Need userId from authentication...
-        Long userId = 1L;
+        // TODO: Check that user is updating self. Need userId from authentication...
+
+        User user = userRepository.findById(userUpdateDTO.userId())
+                .orElseThrow(() -> new UsernameNotFoundException("User id: " + userUpdateDTO.userId()));
+
+        if(userUpdateDTO.username() != null) {
+            if(userRepository.findByUsername(userUpdateDTO.username()).isPresent()) {
+                LOGGER.warn("Username is already in-use.");
+                throw new ExistsException("User", userUpdateDTO.username());
+            }
+            user.setUsername(userUpdateDTO.username());
+        }
+
+        if(userUpdateDTO.profilePicture() != null){
+            String newProfilePicLink = imageService.saveImage(userUpdateDTO.profilePicture(), userUpdateDTO.userId());
+            user.setProfilePicLink(newProfilePicLink);
+        }
+
+        if(userUpdateDTO.showActivity() != null){
+            user.setShowActivity(userUpdateDTO.showActivity());
+        }
+
+        if(userUpdateDTO.showFeedback() != null){
+            user.setShowFeedback(userUpdateDTO.showFeedback());
+        }
+
+        userRepository.save(user);
         LOGGER.info("User has been successfully updated");
         return null;
     }

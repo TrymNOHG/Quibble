@@ -78,9 +78,10 @@ public class ImageService {
      * This method saves a given image to the user's image directory.
      * @param file                  The image to be saved.
      * @param userId                The user saving the image.
+     * @return                      The file path of the saved image.
      * @throws FileSystemException  An error with saving the image.
      */
-    public void saveImage(MultipartFile file, Long userId) throws FileSystemException {
+    public String saveImage(MultipartFile file, Long userId) throws FileSystemException {
         String fileName = file.getOriginalFilename();
 
         if (!VALID_FILES.contains(file.getContentType())) {
@@ -94,6 +95,7 @@ public class ImageService {
         } catch (Exception e) {
             throw new FileSystemException("File could not be saved");
         }
+        return newFilePath.getFileName().toString();
     }
 
     /**
@@ -130,15 +132,6 @@ public class ImageService {
         return Files.deleteIfExists(Path.of(filePath));
     }
 
-    public Resource getImageTest(String imageDirectory, String imageName) {
-        ResourceLoader resourceLoader = new DefaultResourceLoader();
-        Resource imageResource = resourceLoader.getResource("file:" + imageDirectory + "/" + imageName);
 
-        if (imageResource.exists() && imageResource.isReadable()) {
-            return imageResource;
-        } else {
-            return null; // Handle missing images
-        }
-    }
 
 }

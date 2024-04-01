@@ -52,10 +52,31 @@ export const getUser = async () => {
 // let userUpdateDTO = {
 //     'userId' : '',
 //     'username' : '',
-//     'profilePicture' : null
+//     'profilePicture' : null,
+//     'showActivity' : null,
+//      'showFeedback' : null
 // }
 export const updateUser = async (userUpdateDTO) => {
     return axios.patch(`${BASE_URL}/private/users/update`, userUpdateDTO, {
+        headers: {
+            Authorization: `Bearer ${await sessionToken()}`,
+        },
+    });
+}
+
+
+//TODO: use userUpdateDTO
+export const updateUserShowActivity = async (newShowActivity) => {
+    console.log(newShowActivity)
+    return axios.patch(`${BASE_URL}/private/users/update/showActivity`, newShowActivity, {
+        headers: {
+            Authorization: `Bearer ${await sessionToken()}`,
+        },
+    });
+}
+
+export const updateUserShowFeedback = async (newShowFeedback) => {
+    return axios.patch(`${BASE_URL}/private/users/update/showFeedback`, newShowFeedback, {
         headers: {
             Authorization: `Bearer ${await sessionToken()}`,
         },

@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.nio.file.FileSystemException;
+
 /**
  * This interface outlines the various functionality the private endpoint for user's should have.
  * An authorized user should be able to update and delete their profile.
@@ -46,7 +48,7 @@ public interface IUserController {
                             schema = @Schema(implementation = User.class)) })
     }
     )
-    ResponseEntity<UserLoadDTO> updateUser(@RequestBody @NonNull UserUpdateDTO userUpdateDTO, @NonNull Authentication authentication);
+    ResponseEntity<UserLoadDTO> updateUser(@RequestBody @NonNull UserUpdateDTO userUpdateDTO, @NonNull Authentication authentication) throws FileSystemException;
 
 
     /**
@@ -90,6 +92,41 @@ public interface IUserController {
     }
     )
     ResponseEntity<Object> getUser(Authentication authentication);
+
+//    @PatchMapping(
+//            value="/update/showActivity",
+//            consumes = MediaType.APPLICATION_JSON_VALUE,
+//            produces = MediaType.APPLICATION_JSON_VALUE
+//    )
+//    @Operation(summary = "This method updates the user's show activity preference.")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "Successful update of user.",
+//                    content = { @Content(mediaType = "application/json",
+//                            schema = @Schema(implementation = User.class)) }),
+//            @ApiResponse(responseCode = "403", description = "Unauthorized update of user.",
+//                    content = { @Content(mediaType = "application/json",
+//                            schema = @Schema(implementation = User.class)) })
+//    }
+//    )
+//    ResponseEntity<Object> updateUserShowActivity(@RequestBody boolean newShowActivity, @NonNull Authentication authentication) throws FileSystemException;
+//
+//    @PatchMapping(
+//            value="/update/showFeedback",
+//            consumes = MediaType.APPLICATION_JSON_VALUE,
+//            produces = MediaType.APPLICATION_JSON_VALUE
+//    )
+//    @Operation(summary = "This method updates the user's show feedback preference.")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "Successful update of user.",
+//                    content = { @Content(mediaType = "application/json",
+//                            schema = @Schema(implementation = User.class)) }),
+//            @ApiResponse(responseCode = "403", description = "Unauthorized update of user.",
+//                    content = { @Content(mediaType = "application/json",
+//                            schema = @Schema(implementation = User.class)) })
+//    }
+//    )
+//    ResponseEntity<Object> updateUserShowFeedback(@RequestBody boolean newShowFeedback, @NonNull Authentication authentication) throws FileSystemException;
+//
 
 
 }
