@@ -36,7 +36,7 @@ public class QuestionService {
     }
 
     @Transactional
-    public QuestionDTO getQuestionDTIO(long questionId) {
+    public QuestionDTO getQuestionDTO(long questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow();
         return QuestionDTO.builder()
                 .id(question.getQuestionId())
