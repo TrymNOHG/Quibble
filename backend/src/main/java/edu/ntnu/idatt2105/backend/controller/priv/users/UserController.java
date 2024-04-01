@@ -3,7 +3,6 @@ package edu.ntnu.idatt2105.backend.controller.priv.users;
 import edu.ntnu.idatt2105.backend.dto.users.UserLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.users.UserUpdateDTO;
 import edu.ntnu.idatt2105.backend.service.users.UserService;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;

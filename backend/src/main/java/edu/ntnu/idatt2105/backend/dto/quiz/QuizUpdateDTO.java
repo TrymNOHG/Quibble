@@ -1,7 +1,9 @@
 package edu.ntnu.idatt2105.backend.dto.quiz;
 
+import jakarta.validation.constraints.Null;
 import lombok.Builder;
 import lombok.NonNull;
+import org.springframework.lang.Nullable;
 
 
 /**
@@ -15,5 +17,5 @@ import lombok.NonNull;
  * @version 1.0 24.03.2024
  */
 @Builder
-public record QuizUpdateDTO(@NonNull Long quizId, String newName, String newDescription) {
+public record QuizUpdateDTO(@NonNull Long quizId, @Nullable String newName, @Nullable String newDescription) {
 }

@@ -1,7 +1,9 @@
 package edu.ntnu.idatt2105.backend.controller.priv.quiz;
 
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.QuizUpdateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
+import edu.ntnu.idatt2105.backend.service.quiz.QuizService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,14 +27,18 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequestMapping(value = "/api/v1/private/quiz")
 public class QuizController implements IQuizController{
+
+    private final QuizService quizService;
+
     @Override
     public ResponseEntity<QuizLoadDTO> createQuiz(@NonNull String quizName, @NonNull Authentication authentication) {
         return null;
     }
 
     @Override
-    public ResponseEntity<QuizLoadDTO> updateQuiz(@NonNull Long quizId, @NonNull Authentication authentication) {
-        return null;
+    public ResponseEntity<QuizLoadDTO> updateQuiz(@NonNull QuizUpdateDTO quizUpdateDTO, @NonNull Authentication authentication) {
+        QuizLoadDTO quizLoadDTO = quizService.updateQuiz(quizUpdateDTO);
+        return ResponseEntity.ok(quizLoadDTO);
     }
 
     @Override
