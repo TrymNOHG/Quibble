@@ -15,6 +15,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * This class represents a room in the quiz game.
+ *
+ * @version 1.0 31.03.2024
+ * @see Player
+ * @see AnonymousPlayer
+ * @author Brage Halvorsen Kvamme
  */
 @Data
 @Slf4j
@@ -107,19 +112,41 @@ public class Game {
         return leaderboardDTO;
     }
 
+    /**
+     * Starts the game in the game room.
+     */
     public void startGame() {
         started = true;
         questionIndex = 0;
     }
 
+    /**
+     * Gets the next question in the game room. If there is no next question, the game is over. Can't get next question
+     * if the game has not started.
+     *
+     * @return True if there is a next question, false otherwise.
+     */
     public boolean nextQuestion() {
-        return ++questionIndex < quiz.getQuestions().size();
+        return ++questionIndex < quiz.getQuestions().size() && started;
     }
 
+    /**
+     * Gets the current question in the game room.
+     *
+     * @return The current question in the game room.
+     */
     public Question getCurrentQuestion() {
         return questions.get(questionIndex);
     }
 
+    /**
+     * Answers a question in the game room. If the answer is correct, the player gets points. The player is anonymous.
+     *
+     * @param answer The answer to the question.
+     * @param userId The UUID of the player.
+     * @param correctAnswer The correct answer to the question.
+     * @return False if the answer was answered in time or has not been answered before, true otherwise.
+     */
     public boolean answerQuestionAnon(String answer, UUID userId, String correctAnswer) {
         int maxQuestionTime = 90;
         Instant now = Instant.now();
@@ -182,7 +209,12 @@ public class Game {
         return true;
     }
 
-
+    /**
+     * Checks if a player has answered the current question correctly.
+     *
+     * @param sessionId The UUID of the player.
+     * @return True if the player has answered the question correctly, false otherwise.
+     */
     public boolean answeredCorrect(UUID sessionId) {
         AtomicBoolean isCorrect = new AtomicBoolean(false);
         players.forEach(player -> {
@@ -201,10 +233,18 @@ public class Game {
         }
     }
 
+    /**
+     * Starts the timer for the current question.
+     */
     public void startTimer() {
         answerStart.put(questionIndex, Instant.now());
     }
 
+    /**
+     * Gets the UUIDs of every player in the game
+     *
+     * @return A list of the UUIDs of every player in the game.
+     */
     public List<UUID> getAllPlayerUUIDs() {
         List<UUID> uuids = new ArrayList<>();
         players.forEach(player -> uuids.add(player.getWebSocketId()));
@@ -212,6 +252,12 @@ public class Game {
         return uuids;
     }
 
+    /**
+     * Gets the score of a player in the game.
+     *
+     * @param player The UUID of the player.
+     * @return The score of the player.
+     */
     public int getPlayerScore(UUID player) {
         for (Player p : players) {
             if (p.getWebSocketId().equals(player)) {
@@ -221,6 +267,11 @@ public class Game {
         return anonymousPlayers.get(player).getScore();
     }
 
+    /**
+     * Checks if everyone has answered the current question.
+     *
+     * @return True if everyone has answered the current question, false otherwise.
+     */
     public boolean everyoneAnswered() {
         for (Player player : players) {
             if (player.getAnswerTimes().containsKey(questionIndex)) {

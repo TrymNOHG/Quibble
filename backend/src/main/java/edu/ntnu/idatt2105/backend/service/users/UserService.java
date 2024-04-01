@@ -26,8 +26,10 @@ import java.nio.file.FileSystemException;
 /**
  * Service class for getting user information from their email.
  *
- * @author Trym Hamer Gudvangen, Brage Kvamme
+ * @author Trym Hamer Gudvangen
+ * @author Brage Halvorsen Kvamme
  * @version 1.0 26.03.2024
+ * @see User
  */
 @Service
 @RequiredArgsConstructor
@@ -38,6 +40,13 @@ public class UserService implements UserDetailsService {
     private final UserMapper userMapper;
     private final ImageService imageService;
 
+    /**
+     * Load userDetals object by their email.
+     *
+     * @param email The email of the user.
+     * @return The user.
+     * @throws UsernameNotFoundException If the user is not found.
+     */
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository

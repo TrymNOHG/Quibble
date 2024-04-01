@@ -28,30 +28,40 @@ import java.util.logging.Logger;
 
 /**
  * This class is responsible for handling the socket io service. It listens for events and sends events to the clients.
- * It also handles the game logic. Se the documentation for each websocket event for more information. A websocket
- * event is a websocket message that is sent from the client to the server or from the server to the client.
- * <p>Here is a list for all endpoints the client can send to the server:
- * <p>- createGame: Creates a game with the given quiz id. The user that creates the game is the host of the game.
- * <p>- joinGame: Joins a game with the given code. The user can join with a username or a jwt token. If the user joins
- * with a jwt token, the user is authenticated and added to the game with the email from the jwt token. If the user
- * joins without authentication, the user is added to the game with the username.
- * <p>- startGame: Starts the game if the user is the host of the game.
- * <p>- nextQuestion: Starts the next question if the user is the host of the game.
- * <p>- answerQuestion: Answers the current question in the game.
- * <p> Next are all endpoints the server can send to the client. These are the ones that the client listens for:
- * <p>- gameDoesNotExist: The game with the given code does not exist. Usually when a user enters the wrong code.
- * <p>- gameCreated: The game was successfully created and the game code is sent back to the client.
- * <p>- gameJoined: The user has successfully joined the game.
- * <p>- gameStarted: The gam notHost: The user ise has started.
- * <p>- not the host of the game.
- * <p>- questionStarted: The question has started. The question and alternatives are sent to the clients.
- * <p>- questionAnswered: The question has been answered.
- * <p>- gameEnded: The game has ended.
- * <p>- answerRevealed: The answer to the current question has been revealed.
- * <p>- yourScore: The score of the user is sent to the user.
+ * It also handles the game logic. See the documentation for each websocket event for more information. A websocket
+ * event is a websocket message that is sent from the client to the server or from the server to the client. It is
+ * important to have the right capitalization and spelling of the event names. The events are case-sensitive.
+ * <p>Here is a list for all endpoints the client or host can send to the server:
+ * <p> Host:
+ * <p>- createGame
+ * <p>- startGame
+ * <p>- nextQuestion
+ * <p>- beginAnswering
+ * <p>- revealAnswer
+ * <p>- getScoreBoard
+ * <p> Client:
+ * <p>- joinGame
+ * <p>- answerQuestion
+ * <p> Next are all endpoints the server can send to the client. These are the ones that the client/host listens for:
+ * <p> Host and client:
+ * <p>- gameDoesNotExist
+ * <p>- gameEnded
+ * <p>- invalidToken
+ * <p> Host:
+ * <p>- gameCreated
+ * <p>- notHost
+ * <p>- getQuestion
+ * <p>- everyOneAnswered
+ * <p>- getScoreBoard
+ * <p> Client:
+ * <p>- gameJoined
+ * <p>- waitForQuestion
+ * <p>- beginAnswering
+ * <p>- questionAnswered
+ * <p>- yourScore
  *
- * @version 1.0 28.03.2024
- * @author brage
+ * @version 1.1 30.03.2024
+ * @author Brage Halvorsen Kvamme
  */
 @Service
 @RequiredArgsConstructor
@@ -60,14 +70,13 @@ public class SocketService {
     private final SocketIOServer server;
     private final GameService gameService;
     private final JWTTokenService jwtTokenService;
-    private final QuizService quizService;
     private final UserService userService;
     private final QuestionService questionService;
     private final Environment env;
 
 
     /**
-     * Inits the socket io service. All listeners are added.
+     * Inits the socket io service. All event listeners are added.
      */
     @PostConstruct
     public void initSocketIoService() {
@@ -95,7 +104,7 @@ public class SocketService {
     }
 
     /**
-     * This method is called when a user connects to the socket io server. It logs the event to the backend.
+     * This method is automatically called when a user connects to the socket io server. It logs the event to the backend.
      * The "onConnect" is automatically called when a user connects to the server.
      *
      * @param client The client that connected
@@ -106,8 +115,7 @@ public class SocketService {
 
     /**
      * This method is called when a user disconnects from the socket io server. It logs the event to the backend.
-     * If the host of a room leaves, the room is closed. The "onDisconnect" is
-     * automatically called when a user disconnects
+     * If the host of a room leaves, the room is closed. If an anonymous user leaves, the user is deleted from the game.
      *
      * @param client The client that disconnected
      */
@@ -127,7 +135,10 @@ public class SocketService {
     }
 
     /**
-     * This method is called when the "createGame" event is received.
+     * Send  "createGame" from host.
+     * <p>
+     * Listen for "invalidToken" and "gameCreated" from server.
+     * <p>
      * It creates a game and sends the game code back to the client for it to be shared with others to
      * join the game. After creating the game, other clients can join the game with the "joinGame" event.
      *
@@ -153,8 +164,11 @@ public class SocketService {
     }
 
     /**
-     * This method is called when the "joinGame" event is received.
-     * It joins a game with the given code. If the game does not exist, the client is notified.
+     * Send "joinGame" from client.
+     * <p>
+     * Listen for "gameDoesNotExist", "waitForQuestion", "gameJoined", "invalidToken" and "yourScore" from server.
+     * <p>
+     * Join a game with the given code. If the game does not exist, the client is notified.
      * If the game has already started, the client is notified. If the user is already in the game, the user is
      * rejoining the game. The user can join the game with a username or a jwt token. If the user joins with a jwt token,
      * the user is authenticated and the user is added to the game with the email from the jwt token. If the user joins
@@ -209,9 +223,10 @@ public class SocketService {
     }
 
     /**
-     * This method is called when the "startGame" event is received.
-     * It starts the game if the user is the host of the game. If the user is not the host of the game, the user is
-     * notified. The "startGame" event is automatically called when the host of the game starts the game.
+     * <p>Send "startGame" from host.
+     * <p>Listen to "getQuestion" from server.
+     * <p>It starts the game if the user is the host of the game. If the user is not the host of the game, the user is
+     * notified.
      *
      * @param client The client that sent the event
      * @param data The data sent with the event
@@ -229,8 +244,9 @@ public class SocketService {
     }
 
     /**
-     * This method is called when the "nextQuestion" event is received.
-     * It starts the next question if the user is the host of the game. If the user is not the host of the game, the
+     * <p>Send "nextQuestion" from host.
+     * <p>Listen to "getQuestion" from server.
+     * <p>It starts the next question if the user is the host of the game. If the user is not the host of the game, the
      * user is notified. If the game has ended, the user is notified. The "nextQuestion" event is automatically called
      * when the host of the game starts the next question.
      *
@@ -258,8 +274,9 @@ public class SocketService {
     }
 
     /**
-     * This method is called when the "beginAnswering" event is received.
-     * It begins the answering phase of the game. The host can show the question on a screen and the players can answer
+     * <p>Send "beginAnswering" from host.
+     * <p>Client should listen to "getQuestion" from server.
+     * <p>It begins the answering phase of the game. The host can show the question on a screen and the players can answer
      * the question.
      *
      * @param client The client that sent the event
@@ -279,9 +296,10 @@ public class SocketService {
     }
 
     /**
-     * This method is called when the "answerQuestion" event is received.
-     * It answers the current question in the game. If the game does not exist, the user is notified. If the question
-     * is answered, the user gets notified. If the game has ended, the user gets notified.
+     * <p>Send "answerQuestion" from client.
+     * <p>Listen to "questionAnswered" from server.
+     * <p>It answers a question in the game room. If the answer is correct, the player gets points. If the user is not
+     * signed in, the user is notified. If the game does not exist, the user is notified. If the user has already
      *
      * @param client The client that sent the question
      * @param data The data sent with the event
@@ -329,13 +347,14 @@ public class SocketService {
     }
 
     /**
-     * This method is called when the "revealAnswer" event is received.
-     * It reveals the answer to the current question in the game. If the user is not the host of the game, the user is
-     * notified. If the game does not exist, the user is notified.
+     * <p>Send "revealAnswer" from host.
+     * <p>Listen to "answerRevealed" from server.
+     * <p>It reveals the answer to the question. The host can show the answer on a screen. The players can see if they
+     * answered the question correctly or not.
      *
-     * @param client
-     * @param data
-     * @param ackRequest
+     * @param client The client that sent the event
+     * @param data The data sent with the event
+     * @param ackRequest The ack request
      */
     private void revealAnswer(SocketIOClient client, GameValidationDTO data, AckRequest ackRequest) {
         logger.info("revealAnswer event received from client: " + client.getSessionId());
@@ -349,6 +368,16 @@ public class SocketService {
         });
     }
 
+    /**
+     * <p>Send "getScoreBoard" from host.
+     * <p>Listen to "getScoreBoard" from server.
+     * <p>It gets the scoreboard of the game. The host can show the scoreboard on a screen. The players can see their
+     * score on their screen.
+     *
+     * @param client The client that sent the event
+     * @param data The data sent with the event
+     * @param ackRequest The ack request
+     */
     private void getScoreBoard(SocketIOClient client, GameValidationDTO data, AckRequest ackRequest) {
         logger.info("getScoreBoard event received from client: " + client.getSessionId());
         Game game = validateIsHostAndReturnGame(client, data);
@@ -390,6 +419,12 @@ public class SocketService {
         return game;
     }
 
+    /**
+     * Gets the room code of the client. The room code is the code of the game room that the client is in.
+     *
+     * @param client The client to get the room code from
+     * @return The room code of the client
+     */
     private String getRoomCode(SocketIOClient client) {
         logger.info("all rooms from lient " + client.getSessionId() + ": " + client.getAllRooms().toString());
         return client.getAllRooms().stream().filter(room -> !room.isBlank()).findFirst().orElse(null);
