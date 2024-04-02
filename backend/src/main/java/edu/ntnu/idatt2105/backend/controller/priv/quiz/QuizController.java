@@ -52,12 +52,14 @@ public class QuizController implements IQuizController{
     @Override
     public ResponseEntity<QuizLoadDTO> deleteQuiz(@NonNull Long quizId, @NonNull Authentication authentication) {
         logger.info("Deleting quiz with ID: {}" + quizId);
+        quizService.deleteQuiz(quizId);
         return ResponseEntity.ok(null);
     }
 
     @Override
     public ResponseEntity<QuizLoadDTO> addCollaborator(@NonNull QuizAuthorDTO newCollaborator, @NonNull Authentication authentication) {
         logger.info("adding collaborator");
+        //TODO: check that user is owner or collaborator
         // Check if already part of quiz
         // Check is authorized
         // Check is admin? exists? etc.
@@ -68,12 +70,14 @@ public class QuizController implements IQuizController{
     @Override
     public ResponseEntity<QuizLoadDTO> removeCollaborator(@NonNull Long userId, @NonNull Authentication authentication) {
         logger.info("deleting collaborator");
+        //TODO: check that user is owner or collaborator
         return null;
     }
 
     @Override
     public ResponseEntity<QuizLoadDTO> addQuestion(@NonNull QuestionCreateDTO questionCreateDTO, @NonNull Authentication authentication) {
         //TODO: check that user is owner or collaborator
+        //TODO: make method that checks if user is owner or collaborator of quiz.
         QuizLoadDTO quizLoadDTO = questionService.addQuestion(questionCreateDTO);
         return ResponseEntity.ok(quizLoadDTO);
     }
@@ -82,6 +86,12 @@ public class QuizController implements IQuizController{
     public ResponseEntity<QuizLoadDTO> editQuestion(@NonNull QuestionEditDTO questionEditDTO, @NonNull Authentication authentication) {
         QuizLoadDTO quizLoadDTO = questionService.editQuestion(questionEditDTO);
         return ResponseEntity.ok(quizLoadDTO);
+    }
+
+    @Override
+    public ResponseEntity<Object> deleteQuestion(@NonNull Long questionId, @NonNull Authentication authentication) {
+        questionService.deleteQuestion(questionId);
+        return ResponseEntity.ok("Successful Deletion");
     }
 
 

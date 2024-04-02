@@ -169,4 +169,22 @@ public interface IQuizController {
     }
     )
     ResponseEntity<QuizLoadDTO> editQuestion(@RequestBody @NonNull QuestionEditDTO questionEditDTO, @NonNull Authentication authentication);
+
+    @DeleteMapping(
+            value="/delete/question/{questionId}",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @Operation(summary = "This method deletes a question of a given quiz")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful deletion of question.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = QuizAuthor.class)) }),
+            @ApiResponse(responseCode = "403", description = "Unauthorized deletion of question.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = QuizAuthor.class)) })
+    }
+    )
+    ResponseEntity<Object> deleteQuestion(@PathVariable @NonNull Long questionId, @NonNull Authentication authentication);
+
 }
