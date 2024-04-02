@@ -32,7 +32,7 @@ export default {
       type: Object,
       required: true,
       default: () => ({
-        id: Number,
+        userId: Number,
         username: String,
       })
     }

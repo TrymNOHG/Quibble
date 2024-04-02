@@ -3,6 +3,7 @@ package edu.ntnu.idatt2105.backend.controller.priv.quiz;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizUpdateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionCreateDTO;
 import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
 import edu.ntnu.idatt2105.backend.model.quiz.QuizAuthor;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,7 +12,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.NonNull;
-import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -31,7 +31,7 @@ public interface IQuizController {
      * @return ResponseEntity showing whether the operation was successful.
      */
     @PostMapping(
-            value="/create/quiz",
+            value="/create/{quizName}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -45,7 +45,7 @@ public interface IQuizController {
                             schema = @Schema(implementation = Quiz.class)) })
     }
     )
-    ResponseEntity<QuizLoadDTO> createQuiz(@ParameterObject @RequestParam(name = "quizName") @NonNull String quizName,
+    ResponseEntity<QuizLoadDTO> createQuiz(@PathVariable @NonNull String quizName,
                                            @NonNull Authentication authentication);
 
     @PatchMapping(
@@ -128,5 +128,27 @@ public interface IQuizController {
     )
     ResponseEntity<QuizLoadDTO> removeCollaborator(@PathVariable @NonNull Long userId,
                                                 @NonNull Authentication authentication);
+
+    /**
+     * This method adds a new question to a quiz.
+     *
+     * @return ResponseEntity showing whether the operation was successful.
+     */
+    @PostMapping(
+            value="/create/question",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @Operation(summary = "This method adds a new question to a given quiz")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful addition of question.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = QuizAuthor.class)) }),
+            @ApiResponse(responseCode = "403", description = "Unauthorized addition of question.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = QuizAuthor.class)) })
+    }
+    )
+    ResponseEntity<QuizLoadDTO> addQuestion(@RequestBody @NonNull QuestionCreateDTO questionCreateDTO, @NonNull Authentication authentication);
 
 }

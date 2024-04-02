@@ -20,13 +20,11 @@
               id="add"
               icon="fa-solid fa-pen-to-square"
               @click="editQuestion"
-              v-if="isAuth || isEditor"
           />
           <font-awesome-icon
               class="icon_trash"
               icon="fa-solid fa-trash"
               @click="showPopupProp = true"
-              v-if="isAuth || isEditor"
           />
         </div>
       </div>
@@ -37,8 +35,10 @@
 <script>
 import {ref, getCurrentInstance} from "vue";
 import {useQuizStore} from "@/stores/counter.js";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 export default {
+  components: {FontAwesomeIcon},
   props: {
     question: {
       type: Object,
@@ -52,17 +52,11 @@ export default {
   },
 
   setup() {
-    const store = useQuizStore();
     const showPopupProp = ref(false);
     const { emit } = getCurrentInstance();
-    const isAuth = ref(store.isAuth)
-    const isEditor = ref(store.isEditor)
 
     const deleteQuestion = (question) => {
       emit("deleteQuestion", question.id);
-      showPopupProp.value = false;
-    };
-    const closePopup = () => {
       showPopupProp.value = false;
     };
 
@@ -70,13 +64,15 @@ export default {
       emit("editQuestion", question);
     }
 
+    const closePopup = () => {
+      showPopupProp.value = false;
+    };
+
     return {
-      editQuestion,
       showPopupProp,
+      editQuestion,
       deleteQuestion,
       closePopup,
-      isEditor,
-      isAuth
     };
   }
 }
@@ -142,15 +138,14 @@ button{
   width: 50%;
 }
 
-.router {
-  text-decoration: none;
-  color: black;
-}
-
 .icon_trash:hover {
   color: red;
   scale: 1.25;
   cursor: pointer;
+}
+
+.icon_trash {
+  margin-right: 20%;
 }
 
 .question-item {
@@ -191,5 +186,9 @@ span {
 .actions font-awesome-icon:hover {
   scale: 1.25;
   color: #ff001e;
+}
+
+.bottom {
+
 }
 </style>

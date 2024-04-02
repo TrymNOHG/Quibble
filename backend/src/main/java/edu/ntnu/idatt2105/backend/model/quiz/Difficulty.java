@@ -1,4 +1,4 @@
-package edu.ntnu.idatt2105.backend.model.quiz.question;
+package edu.ntnu.idatt2105.backend.model.quiz;
 
 /**
  * The various difficulties of a quiz.

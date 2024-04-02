@@ -1,11 +1,12 @@
 import { defineStore } from 'pinia'
 import {
-  checkSuperUser,
-  getMoreQuizzes, getQuizzesByDifficulty,
-  getSearchedQuizzes,
   getUser
 } from "@/services/UserService.js";
 import {getPictureFromUser} from "@/services/ImageService.js";
+
+import {
+  createQuiz
+} from "@/services/QuizService.js"
 
 export const useUserStore = defineStore('storeUser', {
 
@@ -74,37 +75,46 @@ export const useQuizStore = defineStore('storeQuiz', {
   state: () => {
     return {
       allQuiz: [],
-      allAuthors: [{
-          id: 1,
-          username: 'Author 1'},
-        {
-          id: 2,
-          username: 'Author 2'},
-        {
-          id: 3,
-          username: 'Author 3'}],
 
       currentQuiz: {
         QuizId: null,
-        Name: "",
-        Difficulty: "",
-        Description: "",
-        Image: "",
-        question_list: [
+        quizName: "",
+        quizDifficulty: "",
+        quizDescription: "",
+        admin_id: null,
+        feedback: [],
+        collaborators: [],
+        categories: [],
+        question: [
           {
             id: null,
             question: "",
             answer: "",
+            answers: [],
+            correctAnswers: [],
             type: ""
           },
         ],
+        keywords: [],
+        Image: "",
       },
-      isAuth: false,
-      isEditor: false,
     }
   },
 
   actions: {
+    async loadQuizzes(searchword, difficulty, pageIndex, numberOfQuizzes) {
+      /*
+      try {
+        const response = await fetchQuizzes(searchword, difficulty, pageIndex, numberOfQuizzes);
+        this.allQuizzes = [ ...response.content ];
+        return this.allQuizzes;
+      } catch (error) {
+          console.error("Failed to load previous page:", error);
+          pageIndex.value--;
+      }
+       */
+    },
+
     async deleteCurrentQuiz() {
       /*
       TODO: axioscall
@@ -112,6 +122,26 @@ export const useQuizStore = defineStore('storeQuiz', {
       */
     },
 
+    async editQuestion(editedQuestion){
+      /*
+      TODO: axioscall
+      editQuestionById(this.currentQuiz.quizId, editedQuestion.id)
+      */
+    },
+
+    async addQuestion(newQuestion){
+      /*
+      TODO: axioscall
+      addQuestion(this.currentQuiz.quizId, newQuestion)
+      */
+    },
+
+    async addQuiz() {
+      /*
+      TODO: axioscall
+      addQuizById(user.id, this.currentQuiz.quizId)
+      */
+    },
 
     async deleteQuestion(question_id) {
       for (let index = 0; index < this.currentQuiz.question_list.length; index++) {
@@ -140,24 +170,21 @@ export const useQuizStore = defineStore('storeQuiz', {
           break;
         }
       }
-      console.log("KL")
     },
 
     async setCurrentQuizById(quiz) {
       console.log(quiz)
       this.currentQuiz = quiz;
-      this.isAuth = true;
-      this.isEditor = true;
+      if (useUserStore().user.userId === this.currentQuiz().QuizId){
+        this.isAuth = true;
+        this.isEditor = true;
+      }
+
       /*
       TODO: Sjekke opp mot backend
       isAuth og isEditor burde sjekkes opp mot axioscall til backend
        */
       return this.currentQuiz;
-    },
-
-    async searchQuizzes(searchword) {
-      this.allQuiz = getSearchedQuizzes(searchword);
-      return this.allQuiz;
     },
 
     async addAuthor(newAuthor) {
@@ -168,28 +195,6 @@ export const useQuizStore = defineStore('storeQuiz', {
       fetchAuthors(this.currentQuiz.quizId)
       */
       return this.allAuthors;
-    },
-
-    async setAllQuizzes(difficulty) {
-      this.allQuiz = getQuizzesByDifficulty(difficulty);
-      return this.allQuiz;
-    },
-
-    async checkSuperUser(quizId) {
-      try {
-        const response = await checkSuperUser(quizId);
-        return response.data
-      } catch (e) {
-        console.error(e)
-      }
-    },
-
-    async fetchMoreQuizzes(diff) {
-      await getMoreQuizzes(diff).then(response => {
-        this.newQuizzes = []
-        this.newQuizzes = response.data;
-      })
-      return this.newQuizzes;
     },
 
     resetCurrentQuiz() {
@@ -203,39 +208,71 @@ export const useQuizStore = defineStore('storeQuiz', {
 export const useQuizCreateStore = defineStore('storeQuizCreate', {
   state: () => {
     return {
-      currentQuiz: {
+      templateQuiz: {
         QuizId: null,
-        Name: "TemplateQuiz",
-        Difficulty: "Medium",
-        Description: "Template quiz, change the quiz as wanted",
-        Image: "https://via.placeholder.com/150",
-        question_list: [
+        quizName: "TemplateQuiz",
+        quizDifficulty: "Easy",
+        quizDescription: "Template quiz, change the quiz as wanted",
+        admin_id: null,
+        feedbacks: [],
+        collaborators: [],
+        categories: [
+          { id: 1, name: "Science" },
+          { id: 2, name: "History" },
+        ],
+        questions: [
           {
-            id: null,
-            question: "What is your name?",
+            id: 1,
+            question: "What is your question?",
             answer: "John",
             answers: ["pencil", "book", "John", "quiz"],
-            type: "MultipleChoice"
+            correctAnswers: [false, true, false, false],
+            type: "multiplechoice"
           },
           {
-            id: null,
+            id: 2,
             question: "Are you 21 years old?",
-            answer: "Yes",
-            answers: ["Yes", "No"],
-            type: "TrueFalse"
+            answer: "true",
+            answers: ["true", "false"],
+            type: "truefalse"
           },
           {
-            id: null,
+            id: 3,
             question: "What is in the center of the milky way",
             answer: "Black Hole",
             answers: ["Sun", "Earth", "Venus", "Black Hole"],
-            type: "MultipleChoice"
+            correctAnswers: [false, true, false, false],
+            type: "multiplechoice"
           },
         ],
+        keywords: [],
+        Image: "https://via.placeholder.com/150",
       },
     }
   },
 
+  actions: {
+    async deleteTag(tag) {
+
+    },
 
 
+    async addTag(newTag) {
+
+    },
+
+    async createQuiz(questions) {
+      let createdQuiz = null;
+      this.templateQuiz.question_list = questions.value;
+
+      await createQuiz(this.templateQuiz.quizName)
+          .then(response => {
+            console.log(response)
+            createdQuiz = response;
+          }).catch(error => {
+            console.warn("error", error)
+          })
+
+    },
+  },
 })

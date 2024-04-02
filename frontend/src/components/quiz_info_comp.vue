@@ -6,10 +6,17 @@
       </div>
       <div class="quiz-details">
         <div class="quiz-details">
-          <h2>{{ $t('titles.REGISTER') }}</h2>
-          <p><strong>{{ $t('dropdown_options.DIFFICULTY') }}:</strong> {{ $t('dropdown_options.' + quiz.Difficulty.toUpperCase()) }}</p>
-          <p>{{ $t('quiz_card.QUESTIONS_LABEL') }}: {{ quiz.question_list.length }}</p>
-          <p>{{ $t('quiz_card.DESCRIPTION') }}: {{ quiz.Description }}</p>
+          <h2>{{quiz.quizName}}</h2>
+          <p>
+            <strong>{{ $t('dropdown_options.DIFFICULTY') }}:</strong>
+            {{ $t('dropdown_options.' + quiz.quizDifficulty.toUpperCase()) }}
+          </p>
+          <p>{{ $t('quiz_card.QUESTIONS_LABEL') }}:
+            {{ quiz.questions.length }}
+          </p>
+          <p>{{ $t('quiz_card.DESCRIPTION') }}:
+            {{ quiz.quizDescription }}
+          </p>
         </div>
       </div>
     </div>
@@ -24,7 +31,7 @@
         />
       </div>
       <listing_comp
-          v-for="(a, index) in quizAuthors"
+          v-for="(a, index) in quiz.collaborators"
           :key="index"
           :author="a"
           @deleteAuthor="deleteAuthor(a)"
@@ -56,18 +63,21 @@ export default {
 
   props: {
     quiz: {
-      QuizId: null,
-      Name: "",
-      Difficulty: "",
-      Description: "",
-      Image: "",
-      question_list: [
-        { id: null,
-          question: "",
-          answer: "",
-          type: "" },
-      ],
-    },
+      type: Object,
+      default: () => ({
+        QuizId: Number,
+        quizName: String,
+        quizDifficulty: String,
+        quizDescription: String,
+        admin_id: Number,
+        feedbacks: Set,
+        collaborators: Set,
+        categories: Set,
+        questions: Set,
+        keywords: Set,
+        Image: String,
+      })
+    }
   },
 
   setup() {
@@ -219,8 +229,13 @@ button{
 }
 
 .quiz-img {
-  width: 150px;
-  height: auto;
+  margin-top: 10px;
+  background-color: rgba(205, 205, 205, 0.96);
+  border-radius: 10px;
+  height: 200px;
+  width: 320px;
+  margin-right: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .quiz-details {

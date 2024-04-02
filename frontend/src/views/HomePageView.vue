@@ -22,178 +22,62 @@
 import SearchInput from "@/components/searchbar.vue";
 import {onBeforeMount, onMounted, ref} from 'vue';
 import One_quiz_rectangle from "@/components/BasicComponents/one_quiz_rectangle.vue";
+import {useQuizStore} from "@/stores/counter.js";
 
 const searchInput =  ref('');
-const recommendedQuizzes = ref([]);
 let displayedQuizzes = ref([]);
 let difficulty_selected = ref('');
+let page = ref(-1);
+
 
 
 onBeforeMount(() => {
-  //useQuizStore().setAllQuizzes();
+  //displayedQuizzes = useQuizStore().loadQuizzes();
   //TODO: get quizzes from backend
-  recommendedQuizzes.value = test_quizzes.value;
   displayedQuizzes.value = test_quizzes.value;
 })
 
 async function getNextQuiz() {
-  window.onscroll = () => {
+  window.onscroll = async () => {
     let bottomOfWindow = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight;
     if (bottomOfWindow) {
-      /*
-      TODO: get quizzes from backend
-      const newQuizzes = useQuizStore().getMoreQuizzes(difficulty_selected);
-      quizzes.value = [...newQuizzes]
-       */
-      const newQuizzes = [
-        {
-          QuizId: 5,
-          Name: "Quiz 5",
-          Difficulty: "Medium",
-          Description: "Test your knowledge with Quiz 5",
-          Image: "https://via.placeholder.com/150",
-          question_list: [
-            { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
-            { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
-            { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
-          ]
-        },
-        {
-          QuizId: 6,
-          Name: "Quiz 6",
-          Difficulty: "Hard",
-          Description: "Test your knowledge with Quiz 6",
-          Image: "https://via.placeholder.com/150",
-          question_list: [
-            { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
-            { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
-            { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
-          ]
-        },
-        {
-          QuizId: 7,
-          Name: "Quiz 7",
-          Difficulty: "Easy",
-          Description: "Test your knowledge with Quiz 7",
-          Image: "https://via.placeholder.com/150",
-          question_list: [
-            { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
-            { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
-            { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
-          ]
-        },
-        {
-          QuizId: 8,
-          Name: "Quiz 8",
-          Difficulty: "Medium",
-          Description: "Test your knowledge with Quiz 8",
-          Image: "https://via.placeholder.com/150",
-          question_list: [
-            { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
-            { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
-            { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
-          ]
-        },
-        {
-          QuizId: 9,
-          Name: "Quiz 9",
-          Difficulty: "Hard",
-          Description: "Test your knowledge with Quiz 9",
-          Image: "https://via.placeholder.com/150",
-          question_list: [
-            { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
-            { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
-            { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
-          ]
-        },
-      ];
-      displayedQuizzes.value = [...displayedQuizzes.value, ...newQuizzes];
+      try {
+        const s = (searchInput.value === '') ? null : searchInput.value;
+        const d = (difficulty_selected.value === '') ? null : difficulty_selected.value;
+        page++
+        displayedQuizzes = useQuizStore().loadQuizzes(s, d, page, 10);
+      } catch (e) {
+        page--
+        console.error(e);
+      }
     }
-  };
+  }
 }
 
 async function handleDifficulty(difficulty) {
   difficulty_selected = difficulty
-  if (difficulty === "") {
-    //TODO: get quizzes from backend
-    //const filtered = useQuizStore().getRecommendedDifficulty(difficulty_selected);
-    displayedQuizzes.value = recommendedQuizzes.value;
-  }
-  else {
-    //TODO: get quizzes from backend
-    //const filtered = useQuizStore().getRecommendedDifficulty(difficulty_selected);
-    const filtered = recommendedQuizzes.value.filter(quiz => quiz.Difficulty === difficulty);
-    displayedQuizzes.value = filtered;
+  displayedQuizzes = [];
+  page = -1;
+  try {
+    const s = (searchInput.value === '') ? null : searchInput.value;
+    const d = (difficulty_selected.value === '') ? null : difficulty_selected.value;
+    page++
+    displayedQuizzes = useQuizStore().loadQuizzes(s, d, 0, 10);
+  } catch (e) {
+    page--
+    console.error(e);
   }
 }
 
-async function handleSearchInput(searchword) {
-  if (searchword.length >= 3) {
-    //TODO: get quizzes from backend
-    //displayedQuizzes.value = await useQuizStore().searchQuizzes(searchword);
-    displayedQuizzes.value = [  {
-      QuizId: 5,
-      Name: "Quiz 5",
-      Difficulty: "Medium",
-      Description: "Test your knowledge with Quiz 5",
-      Image: "https://via.placeholder.com/150",
-      question_list: [
-        { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
-        { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
-        { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
-      ]
-    },
-      {
-        QuizId: 6,
-        Name: "Quiz 6",
-        Difficulty: "Hard",
-        Description: "Test your knowledge with Quiz 6",
-        Image: "https://via.placeholder.com/150",
-        question_list: [
-          { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
-          { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
-          { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
-        ]
-      },
-      {
-        QuizId: 7,
-        Name: "Quiz 7",
-        Difficulty: "Easy",
-        Description: "Test your knowledge with Quiz 7",
-        Image: "https://via.placeholder.com/150",
-        question_list: [
-          { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
-          { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
-          { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
-        ]
-      },
-      {
-        QuizId: 8,
-        Name: "Quiz 8",
-        Difficulty: "Medium",
-        Description: "Test your knowledge with Quiz 8",
-        Image: "https://via.placeholder.com/150",
-        question_list: [
-          { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
-          { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
-          { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
-        ]
-      },
-      {
-        QuizId: 9,
-        Name: "Quiz 9",
-        Difficulty: "Hard",
-        Description: "Test your knowledge with Quiz 9",
-        Image: "https://via.placeholder.com/150",
-        question_list: [
-          { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
-          { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
-          { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
-        ]
-      },];
-  } else {
-    let newQuizzelist = recommendedQuizzes.value;
-    displayedQuizzes.value = newQuizzelist;
+async function handleSearchInput() {
+  try {
+    const s = (searchInput.value === '') ? null : searchInput.value;
+    const d = (difficulty_selected.value === '') ? null : difficulty_selected.value;
+    page++
+    displayedQuizzes = useQuizStore().loadQuizzes(s, d, page, 10);
+  } catch (e) {
+    page--
+    console.error(e);
   }
 }
 
@@ -203,113 +87,43 @@ onMounted(() => {
 
 let test_quizzes = ref([
   {
-    QuizId: 1,
-    Name: "Quiz 1",
-    Difficulty: "Easy",
-    Description: "Test your knowledge with Quiz 1",
-    Image: "https://via.placeholder.com/150",
-    question_list: [
-      { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
-      { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
-      { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
-    ]
-  },
-  {
     QuizId: 2,
-    Name: "Quiz 2",
-    Difficulty: "Medium",
-    Description: "Test your knowledge with Quiz 2",
-    Image: "https://via.placeholder.com/150",
-    question_list: [
-      { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
-      { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
-      { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
-    ]
-  },
-  {
-    QuizId: 3,
-    Name: "Quiz 3",
-    Difficulty: "Hard",
-    Description: "Test your knowledge with Quiz 3",
-    Image: "https://via.placeholder.com/150",
-    question_list: [
-      { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
-      { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
-      { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
-    ]
-  },
-  {
-    QuizId: 4,
-    Name: "Quiz 4",
-    Difficulty: "Easy",
-    Description: "Test your knowledge with Quiz 4",
-    Image: "https://via.placeholder.com/150",
-    question_list: [
-      { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
-      { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
-      { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
-    ]
-  },
-  {
-    QuizId: 5,
-    Name: "Quiz 5",
-    Difficulty: "Medium",
-    Description: "Test your knowledge with Quiz 5",
-    Image: "https://via.placeholder.com/150",
-    question_list: [
-      { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
-      { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
-      { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
-    ]
-  },
-  {
-    QuizId: 6,
-    Name: "Quiz 6",
-    Difficulty: "Hard",
-    Description: "Test your knowledge with Quiz 6",
-    Image: "https://via.placeholder.com/150",
-    question_list: [
-      { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
-      { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
-      { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
-    ]
-  },
-  {
-    QuizId: 7,
-    Name: "Quiz 7",
-    Difficulty: "Easy",
-    Description: "Test your knowledge with Quiz 7",
-    Image: "https://via.placeholder.com/150",
-    question_list: [
-      { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
-      { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
-      { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
-    ]
-  },
-  {
-    QuizId: 8,
-    Name: "Quiz 8",
-    Difficulty: "Medium",
-    Description: "Test your knowledge with Quiz 8",
-    Image: "https://via.placeholder.com/150",
-    question_list: [
-      { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
-      { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
-      { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
-    ]
-  },
-  {
-    QuizId: 9,
-    Name: "Quiz 9",
-    Difficulty: "Hard",
-    Description: "Test your knowledge with Quiz 9",
-    Image: "https://via.placeholder.com/150",
-    question_list: [
-      { id: 1, question: "Question 1", answer: "Answer 1", type: "text" },
-      { id: 2, question: "Question 2", answer: "Answer 2", type: "text" },
-      { id: 3, question: "Question 3", answer: "Answer 3", type: "text" }
-    ]
-  },
+    quizName: "Demo Quiz",
+    quizDifficulty: "Medium",
+    quizDescription: "This is a demo quiz for testing purposes",
+    admin_id: 456,
+    feedbacks: new Set(["Feedback 1", "Feedback 2", "Feedback 3"]),
+    collaborators: new Set(["Collaborator 1", "Collaborator 2", "Collaborator 3"]),
+    categories: new Set(["Category 1", "Category 2", "Category 3"]),
+    questions: [
+      {
+        id: 1,
+        question: "What is 2 + 2?",
+        answer: "4",
+        difficulty: "Medium",
+        questionType: "multiplechoice",
+        options: ["2", "3", "4", "5"]
+      },
+      {
+        id: 2,
+        question: "What is the capital of France?",
+        answer: "Paris",
+        difficulty: "Medium",
+        questionType: "multiplechoice",
+        options: ["London", "Paris", "Berlin", "Dublin"]
+      },
+      {
+        id: 3,
+        question: "Is the earth flat?",
+        answer: "No",
+        difficulty: "Medium",
+        questionType: "truefalse",
+        options: []
+      }
+    ],
+    keywords: new Set(["Keyword 1", "Keyword 2", "Keyword 3"]),
+    Image: "https://via.placeholder.com/150"
+  }
 ]);
 
 </script>

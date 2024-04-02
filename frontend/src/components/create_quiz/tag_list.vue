@@ -5,30 +5,19 @@
         <div class="popup-content">
           <h3>{{ $t('delete_modal.TITLE') }}</h3>
           <div class="button-group">
-            <button @click="deleteQuestion(question)">{{ $t('delete_modal.YES') }}</button>
+            <button @click="deleteTag(tag)">{{ $t('delete_modal.YES') }}</button>
             <button @click="closePopup">{{ $t('delete_modal.NO') }}</button>
           </div>
         </div>
       </div>
     </div>
-    <div class="question-item">
-      <div class="question-info">
-        <span>{{ question.question }}</span>
-        <div class="actions">
-          <font-awesome-icon
-              class="icon_edit"
-              id="add"
-              icon="fa-solid fa-pen-to-square"
-              @click="editQuestion"
-              v-if="isAuth || isEditor"
-          />
-          <font-awesome-icon
-              class="icon_trash"
-              icon="fa-solid fa-trash"
-              @click="showPopupProp = true"
-              v-if="isAuth || isEditor"
-          />
-        </div>
+    <div class="author-info">
+      <router-link :to="'/userprofile'" class="author-link">
+        <span>{{ tag.type }}:</span>
+        <span>{{tag.name}}</span>
+      </router-link>
+      <div class="actions">
+        <font-awesome-icon class="trash-icon" icon="fa-solid fa-trash" @click="showPopupProp = true"/>
       </div>
     </div>
   </div>
@@ -40,73 +29,39 @@ import {useQuizStore} from "@/stores/counter.js";
 
 export default {
   props: {
-    question: {
+    tag: {
       type: Object,
+      required: true,
       default: () => ({
-        id: Number,
-        question: String,
-        answer: String,
+        name: String,
         type: String,
       })
     }
   },
 
   setup() {
-    const store = useQuizStore();
     const showPopupProp = ref(false);
     const { emit } = getCurrentInstance();
-    const isAuth = ref(store.isAuth)
-    const isEditor = ref(store.isEditor)
 
-    const deleteQuestion = (question) => {
-      emit("deleteQuestion", question.id);
+    const deleteTag = (tag) => {
+      emit("deleteTag", tag);
       showPopupProp.value = false;
     };
+
     const closePopup = () => {
       showPopupProp.value = false;
     };
 
-    const editQuestion = (question) => {
-      emit("editQuestion", question);
-    }
-
     return {
-      editQuestion,
       showPopupProp,
-      deleteQuestion,
+      deleteTag,
       closePopup,
-      isEditor,
-      isAuth
     };
   }
 }
-
 </script>
 
-<style>
-#add {
-  margin-right: 20%;
-}
-
-#add:hover {
-  scale: 1.2;
-  color: rgba(113,218,17,0.96);
-}
-
-button{
-  width: 15%;
-  height: 35px;
-  color: white;
-  text-align: center;
-  margin-bottom: 3%;
-  justify-content: space-between;
-  align-content: center;
-  background-color: #b22fe8;
-  border-radius: 5px;
-  font-size: 14px;
-  transition: background-color 0.3s;
-}
-
+<style scoped>
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -142,45 +97,45 @@ button{
   width: 50%;
 }
 
-.router {
+.author-link {
   text-decoration: none;
   color: black;
 }
 
-.icon_trash:hover {
+.trash-icon:hover {
   color: red;
   scale: 1.25;
   cursor: pointer;
 }
 
-.question-item {
-  margin-top: 2%;
-}
-
-.question-info {
+.author-info {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: rgba(231, 231, 231, 0.96);
+  background-color: #4991fa;
   padding: 10px;
   border-radius: 5px;
   width: 80%;
   height: 50px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 2%;
+  color: white;
 }
 
-.question-info:hover {
+.author-info:hover {
   transition: 0.5s;
   transform: translateY(-5px);
 }
 
 span {
   font-weight: bold;
+  color: white;
 }
 
 .actions {
   display: flex;
   align-items: center;
+  align-content: center;
 }
 
 .actions font-awesome-icon {

@@ -7,21 +7,22 @@ import HomePageView from "@/views/HomePageView.vue";
 import CurrentQuizView from "@/views/CurrentQuizView.vue";
 import {useUserStore} from "@/stores/counter.js";
 import ProfileView from "@/views/PrivateProfileView.vue";
+import CreateQuizView from "@/views/CreateQuizView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
       {
-        path: '/',
-        name: 'FrontPage',
-        component: TheWelcomeComponent,
-        meta: { requiresAuth: false }
+          path: '/',
+          name: 'FrontPage',
+          component: TheWelcomeComponent,
+          meta: { requiresAuth: false }
       },
       {
-        path: '/register',
-        name: 'register',
-        component: RegisterView,
-        meta: { requiresAuth: false }
+          path: '/register',
+          name: 'register',
+          component: RegisterView,
+          meta: { requiresAuth: false }
       },
       {
           path: '/home',
@@ -40,19 +41,24 @@ const router = createRouter({
           component: LoginView,
           meta: { requiresAuth: false }
       },
-        {
-            path: '/quiz',
-            name: 'quiz',
-            component: Quiz_comp,
-            meta: { requiresAuth: false }
-        },
+      {
+          path: '/quiz',
+          name: 'quiz',
+          component: Quiz_comp,
+          meta: { requiresAuth: false }
+      },
       {
           path: '/profile',
           name: 'profile',
           component: ProfileView,
           meta: { requiresAuth: true }
-      }
-
+      },
+      {
+          path: '/create',
+          name: 'CreateQuiz',
+          component: CreateQuizView,
+          meta: { requiresAuth: true }
+      },
   ]
 })
 
