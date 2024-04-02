@@ -1,4 +1,5 @@
 package edu.ntnu.idatt2105.backend.service.quiz;
+import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadAllDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
 import edu.ntnu.idatt2105.backend.model.quiz.Difficulty;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
@@ -19,6 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This service provides the logic for the Quiz entity.
@@ -62,6 +66,19 @@ public class QuizService {
                 .build();
     }
 
+    /**
+     * This method loads all quizzes available.
+     * @return  All quizzes as QuizLoadAllDTO
+     */
+    public QuizLoadAllDTO loadAllQuiz(){
+        List<Quiz> allQuizzes = quizRepository.findAll();
+        return QuizLoadAllDTO
+                .builder()
+                .quizzes(allQuizzes.stream().map(quizMapper::quizToQuizLoadDTO).collect(Collectors.toSet()))
+                .build();
+    }
+
+    @Transactional
     public QuizLoadDTO updateQuiz(QuizUpdateDTO quizUpdateDTO) {
         //TODO: check that user trying to change is owner or collaborator
         LOGGER.info("Attempting to retrieve quiz with id: " + quizUpdateDTO.quizId());
