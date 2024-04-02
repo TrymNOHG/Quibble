@@ -1,13 +1,8 @@
 package edu.ntnu.idatt2105.backend.mapper.quiz;
 
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
-import edu.ntnu.idatt2105.backend.dto.quiz.feedback.QuizFeedbackLoadDTO;
-import edu.ntnu.idatt2105.backend.dto.quiz.keyword.QuizKeywordLoadDTO;
-import edu.ntnu.idatt2105.backend.dto.quiz.question.MultipleChoiceDTO;
 import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
-import lombok.NonNull;
 import org.mapstruct.Mapper;
-import org.springframework.lang.Nullable;
 
 import java.util.stream.Collectors;
 

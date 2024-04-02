@@ -1,4 +1,5 @@
 package edu.ntnu.idatt2105.backend.service.quiz;
+import edu.ntnu.idatt2105.backend.dto.quiz.question.MultipleChoiceCreateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.MultipleChoiceDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionCreateDTO;
 import edu.ntnu.idatt2105.backend.exception.notfound.NotFoundException;
@@ -113,7 +114,7 @@ public class QuizService {
 
         if(questionCreateDTO.choices() != null) {
             LOGGER.info("Adding multiple choices.");
-            for (MultipleChoiceDTO choice : questionCreateDTO.choices()) {
+            for (MultipleChoiceCreateDTO choice : questionCreateDTO.choices()) {
                 addMultipleChoiceAlternative(choice, savedQuestion.getQuestionId());
             }
         }
@@ -125,15 +126,15 @@ public class QuizService {
 
     /**
      * This method adds a new multiple choice alternative to a question.
-     * @param multipleChoiceDTO     The information surrounding the choice.
+     * @param multipleChoiceCreateDTO     The information surrounding the choice.
      * @param questionId            The question to be added under.
      */
-    private void addMultipleChoiceAlternative(MultipleChoiceDTO multipleChoiceDTO, Long questionId) {
+    private void addMultipleChoiceAlternative(MultipleChoiceCreateDTO multipleChoiceCreateDTO, Long questionId) {
         // Check if question exists
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new NotFoundException("Question"));
 
-        MultipleChoice multipleChoice = MultipleChoiceMapper.INSTANCE.multipleChoiceDTOToMultipleChoice(multipleChoiceDTO);
+        MultipleChoice multipleChoice = MultipleChoiceMapper.INSTANCE.multipleChoiceCreateDTOToMultipleChoice(multipleChoiceCreateDTO);
         multipleChoice.setQuestion(question);
         multipleChoiceRepository.save(multipleChoice);
     }

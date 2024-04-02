@@ -13,5 +13,5 @@ public record QuestionCreateDTO(@NonNull Long quizId,
                                 @NonNull String question,
                                 @NonNull String answer,
                                 @NonNull QuestionType type,
-                                @Nullable Set<MultipleChoiceDTO> choices) {
+                                @Nullable Set<MultipleChoiceCreateDTO> choices) {
 }
