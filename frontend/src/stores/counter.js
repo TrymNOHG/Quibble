@@ -7,7 +7,7 @@ import {getPictureFromUser} from "@/services/ImageService.js";
 import {
   addCollaborator,
   addQuestion,
-  createQuiz, deleteQuizById, removeCollaborator, updateQuiz
+  createQuiz, deleteQuizById, fetchQuizzes, patchQuestion, removeCollaborator, updateQuiz
 } from "@/services/QuizService.js"
 
 export const useUserStore = defineStore('storeUser', {
@@ -90,6 +90,7 @@ export const useQuizStore = defineStore('storeQuiz', {
         questions: [
           {
             quizId: null,
+            questionId: null,
             question: "",
             answer: "",
             type: "",
@@ -103,17 +104,18 @@ export const useQuizStore = defineStore('storeQuiz', {
   },
 
   actions: {
-    async loadQuizzes(searchword, difficulty, pageIndex, numberOfQuizzes) {
-      /*
+    //searchword, difficulty, pageIndex,
+    //TODO: search, diff, page
+
+    async loadQuizzes(page, size) {
       try {
-        const response = await fetchQuizzes(searchword, difficulty, pageIndex, numberOfQuizzes);
-        this.allQuizzes = [ ...response.content ];
+        const response = await fetchQuizzes(page, size);
+        console.log(response)
+        this.allQuizzes = [ ...response ];
         return this.allQuizzes;
       } catch (error) {
           console.error("Failed to load previous page:", error);
-          pageIndex.value--;
       }
-       */
     },
 
     async isAdmin(quizAdminId) {
@@ -134,10 +136,23 @@ export const useQuizStore = defineStore('storeQuiz', {
     },
 
     async editQuestion(editedQuestion){
-      /*
-      TODO: axioscall
-      editQuestionById(this.currentQuiz.quizId, editedQuestion.id)
-      */
+      console.log(editedQuestion.quizId)
+      console.log(this.currentQuiz.quizId)
+      const editQuestionDTO = {
+        "quizId": editedQuestion.quizId,
+        "questionId": editedQuestion.questionId,
+        "question": editedQuestion.question,
+        "type": editedQuestion.type,
+        "choices": editedQuestion.choices
+      }
+
+      await patchQuestion(editQuestionDTO)
+          .then(responses => {
+            console.log(responses);
+            return responses;
+          }).catch(error => {
+            console.warn("error", error);
+          });
     },
 
     async addQuestion(newQuestion){
@@ -145,11 +160,9 @@ export const useQuizStore = defineStore('storeQuiz', {
         "quizId": this.currentQuiz.quizId,
         "question": newQuestion.question,
         "answer": newQuestion.answer,
-        "type": newQuestion.type.toUpperCase(),
+        "type": newQuestion.type,
         "choices": newQuestion.choices
       };
-
-      console.log(questionCreateDTO)
 
       await addQuestion(questionCreateDTO)
           .then(responses => {
@@ -225,6 +238,10 @@ export const useQuizStore = defineStore('storeQuiz', {
       this.isEditor = false;
     },
   },
+
+  persist: {
+    storage: sessionStorage
+  }
 })
 
 export const useQuizCreateStore = defineStore('storeQuizCreate', {
@@ -344,4 +361,7 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
           });
     },
   },
+  persist: {
+    storage: sessionStorage
+  }
 })

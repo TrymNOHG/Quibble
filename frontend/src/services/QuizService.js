@@ -1,11 +1,27 @@
 import axios from "axios"
 import sessionToken from "@/features/SessionToken.js";
 
-const BASE_URL = "http://localhost:8080/api/v1/private/quiz"
+const BASE_URL_PRIV = "http://localhost:8080/api/v1/private/quiz"
+const BASE_URL_PUB = "http://localhost:8080/api/v1/public/quiz"
+
+
+export const fetchQuizzes = async (page, size) => {
+    try {
+        const response = await axios.get(`${BASE_URL_PUB}/get?page=${page}&size=${size}`, {
+            headers: {
+                Authorization: `Bearer ${await sessionToken()}`,
+            }
+        });
+        console.log(response);
+        return response.data.content;
+    } catch (error) {
+        throw error.response ? error.response.data : error.message;
+    }
+};
 
 export const createQuiz = async (quizName) => {
     try {
-        const response = await axios.post(`${BASE_URL}/create/${quizName}`,
+        const response = await axios.post(`${BASE_URL_PRIV}/create/${quizName}`,
             {},
             {
             headers: {
@@ -21,7 +37,7 @@ export const createQuiz = async (quizName) => {
 
 export const updateQuiz = async (quizUpdateDTO) => {
     try {
-        const response = await axios.patch(`${BASE_URL}/update`,
+        const response = await axios.patch(`${BASE_URL_PRIV}/update`,
             quizUpdateDTO, {
             headers: {
                     Authorization: `Bearer ${await sessionToken()}`,
@@ -36,7 +52,7 @@ export const updateQuiz = async (quizUpdateDTO) => {
 
 export const addCollaborator = async (quizAuthorDTO) => {
     try {
-        const response = await axios.post(`${BASE_URL}/create/collaborator`,
+        const response = await axios.post(`${BASE_URL_PRIV}/create/collaborator`,
             quizAuthorDTO, {
                 headers: {
                     Authorization: `Bearer ${await sessionToken()}`,
@@ -51,7 +67,7 @@ export const addCollaborator = async (quizAuthorDTO) => {
 
 export const removeCollaborator = async (username) => {
     try {
-        const response = await axios.delete(`${BASE_URL}/delete/${username}`,
+        const response = await axios.delete(`${BASE_URL_PRIV}/delete/${username}`,
             {
                 headers: {
                     Authorization: `Bearer ${await sessionToken()}`,
@@ -66,7 +82,7 @@ export const removeCollaborator = async (username) => {
 
 export const deleteQuizById = async (QuizId) => {
     try {
-        const response = await axios.delete(`${BASE_URL}/delete/${QuizId}`, {
+        const response = await axios.delete(`${BASE_URL_PRIV}/delete/${QuizId}`, {
             headers: {
                 Authorization: `Bearer ${await sessionToken()}`,
             }
@@ -78,11 +94,9 @@ export const deleteQuizById = async (QuizId) => {
     }
 };
 
-
-
 export const addQuestion = async (questionCreateDTO) => {
     try {
-        const response = await axios.post(`${BASE_URL}/create/question`,
+        const response = await axios.post(`${BASE_URL_PRIV}/create/question`,
             questionCreateDTO, {
                 headers: {
                     Authorization: `Bearer ${await sessionToken()}`,
@@ -95,3 +109,18 @@ export const addQuestion = async (questionCreateDTO) => {
     }
 };
 
+export const patchQuestion = async (questionEditDTO) => {
+    console.log("bruh3 ", questionEditDTO)
+    try {
+        const response = await axios.patch(`${BASE_URL_PRIV}/edit/question`,
+            questionEditDTO, {
+                headers: {
+                    Authorization: `Bearer ${await sessionToken()}`,
+                }
+            });
+        console.log("Bruh2  ", response.data)
+        return response.data;
+    } catch (error) {
+        throw error.response ? error.response.data : error.message;
+    }
+};
