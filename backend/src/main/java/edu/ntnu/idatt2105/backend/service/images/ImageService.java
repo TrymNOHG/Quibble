@@ -83,6 +83,7 @@ public class ImageService {
      */
     public String saveImage(MultipartFile file, Long userId) throws FileSystemException {
         String fileName = file.getOriginalFilename();
+        LOGGER.info("File name: " + fileName);
 
         if (!VALID_FILES.contains(file.getContentType())) {
             throw new InvalidPathException(Objects.requireNonNull(file.getContentType()),"Invalid Path Extension.");

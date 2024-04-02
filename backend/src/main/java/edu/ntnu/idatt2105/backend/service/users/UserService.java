@@ -113,6 +113,7 @@ public class UserService implements UserDetailsService {
 
         if(userUpdateDTO.profilePicture() != null){
             String newProfilePicLink = imageService.saveImage(userUpdateDTO.profilePicture(), userUpdateDTO.userId());
+            LOGGER.info("New Profile Pic Link: " + newProfilePicLink);
             user.setProfilePicLink(newProfilePicLink);
         }
 

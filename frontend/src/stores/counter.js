@@ -41,7 +41,7 @@ export const useUserStore = defineStore('storeUser', {
       await getUser()
           .then(response => {
             this.user = response.data
-            getPictureFromUser('2', 'profile_pic.PNG').then(response =>{
+            getPictureFromUser('2', response.data.profilePicture).then(response =>{
               this.user.profilePicture = `data:${response.data.contentType};base64,${response.data.image}`;
             }).catch(e => {
               console.log(e)

@@ -59,6 +59,7 @@ export const getUser = async () => {
 export const updateUser = async (userUpdateDTO) => {
     return axios.patch(`${BASE_URL}/private/users/update`, userUpdateDTO, {
         headers: {
+            'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${await sessionToken()}`,
         },
     });
@@ -78,6 +79,7 @@ export const updateUserShowActivity = async (newShowActivity) => {
 export const updateUserShowFeedback = async (newShowFeedback) => {
     return axios.patch(`${BASE_URL}/private/users/update/showFeedback`, newShowFeedback, {
         headers: {
+            'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${await sessionToken()}`,
         },
     });
