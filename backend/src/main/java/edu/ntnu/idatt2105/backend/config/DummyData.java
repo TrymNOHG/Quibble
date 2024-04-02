@@ -75,6 +75,7 @@ public class DummyData implements CommandLineRunner {
         Question question1 = Question.builder()
                 .question("What is the capital of Norway?")
                 .questionType(QuestionType.MULTIPLE_CHOICE)
+                .answer("Oslo")
                 .quiz(quiz)
                 .build();
 
