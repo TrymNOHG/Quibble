@@ -268,10 +268,10 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
             answer: "Black Hole",
             type: "multiple_choice",
             choices: [
-              { alternative: "Sun", isCorrect: false, questionId: 3 },
-              { alternative: "Earth", isCorrect: false, questionId: 3 },
-              { alternative: "Venus", isCorrect: false, questionId: 3 },
-              { alternative: "Black Hole", isCorrect: true, questionId: 3 }
+              { alternative: "Sun", isCorrect: false },
+              { alternative: "Earth", isCorrect: false },
+              { alternative: "Venus", isCorrect: false },
+              { alternative: "Black Hole", isCorrect: true }
             ]
           },
         ],
@@ -314,6 +314,7 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
       const addQuestionPromises = [];
 
       // Loop through each question
+      console.log(this.templateQuiz.questions)
       this.templateQuiz.questions.forEach(question => {
         const questionCreateDTO = {
           "quizId": createdQuiz.quizId,
@@ -328,7 +329,6 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
       // Execute all promises to add questions
       await Promise.all(addQuestionPromises)
           .then(responses => {
-            console.log(responses);
             createdQuiz = responses[responses.length - 1];
           }).catch(error => {
             console.warn("error", error);
