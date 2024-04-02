@@ -20,6 +20,7 @@ import java.util.Set;
  */
 @Builder
 public record QuestionEditDTO(@NonNull Long quizId,
+                              @NonNull Long questionId,
                               @Nullable String question,
                               @Nullable String answer,
                               @Nullable QuestionType type,

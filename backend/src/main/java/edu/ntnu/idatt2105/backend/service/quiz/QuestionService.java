@@ -130,7 +130,7 @@ public class QuestionService {
                 .orElseThrow(() -> new QuizNotFoundException(questionEditDTO.quizId().toString()));
         LOGGER.info("Quiz found.");
         LOGGER.info("Retrieving Question object.");
-        Question question = questionRepository.findById(questionEditDTO.quizId())
+        Question question = questionRepository.findById(questionEditDTO.questionId())
                 .orElseThrow(() -> new QuestionNotFoundException(questionEditDTO.quizId().toString()));
 
         LOGGER.info("Editing Question.");
