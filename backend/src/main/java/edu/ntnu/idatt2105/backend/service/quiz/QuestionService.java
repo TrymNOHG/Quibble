@@ -52,7 +52,6 @@ public class QuestionService {
         };
     }
 
-    @Transactional
     public QuestionDTO getQuestionDTO(long questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow();
         return QuestionDTO.builder()
@@ -64,7 +63,6 @@ public class QuestionService {
                 .build();
     }
 
-    @Transactional
     public SendAlternativesDTO getAlternatives(long questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow();
         return SendAlternativesDTO.builder()
@@ -73,7 +71,6 @@ public class QuestionService {
                 .build();
     }
 
-    @Transactional
     public String getCorrectAnswer(Long questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow();
         if (question.getAnswer() == null || question.getAnswer().isBlank()) {
@@ -91,6 +88,7 @@ public class QuestionService {
      * @param questionCreateDTO The information of the question.
      * @return The new quiz.
      */
+    @Transactional
     public QuizLoadDTO addQuestion(QuestionCreateDTO questionCreateDTO) {
         //TODO: check that user is editing question they are authorized to.
         // Might be a little unnecessary to send the whole quiz again...
@@ -124,6 +122,7 @@ public class QuestionService {
      * @param questionEditDTO   The new information to edit.
      * @return                  The quiz as a QuizLoadDTO.
      */
+    @Transactional
     public QuizLoadDTO editQuestion(QuestionEditDTO questionEditDTO) {
         //TODO: check that user is editing question they are authorized to.
         LOGGER.info("Attempting to retrieve quiz");
