@@ -148,12 +148,11 @@ export default {
     };
 
     const addEdit = () => {
-      const choices = newQuestion.value.type === 'multiplechoice' ? newQuestion.value.choices : null;
       const editedQuestion = {
         question: newQuestion.value.question,
         answer: newQuestion.value.answer,
         type: newQuestion.value.type,
-        choices: choices
+        choices: newQuestion.value.choices
       };
       question_list.value[newQuestion.value.id] = editedQuestion;
       cancelCreate();

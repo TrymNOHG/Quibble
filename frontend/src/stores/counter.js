@@ -246,10 +246,10 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
             answer: "John",
             type: "multiple_choice",
             choices: [
-              { multipleChoiceId: 1, alternative: "pencil", isCorrect: false, questionId: 1 },
-              { multipleChoiceId: 2, alternative: "book", isCorrect: false, questionId: 1 },
-              { multipleChoiceId: 3, alternative: "John", isCorrect: true, questionId: 1 },
-              { multipleChoiceId: 4, alternative: "quiz", isCorrect: false, questionId: 1 }
+              { alternative: "pencil", isCorrect: false},
+              { alternative: "book", isCorrect: false},
+              { alternative: "John", isCorrect: true},
+              { alternative: "quiz", isCorrect: false}
             ]
           },
           {
@@ -258,8 +258,8 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
             answer: "true",
             type: "true_false",
             choices: [
-              { multipleChoiceId: 5, alternative: "true", isCorrect: true, questionId: 2 },
-              { multipleChoiceId: 6, alternative: "false", isCorrect: false, questionId: 2 }
+              {alternative: "true", isCorrect: true},
+              {alternative: "false", isCorrect: false}
             ]
           },
           {
@@ -268,10 +268,10 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
             answer: "Black Hole",
             type: "multiple_choice",
             choices: [
-              { multipleChoiceId: 7, alternative: "Sun", isCorrect: false, questionId: 3 },
-              { multipleChoiceId: 8, alternative: "Earth", isCorrect: false, questionId: 3 },
-              { multipleChoiceId: 9, alternative: "Venus", isCorrect: false, questionId: 3 },
-              { multipleChoiceId: 10, alternative: "Black Hole", isCorrect: true, questionId: 3 }
+              { alternative: "Sun", isCorrect: false, questionId: 3 },
+              { alternative: "Earth", isCorrect: false, questionId: 3 },
+              { alternative: "Venus", isCorrect: false, questionId: 3 },
+              { alternative: "Black Hole", isCorrect: true, questionId: 3 }
             ]
           },
         ],

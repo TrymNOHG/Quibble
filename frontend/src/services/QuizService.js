@@ -12,6 +12,7 @@ export const createQuiz = async (quizName) => {
                 Authorization: `Bearer ${await sessionToken()}`,
             }
         });
+        console.log("Bruh  ", response.data)
         return response.data;
     } catch (error) {
         throw error.response ? error.response.data : error.message;
@@ -26,7 +27,7 @@ export const updateQuiz = async (quizUpdateDTO) => {
                     Authorization: `Bearer ${await sessionToken()}`,
                 }
             });
-        console.log(response);
+        console.log("Bruh  ", response.data)
         return response.data;
     } catch (error) {
         throw error.response ? error.response.data : error.message;
@@ -87,7 +88,7 @@ export const addQuestion = async (questionCreateDTO) => {
                     Authorization: `Bearer ${await sessionToken()}`,
                 }
             });
-        console.log(response);
+        console.log("Bruh2  ", response.data)
         return response.data;
     } catch (error) {
         throw error.response ? error.response.data : error.message;

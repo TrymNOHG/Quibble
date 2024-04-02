@@ -48,8 +48,8 @@ public class QuizController implements IQuizController{
 
     @Override
     public ResponseEntity<QuizLoadDTO> deleteQuiz(@NonNull Long quizId, @NonNull Authentication authentication) {
-        logger.info("Deleting quiz with ID: {}", quizId);
-        return ResponseEntity.ok();
+        logger.info("Deleting quiz with ID: {}" + quizId);
+        return ResponseEntity.ok(null);
     }
 
     @Override
