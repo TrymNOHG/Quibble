@@ -5,7 +5,9 @@ import {
 import {getPictureFromUser} from "@/services/ImageService.js";
 
 import {
-  createQuiz
+  addCollaborator,
+  addQuestion,
+  createQuiz, deleteQuizById, removeCollaborator, updateQuiz
 } from "@/services/QuizService.js"
 
 export const useUserStore = defineStore('storeUser', {
@@ -77,7 +79,7 @@ export const useQuizStore = defineStore('storeQuiz', {
       allQuiz: [],
 
       currentQuiz: {
-        QuizId: null,
+        quizId: null,
         quizName: "",
         quizDifficulty: "",
         quizDescription: "",
@@ -85,14 +87,13 @@ export const useQuizStore = defineStore('storeQuiz', {
         feedback: [],
         collaborators: [],
         categories: [],
-        question: [
+        questions: [
           {
-            id: null,
+            quizId: null,
             question: "",
             answer: "",
-            answers: [],
-            correctAnswers: [],
-            type: ""
+            type: "",
+            choices: [],
           },
         ],
         keywords: [],
@@ -115,11 +116,21 @@ export const useQuizStore = defineStore('storeQuiz', {
        */
     },
 
+    async isAdmin(quizAdminId) {
+      return quizAdminId === useUserStore().user.userId;
+    },
+
+    async isCollaborator() {
+
+    },
+
     async deleteCurrentQuiz() {
-      /*
-      TODO: axioscall
-      deleteQuizById(this.currentQuiz.quizId)
-      */
+      await deleteQuizById(this.currentQuiz.quizId)
+          .then(response => {
+            console.log(response)
+          }).catch(error => {
+            console.warn("error", error)
+          })
     },
 
     async editQuestion(editedQuestion){
@@ -130,10 +141,22 @@ export const useQuizStore = defineStore('storeQuiz', {
     },
 
     async addQuestion(newQuestion){
-      /*
-      TODO: axioscall
-      addQuestion(this.currentQuiz.quizId, newQuestion)
-      */
+      const questionCreateDTO = {
+        "quizId": this.currentQuiz.quizId,
+        "question": newQuestion.question,
+        "answer": newQuestion.answer,
+        "type": newQuestion.type.toUpperCase(),
+        "choices": newQuestion.choices
+      };
+
+      console.log(questionCreateDTO)
+
+      await addQuestion(questionCreateDTO)
+          .then(responses => {
+            console.log(responses);
+          }).catch(error => {
+            console.warn("error", error);
+          });
     },
 
     async addQuiz() {
@@ -159,46 +182,45 @@ export const useQuizStore = defineStore('storeQuiz', {
     },
 
     async deleteAuth(auth) {
-      for (let index = 0; index < this.allAuthors.length; index++) {
-        if (auth.id === this.allAuthors[index].id) {
-          this.allAuthors.splice(index, 1);
-          /*
-          TODO: fjerne auth i backend
-          response = removeAuth(author.username // author-id)
-          this.allAuthors = response;
-           */
-          break;
-        }
-      }
+
+      await removeCollaborator(auth.username)
+          .then(response => {
+            console.log(response)
+          }).catch(error => {
+            console.warn("error", error)
+          })
+
+      return this.currentQuiz.collaborators;
     },
 
     async setCurrentQuizById(quiz) {
       console.log(quiz)
       this.currentQuiz = quiz;
-      if (useUserStore().user.userId === this.currentQuiz().QuizId){
+      if (useUserStore().user.userId === this.currentQuiz.QuizId){
         this.isAuth = true;
         this.isEditor = true;
       }
-
-      /*
-      TODO: Sjekke opp mot backend
-      isAuth og isEditor burde sjekkes opp mot axioscall til backend
-       */
       return this.currentQuiz;
     },
 
     async addAuthor(newAuthor) {
-      this.allAuthors.push({id: 4, username: newAuthor.username})
-      /*
-      TODO: legge til user i backend og returne den nye listen fra backend
-      setNewAuthor(newAuthor)
-      fetchAuthors(this.currentQuiz.quizId)
-      */
-      return this.allAuthors;
+      this.currentQuiz.collaborators.push({id: 4, username: newAuthor.username});
+      const quizAuthorDTO = {
+        username: newAuthor.username,
+        quizId: this.currentQuiz.quizId
+      };
+      await addCollaborator(quizAuthorDTO)
+          .then(response => {
+            console.log(response)
+          }).catch(error => {
+            console.warn("error", error)
+          })
+
+      return this.currentQuiz.collaborators;
     },
 
     resetCurrentQuiz() {
-      this.currentQuiz = null
+      this.currentQuiz = null;
       this.isAuth = false;
       this.isEditor = false;
     },
@@ -216,38 +238,46 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
         admin_id: null,
         feedbacks: [],
         collaborators: [],
-        categories: [
-          { id: 1, name: "Science" },
-          { id: 2, name: "History" },
-        ],
+        categories: [],
         questions: [
           {
-            id: 1,
+            quizId: null,
             question: "What is your question?",
             answer: "John",
-            answers: ["pencil", "book", "John", "quiz"],
-            correctAnswers: [false, true, false, false],
-            type: "multiplechoice"
+            type: "multiple_choice",
+            choices: [
+              { alternative: "pencil", isCorrect: false},
+              { alternative: "book", isCorrect: false},
+              { alternative: "John", isCorrect: true},
+              { alternative: "quiz", isCorrect: false}
+            ]
           },
           {
-            id: 2,
+            quizId: null,
             question: "Are you 21 years old?",
             answer: "true",
-            answers: ["true", "false"],
-            type: "truefalse"
+            type: "true_false",
+            choices: [
+              {alternative: "true", isCorrect: true},
+              {alternative: "false", isCorrect: false}
+            ]
           },
           {
-            id: 3,
-            question: "What is in the center of the milky way",
+            quizId: null,
+            question: "What is in the center of the Milky Way?",
             answer: "Black Hole",
-            answers: ["Sun", "Earth", "Venus", "Black Hole"],
-            correctAnswers: [false, true, false, false],
-            type: "multiplechoice"
+            type: "multiple_choice",
+            choices: [
+              { alternative: "Sun", isCorrect: false, questionId: 3 },
+              { alternative: "Earth", isCorrect: false, questionId: 3 },
+              { alternative: "Venus", isCorrect: false, questionId: 3 },
+              { alternative: "Black Hole", isCorrect: true, questionId: 3 }
+            ]
           },
         ],
         keywords: [],
         Image: "https://via.placeholder.com/150",
-      },
+      }
     }
   },
 
@@ -263,7 +293,7 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
 
     async createQuiz(questions) {
       let createdQuiz = null;
-      this.templateQuiz.question_list = questions.value;
+      this.templateQuiz.questions = questions.value;
 
       await createQuiz(this.templateQuiz.quizName)
           .then(response => {
@@ -273,6 +303,45 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
             console.warn("error", error)
           })
 
+      const quizUpdateDTO = {
+        "quizId": createdQuiz.quizId,
+        "newName": createdQuiz.quizName,
+        "newDescription": this.templateQuiz.quizDescription,
+        "difficulty": this.templateQuiz.quizDifficulty.toUpperCase(),
+      }
+
+      // Array to hold promises for adding questions
+      const addQuestionPromises = [];
+
+      // Loop through each question
+      this.templateQuiz.questions.forEach(question => {
+        const questionCreateDTO = {
+          "quizId": createdQuiz.quizId,
+          "question": question.question,
+          "answer": question.answer,
+          "type": question.type.toUpperCase(),
+          "choices": question.choices
+        };
+        addQuestionPromises.push(addQuestion(questionCreateDTO));
+      });
+
+      // Execute all promises to add questions
+      await Promise.all(addQuestionPromises)
+          .then(responses => {
+            console.log(responses);
+            createdQuiz = responses[responses.length - 1];
+          }).catch(error => {
+            console.warn("error", error);
+          });
+
+      // Update the quiz after adding all questions
+      await updateQuiz(quizUpdateDTO)
+          .then(response => {
+            console.log(response);
+            createdQuiz = response;
+          }).catch(error => {
+            console.warn("error", error);
+          });
     },
   },
 })
