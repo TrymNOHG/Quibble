@@ -19,7 +19,7 @@
               class="icon_edit"
               id="add"
               icon="fa-solid fa-pen-to-square"
-              @click="editQuestion(q)"
+              @click="editQuestion()"
               v-if="isAuth || isEditor"
           />
           <font-awesome-icon
@@ -59,8 +59,8 @@ export default {
     const isAuth = ref(store.isAdmin(store.currentQuiz.admin_id));
     const isEditor = ref(store.isEditor);
 
-    const deleteQuestion = (questionId) => {
-      emit("deleteQuestion", questionId);
+    const deleteQuestion = (question) => {
+      emit("deleteQuestion", question);
       showPopupProp.value = false;
     };
 

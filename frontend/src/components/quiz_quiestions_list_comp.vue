@@ -97,19 +97,25 @@ export default {
     let question_list = ref(store.currentQuiz.questions);
 
     const editQuestion = ref({
-      question: ref(''),
-      answer: ref(''),
-      type: ref('true_false'),
-      choices: ref([
-        { alternative: ref('Option 1'), isCorrect: ref(false) },
-        { alternative: ref('Option 2'), isCorrect: ref(false) },
-        { alternative: ref('Option 3'), isCorrect: ref(false) },
-        { alternative: ref('Option 4'), isCorrect: ref(false) }
-      ])
+      quizId: null,
+      question:'',
+      answer:'',
+      type:'true_false',
+      choices:[
+        { alternative: 'Option 1', isCorrect: false },
+        { alternative: 'Option 2', isCorrect: false },
+        { alternative: 'Option 3', isCorrect: false },
+        { alternative: 'Option 4', isCorrect: false }
+      ]
     });
 
-    const deleteQuestion = (questionId) => {
-      store.deleteQuestion(questionId);
+    const deleteQuestion = (question) => {
+      const index = question_list.value.indexOf(question);
+      if (index !== -1) {
+        question_list.value.splice(index, 1);
+      }
+
+      store.deleteQuestion(question.id);
     };
 
     const deleteQuiz = () => {
@@ -120,9 +126,10 @@ export default {
       store.addQuiz();
     }
 
+
     const createQuestion = () => {
       if (editQuestion.value.type === 'true_false') {
-        editQuestion.value.answer = editQuestion.value.choices[0].isCorrect ? 'true' : 'false';
+        editQuestion.value.choices = null;
       } else if (editQuestion.value.type === 'multiple_choice') {
         const correctChoice = editQuestion.value.choices.find(choice => choice.isCorrect);
         if (correctChoice) {
@@ -132,6 +139,7 @@ export default {
         }
       }
       store.addQuestion(editQuestion.value);
+      question_list.value.push(editQuestion.value);
       addNewQuestion.value = false;
       edit.value = false;
     };
@@ -156,7 +164,7 @@ export default {
         quizId: null,
         question: "",
         answer: "",
-        type: "truefalse",
+        type: "true_false",
         choices: [
           { alternative: "", isCorrect: false },
           { alternative: "", isCorrect: false },
