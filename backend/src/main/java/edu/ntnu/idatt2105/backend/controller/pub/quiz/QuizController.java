@@ -1,10 +1,14 @@
 package edu.ntnu.idatt2105.backend.controller.pub.quiz;
 
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadAllDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
 import edu.ntnu.idatt2105.backend.service.quiz.QuizService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,5 +34,12 @@ public class QuizController implements IQuizController{
     public ResponseEntity<QuizLoadAllDTO> getAllQuizzes() {
         QuizLoadAllDTO quizLoadAllDTO = quizService.loadAllQuiz();
         return ResponseEntity.ok(quizLoadAllDTO);
+    }
+
+    @Override
+    public ResponseEntity<Page<QuizLoadDTO>> getQuizzes(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<QuizLoadDTO> quizLoadPage = quizService.getPage(pageable);
+        return ResponseEntity.ok(quizLoadPage);
     }
 }

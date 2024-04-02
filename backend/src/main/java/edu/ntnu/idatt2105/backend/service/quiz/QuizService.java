@@ -18,6 +18,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -76,6 +78,16 @@ public class QuizService {
                 .builder()
                 .quizzes(allQuizzes.stream().map(quizMapper::quizToQuizLoadDTO).collect(Collectors.toSet()))
                 .build();
+    }
+
+    /**
+     * This method retrieves a page of quizzes.
+     * @param pageable  The meta information surrounding the page, such as page index and size.
+     * @return          A page of quiz load DTOs.
+     */
+    public Page<QuizLoadDTO> getPage(Pageable pageable) {
+        Page<Quiz> allQuizzes = quizRepository.findAll(pageable);
+        return quizMapper.quizPageToQuizLoadDTOPage(allQuizzes);
     }
 
     @Transactional

@@ -3,6 +3,7 @@ package edu.ntnu.idatt2105.backend.mapper.quiz;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
 import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
 import org.mapstruct.Mapper;
+import org.springframework.data.domain.Page;
 
 import java.util.stream.Collectors;
 
@@ -54,6 +55,15 @@ public interface QuizMapper {
                         .map(QuestionMapper.INSTANCE::questionToQuestionDTO)
                         .collect(Collectors.toSet()))
                 .build();
+    }
+
+    /**
+     * This method maps a quiz page to a page with quiz load DTOs.
+     * @param quizPage  The page of quizzes.
+     * @return          Page of quiz load dto.
+     */
+    default Page<QuizLoadDTO> quizPageToQuizLoadDTOPage(Page<Quiz> quizPage) {
+        return quizPage.map(this::quizToQuizLoadDTO);
     }
 
 
