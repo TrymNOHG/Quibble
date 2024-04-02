@@ -44,7 +44,12 @@
   </div>
   <div class="comp">
     <div class="buttons">
-      <router-link class="btn" to="/myquiz" @click="createQuiz()">{{ $t('new_question.create_quiz_button') }}</router-link>
+      <button
+          class="btn"
+          to="/myquiz"
+          @click="createQuiz()"
+      >{{ $t('new_question.create_quiz_button') }}
+      </button>
       <font-awesome-icon
           id="add"
           icon="fa-solid fa-circle-plus"
@@ -53,8 +58,7 @@
     </div>
     <div class="header"></div>
     <div class="questions_list">
-      <div class="buttons bottomline" >
-      </div>
+      <div class="buttons bottomline" ></div>
       <div class="encap_List">
         <question-create-list
             class="list"
@@ -72,6 +76,7 @@
 import {ref} from 'vue';
 import {useQuizCreateStore} from '@/stores/counter.js';
 import QuestionCreateList from "@/components/create_quiz/question-create-list.vue";
+import router from "@/router/index.js";
 
 export default {
   components: { QuestionCreateList },
@@ -95,7 +100,7 @@ export default {
       ]
     });
 
-    const createQuestion = () => {
+     const createQuestion = () => {
       if (newQuestion.value.type === 'true_false') {
         newQuestion.value.choices = null;
       } else if (newQuestion.value.type === 'multiple_choice') {
@@ -160,9 +165,15 @@ export default {
       cancelCreate();
     }
 
-    const createQuiz = () => {
-      store.createQuiz(question_list);
-    }
+    const createQuiz = async () => {
+      try {
+        await store.createQuiz(question_list);
+        setTimeout(()=> {}, 500);
+        await router.push('/home');
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
     return {
       question_list,

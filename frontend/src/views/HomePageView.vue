@@ -27,15 +27,23 @@ import {useQuizStore, useUserStore} from "@/stores/counter.js";
 const searchInput =  ref('');
 let displayedQuizzes = ref([]);
 let difficulty_selected = ref('');
-let page = ref(-1);
+let page = ref(0);
 
 
 
-onBeforeMount(() => {
-  //displayedQuizzes = useQuizStore().loadQuizzes();
-  //TODO: get quizzes from backend
-  displayedQuizzes.value = test_quizzes.value;
-})
+onMounted(async () => {
+  await loadQuizzes();
+});
+
+async function loadQuizzes() {
+  try {
+    const s = (searchInput.value === '') ? null : searchInput.value;
+    const d = (difficulty_selected.value === '') ? null : difficulty_selected.value;
+    displayedQuizzes.value = await useQuizStore().loadQuizzes(page.value, 10);
+  } catch (e) {
+    console.error(e);
+  }
+}
 
 async function getNextQuiz() {
   window.onscroll = async () => {
@@ -45,7 +53,7 @@ async function getNextQuiz() {
         const s = (searchInput.value === '') ? null : searchInput.value;
         const d = (difficulty_selected.value === '') ? null : difficulty_selected.value;
         page++
-        displayedQuizzes = useQuizStore().loadQuizzes(s, d, page, 10);
+        displayedQuizzes = useQuizStore().loadQuizzes(page);
       } catch (e) {
         page--
         console.error(e);
@@ -62,7 +70,7 @@ async function handleDifficulty(difficulty) {
     const s = (searchInput.value === '') ? null : searchInput.value;
     const d = (difficulty_selected.value === '') ? null : difficulty_selected.value;
     page++
-    displayedQuizzes = useQuizStore().loadQuizzes(s, d, 0, 10);
+    displayedQuizzes = useQuizStore().loadQuizzes(page);
   } catch (e) {
     page--
     console.error(e);
@@ -74,7 +82,7 @@ async function handleSearchInput() {
     const s = (searchInput.value === '') ? null : searchInput.value;
     const d = (difficulty_selected.value === '') ? null : difficulty_selected.value;
     page++
-    displayedQuizzes = useQuizStore().loadQuizzes(s, d, page, 10);
+    displayedQuizzes = useQuizStore().loadQuizzes(page);
   } catch (e) {
     page--
     console.error(e);
@@ -84,57 +92,6 @@ async function handleSearchInput() {
 onMounted(() => {
   getNextQuiz();
 });
-
-let test_quizzes = ref([
-  {
-    quizId: 2,
-    quizName: "Demo Quiz",
-    quizDifficulty: "Medium",
-    quizDescription: "This is a demo quiz for testing purposes",
-    admin_id: useUserStore().user.userId,
-    feedbacks: new Set(["Feedback 1", "Feedback 2", "Feedback 3"]),
-    collaborators: new Set(["Collaborator 1", "Collaborator 2", "Collaborator 3"]),
-    categories: new Set(["Category 1", "Category 2", "Category 3"]),
-    questions: [
-      {
-        id: 1,
-        question: "What is 2 + 2?",
-        answer: "4",
-        type: "multiple_choice",
-        choices: [
-          { alternative: "2", isCorrect: false },
-          { alternative: "3", isCorrect: false },
-          { alternative: "4", isCorrect: true },
-          { alternative: "5", isCorrect: false }
-        ]
-      },
-      {
-        id: 2,
-        question: "What is the capital of France?",
-        answer: "Paris",
-        type: "multiple_choice",
-        choices: [
-          { alternative: "London", isCorrect: false },
-          { alternative: "Paris", isCorrect: true },
-          { alternative: "Berlin", isCorrect: false },
-          { alternative: "Dublin", isCorrect: false }
-        ]
-      },
-      {
-        id: 3,
-        question: "Is the earth flat?",
-        answer: "false",
-        type: "true_false",
-        choices: [
-          { alternative: "true", isCorrect: true },
-          { alternative: "false", isCorrect: false },
-        ]
-      }
-    ],
-    keywords: new Set(["Keyword 1", "Keyword 2", "Keyword 3"]),
-    Image: "https://via.placeholder.com/150"
-  }
-]);
 
 </script>
 

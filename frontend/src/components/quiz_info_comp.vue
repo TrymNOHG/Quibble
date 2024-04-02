@@ -9,7 +9,7 @@
           <h2>{{quiz.quizName}}</h2>
           <p>
             <strong>{{ $t('dropdown_options.DIFFICULTY') }}:</strong>
-            {{ $t('dropdown_options.' + quiz.quizDifficulty.toUpperCase()) }}
+            {{ $t('dropdown_options.' + quiz.difficulty) }}
           </p>
           <p>{{ $t('quiz_card.QUESTIONS_LABEL') }}:
             {{ quiz.questions.length }}
@@ -67,7 +67,7 @@ export default {
       default: () => ({
         QuizId: Number,
         quizName: String,
-        quizDifficulty: String,
+        difficulty: String,
         quizDescription: String,
         admin_id: Number,
         feedbacks: Set,
@@ -81,10 +81,10 @@ export default {
   },
 
   setup(props) {
+    console.log(props)
     const showPopup = ref(false);
     const store = useQuizStore();
-
-    const isAuthor = ref(store.isAdmin(props.quiz.QuizId));
+    const isAuthor = ref(store.isAdmin(props.quiz.admin_id));
     const isEditor = ref(store.isCollaborator());
     let quizAuthors = ref(store.currentQuiz.collaborators)
 
