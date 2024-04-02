@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 /**
  * This repository creates the CRUD operations for the quiz author entity.
  *
@@ -13,4 +15,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface QuizAuthorRepository extends JpaRepository<QuizAuthor, Long>, JpaSpecificationExecutor<QuizAuthor> {
+
+    Optional<QuizAuthor> findQuizAuthorByQuizQuizIdAndUserUserId(Long quiz_quizId, Long user_userId);
+
 }

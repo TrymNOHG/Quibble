@@ -59,22 +59,26 @@ public class QuizController implements IQuizController{
     @Override
     public ResponseEntity<QuizLoadDTO> addCollaborator(@NonNull QuizAuthorDTO newCollaborator, @NonNull Authentication authentication) {
         logger.info("adding collaborator");
+        //TODO: check that user is owner or collaborator
         // Check if already part of quiz
         // Check is authorized
         // Check is admin? exists? etc.
         // Other edge cases...
+        quizService.addCollaborator(newCollaborator);
         return null;
     }
 
     @Override
-    public ResponseEntity<QuizLoadDTO> removeCollaborator(@NonNull Long userId, @NonNull Authentication authentication) {
+    public ResponseEntity<QuizLoadDTO> removeCollaborator(@NonNull QuizAuthorDTO newCollaborator, @NonNull Authentication authentication) {
         logger.info("deleting collaborator");
+        //TODO: check that user is owner or collaborator
         return null;
     }
 
     @Override
     public ResponseEntity<QuizLoadDTO> addQuestion(@NonNull QuestionCreateDTO questionCreateDTO, @NonNull Authentication authentication) {
         //TODO: check that user is owner or collaborator
+        //TODO: make method that checks if user is owner or collaborator of quiz.
         QuizLoadDTO quizLoadDTO = questionService.addQuestion(questionCreateDTO);
         return ResponseEntity.ok(quizLoadDTO);
     }
