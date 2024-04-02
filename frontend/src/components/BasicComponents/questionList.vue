@@ -5,7 +5,7 @@
         <div class="popup-content">
           <h3>{{ $t('delete_modal.TITLE') }}</h3>
           <div class="button-group">
-            <button @click="deleteQuestion(question)">{{ $t('delete_modal.YES') }}</button>
+            <button @click="deleteQuestion(q.quizId)">{{ $t('delete_modal.YES') }}</button>
             <button @click="closePopup">{{ $t('delete_modal.NO') }}</button>
           </div>
         </div>
@@ -13,13 +13,13 @@
     </div>
     <div class="question-item">
       <div class="question-info">
-        <span>{{ question.question }}</span>
+        <span>{{ q.question }}</span>
         <div class="actions">
           <font-awesome-icon
               class="icon_edit"
               id="add"
               icon="fa-solid fa-pen-to-square"
-              @click="editQuestion"
+              @click="editQuestion(q)"
               v-if="isAuth || isEditor"
           />
           <font-awesome-icon
@@ -35,18 +35,19 @@
 </template>
 
 <script>
-import {ref, getCurrentInstance} from "vue";
-import {useQuizStore} from "@/stores/counter.js";
+import { ref, getCurrentInstance } from "vue";
+import { useQuizStore } from "@/stores/counter.js";
 
 export default {
   props: {
-    question: {
+    q: {
       type: Object,
       default: () => ({
-        id: Number,
+        quizId: Number,
         question: String,
         answer: String,
         type: String,
+        choices: Set,
       })
     }
   },
@@ -54,21 +55,23 @@ export default {
   setup() {
     const store = useQuizStore();
     const showPopupProp = ref(false);
-    const { emit } = getCurrentInstance();
-    const isAuth = ref(store.isAuth)
-    const isEditor = ref(store.isEditor)
+    const {emit} = getCurrentInstance();
+    const isAuth = ref(store.isAdmin(store.currentQuiz.admin_id));
+    const isEditor = ref(store.isEditor);
 
-    const deleteQuestion = (question) => {
-      emit("deleteQuestion", question.id);
+    const deleteQuestion = (questionId) => {
+      emit("deleteQuestion", questionId);
       showPopupProp.value = false;
     };
+
     const closePopup = () => {
       showPopupProp.value = false;
     };
 
     const editQuestion = (question) => {
+      console.log(question);
       emit("editQuestion", question);
-    }
+    };
 
     return {
       editQuestion,
@@ -80,7 +83,6 @@ export default {
     };
   }
 }
-
 </script>
 
 <style>
@@ -140,11 +142,6 @@ button{
 
 .button-group button{
   width: 50%;
-}
-
-.router {
-  text-decoration: none;
-  color: black;
 }
 
 .icon_trash:hover {

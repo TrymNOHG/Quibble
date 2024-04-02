@@ -24,10 +24,10 @@
           </div>
         </div>
         <div class="multiple" v-else-if="newQuestion.type==='multiplechoice'">
-          <div v-for="(answer, index) in newQuestion.answers" :key="index" class="answer-option">
-            <label :for="'answer' + index">{{ $t('new_question.answer_label') }} {{ index + 1 }}</label>
-            <input type="text" v-model="newQuestion.answers[index]" :id="'answer' + index" class="input answer">
-            <input type="checkbox" v-model="newQuestion.correctAnswers[index]">
+          <div v-for="(choice, index) in newQuestion.choices" :key="index" class="answer-option">
+            <label :for="'choice' + index">{{ $t('new_question.answer_label') }} {{ index + 1 }}</label>
+            <input type="text" v-model="choice.alternative" :id="'choice' + index" class="input answer">
+            <input type="checkbox" v-model="choice.isCorrect">
           </div>
         </div>
         <div class="button-group">
@@ -68,7 +68,6 @@
   </div>
 </template>
 
-
 <script>
 import { ref } from 'vue';
 import { useQuizCreateStore } from '@/stores/counter.js';
@@ -84,21 +83,33 @@ export default {
     const question_list = ref(store.templateQuiz.questions);
 
     const newQuestion = ref({
-      id: ref('null'),
       question: ref(''),
-      answer: ref('true'),
-      answers: ref(['Option 1', 'Option 2', 'Option 3', 'Option 4']),
-      correctAnswers: ref([false, false, false, false]),
-      type: ref('truefalse')
+      answer: ref(''),
+      type: ref('truefalse'),
+      choices: ref([
+        { alternative: ref('Option 1'), isCorrect: ref(false) },
+        { alternative: ref('Option 2'), isCorrect: ref(false) },
+        { alternative: ref('Option 3'), isCorrect: ref(false) },
+        { alternative: ref('Option 4'), isCorrect: ref(false) }
+      ])
     });
 
     const createQuestion = () => {
+      if (newQuestion.value.type === 'true_false') {
+        newQuestion.value.answer = newQuestion.value.choices[0].isCorrect ? 'true' : 'false';
+      } else if (newQuestion.value.type === 'multiple_choice') {
+        const correctChoice = newQuestion.value.choices.find(choice => choice.isCorrect);
+        if (correctChoice) {
+          newQuestion.value.answer = correctChoice.alternative;
+        } else {
+          newQuestion.value.answer = '';
+        }
+      }
       question_list.value.push({
         question: newQuestion.value.question,
         answer: newQuestion.value.answer,
-        answers: newQuestion.value.answers.slice(),
-        correctAnswers: newQuestion.value.correctAnswers.slice(),
-        type: newQuestion.value.type
+        type: newQuestion.value.type,
+        choices: newQuestion.value.choices
       });
       addNewQuestion.value = false;
       editQuestion.value = false;
@@ -107,20 +118,25 @@ export default {
     const cancelCreate = () => {
       newQuestion.value.question = '';
       newQuestion.value.type = 'truefalse';
-      newQuestion.value.answer = 'true';
-      newQuestion.value.answers = ['Option 1', 'Option 2', 'Option 3', 'Option 4'];
-      newQuestion.value.correctAnswers = [false, false, false, false];
+      newQuestion.value.answer = '';
+      newQuestion.value.choices.forEach(choice => {
+        choice.alternative = '';
+        choice.isCorrect = false;
+      });
       addNewQuestion.value = false;
       editQuestion.value = false;
     };
 
     const showEdit = (question) => {
-      newQuestion.value.id = question.id;
       newQuestion.value.question = question.question;
-      newQuestion.value.type = question.type;
       newQuestion.value.answer = question.answer;
-      newQuestion.value.answers = question.answers.slice();
-      newQuestion.value.correctAnswers = (question.type === "truefalse") ? null : question.correctAnswers.slice();
+      newQuestion.value.type = question.type;
+      newQuestion.value.choices = question.choices || [
+        { alternative: 'Option 1', isCorrect: false },
+        { alternative: 'Option 2', isCorrect: false },
+        { alternative: 'Option 3', isCorrect: false },
+        { alternative: 'Option 4', isCorrect: false }
+      ];
       editQuestion.value = true;
     };
 
@@ -132,24 +148,15 @@ export default {
     };
 
     const addEdit = () => {
-      for (let i = 0; i < question_list.value.length; i++) {
-        if (question_list.value[i].id === newQuestion.value.id){
-          question_list.value[i].question = newQuestion.value.question;
-          question_list.value[i].answer = newQuestion.value.answer;
-          question_list.value[i].answers = newQuestion.value.answers.slice();
-          question_list.value[i].correctAnswers = newQuestion.value.correctAnswers
-          !== null ? newQuestion.value.correctAnswers.slice() : null;
-          question_list.value[i].type = newQuestion.value.type;
-          break;
-        }
-      }
-      newQuestion.value.question = '';
-      newQuestion.value.type = 'truefalse';
-      newQuestion.value.answer = 'true';
-      newQuestion.value.answers = ['Option 1', 'Option 2', 'Option 3', 'Option 4'];
-      newQuestion.value.correctAnswers = [false, false, false, false];
-      addNewQuestion.value = false;
-      editQuestion.value = false;
+      const choices = newQuestion.value.type === 'multiplechoice' ? newQuestion.value.choices : null;
+      const editedQuestion = {
+        question: newQuestion.value.question,
+        answer: newQuestion.value.answer,
+        type: newQuestion.value.type,
+        choices: choices
+      };
+      question_list.value[newQuestion.value.id] = editedQuestion;
+      cancelCreate();
     }
 
     const createQuiz = () => {
@@ -170,9 +177,7 @@ export default {
     };
   }
 };
-
 </script>
-
 
 <style scoped>
 

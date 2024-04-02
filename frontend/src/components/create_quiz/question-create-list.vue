@@ -5,7 +5,7 @@
         <div class="popup-content">
           <h3>{{ $t('delete_modal.TITLE') }}</h3>
           <div class="button-group">
-            <button @click="deleteQuestion(question)">{{ $t('delete_modal.YES') }}</button>
+            <button @click="deleteQuestion(question.id)">{{ $t('delete_modal.YES') }}</button>
             <button @click="closePopup">{{ $t('delete_modal.NO') }}</button>
           </div>
         </div>
@@ -33,12 +33,11 @@
 </template>
 
 <script>
-import {ref, getCurrentInstance} from "vue";
-import {useQuizStore} from "@/stores/counter.js";
-import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import { ref, getCurrentInstance } from "vue";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 export default {
-  components: {FontAwesomeIcon},
+  components: { FontAwesomeIcon },
   props: {
     question: {
       type: Object,
@@ -51,17 +50,16 @@ export default {
     }
   },
 
-  setup() {
+  setup(props, { emit }) {
     const showPopupProp = ref(false);
-    const { emit } = getCurrentInstance();
 
-    const deleteQuestion = (question) => {
-      emit("deleteQuestion", question.id);
+    const deleteQuestion = (questionId) => {
+      emit("deleteQuestion", questionId);
       showPopupProp.value = false;
     };
 
-    const editQuestion = (question) => {
-      emit("editQuestion", question);
+    const editQuestion = () => {
+      emit("editQuestion", props.question);
     }
 
     const closePopup = () => {

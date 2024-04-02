@@ -45,7 +45,7 @@
           <h3>{{ $t('quiz_details.add_tag_category') }}</h3>
           <div class="input-group">
             <span class="add-span">{{ $t('quiz_details.tag_label') }}</span>
-            <input type="text" v-model="newTag.tag_desc"/>
+            <input type="text" v-model="newTag.name"/>
             <span class="add-span">{{ $t('quiz_details.type_label') }}</span>
             <select class="add-area" v-model="newTag.type">
               <option value="Category">{{ $t('dropdown_options.CATEGORY') }}</option>
@@ -95,30 +95,30 @@ export default {
     };
 
     const addTag = () => {
-      if (newTag.value.tag_desc.trim() !== '') {
-        for (const tag of template_tags.value.tags) {
-          if (tag.tag_desc === newTag.value.tag_desc) {
+      if (newTag.value.name.trim() !== '') {
+        for (const tag of template_tags.value) {
+          if (tag.name === newTag.value.name) {
             console.log("Tag already exists");
             return;
           }
         }
 
-        template_tags.value.tags.push({ ...newTag.value });
-        newTag.value.tag_desc = '';
+        template_tags.value.push({ ...newTag.value });
+        newTag.value.name = '';
         newTag.value.type = 'Category';
         showPopup.value = false;
       }
     };
 
     const deleteTag = (tagToDelete) => {
-      const index = template_tags.value.tags.findIndex(tag => tag.tag_desc === tagToDelete.tag_desc);
+      const index = template_tags.value.findIndex(tag => tag.name === tagToDelete.name);
       if (index !== -1) {
-        template_tags.value.tags.splice(index, 1);
+        template_tags.value.splice(index, 1);
       }
     };
 
     const closePopup = () => {
-      newTag.value.tag_desc = '';
+      newTag.value.name = '';
       newTag.value.type = 'Category';
       showPopup.value = false;
     };

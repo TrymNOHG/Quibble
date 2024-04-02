@@ -48,11 +48,13 @@ public class QuizController implements IQuizController{
 
     @Override
     public ResponseEntity<QuizLoadDTO> deleteQuiz(@NonNull Long quizId, @NonNull Authentication authentication) {
-        return null;
+        logger.info("Deleting quiz with ID: {}", quizId);
+        return ResponseEntity.ok();
     }
 
     @Override
     public ResponseEntity<QuizLoadDTO> addCollaborator(@NonNull QuizAuthorDTO newCollaborator, @NonNull Authentication authentication) {
+        logger.info("adding collaborator");
         // Check if already part of quiz
         // Check is authorized
         // Check is admin? exists? etc.
@@ -62,6 +64,7 @@ public class QuizController implements IQuizController{
 
     @Override
     public ResponseEntity<QuizLoadDTO> removeCollaborator(@NonNull Long userId, @NonNull Authentication authentication) {
+        logger.info("deleting collaborator");
         return null;
     }
 

@@ -81,7 +81,8 @@ public interface IQuizController {
                             schema = @Schema(implementation = Quiz.class)) })
     }
     )
-    ResponseEntity<QuizLoadDTO> deleteQuiz(@PathVariable @NonNull Long quizId, @NonNull Authentication authentication);
+    ResponseEntity<QuizLoadDTO> deleteQuiz(@PathVariable @NonNull Long quizId,
+                                           @NonNull Authentication authentication);
 
     /**
      * This method adds a new collaborator to a quiz.

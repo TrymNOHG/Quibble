@@ -22,7 +22,7 @@
 import SearchInput from "@/components/searchbar.vue";
 import {onBeforeMount, onMounted, ref} from 'vue';
 import One_quiz_rectangle from "@/components/BasicComponents/one_quiz_rectangle.vue";
-import {useQuizStore} from "@/stores/counter.js";
+import {useQuizStore, useUserStore} from "@/stores/counter.js";
 
 const searchInput =  ref('');
 let displayedQuizzes = ref([]);
@@ -87,11 +87,11 @@ onMounted(() => {
 
 let test_quizzes = ref([
   {
-    QuizId: 2,
+    quizId: 2,
     quizName: "Demo Quiz",
     quizDifficulty: "Medium",
     quizDescription: "This is a demo quiz for testing purposes",
-    admin_id: 456,
+    admin_id: useUserStore().user.userId,
     feedbacks: new Set(["Feedback 1", "Feedback 2", "Feedback 3"]),
     collaborators: new Set(["Collaborator 1", "Collaborator 2", "Collaborator 3"]),
     categories: new Set(["Category 1", "Category 2", "Category 3"]),
@@ -100,25 +100,35 @@ let test_quizzes = ref([
         id: 1,
         question: "What is 2 + 2?",
         answer: "4",
-        difficulty: "Medium",
-        questionType: "multiplechoice",
-        options: ["2", "3", "4", "5"]
+        type: "multiple_choice",
+        choices: [
+          { alternative: "2", isCorrect: false },
+          { alternative: "3", isCorrect: false },
+          { alternative: "4", isCorrect: true },
+          { alternative: "5", isCorrect: false }
+        ]
       },
       {
         id: 2,
         question: "What is the capital of France?",
         answer: "Paris",
-        difficulty: "Medium",
-        questionType: "multiplechoice",
-        options: ["London", "Paris", "Berlin", "Dublin"]
+        type: "multiple_choice",
+        choices: [
+          { alternative: "London", isCorrect: false },
+          { alternative: "Paris", isCorrect: true },
+          { alternative: "Berlin", isCorrect: false },
+          { alternative: "Dublin", isCorrect: false }
+        ]
       },
       {
         id: 3,
         question: "Is the earth flat?",
-        answer: "No",
-        difficulty: "Medium",
-        questionType: "truefalse",
-        options: []
+        answer: "false",
+        type: "true_false",
+        choices: [
+          { alternative: "true", isCorrect: true },
+          { alternative: "false", isCorrect: false },
+        ]
       }
     ],
     keywords: new Set(["Keyword 1", "Keyword 2", "Keyword 3"]),

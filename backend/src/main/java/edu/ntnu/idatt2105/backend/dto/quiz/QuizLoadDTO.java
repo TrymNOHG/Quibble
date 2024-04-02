@@ -28,6 +28,6 @@ import java.util.Set;
 @Builder
 public record QuizLoadDTO(
         @NonNull Long quizId, @NonNull String quizName, String quizDescription, @NonNull Difficulty difficulty,
-        @NonNull Long admin_id, Set<QuizFeedbackDTO> feedbacks, Set<QuizAuthorDTO> collaborators,
-        Set<QuizCategory> categories, Set<QuestionDTO> questions, Set<QuizKeyword> keywords
+        @NonNull Long admin_id, Set<QuizFeedback> feedbacks, Set<QuizAuthor> collaborators,
+        Set<QuizCategory> categories, Set<Question> questions, Set<QuizKeyword> keywords
 ) {}

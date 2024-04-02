@@ -80,18 +80,17 @@ export default {
     }
   },
 
-  setup() {
+  setup(props) {
     const showPopup = ref(false);
     const store = useQuizStore();
 
-    const isAuthor = ref(store.isAuth);
-    const isEditor = ref(store.isEditor);
-    let quizAuthors = ref(store.allAuthors)
+    const isAuthor = ref(store.isAdmin(props.quiz.QuizId));
+    const isEditor = ref(store.isCollaborator());
+    let quizAuthors = ref(store.currentQuiz.collaborators)
 
 
     const newAuthor = {
       username: '',
-      role: 'editor'
     };
 
     const deleteAuthor = (author) => {
@@ -102,13 +101,11 @@ export default {
       console.log('Adding new author:', newAuthor);
       quizAuthors = store.addAuthor(newAuthor);
       newAuthor.username = '';
-      newAuthor.role = 'editor';
       showPopup.value = false;
     };
 
     const closePopup = () => {
       newAuthor.username = '';
-      newAuthor.role = 'editor';
       showPopup.value = false;
     };
 

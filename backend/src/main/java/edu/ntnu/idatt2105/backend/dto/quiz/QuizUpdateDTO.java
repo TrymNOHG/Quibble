@@ -17,6 +17,9 @@ import org.springframework.lang.Nullable;
  * @version 1.0 24.03.2024
  */
 @Builder
-public record QuizUpdateDTO(@NonNull Long quizId, @Nullable String newName, @Nullable String newDescription,
-                            @Nullable Difficulty difficulty) {
+public record QuizUpdateDTO(
+        @NonNull Long quizId,
+        @Nullable String newName,
+        @Nullable String newDescription,
+        @Nullable Difficulty difficulty) {
 }
