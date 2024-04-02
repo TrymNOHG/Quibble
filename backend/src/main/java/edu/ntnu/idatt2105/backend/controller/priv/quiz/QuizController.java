@@ -64,11 +64,12 @@ public class QuizController implements IQuizController{
         // Check is authorized
         // Check is admin? exists? etc.
         // Other edge cases...
+        quizService.addCollaborator(newCollaborator);
         return null;
     }
 
     @Override
-    public ResponseEntity<QuizLoadDTO> removeCollaborator(@NonNull Long userId, @NonNull Authentication authentication) {
+    public ResponseEntity<QuizLoadDTO> removeCollaborator(@NonNull QuizAuthorDTO newCollaborator, @NonNull Authentication authentication) {
         logger.info("deleting collaborator");
         //TODO: check that user is owner or collaborator
         return null;

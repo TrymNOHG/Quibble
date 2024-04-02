@@ -114,7 +114,7 @@ public interface IQuizController {
      * @return ResponseEntity showing whether the operation was successful.
      */
     @DeleteMapping(
-            value="/delete/{userId}",
+            value="/delete/collaborator",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -128,7 +128,7 @@ public interface IQuizController {
                             schema = @Schema(implementation = QuizAuthor.class)) })
     }
     )
-    ResponseEntity<QuizLoadDTO> removeCollaborator(@PathVariable @NonNull Long userId,
+    ResponseEntity<QuizLoadDTO> removeCollaborator(@RequestBody @NonNull QuizAuthorDTO newCollaborator,
                                                 @NonNull Authentication authentication);
 
     /**
