@@ -39,8 +39,6 @@ public class QuizService {
     private final UserRepository userRepository;
     private final QuestionRepository questionRepository;
     private final QuizMapper quizMapper;
-    private final QuestionMapper questionMapper;
-    private final MultipleChoiceMapper multipleChoiceMapper;
     private final MultipleChoiceRepository multipleChoiceRepository;
 
     public QuizLoadDTO updateQuiz(QuizUpdateDTO quizUpdateDTO) {
@@ -87,7 +85,7 @@ public class QuizService {
         return QuizLoadDTO.builder()
                 .quizId(quiz.getQuizId())
                 .quizName(quiz.getQuizName())
-                .admin_id(admin.getUserId())
+                .adminId(admin.getUserId())
                 .difficulty(quiz.getDifficulty())
                 .build();
     }
@@ -106,7 +104,7 @@ public class QuizService {
                 .orElseThrow(() -> new QuizNotFoundException(questionCreateDTO.quizId().toString()));
         LOGGER.info("Quiz found.");
         LOGGER.info("Creating Question object.");
-        Question question = questionMapper.questionCreateDTOToQuestion(questionCreateDTO);
+        Question question = QuestionMapper.INSTANCE.questionCreateDTOToQuestion(questionCreateDTO);
         question.setQuiz(quiz);
 
         LOGGER.info("Saving question to database.");
@@ -135,7 +133,7 @@ public class QuizService {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new NotFoundException("Question"));
 
-        MultipleChoice multipleChoice = multipleChoiceMapper.multipleChoiceDTOToMultipleChoice(multipleChoiceDTO);
+        MultipleChoice multipleChoice = MultipleChoiceMapper.INSTANCE.multipleChoiceDTOToMultipleChoice(multipleChoiceDTO);
         multipleChoice.setQuestion(question);
         multipleChoiceRepository.save(multipleChoice);
     }
