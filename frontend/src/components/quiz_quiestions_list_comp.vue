@@ -72,7 +72,7 @@
             class="list"
             v-for="q in question_list"
             :q="q"
-            @deleteQuestion="deleteQuestion(q.id)"
+            @deleteQuestion="deleteQuestion(q)"
             @editQuestion="showEdit(q)"
         />
       </div>
@@ -111,13 +111,17 @@ export default {
       ]
     });
 
-    const deleteQuestion = (question) => {
+    const deleteQuestion = async (question) => {
       const index = question_list.value.indexOf(question);
       if (index !== -1) {
         question_list.value.splice(index, 1);
       }
 
-      store.deleteQuestion(question.id);
+      try {
+        await store.deleteQuestion(question.questionId);
+      } catch (error) {
+        console.error('Error editing question:', error);
+      }
     };
 
     const deleteQuiz = () => {

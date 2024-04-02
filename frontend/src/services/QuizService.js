@@ -109,8 +109,21 @@ export const addQuestion = async (questionCreateDTO) => {
     }
 };
 
+export const deleteQuestionById = async (questionId) => {
+    try {
+        const response = await axios.delete(`${BASE_URL_PRIV}/delete/question/${questionId}`, {
+            headers: {
+                Authorization: `Bearer ${await sessionToken()}`,
+            }
+        });
+        console.log(response);
+        return response.data;
+    } catch (error) {
+        throw error.response ? error.response.data : error.message;
+    }
+};
+
 export const patchQuestion = async (questionEditDTO) => {
-    console.log("bruh3 ", questionEditDTO)
     try {
         const response = await axios.patch(`${BASE_URL_PRIV}/edit/question`,
             questionEditDTO, {
@@ -118,7 +131,6 @@ export const patchQuestion = async (questionEditDTO) => {
                     Authorization: `Bearer ${await sessionToken()}`,
                 }
             });
-        console.log("Bruh2  ", response.data)
         return response.data;
     } catch (error) {
         throw error.response ? error.response.data : error.message;

@@ -84,8 +84,7 @@ export default {
     console.log(props)
     const showPopup = ref(false);
     const store = useQuizStore();
-
-    const isAuthor = ref(store.isAdmin(props.quiz.QuizId));
+    const isAuthor = ref(store.isAdmin(props.quiz.admin_id));
     const isEditor = ref(store.isCollaborator());
     let quizAuthors = ref(store.currentQuiz.collaborators)
 

@@ -68,9 +68,7 @@ public interface IQuizController {
     ResponseEntity<QuizLoadDTO> updateQuiz(@RequestBody @NonNull QuizUpdateDTO quizUpdateDTO, @NonNull Authentication authentication);
 
     @DeleteMapping(
-            value="/delete/{quizId}",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
+            value="/delete/{quizId}"
     )
     @Operation(summary = "This method deletes a quiz given its id.")
     @ApiResponses(value = {
@@ -171,9 +169,7 @@ public interface IQuizController {
     ResponseEntity<QuizLoadDTO> editQuestion(@RequestBody @NonNull QuestionEditDTO questionEditDTO, @NonNull Authentication authentication);
 
     @DeleteMapping(
-            value="/delete/question/{questionId}",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
+            value="/delete/question/{questionId}"
     )
     @Operation(summary = "This method deletes a question of a given quiz")
     @ApiResponses(value = {

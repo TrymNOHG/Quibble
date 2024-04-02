@@ -7,7 +7,13 @@ import {getPictureFromUser} from "@/services/ImageService.js";
 import {
   addCollaborator,
   addQuestion,
-  createQuiz, deleteQuizById, fetchQuizzes, patchQuestion, removeCollaborator, updateQuiz
+  createQuiz,
+  deleteQuestionById,
+  deleteQuizById,
+  fetchQuizzes,
+  patchQuestion,
+  removeCollaborator,
+  updateQuiz
 } from "@/services/QuizService.js"
 
 export const useUserStore = defineStore('storeUser', {
@@ -180,18 +186,13 @@ export const useQuizStore = defineStore('storeQuiz', {
     },
 
     async deleteQuestion(question_id) {
-      for (let index = 0; index < this.currentQuiz.question_list.length; index++) {
-        if (question_id === this.currentQuiz.question_list[index].id) {
-          this.currentQuiz.question_list.splice(index, 1);
-          /*
-          TODO: fjerne q i backend
-          response = deleteQuestion(q.id)
-          this.currentQuiz.Questions = response;
-           */
-          break;
-        }
-      }
-      return this.currentQuiz.question_list;
+      console.log(question_id)
+      await deleteQuestionById(question_id)
+          .then(response => {
+            console.log(response)
+          }).catch(error => {
+            console.warn("error", error)
+          })
     },
 
     async deleteAuth(auth) {
