@@ -34,6 +34,29 @@ public class QuizService {
     private final QuizMapper quizMapper;
     private final MultipleChoiceRepository multipleChoiceRepository;
 
+    public Quiz getQuizById(long quizId) {
+        return quizRepository.findById(quizId)
+                .orElseThrow(() -> new IllegalArgumentException("Quiz with id " + quizId + " not found"));
+    }
+
+    @Transactional
+    public QuizLoadDTO createQuiz(String quizName, String adminEmail) {
+        User admin = userRepository.findByEmail(adminEmail)
+                .orElseThrow(() -> new IllegalArgumentException("User with email " + adminEmail + " not found"));
+        Quiz quiz = Quiz.builder()
+                .quizName(quizName)
+                .admin(admin)
+                .difficulty(Difficulty.EASY)
+                .build();
+        quiz = quizRepository.save(quiz);
+        return QuizLoadDTO.builder()
+                .quizId(quiz.getQuizId())
+                .quizName(quiz.getQuizName())
+                .adminId(admin.getUserId())
+                .difficulty(quiz.getDifficulty())
+                .build();
+    }
+
     public QuizLoadDTO updateQuiz(QuizUpdateDTO quizUpdateDTO) {
         //TODO: check that user trying to change is owner or collaborator
         LOGGER.info("Attempting to retrieve quiz with id: " + quizUpdateDTO.quizId());
@@ -60,27 +83,18 @@ public class QuizService {
         return quizMapper.quizToQuizLoadDTO(savedQuiz);
     }
 
-    public Quiz getQuizById(long quizId) {
-        return quizRepository.findById(quizId)
-                .orElseThrow(() -> new IllegalArgumentException("Quiz with id " + quizId + " not found"));
-    }
-
-    @Transactional
-    public QuizLoadDTO createQuiz(String quizName, String adminEmail) {
-        User admin = userRepository.findByEmail(adminEmail)
-                .orElseThrow(() -> new IllegalArgumentException("User with email " + adminEmail + " not found"));
-        Quiz quiz = Quiz.builder()
-                .quizName(quizName)
-                .admin(admin)
-                .difficulty(Difficulty.EASY)
-                .build();
-        quiz = quizRepository.save(quiz);
-        return QuizLoadDTO.builder()
-                .quizId(quiz.getQuizId())
-                .quizName(quiz.getQuizName())
-                .adminId(admin.getUserId())
-                .difficulty(quiz.getDifficulty())
-                .build();
+    /**
+     * This method deletes a quiz based on its id.
+     * @param quizId    The id of the quiz.
+     */
+    public void deleteQuiz(Long quizId) {
+        //TODO: check if owner
+        LOGGER.info("Attempting to find quiz to delete.");
+        Quiz quiz = quizRepository.findById(quizId)
+                .orElseThrow(() -> new QuizNotFoundException("Quiz with id: " + quizId));
+        LOGGER.info("Attempting to delete quiz.");
+        quizRepository.delete(quiz);
+        LOGGER.info("Quiz successfully deleted.");
     }
 
 

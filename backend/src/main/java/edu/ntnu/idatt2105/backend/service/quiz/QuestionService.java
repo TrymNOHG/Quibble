@@ -166,6 +166,18 @@ public class QuestionService {
     }
 
     /**
+     * This method deletes a question from the database.
+     * @param questionId    The question's id.
+     */
+    public void deleteQuestion(Long questionId) {
+        LOGGER.info("Deleting question with id: " + questionId);
+        //TODO: Check if owner
+        Question question = questionRepository.findById(questionId)
+                        .orElseThrow(() -> new QuestionNotFoundException("Question with id: " + questionId));
+        questionRepository.delete(question);
+    }
+
+    /**
      * This method adds a new multiple choice alternative to a question.
      *
      * @param multipleChoiceCreateDTO The information surrounding the choice.

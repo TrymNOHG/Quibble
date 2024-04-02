@@ -52,6 +52,7 @@ public class QuizController implements IQuizController{
     @Override
     public ResponseEntity<QuizLoadDTO> deleteQuiz(@NonNull Long quizId, @NonNull Authentication authentication) {
         logger.info("Deleting quiz with ID: {}" + quizId);
+        quizService.deleteQuiz(quizId);
         return ResponseEntity.ok(null);
     }
 
@@ -82,6 +83,12 @@ public class QuizController implements IQuizController{
     public ResponseEntity<QuizLoadDTO> editQuestion(@NonNull QuestionEditDTO questionEditDTO, @NonNull Authentication authentication) {
         QuizLoadDTO quizLoadDTO = questionService.editQuestion(questionEditDTO);
         return ResponseEntity.ok(quizLoadDTO);
+    }
+
+    @Override
+    public ResponseEntity<Object> deleteQuestion(@NonNull Long questionId, @NonNull Authentication authentication) {
+        questionService.deleteQuestion(questionId);
+        return ResponseEntity.ok("Successful Deletion");
     }
 
 
