@@ -4,6 +4,7 @@ import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizUpdateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionCreateDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionEditDTO;
 import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
 import edu.ntnu.idatt2105.backend.model.quiz.QuizAuthor;
 import io.swagger.v3.oas.annotations.Operation;
@@ -152,4 +153,20 @@ public interface IQuizController {
     )
     ResponseEntity<QuizLoadDTO> addQuestion(@RequestBody @NonNull QuestionCreateDTO questionCreateDTO, @NonNull Authentication authentication);
 
+    @PatchMapping(
+            value="/edit/question",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @Operation(summary = "This method edits a question of a given quiz")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful edit of question.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = QuizAuthor.class)) }),
+            @ApiResponse(responseCode = "403", description = "Unauthorized edit of question.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = QuizAuthor.class)) })
+    }
+    )
+    ResponseEntity<QuizLoadDTO> editQuestion(@RequestBody @NonNull QuestionEditDTO questionEditDTO, @NonNull Authentication authentication);
 }

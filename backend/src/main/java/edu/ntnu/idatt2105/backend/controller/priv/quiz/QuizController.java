@@ -4,6 +4,8 @@ import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizUpdateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionCreateDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionEditDTO;
+import edu.ntnu.idatt2105.backend.service.quiz.QuestionService;
 import edu.ntnu.idatt2105.backend.service.quiz.QuizService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +34,7 @@ import java.util.logging.Logger;
 public class QuizController implements IQuizController{
 
     private final QuizService quizService;
+    private final QuestionService questionService;
     Logger logger = Logger.getLogger(QuizController.class.getName());
 
     @Override
@@ -71,7 +74,13 @@ public class QuizController implements IQuizController{
     @Override
     public ResponseEntity<QuizLoadDTO> addQuestion(@NonNull QuestionCreateDTO questionCreateDTO, @NonNull Authentication authentication) {
         //TODO: check that user is owner or collaborator
-        QuizLoadDTO quizLoadDTO = quizService.addQuestion(questionCreateDTO);
+        QuizLoadDTO quizLoadDTO = questionService.addQuestion(questionCreateDTO);
+        return ResponseEntity.ok(quizLoadDTO);
+    }
+
+    @Override
+    public ResponseEntity<QuizLoadDTO> editQuestion(@NonNull QuestionEditDTO questionEditDTO, @NonNull Authentication authentication) {
+        QuizLoadDTO quizLoadDTO = questionService.editQuestion(questionEditDTO);
         return ResponseEntity.ok(quizLoadDTO);
     }
 

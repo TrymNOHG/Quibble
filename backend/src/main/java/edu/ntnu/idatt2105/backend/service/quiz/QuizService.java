@@ -1,18 +1,10 @@
 package edu.ntnu.idatt2105.backend.service.quiz;
-import edu.ntnu.idatt2105.backend.dto.quiz.question.MultipleChoiceCreateDTO;
-import edu.ntnu.idatt2105.backend.dto.quiz.question.MultipleChoiceDTO;
-import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionCreateDTO;
-import edu.ntnu.idatt2105.backend.exception.notfound.NotFoundException;
-import edu.ntnu.idatt2105.backend.mapper.quiz.MultipleChoiceMapper;
-import edu.ntnu.idatt2105.backend.mapper.quiz.QuestionMapper;
 import edu.ntnu.idatt2105.backend.model.quiz.Difficulty;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizUpdateDTO;
 import edu.ntnu.idatt2105.backend.exception.notfound.QuizNotFoundException;
 import edu.ntnu.idatt2105.backend.mapper.quiz.QuizMapper;
 import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
-import edu.ntnu.idatt2105.backend.model.quiz.question.MultipleChoice;
-import edu.ntnu.idatt2105.backend.model.quiz.question.Question;
 import edu.ntnu.idatt2105.backend.model.users.User;
 import edu.ntnu.idatt2105.backend.repo.quiz.QuizRepository;
 import edu.ntnu.idatt2105.backend.repo.quiz.question.MultipleChoiceRepository;
@@ -91,52 +83,5 @@ public class QuizService {
                 .build();
     }
 
-    /**
-     * This method adds a new question to the database.
-     * @param questionCreateDTO     The information of the question.
-     * @return                      The new quiz.
-     */
-    public QuizLoadDTO addQuestion(QuestionCreateDTO questionCreateDTO) {
-        //TODO: check that user is editing question they are authorized to.
-        // Might be a little unnecessary to send the whole quiz again...
-        //Check if Quiz exist
-        LOGGER.info("Attempting to retrieve quiz");
-        Quiz quiz = quizRepository.findById(questionCreateDTO.quizId())
-                .orElseThrow(() -> new QuizNotFoundException(questionCreateDTO.quizId().toString()));
-        LOGGER.info("Quiz found.");
-        LOGGER.info("Creating Question object.");
-        Question question = QuestionMapper.INSTANCE.questionCreateDTOToQuestion(questionCreateDTO);
-        question.setQuiz(quiz);
-
-        LOGGER.info("Saving question to database.");
-        Question savedQuestion = questionRepository.save(question);
-        LOGGER.info("Question saved to database!");
-
-        if(questionCreateDTO.choices() != null) {
-            LOGGER.info("Adding multiple choices.");
-            for (MultipleChoiceCreateDTO choice : questionCreateDTO.choices()) {
-                addMultipleChoiceAlternative(choice, savedQuestion.getQuestionId());
-            }
-        }
-
-        LOGGER.info("Retrieving newest quiz.");
-        return quizMapper.quizToQuizLoadDTO(quizRepository.findById(questionCreateDTO.quizId())
-                .orElseThrow(() -> new QuizNotFoundException(questionCreateDTO.quizId().toString())));
-    }
-
-    /**
-     * This method adds a new multiple choice alternative to a question.
-     * @param multipleChoiceCreateDTO     The information surrounding the choice.
-     * @param questionId            The question to be added under.
-     */
-    private void addMultipleChoiceAlternative(MultipleChoiceCreateDTO multipleChoiceCreateDTO, Long questionId) {
-        // Check if question exists
-        Question question = questionRepository.findById(questionId)
-                .orElseThrow(() -> new NotFoundException("Question"));
-
-        MultipleChoice multipleChoice = MultipleChoiceMapper.INSTANCE.multipleChoiceCreateDTOToMultipleChoice(multipleChoiceCreateDTO);
-        multipleChoice.setQuestion(question);
-        multipleChoiceRepository.save(multipleChoice);
-    }
 
 }
