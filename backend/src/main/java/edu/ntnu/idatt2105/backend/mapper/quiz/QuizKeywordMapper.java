@@ -18,8 +18,8 @@ public interface QuizKeywordMapper {
     QuizKeywordMapper INSTANCE = Mappers.getMapper(QuizKeywordMapper.class);
 
 
-    @Mapping(target = "quizId", source = "quizKeyword.quizId")
-    @Mapping(target = "keywordId", source = "quizKeyword.keywordId")
+    @Mapping(target = "quizId", source = "quizKeyword.quiz.quizId")
+    @Mapping(target = "keywordId", source = "quizKeyword.quizKeywordId")
     QuizKeywordLoadDTO quizKeywordToQuizKeywordLoadDTO(QuizKeyword quizKeyword);
 
 }
