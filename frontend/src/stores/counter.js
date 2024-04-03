@@ -204,13 +204,19 @@ export const useQuizStore = defineStore('storeQuiz', {
     },
 
     async deleteAuth(auth) {
-      await removeCollaborator(auth.quizAuthorId)
-          .then(response => {
-            console.log(response)
-          }).catch(error => {
-            console.warn("error", error)
-          })
+      try {
+        const response = await removeCollaborator(auth.quizAuthorId);
+        const index = this.currentQuiz.collaborators.findIndex(author => author.quizAuthorId === auth.quizAuthorId);
+        if (index !== -1) {
+          this.currentQuiz.collaborators.splice(index, 1);
+        } else {
+          console.warn("Author not found in collaborators array");
+        }
+      } catch (error) {
+        console.error("Error deleting author:", error);
+      }
     },
+
 
     async setCurrentQuizById(quiz) {
       console.log(quiz)

@@ -131,7 +131,7 @@ export default {
     };
 
     const deleteAuthor = (author) => {
-      quizAuthors = store.deleteAuth(author);
+      store.deleteAuth(author);
     };
 
     const addAuthor = (author) => {

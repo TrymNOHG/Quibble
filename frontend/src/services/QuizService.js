@@ -123,6 +123,7 @@ export const addCollaborator = async (quizAuthorDTO) => {
 };
 
 export const removeCollaborator = async (authorId) => {
+    console.log(authorId)
     try {
         const response = await axios.delete(`${BASE_URL_PRIV}/delete/collaborator/${authorId}`,
             {
