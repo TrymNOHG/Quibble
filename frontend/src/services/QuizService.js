@@ -124,7 +124,7 @@ export const addCollaborator = async (quizAuthorDTO) => {
 
 export const removeCollaborator = async (userId) => {
     try {
-        const response = await axios.delete(`${BASE_URL_PRIV}/delete/${userId}`,
+        const response = await axios.delete(`${BASE_URL_PRIV}/delete/collaborator/${userId}`,
             {
                 headers: {
                     Authorization: `Bearer ${await sessionToken()}`,
