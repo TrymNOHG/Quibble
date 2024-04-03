@@ -157,7 +157,7 @@ public class QuizService {
         quizAuthorRepository.save(quizAuthor);
         LOGGER.info("Quiz author saved.");
 
-        return QuizAuthorMapper.INSTANCE.quizAuthorToQuizAuthorDTO(quizAuthor);
+        return QuizAuthorMapper.INSTANCE.quizAuthorToQuizAuthorLoadDTO(quizAuthor);
     }
 
     /**

@@ -36,7 +36,7 @@ public interface QuizMapper {
                 .collaborators(quiz
                         .getCollaborators()
                         .stream()
-                        .map(QuizAuthorMapper.INSTANCE::quizAuthorToQuizAuthorDTO)
+                        .map(QuizAuthorMapper.INSTANCE::quizAuthorToQuizAuthorLoadDTO)
                         .collect(Collectors.toSet()))
                 .keywords(quiz
                         .getKeywords()
