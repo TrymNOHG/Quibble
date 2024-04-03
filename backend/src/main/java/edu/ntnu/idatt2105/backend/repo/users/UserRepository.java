@@ -2,6 +2,8 @@ package edu.ntnu.idatt2105.backend.repo.users;
 
 import edu.ntnu.idatt2105.backend.model.users.User;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -49,4 +51,13 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
      * @return          A set of users objects matching the condition.
      */
     Optional<Set<User>> findByUsernameContainingIgnoreCase(String username);
+
+    /**
+     * This method uses SpringRepository's fuzzy search algorithm to look for usernames containing the username
+     * given as parameter. It then retrieves a page of the results.
+     * @param username  The username to look for.
+     * @param pageable  Page specifications, such as size and page index.
+     * @return          A set of users objects matching the condition.
+     */
+    Optional<Page<User>> findByUsernameContainingIgnoreCase(String username, Pageable pageable);
 }

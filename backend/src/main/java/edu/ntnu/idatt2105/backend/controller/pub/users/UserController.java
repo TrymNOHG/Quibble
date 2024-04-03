@@ -27,7 +27,7 @@ public class UserController implements IUserController {
     private final UserService userService;
 
     @Override
-    public ResponseEntity<MultipleUserDTO> findUsersByUsername(@NonNull String username) {
-        return ResponseEntity.ok(userService.getUsersByUsernameFuzzy(username));
+    public ResponseEntity<MultipleUserDTO> findUsersByUsername(@NonNull String username, int number) {
+        return ResponseEntity.ok(userService.getNumberUsersByUsernameFuzzy(username, number));
     }
 }

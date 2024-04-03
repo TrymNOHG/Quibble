@@ -40,9 +40,7 @@ public interface IUserController {
                             schema = @Schema(implementation = User.class)) })
     }
     )
-    ResponseEntity<MultipleUserDTO> findUsersByUsername(@RequestParam @NonNull String username);
-
-
-
+    ResponseEntity<MultipleUserDTO> findUsersByUsername(@RequestParam(defaultValue = "") @NonNull String username,
+                                                        @RequestParam(defaultValue = "5") int number);
 
 }

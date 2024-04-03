@@ -12,6 +12,10 @@ import edu.ntnu.idatt2105.backend.service.images.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.nio.file.FileSystemException;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Service class for getting user information from their email.
@@ -88,7 +93,7 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * THis method gets a set of users based on a fuzzy search of their username.
+     * This method gets a set of users based on a fuzzy search of their username.
      * @param fuzzyUsername     The input, username, to the fuzzy search algorithm
      * @return                  A multiple user DTO, containing a set of UserLoadDTO.
      */
@@ -99,6 +104,40 @@ public class UserService implements UserDetailsService {
 
         LOGGER.info("Converting users to MultipleUserDTO");
         return userMapper.usersToMultipleUserLoadDTO(users);
+    }
+
+    /**
+     * This method gets a specifically-sized set of users based on a fuzzy search of their username.
+     * @param fuzzyUsername     The input, username, to the fuzzy search algorithm.
+     * @param numberUsers       The number of users to retrieve.
+     * @return                  A multiple user DTO, containing a set of UserLoadDTO.
+     */
+    public MultipleUserDTO getNumberUsersByUsernameFuzzy(String fuzzyUsername, int numberUsers) {
+        LOGGER.info("Looking for users that match the username: " + fuzzyUsername);
+        if(numberUsers <= 0) {
+            return getUsersByUsernameFuzzy(fuzzyUsername);
+        }
+        else {
+            Pageable pageable = PageRequest.of(0, numberUsers);
+            Set<User> users = userRepository
+                    .findByUsernameContainingIgnoreCase(fuzzyUsername, pageable)
+                    .orElseThrow(() -> new UsernameNotFoundException(fuzzyUsername))
+                    .toSet();
+
+            LOGGER.info("Converting users to MultipleUserDTO");
+            return userMapper.usersToMultipleUserLoadDTO(users);
+        }
+    }
+
+    /**
+     * This method retrieves a page of user's that match the fuzzy search on username.
+     * @param fuzzyUsername     Username to fuzzy search for in the database.
+     * @param page              Page specifications, giving size and page index.
+     * @return                  Page of users.
+     */
+    private Page<User> getPageUsersByUsernameFuzzy(String fuzzyUsername, Pageable page) {
+        return userRepository.findByUsernameContainingIgnoreCase(fuzzyUsername, page)
+                .orElseThrow(() -> new UsernameNotFoundException(fuzzyUsername));
     }
 
 
