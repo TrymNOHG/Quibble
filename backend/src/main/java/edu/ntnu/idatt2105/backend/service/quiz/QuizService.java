@@ -177,4 +177,19 @@ public class QuizService {
     }
 
 
+    /**
+     * This method removes a collaborator from a quiz.
+     * @param collaboratorId   The id of the collaborator
+     */
+    public void removeCollaborator(Long collaboratorId) {
+        //TODO: check that the user trying to remove the collaborator can.
+        LOGGER.info("Looking for collaborator.");
+        QuizAuthor quizAuthor = quizAuthorRepository
+                .findById(collaboratorId)
+                .orElseThrow(() -> new UsernameNotFoundException("Author Id: " + collaboratorId));
+        LOGGER.info("Collaborator found.");
+        quizAuthorRepository.delete(quizAuthor);
+        LOGGER.info("Collaborator removed.");
+    }
+
 }

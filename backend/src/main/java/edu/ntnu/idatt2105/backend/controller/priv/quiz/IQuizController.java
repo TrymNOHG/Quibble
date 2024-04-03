@@ -130,6 +130,24 @@ public interface IQuizController {
     ResponseEntity<Object> removeCollaborator(@RequestBody @NonNull QuizAuthorDTO removeCollaborator,
                                                 @NonNull Authentication authentication);
 
+    @DeleteMapping(
+            value="/delete/collaborator/{authorId}",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @Operation(summary = "This method removes a collaborator from a quiz.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful removal of collaborator.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = QuizAuthor.class)) }),
+            @ApiResponse(responseCode = "403", description = "Unauthorized removal of collaborator.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = QuizAuthor.class)) })
+    }
+    )
+    ResponseEntity<Object> removeCollaborator(@PathVariable @NonNull Long authorId,
+                                              @NonNull Authentication authentication);
+
     /**
      * This method adds a new question to a quiz.
      *
