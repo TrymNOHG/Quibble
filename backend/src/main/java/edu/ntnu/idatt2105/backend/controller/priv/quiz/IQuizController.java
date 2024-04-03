@@ -3,6 +3,7 @@ package edu.ntnu.idatt2105.backend.controller.priv.quiz;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizUpdateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionCreateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionEditDTO;
 import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
@@ -103,8 +104,8 @@ public interface IQuizController {
                             schema = @Schema(implementation = QuizAuthor.class)) })
     }
     )
-    ResponseEntity<QuizLoadDTO> addCollaborator(@RequestBody @NonNull QuizAuthorDTO newCollaborator,
-                                                @NonNull Authentication authentication);
+    ResponseEntity<QuizAuthorLoadDTO> addCollaborator(@RequestBody @NonNull QuizAuthorDTO newCollaborator,
+                                                      @NonNull Authentication authentication);
 
     /**
      * This method removes a collaborator from a quiz.

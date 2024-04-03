@@ -3,6 +3,7 @@ package edu.ntnu.idatt2105.backend.controller.priv.quiz;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizUpdateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionCreateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionEditDTO;
 import edu.ntnu.idatt2105.backend.service.quiz.QuestionService;
@@ -57,15 +58,14 @@ public class QuizController implements IQuizController{
     }
 
     @Override
-    public ResponseEntity<QuizLoadDTO> addCollaborator(@NonNull QuizAuthorDTO newCollaborator, @NonNull Authentication authentication) {
+    public ResponseEntity<QuizAuthorLoadDTO> addCollaborator(@NonNull QuizAuthorDTO newCollaborator, @NonNull Authentication authentication) {
         logger.info("adding collaborator");
         //TODO: check that user is owner or collaborator
         // Check if already part of quiz
         // Check is authorized
         // Check is admin? exists? etc.
         // Other edge cases...
-        quizService.addCollaborator(newCollaborator);
-        return null;
+        return ResponseEntity.ok(quizService.addCollaborator(newCollaborator));
     }
 
     @Override

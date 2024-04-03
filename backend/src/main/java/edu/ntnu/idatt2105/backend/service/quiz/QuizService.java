@@ -1,6 +1,8 @@
 package edu.ntnu.idatt2105.backend.service.quiz;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadAllDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorLoadDTO;
+import edu.ntnu.idatt2105.backend.mapper.quiz.QuizAuthorMapper;
 import edu.ntnu.idatt2105.backend.model.quiz.Difficulty;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizUpdateDTO;
@@ -135,7 +137,7 @@ public class QuizService {
      * This method adds a new collaborator to a quiz.
      * @param newCollaborator   The new collaborator.
      */
-    public void addCollaborator(QuizAuthorDTO newCollaborator) {
+    public QuizAuthorLoadDTO addCollaborator(QuizAuthorDTO newCollaborator) {
         //TODO: check if person adding collaborator can do so.
         //TODO: check that newCollaborator is not owner.
         LOGGER.info("Finding User");
@@ -154,6 +156,8 @@ public class QuizService {
         LOGGER.info("Saving quiz author object.");
         quizAuthorRepository.save(quizAuthor);
         LOGGER.info("Quiz author saved.");
+
+        return QuizAuthorMapper.INSTANCE.quizAuthorToQuizAuthorDTO(quizAuthor);
     }
 
     /**
