@@ -33,7 +33,7 @@ import java.util.logging.Logger;
  */
 @RequestMapping("/api/v1/public/auth")
 @RestController
-@RequiredArgsConstructor
+@RequiredArgsConstructor // allow credentials yes
 @CrossOrigin("*")
 @SecurityScheme(
         name = "basicAuth",
@@ -132,8 +132,8 @@ public class AuthenticationController implements IAuthenticationController {
     //@PreAuthorize("hasAuthority('SCOPE_REFRESH_TOKEN')")
     @PostMapping ("/get-access-token-from-refresh-token")
     public ResponseEntity<AuthenticationResponseDTO> getAccessTokenFromRefreshToken(
-            @RequestHeader HttpServletRequest request
+            @CookieValue(value = "refresh_token", defaultValue = "") String refreshToken
     ){
-        return ResponseEntity.ok(authenticationService.getAccessTokenFromRefreshToken(request));
+        return ResponseEntity.ok(authenticationService.getAccessTokenFromRefreshToken(refreshToken));
     }
 }

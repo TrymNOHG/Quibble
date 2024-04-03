@@ -40,7 +40,7 @@ public class LogoutHandlerService implements LogoutHandler {
 
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        if(!authHeader.startsWith("Bearer "))
+        if(!authHeader.startsWith("Bearer ")) // TODO: uses cookie instead of header
             return;
 
         Optional<User> user = userRepository.findByEmail(authentication.getName());

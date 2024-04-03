@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
@@ -25,7 +26,7 @@ public interface IAuthenticationController {
      * @param httpServletResponse The http response
      * @return The access token
      */
-    public ResponseEntity<AuthenticationResponseDTO> login(
+    ResponseEntity<AuthenticationResponseDTO> login(
             Authentication authentication, HttpServletResponse httpServletResponse
     );
 
@@ -38,7 +39,7 @@ public interface IAuthenticationController {
      * @param bindingResult The binding result
      * @return The access token
      */
-    public ResponseEntity<AuthenticationResponseDTO> signup(
+    ResponseEntity<AuthenticationResponseDTO> signup(
             @Valid @RequestBody UserRegisterDTO userRegisterDto,
             HttpServletResponse httpServletResponse, BindingResult bindingResult
     );
@@ -49,7 +50,7 @@ public interface IAuthenticationController {
      * @param request The request
      * @return The new access token
      */
-    public ResponseEntity<AuthenticationResponseDTO> getAccessTokenFromRefreshToken(
-            @RequestHeader HttpServletRequest request
+    ResponseEntity<AuthenticationResponseDTO> getAccessTokenFromRefreshToken(
+            @CookieValue(value = "refresh_token", defaultValue = "") String refreshToken
     );
 }

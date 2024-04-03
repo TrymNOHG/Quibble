@@ -157,11 +157,14 @@ public class AuthenticationService {
     /**
      * Gets a new access token from a refresh token.
      *
-     * @param request The http request object with a refresh token cookie.
+     * @param refreshToken The refresh token.
      * @return AuthenticationResponseDTO containing the access token.
      */
-    public AuthenticationResponseDTO getAccessTokenFromRefreshToken(HttpServletRequest request) {
-        String refreshToken = getRefreshTokenFromCookie(request);
+    public AuthenticationResponseDTO getAccessTokenFromRefreshToken(String refreshToken) {
+        //String refreshToken = getRefreshTokenFromCookie(request);
+        if (refreshToken == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No refresh token found");
+        }
         // Check if the token is revoked in the database
         RefreshToken refreshTokenDatabaseEntry = refreshTokenRepository.findByToken(refreshToken)
                 .filter(token -> !token.isRevoked())
@@ -176,7 +179,7 @@ public class AuthenticationService {
 
         User user = refreshTokenDatabaseEntry.getUser();
         Authentication authentication =  createAuthenticationObject(user);
-
+        log.info("Getting access token from refresh token");
         return  getAccessTokenAuthDTO(user.getEmail());
     }
 
@@ -187,7 +190,7 @@ public class AuthenticationService {
      * @param request The http request object.
      * @return The refresh token.
      */
-    private String getRefreshTokenFromCookie(HttpServletRequest request) {
+    public String getRefreshTokenFromCookie(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         if (cookies == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No refresh token cookie found");
