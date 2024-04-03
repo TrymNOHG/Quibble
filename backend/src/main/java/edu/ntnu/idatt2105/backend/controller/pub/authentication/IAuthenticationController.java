@@ -2,6 +2,7 @@ package edu.ntnu.idatt2105.backend.controller.pub.authentication;
 
 import edu.ntnu.idatt2105.backend.dto.security.AuthenticationResponseDTO;
 import edu.ntnu.idatt2105.backend.dto.users.UserRegisterDTO;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
@@ -45,10 +46,10 @@ public interface IAuthenticationController {
     /**
      * Endpoint for refreshing the access token. This endpoint returns a new access token.
      *
-     * @param authorizationHeader The authorization header
+     * @param request The request
      * @return The new access token
      */
     public ResponseEntity<AuthenticationResponseDTO> getAccessTokenFromRefreshToken(
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader
+            @RequestHeader HttpServletRequest request
     );
 }

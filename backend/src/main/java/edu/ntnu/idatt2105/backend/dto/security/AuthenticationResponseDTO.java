@@ -10,7 +10,7 @@ import lombok.*;
 @Builder
 public record AuthenticationResponseDTO(
         @JsonProperty("token") String token,
-        @JsonProperty("token_expiration") int tokenExpiration,
+        @JsonProperty("token_expiration") String tokenExpiration,
         @JsonProperty("token_type") TokenType tokenType,
         @JsonProperty("username") String username
 ) {}
