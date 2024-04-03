@@ -131,7 +131,7 @@ public interface IQuizController {
                                                 @NonNull Authentication authentication);
 
     @DeleteMapping(
-            value="/delete/{authorId}",
+            value="/delete/collaborator/{authorId}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
