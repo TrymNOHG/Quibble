@@ -40,7 +40,10 @@
         <div class="popup-content">
           <h3>{{ $t('titles.ADD_NEW_AUTHOR') }}</h3>
           <div class="input-group">
-            <input type="text" :placeholder="$t('placeholders.USERNAME')" v-model="newAuthor.username"/>
+            <input type="text" :placeholder="'username'" v-model="searchQuery" @input="username"/>
+          </div>
+          <div class="user-list">
+            <user_list :users="collaboratorList"/>
           </div>
           <div class="button-group">
             <button @click="addAuthor">{{ $t('buttons.ADD_AUTHOR') }}</button>
@@ -53,13 +56,14 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import {ref, watch} from "vue";
 import { useQuizStore } from "@/stores/counter.js";
 import Listing_comp from "@/components/BasicComponents/authorList.vue";
-import QuestionList from "@/components/BasicComponents/questionList.vue";
+import user_list from "@/components/user_list.vue"
+
 
 export default {
-  components: {QuestionList, Listing_comp },
+  components: { Listing_comp, user_list },
 
   props: {
     quiz: {
@@ -81,15 +85,30 @@ export default {
   },
 
   setup(props) {
-    console.log(props)
     const showPopup = ref(false);
     const store = useQuizStore();
     const isAuthor = ref(store.isAdmin(props.quiz.admin_id));
     const isEditor = ref(store.isCollaborator());
     let quizAuthors = ref(store.currentQuiz.collaborators)
+    let collaboratorList = ref([]);
+    const searchQuery = ref('');
 
+    watch(searchQuery, () => {
+      if (searchQuery.value > ""){
+        collaboratorList.value = filteredUsers();
+      }
+    });
 
-    const newAuthor = {
+    const filteredUsers = async () => {
+      try {
+        return await store.filterAuthor(searchQuery.value);
+      } catch (error) {
+        console.error('Error editing question:', error);
+      }
+    };
+
+    const quizAuthorDTO = {
+      quizId: null,
       username: '',
     };
 
@@ -98,19 +117,22 @@ export default {
     };
 
     const addAuthor = () => {
-      console.log('Adding new author:', newAuthor);
-      quizAuthors = store.addAuthor(newAuthor);
-      newAuthor.username = '';
+      console.log('Adding new author:', quizAuthorDTO);
+      quizAuthors = store.addAuthor(quizAuthorDTO);
+      quizAuthorDTO.username = '';
       showPopup.value = false;
     };
 
     const closePopup = () => {
-      newAuthor.username = '';
+      quizAuthorDTO.username = '';
       showPopup.value = false;
     };
 
     const showPopUP = () => {
       showPopup.value = true;
+    };
+
+    const searchUsers = () => {
     };
 
     return {
@@ -120,9 +142,11 @@ export default {
       showPopup,
       addAuthor,
       closePopup,
-      newAuthor,
+      quizAuthorDTO,
       isEditor,
-      isAuthor
+      isAuthor,
+      searchQuery,
+      filteredUsers,
     };
   }
 }

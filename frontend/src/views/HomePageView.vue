@@ -19,7 +19,7 @@
 </template>
 
 <script setup>
-import SearchInput from "@/components/searchbar.vue";
+import SearchInput from "@/components/BasicComponents/searchbar.vue";
 import {onBeforeMount, onMounted, ref} from 'vue';
 import One_quiz_rectangle from "@/components/BasicComponents/one_quiz_rectangle.vue";
 import {useQuizStore, useUserStore} from "@/stores/counter.js";

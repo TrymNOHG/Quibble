@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import {
+  fetchUserByUsername,
   getUser
 } from "@/services/UserService.js";
 import {getPictureFromUser} from "@/services/ImageService.js";
@@ -91,7 +92,7 @@ export const useQuizStore = defineStore('storeQuiz', {
         quizDescription: "",
         admin_id: null,
         feedback: [],
-        collaborators: [],
+        collaborators: Set,
         categories: [],
         questions: [
           {
@@ -121,6 +122,17 @@ export const useQuizStore = defineStore('storeQuiz', {
         return this.allQuizzes;
       } catch (error) {
           console.error("Failed to load previous page:", error);
+      }
+    },
+
+    async filterAuthor(searchQuery) {
+      try {
+        console.log(searchQuery)
+        const response = await fetchUserByUsername(searchQuery);
+        console.log(response)
+        return response;
+      } catch (error) {
+        console.error("Failed to load previous page:", error);
       }
     },
 
@@ -218,9 +230,8 @@ export const useQuizStore = defineStore('storeQuiz', {
     },
 
     async addAuthor(newAuthor) {
-      this.currentQuiz.collaborators.push({id: 4, username: newAuthor.username});
       const quizAuthorDTO = {
-        username: newAuthor.username,
+        userId: 1,
         quizId: this.currentQuiz.quizId
       };
       await addCollaborator(quizAuthorDTO)

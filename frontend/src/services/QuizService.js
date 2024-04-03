@@ -50,36 +50,6 @@ export const updateQuiz = async (quizUpdateDTO) => {
     }
 };
 
-export const addCollaborator = async (quizAuthorDTO) => {
-    try {
-        const response = await axios.post(`${BASE_URL_PRIV}/create/collaborator`,
-            quizAuthorDTO, {
-                headers: {
-                    Authorization: `Bearer ${await sessionToken()}`,
-                }
-            });
-        console.log(response);
-        return response.data;
-    } catch (error) {
-        throw error.response ? error.response.data : error.message;
-    }
-};
-
-export const removeCollaborator = async (username) => {
-    try {
-        const response = await axios.delete(`${BASE_URL_PRIV}/delete/${username}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${await sessionToken()}`,
-                }
-            });
-        console.log(response);
-        return response.data;
-    } catch (error) {
-        throw error.response ? error.response.data : error.message;
-    }
-};
-
 export const deleteQuizById = async (QuizId) => {
     try {
         const response = await axios.delete(`${BASE_URL_PRIV}/delete/${QuizId}`, {
@@ -131,6 +101,36 @@ export const patchQuestion = async (questionEditDTO) => {
                     Authorization: `Bearer ${await sessionToken()}`,
                 }
             });
+        return response.data;
+    } catch (error) {
+        throw error.response ? error.response.data : error.message;
+    }
+};
+
+export const addCollaborator = async (quizAuthorDTO) => {
+    try {
+        const response = await axios.post(`${BASE_URL_PRIV}/create/collaborator`,
+            quizAuthorDTO, {
+                headers: {
+                    Authorization: `Bearer ${await sessionToken()}`,
+                }
+            });
+        console.log(response);
+        return response.data;
+    } catch (error) {
+        throw error.response ? error.response.data : error.message;
+    }
+};
+
+export const removeCollaborator = async (userId) => {
+    try {
+        const response = await axios.delete(`${BASE_URL_PRIV}/delete/${userId}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${await sessionToken()}`,
+                }
+            });
+        console.log(response);
         return response.data;
     } catch (error) {
         throw error.response ? error.response.data : error.message;
