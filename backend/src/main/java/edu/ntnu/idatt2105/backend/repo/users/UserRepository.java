@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * This repository defines the CRUD operations for the User model.
@@ -40,4 +41,12 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
      * @return The user with the given id.
      */
     @NotNull Optional<User> findById(@NotNull Long id);
+
+    /**
+     * This method uses SpringRepository's fuzzy search algorithm to look for usernames containing the username
+     * given as parameter.
+     * @param username  The username to look for.
+     * @return          A set of users objects matching the condition.
+     */
+    Optional<Set<User>> findByUsernameContainingIgnoreCase(String username);
 }

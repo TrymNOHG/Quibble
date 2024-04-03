@@ -1,11 +1,10 @@
 package edu.ntnu.idatt2105.backend.service.users;
 
 import edu.ntnu.idatt2105.backend.config.UserConfig;
-import edu.ntnu.idatt2105.backend.controller.priv.users.UserController;
+import edu.ntnu.idatt2105.backend.dto.users.MultipleUserDTO;
 import edu.ntnu.idatt2105.backend.dto.users.UserLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.users.UserUpdateDTO;
 import edu.ntnu.idatt2105.backend.exception.exists.ExistsException;
-import edu.ntnu.idatt2105.backend.exception.exists.UserExistsException;
 import edu.ntnu.idatt2105.backend.mapper.users.UserMapper;
 import edu.ntnu.idatt2105.backend.model.users.User;
 import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
@@ -20,8 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.nio.file.FileSystemException;
+import java.util.Set;
 
 /**
  * Service class for getting user information from their email.
@@ -86,6 +85,20 @@ public class UserService implements UserDetailsService {
         UserLoadDTO userLoadDTO = userMapper.userToUserLoadDTO(user);
         LOGGER.info("Successful mapping.");
         return userLoadDTO;
+    }
+
+    /**
+     * THis method gets a set of users based on a fuzzy search of their username.
+     * @param fuzzyUsername     The input, username, to the fuzzy search algorithm
+     * @return                  A multiple user DTO, containing a set of UserLoadDTO.
+     */
+    public MultipleUserDTO getUsersByUsernameFuzzy(String fuzzyUsername) {
+        LOGGER.info("Looking for users that match the username: " + fuzzyUsername);
+        Set<User> users = userRepository.findByUsernameContainingIgnoreCase(fuzzyUsername)
+                .orElseThrow(() -> new UsernameNotFoundException(fuzzyUsername));
+
+        LOGGER.info("Converting users to MultipleUserDTO");
+        return userMapper.usersToMultipleUserLoadDTO(users);
     }
 
 
