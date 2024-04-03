@@ -127,7 +127,7 @@ public interface IQuizController {
                             schema = @Schema(implementation = QuizAuthor.class)) })
     }
     )
-    ResponseEntity<QuizLoadDTO> removeCollaborator(@RequestBody @NonNull QuizAuthorDTO newCollaborator,
+    ResponseEntity<Object> removeCollaborator(@RequestBody @NonNull QuizAuthorDTO removeCollaborator,
                                                 @NonNull Authentication authentication);
 
     /**

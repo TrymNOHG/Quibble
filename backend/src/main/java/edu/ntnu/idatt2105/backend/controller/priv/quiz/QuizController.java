@@ -69,10 +69,11 @@ public class QuizController implements IQuizController{
     }
 
     @Override
-    public ResponseEntity<QuizLoadDTO> removeCollaborator(@NonNull QuizAuthorDTO newCollaborator, @NonNull Authentication authentication) {
+    public ResponseEntity<Object> removeCollaborator(@NonNull QuizAuthorDTO removeCollaborator, @NonNull Authentication authentication) {
         logger.info("deleting collaborator");
         //TODO: check that user is owner or collaborator
-        return null;
+        quizService.removeCollaborator(removeCollaborator);
+        return ResponseEntity.ok("Deletion was successful");
     }
 
     @Override
