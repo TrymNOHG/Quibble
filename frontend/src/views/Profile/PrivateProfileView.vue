@@ -10,18 +10,25 @@
         @toggleChangePassword="handleToggleChangePassword"
         @updateShowActivity="handleUpdateShowActivity"
         @updateShowFeedbackOnProfile="handleUpdateShowFeedbackOnProfile"
+        :profile-data="loadUserData()"
     />
   </div>
 </template>
 
 <script>
-import PrivateProfileComponent from "@/components/Profile/PrivateProfileComponent.vue"; // Ensure this matches your imported component file name
+import PrivateProfileComponent from "@/components/Profile/PrivateProfileComponent.vue";
+import {useUserStore} from "@/stores/counter.js"; // Ensure this matches your imported component file name
+import {updateUser, updateUserShowActivity, updateUserShowFeedback} from "@/services/UserService.js";
 
 export default {
   name: "ProfileView",
   components: { PrivateProfileComponent },
 
   methods: {
+    loadUserData() {
+      console.log(useUserStore().getUserData)
+      return useUserStore().getUserData
+    },
     handleUpdateUserProfile(userData) {
       console.log("Updating user profile with:", userData);
       // Implement your logic here to update the user profile
@@ -33,13 +40,15 @@ export default {
     },
 
     handleLogout() {
-      console.log("Logging out");
-      // Implement your logout logic here
+      useUserStore().logoutUser()
     },
 
     handleChangePicture(file) {
       console.log("Changing picture to:", file.name);
-      // Implement your logic here to change the profile picture
+      let userUpdateDTO = {
+        'userId' : useUserStore().user.userId,
+        'profilePicture' : file,
+      }
     },
 
     handleDeletePicture(pictureUrl) {
@@ -59,12 +68,28 @@ export default {
 
     handleUpdateShowActivity(showActivity) {
       console.log("Updating show activity to:", showActivity);
-      // Implement your logic here to update the activity visibility
+      let userUpdateDTO = {
+        'userId' : useUserStore().user.userId,
+        'showActivity' : showActivity,
+      }
+      updateUser(userUpdateDTO).then(r => {
+        useUserStore().setShowActivity(showActivity)
+      }).catch(e => {
+        //TODO: handle error.
+      });
     },
 
     handleUpdateShowFeedbackOnProfile(showFeedback) {
       console.log("Updating show feedback on profile to:", showFeedback);
-      // Implement your logic here to update the feedback visibility
+      let userUpdateDTO = {
+          'userId' : useUserStore().user.userId,
+          'showFeedback' : showFeedback
+      }
+      updateUser(userUpdateDTO).then(r => {
+        useUserStore().setShowFeedback(showFeedback)
+      }).catch(e => {
+        //TODO: handle error.
+      });
     },
   },
 };

@@ -8,26 +8,28 @@ import CurrentQuizView from "@/views/CurrentQuizView.vue";
 import {useUserStore} from "@/stores/counter.js";
 import ProfileView from "@/views/Profile/PrivateProfileView.vue";
 import multiplayerHostView from "@/views/QuizPlaying/MultiplayerHostView.vue";
+import CreateQuizView from "@/views/CreateQuizView.vue";
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
       {
-        path: '/',
-        name: 'FrontPage',
-        component: TheWelcomeComponent,
-        meta: { requiresAuth: false }
+          path: '/',
+          name: 'FrontPage',
+          component: TheWelcomeComponent,
+          meta: { requiresAuth: false }
       },
       {
-        path: '/register',
-        name: 'register',
-        component: RegisterView,
-        meta: { requiresAuth: false }
+          path: '/register',
+          name: 'register',
+          component: RegisterView,
+          meta: { requiresAuth: false }
       },
       {
           path: '/home',
           name: 'homepage',
           component: HomePageView,
-          meta: { requiresAuth: true }
+          meta: { requiresAuth: false }
       },
       {
           path: '/quiz/current',
@@ -38,20 +40,28 @@ const router = createRouter({
           path: '/login',
           name: 'Login',
           component: LoginView,
+          meta: { requiresAuth: false }
       },
-        {
-            path: '/quiz',
-            name: 'quiz',
-            component: Quiz_comp,
-            meta: { requiresAuth: false }
-        },
+      {
+          path: '/quiz',
+          name: 'quiz',
+          component: Quiz_comp,
+          meta: { requiresAuth: false }
+      },
       {
           path: '/profile',
           name: 'profile',
           component: ProfileView,
           meta: { requiresAuth: true }
       },
-{
+      {
+          path: '/create',
+          name: 'CreateQuiz',
+          component: CreateQuizView,
+          meta: { requiresAuth: true }
+      },
+      },
+        {
           path: '/quiz/multiplayer',
           name: 'multiplayer',
           component: multiplayerHostView,
@@ -61,34 +71,27 @@ const router = createRouter({
   ]
 })
 
-// When auth fixed
-//TODO
-/*
 router.beforeEach((to, from, next) => {
     const store = useUserStore();
     const isAuthenticated = store.isAuth
 
-  const notRequiresAuth = to.matched.some(record => record.meta.requiresAuth === false);
-  const requiresCurrentFridge = to.matched.some(record => record.meta.requiresCurrentFridge === true);
-
-
-  if (to.matched.length === 0) {
-    next({ path: '/' });
-  }
-  else if (notRequiresAuth) {
-    if (['/', '/register', '/login'].includes(to.path) && isAuthenticated) {
-      next({ path: '/home' });
-    } else {
-      next();
+    const notRequiresAuth = to.matched.some(record => record.meta.requiresAuth === false);
+    if (to.matched.length === 0) {
+        next({ path: '/' });
     }
-  } else {
+    else if (notRequiresAuth) {
+        if (['/', '/register', '/login'].includes(to.path) && isAuthenticated) {
+          next({ path: '/home' });
+        } else {
+            next();
+        }
+    } else {
       if (!isAuthenticated) {
-          next({path: '/'});
+          next({path: '/login'});
       }
     }
-  }
+    next();
 });
-*/
 
 
 export default router

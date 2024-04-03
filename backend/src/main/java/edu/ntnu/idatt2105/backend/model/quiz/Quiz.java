@@ -44,6 +44,11 @@ public class Quiz {
     @Schema(description = "The description of the quiz.")
     private String quizDescription;
 
+    @Column(name = "difficulty", nullable = false)
+    @NonNull
+    @Schema(description = "The difficulty of the question.")
+    private Difficulty difficulty;
+
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     @ToString.Exclude

@@ -1,14 +1,69 @@
 <template>
+  <div class="modal-overlay" v-if="addNewQuestion || edit">
+    <div class="popup">
+      <div class="popup-content">
+        <h2>{{ $t('new_question.title') }}</h2>
+        <div class="popup_input">
+          <label for="question">{{ $t('new_question.question_label') }}:</label>
+          <input class="input" type="text" v-model="editQuestion.question" id="question">
+        </div>
+        <div class="popup_input">
+          <label for="question_type">{{ $t('new_question.type_label') }}:</label>
+          <select class="input" v-model="editQuestion.type" id="question_type">
+            <option class="input" value="true_false">{{ $t('new_question.true_false_option') }}</option>
+            <option class="input" value="multiple_choice">{{ $t('new_question.multiple_choice_option') }}</option>
+          </select>
+        </div>
+        <div class="truefalse" v-if="editQuestion.type==='true_false'">
+          <div class="popup_input">
+            <label for="answer">{{ $t('new_question.answer_label') }}:</label>
+            <select class="input-truefalse" v-model="editQuestion.answer" id="answer">
+              <option class="input" value="true">{{ $t('new_question.true_option') }}</option>
+              <option class="input" value="false">{{ $t('new_question.false_option') }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="multiple" v-else-if="editQuestion.type==='multiple_choice'">
+          <div v-for="(choice, index) in editQuestion.choices" :key="index" class="answer-option">
+            <label :for="'choice' + index">{{ $t('new_question.answer_label') }} {{ index + 1 }}</label>
+            <input type="text" v-model="choice.alternative" :id="'choice' + index" class="input answer">
+            <input type="checkbox" v-model="choice.isCorrect">
+          </div>
+        </div>
+        <div class="button-group">
+          <div v-if="addNewQuestion" class="popdiv">
+            <button class="createdit" @click="createQuestion()">{{ $t('new_question.create_button') }}</button>
+          </div>
+          <div v-else-if="editQuestion" class="popdiv">
+            <button class="createdit" @click="addEdit()">{{ $t('new_question.edit_button') }}</button>
+          </div>
+          <button class="popbtn" @click="cancelCreate">{{ $t('new_question.cancel_button') }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="comp">
     <div class="buttons">
       <button>{{ $t('buttons.ONE_PLAYER') }}</button>
       <button>{{ $t('buttons.MULTI_PLAYER') }}</button>
-      <router-link class="btn" to="/home" v-if="isAuthor" @click="deleteQuiz()">{{ $t('buttons.DELETE_QUIZ') }}</router-link>
+      <router-link
+          class="btn"
+          to="/home"
+          v-if="isAuthor"
+          @click="deleteQuiz()">
+        {{ $t('buttons.DELETE_QUIZ') }}
+      </router-link>
+      <button
+          class="btn"
+          v-if="!isAuthor & !isEditor"
+          @click="addToMyquiz()">
+        Add to MyQuiz
+      </button>
     </div>
     <div class="header"></div>
     <div class="questions_list">
       <div class="buttons bottomline" >
-        <button v-if="isEditor || isAuthor">{{ $t('buttons.NEW_QUESTION') }}</button>
+        <button v-if="isEditor || isAuthor" @click="addNew">{{ $t('buttons.NEW_QUESTION') }}</button>
         <h2 class="question_text">{{ $t('titles.QUESTION_LIST') }}</h2>
         <button v-if="isEditor || isAuthor">{{ $t('buttons.IMPORT_QUESTION') }}</button>
       </div>
@@ -16,8 +71,9 @@
         <question-list
             class="list"
             v-for="q in question_list"
-            :question="q"
+            :q="q"
             @deleteQuestion="deleteQuestion(q.id)"
+            @editQuestion="showEdit(q)"
         />
       </div>
     </div>
@@ -26,18 +82,31 @@
 
 <script>
 import QuestionList from "@/components/BasicComponents/questionList.vue";
-import {ref} from "vue";
-import {useQuizStore} from "@/stores/counter.js";
-
+import { ref } from "vue";
+import { useQuizStore } from "@/stores/counter.js";
 
 export default {
-  components: {QuestionList},
+  components: { QuestionList },
 
   setup() {
     const store = useQuizStore();
-    const isAuthor = ref(store.isAuth);
+    const addNewQuestion = ref(false);
+    const edit = ref(false);
+    const isAuthor = ref(store.isAdmin(store.currentQuiz.admin_id));
     const isEditor = ref(store.isEditor);
-    let question_list = ref(store.currentQuiz.question_list);
+    let question_list = ref(store.currentQuiz.questions);
+
+    const editQuestion = ref({
+      question: ref(''),
+      answer: ref(''),
+      type: ref('true_false'),
+      choices: ref([
+        { alternative: ref('Option 1'), isCorrect: ref(false) },
+        { alternative: ref('Option 2'), isCorrect: ref(false) },
+        { alternative: ref('Option 3'), isCorrect: ref(false) },
+        { alternative: ref('Option 4'), isCorrect: ref(false) }
+      ])
+    });
 
     const deleteQuestion = (questionId) => {
       store.deleteQuestion(questionId);
@@ -47,28 +116,146 @@ export default {
       store.deleteCurrentQuiz();
     }
 
+    const addToMyquiz = () => {
+      store.addQuiz();
+    }
+
+    const createQuestion = () => {
+      if (editQuestion.value.type === 'true_false') {
+        editQuestion.value.answer = editQuestion.value.choices[0].isCorrect ? 'true' : 'false';
+      } else if (editQuestion.value.type === 'multiple_choice') {
+        const correctChoice = editQuestion.value.choices.find(choice => choice.isCorrect);
+        if (correctChoice) {
+          editQuestion.value.answer = correctChoice.alternative;
+        } else {
+          editQuestion.value.answer = '';
+        }
+      }
+      store.addQuestion(editQuestion.value);
+      addNewQuestion.value = false;
+      edit.value = false;
+    };
+
+
+    const showEdit = (question) => {
+      editQuestion.value = { ...question };
+      edit.value = true;
+    };
+
+    const addNew = () => {
+      addNewQuestion.value = true;
+    };
+
+    const addEdit = () => {
+      store.editQuestion(editQuestion.value);
+      edit.value = false;
+    }
+
+    const cancelCreate = () => {
+      editQuestion.value = {
+        quizId: null,
+        question: "",
+        answer: "",
+        type: "truefalse",
+        choices: [
+          { alternative: "", isCorrect: false },
+          { alternative: "", isCorrect: false },
+          { alternative: "", isCorrect: false },
+          { alternative: "", isCorrect: false }
+        ]
+      };
+      edit.value = false;
+      addNewQuestion.value = false;
+    };
+
     return {
+      addNew,
+      cancelCreate,
+      showEdit,
+      createQuestion,
+      addEdit,
       deleteQuiz,
+      addToMyquiz,
       isAuthor,
       isEditor,
       question_list,
       deleteQuestion,
+      edit,
+      editQuestion,
+      addNewQuestion
     }
   }
 }
-
-
 </script>
 
 
+
 <style scoped>
+.popup-content{
+  width: 350px
+}
+
+.popdiv {
+  width: 35%;
+}
+
+.createdit{
+  width: 100%
+}
+
+.popbtn {
+  width: 35%;
+}
+
+.truefalse,
+.multiple {
+  margin-top: 10%;
+}
+
+.button-group {
+  width: 100%;
+}
+
+.popup-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.truefalse {
+  display: flex;
+  align-content: start;
+}
+
+.popup_input {
+  display: flex;
+  flex-direction: column;
+}
+
+.input {
+  height: 25px;
+  width: 80%;
+}
+
+.input-truefalse {
+  height: 25px;
+  width: 240%;
+}
+
+.answer-option {
+  display: flex;
+  align-items: center;
+  margin: 0 0 5% 0;
+}
+
+.answer-option input[type="checkbox"] {
+  margin-left: 10px;
+}
+
 .btn {
   width: 15%;
   height: 35px;
   color: white;
   text-align: center;
-  margin-bottom: 3%;
-  justify-content: space-between;
   align-content: center;
   background-color: #b22fe8;
   border-radius: 5px;
@@ -78,13 +265,14 @@ export default {
   border: 2px solid black;
 }
 
-.question_text{
-  font-size: 25px;
-  font-weight: bold;
+.btn:hover {
+  scale: 1.05;
+  cursor: pointer;
+  background-color: #7e1f9c;
 }
 
 .encap_List{
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -100,7 +288,6 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: center;
   margin: 2%;
 }
 
@@ -113,6 +300,8 @@ export default {
 
 .bottomline{
   margin-bottom: 0;
+  justify-content: space-between;
+  display: flex;
 }
 
 button{

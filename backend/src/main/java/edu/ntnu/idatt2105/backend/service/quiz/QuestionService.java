@@ -36,13 +36,12 @@ public class QuestionService {
     }
 
     @Transactional
-    public QuestionDTO getQuestionDTIO(long questionId) {
+    public QuestionDTO getQuestionDTO(long questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow();
         return QuestionDTO.builder()
                 .id(question.getQuestionId())
                 .question(question.getQuestion())
                 .answer(question.getAnswer())
-                .difficulty(question.getDifficulty().name())
                 .questionType(question.getQuestionType().name())
                 .options(question.getChoices().stream().map(MultipleChoice::getAlternative).toList())
                 .build();

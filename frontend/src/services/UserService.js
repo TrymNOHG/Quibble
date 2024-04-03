@@ -36,13 +36,6 @@ export const registerUser = async (userRegisterDTO) => {
     return axios.post(`${BASE_URL}/public/auth/signup`, userRegisterDTO);
 }
 
-export const getUser = async () => {
-    return axios.get(`${BASE_URL}/user/get/info`, {
-        headers: {
-            Authorization: `Bearer ${await sessionToken()}`,
-        },
-    })
-}
 
 export const checkSuperUser = async (quizId) => {
     return axios.get(`${BASE_URL}/superuser`, {
@@ -53,37 +46,48 @@ export const checkSuperUser = async (quizId) => {
     })
 }
 
-export const getSearchedQuizzes = async (searchword) => {
-    return axios.get(`${BASE_URL}/quiz/searchQuiz`, {
-        data: { searchword },
-    })
-}
-
-export const getMoreQuizzes = async (diff) => {
-    return axios.get(`${BASE_URL}/quiz/moreQuizzes`, {
-        data: { diff }
-    })
-}
-
-export const getQuizzesByDifficulty = async (diff) => {
-    return axios.get(`${BASE_URL}/quiz/QuizzDiff`, {
-        data: { diff }
-    })
-}
-
 // Public Endpoints
 
 
 
 // Private Endpoints
 
+export const getUser = async () => {
+    return axios.get(`${BASE_URL}/private/users/get`, {
+        headers: {
+            Authorization: `Bearer ${await sessionToken()}`,
+        },
+    })
+}
+
 // let userUpdateDTO = {
 //     'userId' : '',
 //     'username' : '',
-//     'profilePicture' : null
+//     'profilePicture' : null,
+//     'showActivity' : null,
+//      'showFeedback' : null
 // }
 export const updateUser = async (userUpdateDTO) => {
     return axios.patch(`${BASE_URL}/private/users/update`, userUpdateDTO, {
+        headers: {
+            Authorization: `Bearer ${await sessionToken()}`,
+        },
+    });
+}
+
+
+//TODO: use userUpdateDTO
+export const updateUserShowActivity = async (newShowActivity) => {
+    console.log(newShowActivity)
+    return axios.patch(`${BASE_URL}/private/users/update/showActivity`, newShowActivity, {
+        headers: {
+            Authorization: `Bearer ${await sessionToken()}`,
+        },
+    });
+}
+
+export const updateUserShowFeedback = async (newShowFeedback) => {
+    return axios.patch(`${BASE_URL}/private/users/update/showFeedback`, newShowFeedback, {
         headers: {
             Authorization: `Bearer ${await sessionToken()}`,
         },

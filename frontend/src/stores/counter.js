@@ -1,10 +1,14 @@
 import { defineStore } from 'pinia'
 import {
-  checkSuperUser,
-  getMoreQuizzes, getQuizzesByDifficulty,
-  getSearchedQuizzes,
   getUser
 } from "@/services/UserService.js";
+import {getPictureFromUser} from "@/services/ImageService.js";
+
+import {
+  addCollaborator,
+  addQuestion,
+  createQuiz, deleteQuizById, removeCollaborator, updateQuiz
+} from "@/services/QuizService.js"
 
 export const useUserStore = defineStore('storeUser', {
 
@@ -13,9 +17,12 @@ export const useUserStore = defineStore('storeUser', {
       sessionToken: null,
 
       user: {
-        userID: "",
+        userId: "",
         username: "",
         email: "",
+        profilePicture : "",
+        showActivity: false,
+        showFeedback: false
       }
     }
   },
@@ -24,11 +31,22 @@ export const useUserStore = defineStore('storeUser', {
     setToken(value) {
       this.sessionToken = value
     },
+    setShowActivity(value) {
+      this.user.showActivity = value
+    },
+    setShowFeedback(value) {
+      this.user.showFeedback = value
+    },
 
     async fetchUserData() {
       await getUser()
           .then(response => {
-            this.user = response
+            this.user = response.data
+            getPictureFromUser('2', 'profile_pic.PNG').then(response =>{
+              this.user.profilePicture = `data:${response.data.contentType};base64,${response.data.image}`;
+            }).catch(e => {
+              console.log(e)
+            });
           }).catch(error  => {
             console.warn("error", error)
           })
@@ -37,13 +55,15 @@ export const useUserStore = defineStore('storeUser', {
     logoutUser() {
       localStorage.removeItem("sessionToken")
       localStorage.removeItem("user")
+      this.setToken(null)
       useQuizStore().resetCurrentQuiz()
+      //TODO: invalidate token in backend.
     }
   },
 
   getters: {
     getUserData() {return this.user},
-    isAuth() {return this.sessionToken !== null},
+    isAuth() {return this.sessionToken !== null}, //TODO: should check if token is valid...
     getToken() {return this.sessionToken}
   },
 
@@ -58,44 +78,94 @@ export const useQuizStore = defineStore('storeQuiz', {
   state: () => {
     return {
       allQuiz: [],
-      allAuthors: [{
-          id: 1,
-          username: 'Author 1'},
-        {
-          id: 2,
-          username: 'Author 2'},
-        {
-          id: 3,
-          username: 'Author 3'}],
 
       currentQuiz: {
-        QuizId: null,
-        Name: "",
-        Difficulty: "",
-        Description: "",
-        Image: "",
-        question_list: [
+        quizId: null,
+        quizName: "",
+        quizDifficulty: "",
+        quizDescription: "",
+        admin_id: null,
+        feedback: [],
+        collaborators: [],
+        categories: [],
+        questions: [
           {
-            id: null,
+            quizId: null,
             question: "",
             answer: "",
-            type: ""
+            type: "",
+            choices: [],
           },
         ],
+        keywords: [],
+        Image: "",
       },
-      isAuth: false,
-      isEditor: false,
     }
   },
 
   actions: {
+    async loadQuizzes(searchword, difficulty, pageIndex, numberOfQuizzes) {
+      /*
+      try {
+        const response = await fetchQuizzes(searchword, difficulty, pageIndex, numberOfQuizzes);
+        this.allQuizzes = [ ...response.content ];
+        return this.allQuizzes;
+      } catch (error) {
+          console.error("Failed to load previous page:", error);
+          pageIndex.value--;
+      }
+       */
+    },
+
+    async isAdmin(quizAdminId) {
+      return quizAdminId === useUserStore().user.userId;
+    },
+
+    async isCollaborator() {
+
+    },
+
     async deleteCurrentQuiz() {
+      await deleteQuizById(this.currentQuiz.quizId)
+          .then(response => {
+            console.log(response)
+          }).catch(error => {
+            console.warn("error", error)
+          })
+    },
+
+    async editQuestion(editedQuestion){
       /*
       TODO: axioscall
-      deleteQuizById(this.currentQuiz.quizId)
+      editQuestionById(this.currentQuiz.quizId, editedQuestion.id)
       */
     },
 
+    async addQuestion(newQuestion){
+      const questionCreateDTO = {
+        "quizId": this.currentQuiz.quizId,
+        "question": newQuestion.question,
+        "answer": newQuestion.answer,
+        "type": newQuestion.type.toUpperCase(),
+        "choices": newQuestion.choices
+      };
+
+      console.log(questionCreateDTO)
+
+      await addQuestion(questionCreateDTO)
+          .then(responses => {
+            console.log(responses);
+          }).catch(error => {
+            console.warn("error", error);
+          });
+    },
+
+    async addQuiz() {
+      /*
+      TODO: axioscall
+      addQuizById(user.id, this.currentQuiz.quizId)
+      */
+    },
 
     async deleteQuestion(question_id) {
       for (let index = 0; index < this.currentQuiz.question_list.length; index++) {
@@ -113,71 +183,45 @@ export const useQuizStore = defineStore('storeQuiz', {
     },
 
     async deleteAuth(auth) {
-      for (let index = 0; index < this.allAuthors.length; index++) {
-        if (auth.id === this.allAuthors[index].id) {
-          this.allAuthors.splice(index, 1);
-          /*
-          TODO: fjerne auth i backend
-          response = removeAuth(author.username // author-id)
-          this.allAuthors = response;
-           */
-          break;
-        }
-      }
-      console.log("KL")
+
+      await removeCollaborator(auth.username)
+          .then(response => {
+            console.log(response)
+          }).catch(error => {
+            console.warn("error", error)
+          })
+
+      return this.currentQuiz.collaborators;
     },
 
     async setCurrentQuizById(quiz) {
       console.log(quiz)
       this.currentQuiz = quiz;
-      this.isAuth = true;
-      this.isEditor = true;
-      /*
-      TODO: Sjekke opp mot backend
-      isAuth og isEditor burde sjekkes opp mot axioscall til backend
-       */
+      if (useUserStore().user.userId === this.currentQuiz.QuizId){
+        this.isAuth = true;
+        this.isEditor = true;
+      }
       return this.currentQuiz;
     },
 
-    async searchQuizzes(searchword) {
-      this.allQuiz = getSearchedQuizzes(searchword);
-      return this.allQuiz;
-    },
-
     async addAuthor(newAuthor) {
-      this.allAuthors.push({id: 4, username: newAuthor.username})
-      /*
-      TODO: legge til user i backend og returne den nye listen fra backend
-      setNewAuthor(newAuthor)
-      fetchAuthors(this.currentQuiz.quizId)
-      */
-      return this.allAuthors;
-    },
+      this.currentQuiz.collaborators.push({id: 4, username: newAuthor.username});
+      const quizAuthorDTO = {
+        username: newAuthor.username,
+        quizId: this.currentQuiz.quizId
+      };
+      await addCollaborator(quizAuthorDTO)
+          .then(response => {
+            console.log(response)
+          }).catch(error => {
+            console.warn("error", error)
+          })
 
-    async setAllQuizzes(difficulty) {
-      this.allQuiz = getQuizzesByDifficulty(difficulty);
-      return this.allQuiz;
-    },
-
-    async checkSuperUser(quizId) {
-      try {
-        const response = await checkSuperUser(quizId);
-        return response.data
-      } catch (e) {
-        console.error(e)
-      }
-    },
-
-    async fetchMoreQuizzes(diff) {
-      await getMoreQuizzes(diff).then(response => {
-        this.newQuizzes = []
-        this.newQuizzes = response.data;
-      })
-      return this.newQuizzes;
+      return this.currentQuiz.collaborators;
     },
 
     resetCurrentQuiz() {
-      this.currentQuiz = null
+      this.currentQuiz = null;
       this.isAuth = false;
       this.isEditor = false;
     },
@@ -187,39 +231,118 @@ export const useQuizStore = defineStore('storeQuiz', {
 export const useQuizCreateStore = defineStore('storeQuizCreate', {
   state: () => {
     return {
-      currentQuiz: {
+      templateQuiz: {
         QuizId: null,
-        Name: "TemplateQuiz",
-        Difficulty: "Medium",
-        Description: "Template quiz, change the quiz as wanted",
-        Image: "https://via.placeholder.com/150",
-        question_list: [
+        quizName: "TemplateQuiz",
+        quizDifficulty: "Easy",
+        quizDescription: "Template quiz, change the quiz as wanted",
+        admin_id: null,
+        feedbacks: [],
+        collaborators: [],
+        categories: [],
+        questions: [
           {
-            id: null,
-            question: "What is your name?",
+            quizId: null,
+            question: "What is your question?",
             answer: "John",
-            answers: ["pencil", "book", "John", "quiz"],
-            type: "MultipleChoice"
+            type: "multiple_choice",
+            choices: [
+              { alternative: "pencil", isCorrect: false},
+              { alternative: "book", isCorrect: false},
+              { alternative: "John", isCorrect: true},
+              { alternative: "quiz", isCorrect: false}
+            ]
           },
           {
-            id: null,
+            quizId: null,
             question: "Are you 21 years old?",
-            answer: "Yes",
-            answers: ["Yes", "No"],
-            type: "TrueFalse"
+            answer: "true",
+            type: "true_false",
+            choices: [
+              {alternative: "true", isCorrect: true},
+              {alternative: "false", isCorrect: false}
+            ]
           },
           {
-            id: null,
-            question: "What is in the center of the milky way",
+            quizId: null,
+            question: "What is in the center of the Milky Way?",
             answer: "Black Hole",
-            answers: ["Sun", "Earth", "Venus", "Black Hole"],
-            type: "MultipleChoice"
+            type: "multiple_choice",
+            choices: [
+              { alternative: "Sun", isCorrect: false, questionId: 3 },
+              { alternative: "Earth", isCorrect: false, questionId: 3 },
+              { alternative: "Venus", isCorrect: false, questionId: 3 },
+              { alternative: "Black Hole", isCorrect: true, questionId: 3 }
+            ]
           },
         ],
-      },
+        keywords: [],
+        Image: "https://via.placeholder.com/150",
+      }
     }
   },
 
+  actions: {
+    async deleteTag(tag) {
+
+    },
 
 
+    async addTag(newTag) {
+
+    },
+
+    async createQuiz(questions) {
+      let createdQuiz = null;
+      this.templateQuiz.questions = questions.value;
+
+      await createQuiz(this.templateQuiz.quizName)
+          .then(response => {
+            console.log(response)
+            createdQuiz = response;
+          }).catch(error => {
+            console.warn("error", error)
+          })
+
+      const quizUpdateDTO = {
+        "quizId": createdQuiz.quizId,
+        "newName": createdQuiz.quizName,
+        "newDescription": this.templateQuiz.quizDescription,
+        "difficulty": this.templateQuiz.quizDifficulty.toUpperCase(),
+      }
+
+      // Array to hold promises for adding questions
+      const addQuestionPromises = [];
+
+      // Loop through each question
+      this.templateQuiz.questions.forEach(question => {
+        const questionCreateDTO = {
+          "quizId": createdQuiz.quizId,
+          "question": question.question,
+          "answer": question.answer,
+          "type": question.type.toUpperCase(),
+          "choices": question.choices
+        };
+        addQuestionPromises.push(addQuestion(questionCreateDTO));
+      });
+
+      // Execute all promises to add questions
+      await Promise.all(addQuestionPromises)
+          .then(responses => {
+            console.log(responses);
+            createdQuiz = responses[responses.length - 1];
+          }).catch(error => {
+            console.warn("error", error);
+          });
+
+      // Update the quiz after adding all questions
+      await updateQuiz(quizUpdateDTO)
+          .then(response => {
+            console.log(response);
+            createdQuiz = response;
+          }).catch(error => {
+            console.warn("error", error);
+          });
+    },
+  },
 })

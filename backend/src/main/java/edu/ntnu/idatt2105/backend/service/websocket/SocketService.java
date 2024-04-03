@@ -3,13 +3,9 @@ package edu.ntnu.idatt2105.backend.service.websocket;
 import com.corundumstudio.socketio.AckRequest;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
-import edu.ntnu.idatt2105.backend.dto.quiz.QuestionDTO;
 import edu.ntnu.idatt2105.backend.dto.websocket.*;
-import edu.ntnu.idatt2105.backend.model.quiz.question.MultipleChoice;
-import edu.ntnu.idatt2105.backend.model.quiz.question.Question;
 import edu.ntnu.idatt2105.backend.service.JWTTokenService;
 import edu.ntnu.idatt2105.backend.service.quiz.QuestionService;
-import edu.ntnu.idatt2105.backend.service.quiz.QuizService;
 import edu.ntnu.idatt2105.backend.service.users.UserService;
 import edu.ntnu.idatt2105.backend.util.Game;
 import jakarta.annotation.PostConstruct;
@@ -49,6 +45,7 @@ import java.util.logging.Logger;
  * <p>- invalidToken
  * <p> Host:
  * <p>- gameCreated
+ * <p>- playerJoined
  * <p>- notHost
  * <p>- getQuestion
  * <p>- everyOneAnswered
@@ -239,7 +236,7 @@ public class SocketService {
         if (game == null)
             return;
         game.startGame();
-        client.sendEvent("getQuestion", questionService.getQuestionDTIO(game.getCurrentQuestion().getQuestionId()));
+        client.sendEvent("getQuestion", questionService.getQuestionDTO(game.getCurrentQuestion().getQuestionId()));
         server.getRoomOperations(game.getCode()).sendEvent("waitForQuestion", "The game is starting");
     }
 
@@ -263,7 +260,7 @@ public class SocketService {
             // Send the question and alternatives to everyone in the room. The host can show the question on a screen.
             // The players can answer the question.
             client.sendEvent(
-                    "getQuestion", questionService.getQuestionDTIO(game.getCurrentQuestion().getQuestionId())
+                    "getQuestion", questionService.getQuestionDTO(game.getCurrentQuestion().getQuestionId())
             );
             server.getRoomOperations(game.getCode()).sendEvent(
                     "waitForQuestion", "The question has started. Look at the screen!"

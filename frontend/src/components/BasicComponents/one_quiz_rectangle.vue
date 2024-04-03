@@ -5,8 +5,8 @@
         <div class="content">
           <img class="card_image" :src="quiz.Image" alt="quiz image"/>
           <div class="information">
-            <h4 class="quiz-name">{{ quiz.Name }}</h4>
-            <p class="quiz-details">{{$t("quiz_card.QUESTIONS_LABEL")}}: {{ quiz.question_list.length }}</p>
+            <h4 class="quiz-name">{{ quiz.quizName }}</h4>
+            <p class="quiz-details">{{$t("quiz_card.QUESTIONS_LABEL")}}: {{ quiz.questions.length }}</p>
           </div>
         </div>
       </div>
@@ -22,11 +22,16 @@ export default {
       type: Object,
       default: () => ({
         QuizId: Number,
-        Name: String,
-        Difficulty: String,
-        Description: String,
+        quizName: String,
+        quizDifficulty: String,
+        quizDescription: String,
+        admin_id: Number,
+        feedbacks: Set,
+        collaborators: Set,
+        categories: Set,
+        questions: Set,
+        keywords: Set,
         Image: String,
-        question_list: Array,
       })
     }
   },

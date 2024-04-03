@@ -17,22 +17,27 @@
               <font-awesome-icon class="icon" icon="fa-solid fa-home"/>
           </li>
         </router-link>
-        <router-link to="/">
+        <router-link to="/quiz">
           <li>
             <font-awesome-icon class="icon" icon="fa-solid fa-play" />
           </li>
         </router-link>
-        <router-link to="/quiz">
+        <router-link to="/myquiz">
           <li>
             <font-awesome-icon class="icon" icon="fa-solid fa-puzzle-piece"/>
           </li>
         </router-link>
-        <router-link to="/myquiz">
+        <router-link to="/create">
           <li>
             <font-awesome-icon class="icon" icon="fa-solid fa-circle-plus" />
           </li>
         </router-link>
-        <router-link to="/login">
+<!--        <router-link to="/myquiz">-->
+<!--          <li>-->
+<!--            <font-awesome-icon class="icon" icon="fa-solid fa-circle-plus" />-->
+<!--          </li>-->
+<!--        </router-link>-->
+        <router-link to="/profile">
           <li>
             <font-awesome-icon class="icon" icon="fa-solid fa-circle-user" />
           </li>

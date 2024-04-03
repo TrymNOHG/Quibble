@@ -1,9 +1,7 @@
 package edu.ntnu.idatt2105.backend.config;
 
-import edu.ntnu.idatt2105.backend.model.category.QuizCategory;
 import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
-import edu.ntnu.idatt2105.backend.model.quiz.QuizAuthor;
-import edu.ntnu.idatt2105.backend.model.quiz.question.Difficulty;
+import edu.ntnu.idatt2105.backend.model.quiz.Difficulty;
 import edu.ntnu.idatt2105.backend.model.quiz.question.MultipleChoice;
 import edu.ntnu.idatt2105.backend.model.quiz.question.Question;
 import edu.ntnu.idatt2105.backend.model.quiz.question.QuestionType;
@@ -71,11 +69,11 @@ public class DummyData implements CommandLineRunner {
                 .quizName("Capitals of Scandinavia")
                 .quizDescription("A quiz about the capitals of Scandinavia")
                 .admin(quizAdmin)
+                .difficulty(Difficulty.EASY)
                 .build();
 
         Question question1 = Question.builder()
                 .question("What is the capital of Norway?")
-                .difficulty(Difficulty.EASY)
                 .questionType(QuestionType.MULTIPLE_CHOICE)
                 .quiz(quiz)
                 .build();
@@ -91,7 +89,6 @@ public class DummyData implements CommandLineRunner {
 
         Question question2 = Question.builder()
                 .question("What is the capital of Sweden?")
-                .difficulty(Difficulty.EASY)
                 .answer("Stockholm")
                 .questionType(QuestionType.SHORT_ANSWER)
                 .quiz(quiz)
@@ -99,7 +96,6 @@ public class DummyData implements CommandLineRunner {
 
         Question question3 = Question.builder()
                 .question("What is the capital of Denmark?")
-                .difficulty(Difficulty.EASY)
                 .answer("Copenhagen")
                 .questionType(QuestionType.SHORT_ANSWER)
                 .quiz(quiz)

@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.NonNull;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * This record provides a data transfer object for all collaborators of a quiz.
@@ -14,5 +15,5 @@ import java.util.List;
  * @version 1.0 24.03.2024
  */
 @Builder
-public record QuizAuthorLoadAllDTO(@NonNull List<QuizAuthorLoadDTO> collaborators) {
+public record QuizAuthorLoadAllDTO(@NonNull Set<QuizAuthorLoadDTO> collaborators) {
 }

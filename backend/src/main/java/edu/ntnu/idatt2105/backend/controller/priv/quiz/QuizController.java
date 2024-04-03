@@ -1,7 +1,9 @@
 package edu.ntnu.idatt2105.backend.controller.priv.quiz;
 
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.QuizUpdateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionCreateDTO;
 import edu.ntnu.idatt2105.backend.service.quiz.QuizService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +12,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,7 +34,6 @@ public class QuizController implements IQuizController{
     private final QuizService quizService;
     Logger logger = Logger.getLogger(QuizController.class.getName());
 
-    @PostMapping("/create")
     @Override
     public ResponseEntity<QuizLoadDTO> createQuiz(@NonNull String quizName, @NonNull Authentication authentication) {
         logger.info("Authenicating user: " + authentication.getName());
@@ -41,17 +41,20 @@ public class QuizController implements IQuizController{
     }
 
     @Override
-    public ResponseEntity<QuizLoadDTO> updateQuiz(@NonNull Long quizId, @NonNull Authentication authentication) {
-        return null;
+    public ResponseEntity<QuizLoadDTO> updateQuiz(@NonNull QuizUpdateDTO quizUpdateDTO, @NonNull Authentication authentication) {
+        QuizLoadDTO quizLoadDTO = quizService.updateQuiz(quizUpdateDTO);
+        return ResponseEntity.ok(quizLoadDTO);
     }
 
     @Override
     public ResponseEntity<QuizLoadDTO> deleteQuiz(@NonNull Long quizId, @NonNull Authentication authentication) {
-        return null;
+        logger.info("Deleting quiz with ID: {}" + quizId);
+        return ResponseEntity.ok(null);
     }
 
     @Override
     public ResponseEntity<QuizLoadDTO> addCollaborator(@NonNull QuizAuthorDTO newCollaborator, @NonNull Authentication authentication) {
+        logger.info("adding collaborator");
         // Check if already part of quiz
         // Check is authorized
         // Check is admin? exists? etc.
@@ -61,7 +64,15 @@ public class QuizController implements IQuizController{
 
     @Override
     public ResponseEntity<QuizLoadDTO> removeCollaborator(@NonNull Long userId, @NonNull Authentication authentication) {
+        logger.info("deleting collaborator");
         return null;
+    }
+
+    @Override
+    public ResponseEntity<QuizLoadDTO> addQuestion(@NonNull QuestionCreateDTO questionCreateDTO, @NonNull Authentication authentication) {
+        //TODO: check that user is owner or collaborator
+        QuizLoadDTO quizLoadDTO = quizService.addQuestion(questionCreateDTO);
+        return ResponseEntity.ok(quizLoadDTO);
     }
 
 

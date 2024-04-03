@@ -9,13 +9,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +33,7 @@ import java.util.logging.Logger;
  */
 @RequestMapping("/api/v1/public/auth")
 @RestController
-@RequiredArgsConstructor
+@RequiredArgsConstructor // allow credentials yes
 @CrossOrigin("*")
 @SecurityScheme(
         name = "basicAuth",
@@ -77,9 +76,9 @@ public class AuthenticationController implements IAuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponseDTO> login(Authentication authentication, HttpServletResponse httpServletResponse) {
         logger.info("Starting Login Process.");
-        AuthenticationResponseDTO authenticationResponseDTO = authenticationService.getTokensFromAuth(authentication, httpServletResponse);
+        AuthenticationResponseDTO authenticationResponseDTO = authenticationService.login(authentication, httpServletResponse);
         logger.info("Login Process Completed.");
-        return ResponseEntity.ok(authenticationResponseDTO);
+        return ResponseEntity.ok().body(authenticationResponseDTO);
     }
 
     /**
@@ -118,7 +117,7 @@ public class AuthenticationController implements IAuthenticationController {
     /**
      * Endpoint for refreshing the access token. This endpoint returns a new access token.
      *
-     * @param authorizationHeader The authorization header
+     * @param request The request
      * @return The new access token
      */
     @ApiResponses(value = {
@@ -130,10 +129,11 @@ public class AuthenticationController implements IAuthenticationController {
                     Refreshes the access token using the provided refresh token. Send the refresh token as an
                     Authorization header. The new access token is returned in the response body.
                     """)
-    @PreAuthorize("hasAuthority('SCOPE_REFRESH_TOKEN')")
-    @PostMapping ("/refresh-token")
+    //@PreAuthorize("hasAuthority('SCOPE_REFRESH_TOKEN')")
+    @PostMapping ("/get-access-token-from-refresh-token")
     public ResponseEntity<AuthenticationResponseDTO> getAccessTokenFromRefreshToken(
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader){
-        return ResponseEntity.ok(authenticationService.getAccessTokenFromRefreshToken(authorizationHeader));
+            @CookieValue(value = "refresh_token", defaultValue = "") String refreshToken
+    ){
+        return ResponseEntity.ok(authenticationService.getAccessTokenFromRefreshToken(refreshToken));
     }
 }

@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.NonNull;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * This record retrieves all the historical quiz events.
@@ -14,5 +15,5 @@ import java.util.List;
  * @version 1.0 24.03.2024
  */
 @Builder
-public record QuizHistoryLoadAllDTO(@NonNull List<QuizHistoryLoadDTO> allHistoricalEvents) {
+public record QuizHistoryLoadAllDTO(@NonNull Set<QuizHistoryLoadDTO> allHistoricalEvents) {
 }

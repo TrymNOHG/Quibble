@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.nio.file.FileSystemException;
+
 /**
  * This controller provides the private endpoint for users.
  *
@@ -30,7 +32,7 @@ public class UserController implements IUserController{
     private final UserService userService;
 
     @Override
-    public ResponseEntity<UserLoadDTO> updateUser(@NotNull UserUpdateDTO userUpdateDTO, @NotNull Authentication authentication) {
+    public ResponseEntity<UserLoadDTO> updateUser(@NotNull UserUpdateDTO userUpdateDTO, @NotNull Authentication authentication) throws FileSystemException {
         UserLoadDTO userLoadDTO = userService.updateUser(userUpdateDTO);
         return ResponseEntity.ok(userLoadDTO);
     }
@@ -40,6 +42,26 @@ public class UserController implements IUserController{
         //TODO: fill in.
         return null;
     }
+
+    @Override
+    public ResponseEntity<Object> getUser(Authentication authentication) {
+        UserLoadDTO userLoadDTO = userService.getUserLoadDTOByEmail(authentication.getName());
+        return ResponseEntity.ok(userLoadDTO);
+    }
+
+//    @Override
+//    public ResponseEntity<Object> updateUserShowActivity(boolean newShowActivity, @NonNull Authentication authentication) throws FileSystemException {
+//        log.info("qwerqwer");
+//        userService.updateUser(UserUpdateDTO.builder().showActivity(newShowActivity).build());
+//        return ResponseEntity.ok("User Updated.");
+//    }
+//
+//    @Override
+//    public ResponseEntity<Object> updateUserShowFeedback(boolean newShowFeedback, @NonNull Authentication authentication) throws FileSystemException {
+//        userService.updateUser(UserUpdateDTO.builder().showActivity(newShowFeedback).build());
+//        return ResponseEntity.ok("User Updated.");
+//    }
+
 
     // Update, delete
 

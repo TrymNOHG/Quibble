@@ -10,11 +10,11 @@ import org.springframework.lang.Nullable;
  * @param quizId    The id of the quiz.
  * @param userId    The id of the user.
  * @param stars     The number of stars awarded by the user.
- * @param comment   An optional comment left on the quiz.
+ * @param feedback  An optional comment left on the quiz.
  *
  * @author Trym Hamer Gudvangen
  * @version 1.0 24.03.2024
  */
 @Builder
-public record QuizFeedbackDTO(@NonNull Long quizId, @NonNull Long userId, int stars, @Nullable String comment) {
+public record QuizFeedbackDTO(@NonNull Long quizId, @NonNull Long userId, int stars, @Nullable String feedback) {
 }

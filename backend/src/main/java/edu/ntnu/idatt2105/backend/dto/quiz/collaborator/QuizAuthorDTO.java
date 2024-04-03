@@ -13,5 +13,7 @@ import lombok.NonNull;
  * @version 1.0 23.03.2024
  */
 @Builder
-public record QuizAuthorDTO(@NonNull Long userId, @NonNull Long quizId) {
+public record QuizAuthorDTO(
+        @NonNull Long userId,
+        @NonNull Long quizId) {
 }

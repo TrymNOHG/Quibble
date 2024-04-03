@@ -3,7 +3,8 @@
     "REGISTER": "Registrer",
     "AUTHORS": "Forfattere",
     "ADD_NEW_AUTHOR": "Legg til ny forfatter",
-    "QUESTION_LIST": "Spørsmålsliste"
+    "QUESTION_LIST": "Spørsmålsliste",
+    "LOGIN": "Login"
   },
   "placeholders": {
     "EMAIL": "Email",
@@ -48,11 +49,42 @@
     "DIFFICULTY": "Vanskelighetsgrad",
     "EASY": "Enkel",
     "MEDIUM": "Medium",
-    "HARD": "Vanskelig"
+    "HARD": "Vanskelig",
+    "CATEGORY":  "Kategori",
+    "KEYWORD": "Nøkkelord"
   },
   "delete_modal": {
     "TITLE": "Vil du slette dette?",
     "YES": "Ja",
     "NO": "Nei"
+  },
+  "quiz_details": {
+    "header_txt": "Quiz Detaljer",
+    "image_label": "Bilde",
+    "image_best_resolution": "(best med 1280x720)",
+    "name_label": "Navn:",
+    "difficulty_label": "Vanskelighetsgrad:",
+    "description_label": "Beskrivelse:",
+    "tags_categories_header": "Tags & Kategorier:",
+    "add_tag_category": "Legg til tagg eller kategori",
+    "tag_label": "Tagg",
+    "type_label": "Type",
+    "add_button": "Legg til",
+    "cancel_button": "Avbryt"
+  },
+
+  "new_question": {
+    "title": "Nytt Spørsmål",
+    "question_label": "Spørsmålsnavn",
+    "type_label": "Spørsmålstype",
+    "true_false_option": "Sant eller Usant",
+    "multiple_choice_option": "Flervalg",
+    "answer_label": "Svar",
+    "true_option": "Sant",
+    "false_option": "Usant",
+    "create_button": "Opprett",
+    "cancel_button": "Avbryt",
+    "create_quiz_button": "Opprett Quiz",
+    "edit_button": "Endre"
   }
 }

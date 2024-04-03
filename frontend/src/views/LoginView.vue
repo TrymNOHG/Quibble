@@ -12,7 +12,7 @@
 import login_comp from "@/components/login_comp.vue";
 
 export default {
-  name: "LoginView",
+  question: "LoginView",
   components: {login_comp}
 }
 </script>
