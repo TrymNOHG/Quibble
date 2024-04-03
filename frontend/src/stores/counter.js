@@ -90,7 +90,7 @@ export const useQuizStore = defineStore('storeQuiz', {
         quizName: "",
         quizDifficulty: "",
         quizDescription: "",
-        admin_id: null,
+        adminId: null,
         feedback: [],
         collaborators: Set,
         categories: [],
@@ -136,12 +136,8 @@ export const useQuizStore = defineStore('storeQuiz', {
       }
     },
 
-    async isAdmin(quizAdminId) {
-      return quizAdminId === useUserStore().user.userId;
-    },
-
-    async isCollaborator() {
-
+    isAdmin() {
+      return this.currentQuiz.adminId === useUserStore().user.userId;
     },
 
     async deleteCurrentQuiz() {
@@ -208,15 +204,12 @@ export const useQuizStore = defineStore('storeQuiz', {
     },
 
     async deleteAuth(auth) {
-
-      await removeCollaborator(auth.username)
+      await removeCollaborator(auth.quizAuthorId)
           .then(response => {
             console.log(response)
           }).catch(error => {
             console.warn("error", error)
           })
-
-      return this.currentQuiz.collaborators;
     },
 
     async setCurrentQuizById(quiz) {
@@ -229,14 +222,15 @@ export const useQuizStore = defineStore('storeQuiz', {
       return this.currentQuiz;
     },
 
-    async addAuthor(newAuthor) {
+    async addAuthor(author) {
       const quizAuthorDTO = {
-        userId: 1,
+        userId: author.userId,
         quizId: this.currentQuiz.quizId
       };
       await addCollaborator(quizAuthorDTO)
           .then(response => {
             console.log(response)
+            this.currentQuiz.collaborators.push(response)
           }).catch(error => {
             console.warn("error", error)
           })

@@ -35,19 +35,24 @@
           :key="index"
           :author="a"
           @deleteAuthor="deleteAuthor(a)"
+          :isAuthor="isAuthor"
+          :isEditor="isEditor"
       />
       <div class="popup" v-if="showPopup">
         <div class="popup-content">
-          <h3>{{ $t('titles.ADD_NEW_AUTHOR') }}</h3>
+          <div class="popup-header">
+            <h3>{{ $t('titles.ADD_NEW_AUTHOR') }}</h3>
+            <div @click="closePopup()" class="close-icon">X</div>
+          </div>
           <div class="input-group">
             <input type="text" :placeholder="'username'" v-model="searchQuery" @input="username"/>
           </div>
           <div class="user-list">
-            <user_list :users="collaboratorList"/>
-          </div>
-          <div class="button-group">
-            <button @click="addAuthor">{{ $t('buttons.ADD_AUTHOR') }}</button>
-            <button @click="closePopup">{{ $t('buttons.CANCEL') }}</button>
+            <user_list
+                v-for="author in collaboratorList.users"
+                :user-data="author"
+                @adduser="addAuthor(author)"
+            />
           </div>
         </div>
       </div>
@@ -56,8 +61,8 @@
 </template>
 
 <script>
-import {ref, watch} from "vue";
-import { useQuizStore } from "@/stores/counter.js";
+import {onMounted, ref, watch} from "vue";
+import {useQuizStore, useUserStore} from "@/stores/counter.js";
 import Listing_comp from "@/components/BasicComponents/authorList.vue";
 import user_list from "@/components/user_list.vue"
 
@@ -69,11 +74,11 @@ export default {
     quiz: {
       type: Object,
       default: () => ({
-        QuizId: Number,
+        quizId: Number,
         quizName: String,
         difficulty: String,
         quizDescription: String,
-        admin_id: Number,
+        adminId: Number,
         feedbacks: Set,
         collaborators: Set,
         categories: Set,
@@ -84,27 +89,40 @@ export default {
     }
   },
 
-  setup(props) {
+  setup() {
     const showPopup = ref(false);
+    const userStore = useUserStore();
     const store = useQuizStore();
-    const isAuthor = ref(store.isAdmin(props.quiz.admin_id));
-    const isEditor = ref(store.isCollaborator());
-    let quizAuthors = ref(store.currentQuiz.collaborators)
+    let isAuthor = ref(true);
+    let isEditor = ref(true);
+    let quizAuthors = ref(store.currentQuiz.collaborators === null ? [] : store.currentQuiz.collaborators);
     let collaboratorList = ref([]);
     const searchQuery = ref('');
 
-    watch(searchQuery, () => {
-      if (searchQuery.value > ""){
-        collaboratorList.value = filteredUsers();
+    onMounted( () => {
+      isAuthor.value = store.isAdmin()
+      checkEditor();
+    });
+
+    watch(searchQuery, async () => {
+      if (searchQuery.value !== "") {
+        collaboratorList.value = await filteredUsers();
+      } else {
+        collaboratorList.value = [];
       }
     });
 
     const filteredUsers = async () => {
       try {
+        console.log(searchQuery.value)
         return await store.filterAuthor(searchQuery.value);
       } catch (error) {
         console.error('Error editing question:', error);
       }
+    };
+
+    const checkEditor = () => {
+      isEditor.value = quizAuthors.value.some(author => author.userId === userStore.user.userId);
     };
 
     const quizAuthorDTO = {
@@ -116,23 +134,19 @@ export default {
       quizAuthors = store.deleteAuth(author);
     };
 
-    const addAuthor = () => {
-      console.log('Adding new author:', quizAuthorDTO);
-      quizAuthors = store.addAuthor(quizAuthorDTO);
+    const addAuthor = (author) => {
+      quizAuthors = store.addAuthor(author);
       quizAuthorDTO.username = '';
       showPopup.value = false;
     };
 
     const closePopup = () => {
-      quizAuthorDTO.username = '';
+      searchQuery.value = '';
       showPopup.value = false;
     };
 
     const showPopUP = () => {
       showPopup.value = true;
-    };
-
-    const searchUsers = () => {
     };
 
     return {
@@ -147,12 +161,37 @@ export default {
       isAuthor,
       searchQuery,
       filteredUsers,
+      collaboratorList
     };
   }
 }
 </script>
 
 <style scoped>
+.user-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.popup-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.close-icon {
+  background-color: #8521b0;
+  color: white;
+  border-radius: 50px;
+  width: 25px;
+  text-align: center;
+}
+
+.close-icon:hover {
+  cursor: pointer;
+}
+
 button{
   width: 15%;
   height: 35px;
@@ -199,12 +238,6 @@ button{
 .input-group select {
   width: 100%;
   height: 25px;
-}
-
-.button-group {
-  display: flex;
-  justify-content: space-evenly;
-  margin-top: 10px;
 }
 
 .button-group button{
