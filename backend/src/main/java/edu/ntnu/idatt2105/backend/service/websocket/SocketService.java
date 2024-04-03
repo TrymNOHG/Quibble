@@ -198,7 +198,7 @@ public class SocketService {
             if (!game.addPlayer(userService.getUserByEmail(jwt.getSubject()), client.getSessionId())) {
                 logger.info("User is already in the game, rejoining! WebsocketID updated. User email: " + jwt.getSubject());
             } else {
-                server.getRoomOperations("playerJoined", jwt.getSubject());
+                server.getRoomOperations(game.getCode()).sendEvent("playerJoined", jwt.getSubject());
             }
             if (game.isStarted()) {
                 client.sendEvent("waitForQuestion", "The game has already started");
@@ -211,7 +211,7 @@ public class SocketService {
             // Rejoining won't really work, as the user will have another session ID when rejoining.
             // Instead, cookies or some other temp storage could be a solution
             game.addPlayer(client.getSessionId(), data.username());
-            server.getRoomOperations("playerJoined", data.username());
+            server.getRoomOperations(game.getCode()).sendEvent("playerJoined", data.username());
 
         }
 

@@ -1,12 +1,28 @@
 <template>
   <div id="app" class="center-screen">
-    <ScoreComponentOnePlayer v-if="showScores" :player="players[0]" />
+    <!-- Conditionally display score component with countdown -->
+    <ScoreComponentOnePlayer
+        v-if="showScores"
+        :player="players[0]"
+        @countdownEnded="handleCountdownEnded"
+    />
 
-    <div v-else-if="questionIndex < flashcards.length" class="flashcards-container">
-      <FlashCard :flashcard="flashcards[questionIndex]" @answerSelected="handleAnswerSelection" />
+    <div v-else-if="questionIndex < questions.length" class="flashcards-container">
+      <!-- Show preview or multiple-choice based on phase -->
+      <PreviewQuestion
+          v-if="previewPhase"
+          :question="questions[questionIndex]"
+          @previewEnded="handlePreviewEnd"
+      />
+      <MultipleChoice
+          v-else
+          :question="questions[questionIndex]"
+          @answerSelected="handleAnswerSelection"
+      />
+
+      <!-- Navigation buttons -->
       <div class="buttons-container">
-        <button class="previous-button" @click="previousQuestion" :disabled="questionIndex === 0">Previous</button>
-        <button class="next-button" @click="nextQuestion">Next</button>
+        <button class="next-button" @click="nextQuestion" :disabled="previewPhase">Next</button>
       </div>
     </div>
 
@@ -16,20 +32,24 @@
   </div>
 </template>
 
+
 <script>
-import FlashCard from '@/components/QuizPlaing/flashcard.vue';
+import MultipleChoice from '@/components/QuizPlaing/mutlipleChoiceComponent.vue';
 import ScoreComponent from '@/components/QuizPlaing/scoreComponent.vue';
 import ScoreComponentOnePlayer from "@/components/QuizPlaing/scoreComponentOnePlayer.vue";
+import PreviewQuestion from "@/components/QuizPlaing/PreviewQuestion.vue";
 
 export default {
   components: {
     ScoreComponentOnePlayer,
-    FlashCard,
-    ScoreComponent
+    MultipleChoice,
+    ScoreComponent,
+    PreviewQuestion
+
   },
   data() {
     return {
-      flashcards: [
+      questions: [
         // Flashcard data structure with questions, choices, and answers
         {
           "question": "What is the capital of France?",
@@ -60,6 +80,7 @@ export default {
         { name: 'Trym', score: 0, image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVUJj--xz8Y5xKDa1JUDqjQ1U9GtuLdNbN_hitDMTcWw&s' },
         // Add more players if necessary
       ],
+      previewPhase: true, // Add this to track the preview phase
     };
   },
   methods: {
@@ -76,36 +97,35 @@ export default {
       return array;
     },
     nextQuestion() {
+      this.showScores = true;
 
-      this.showScores = true; // Show scores after an answer is selected
-      setTimeout(() => {
-        this.showScores = false; // Hide scores after a delay
-      }, 10000); // Show the score for 3 seconds
-      // Logic to go to the next question
-      if (this.questionIndex < this.flashcards.length - 1) {
+
+      if (this.questionIndex < this.questions.length - 1) {
         this.questionIndex++;
-      }
-    },
-    previousQuestion() {
-      // Logic to go back to the previous question
-      if (this.questionIndex > 0) {
-        this.questionIndex--;
+        this.previewPhase = true; // Reset to preview phase for the next question
+      } else {
+        this.showScores = false; // Optionally handle the end of the quiz
       }
     },
     handleAnswerSelection(isCorrect) {
-      // Update player scores here
+      // Update player scores and manage transitions
       if (isCorrect) {
-        this.players[0].score += 1; // Increment score for Player 1 if the answer is correct
+        this.players[0].score += 1;
       }
-      // You can implement a mechanism to track which player answered if you have multiple players
-
+    },
+    handlePreviewEnd() {
+      this.previewPhase = false;
+    },
+    handleCountdownEnded() {
+      this.showScores = false; // Hide scores and show next question or end quiz
     },
   },
   created() {
-    this.flashcards = this.shuffleFlashcards(this.flashcards);
+    this.shuffleFlashcards(this.questions);
   },
 }
 </script>
+
 
 
 

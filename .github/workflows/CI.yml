@@ -38,17 +38,17 @@ jobs:
           cd backend
           mvn clean test
 
-#  unit-test-frontend:
-#    runs-on: ubuntu-latest
-#    container: node:16
-#    steps:
-#      - uses: actions/checkout@v2
-#      - name: Unit test frontend
-#        run: |
-#          cd frontend
-#          npm install
-#          npm run test:unit
-#
+  unit-test-frontend:
+    runs-on: ubuntu-latest
+    container: node:16
+    steps:
+      - uses: actions/checkout@v2
+      - name: Unit test frontend
+        run: |
+          cd frontend
+          npm install
+          npm run test:unit
+
 #  e2e-test-frontend:
 #    runs-on: ubuntu-latest
 #    container: cypress/base:16.13.0

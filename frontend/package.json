@@ -19,6 +19,7 @@
     "axios": "^1.6.8",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.1",
+    "socket.io-client": "^4.7.5",
     "vee-validate": "^4.12.6",
     "vue": "^3.4.21",
     "vue-i18n": "^9.10.2",

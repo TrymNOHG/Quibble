@@ -6,8 +6,8 @@ import Quiz_comp from "@/components/QuizPlaing/Quiz_comp.vue";
 import HomePageView from "@/views/HomePageView.vue";
 import CurrentQuizView from "@/views/CurrentQuizView.vue";
 import {useUserStore} from "@/stores/counter.js";
-import ProfileView from "@/views/PrivateProfileView.vue";
-
+import ProfileView from "@/views/Profile/PrivateProfileView.vue";
+import multiplayerHostView from "@/views/QuizPlaying/MultiplayerHostView.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -49,6 +49,12 @@ const router = createRouter({
           path: '/profile',
           name: 'profile',
           component: ProfileView,
+          meta: { requiresAuth: true }
+      },
+{
+          path: '/quiz/multiplayer',
+          name: 'multiplayer',
+          component: multiplayerHostView,
           meta: { requiresAuth: true }
       }
 

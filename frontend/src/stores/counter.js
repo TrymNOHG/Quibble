@@ -11,6 +11,7 @@ export const useUserStore = defineStore('storeUser', {
   state: () => {
     return{
       sessionToken: null,
+
       user: {
         userID: "",
         username: "",
