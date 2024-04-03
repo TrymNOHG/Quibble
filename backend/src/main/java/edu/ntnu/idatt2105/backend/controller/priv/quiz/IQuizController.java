@@ -113,7 +113,7 @@ public interface IQuizController {
      * @return ResponseEntity showing whether the operation was successful.
      */
     @DeleteMapping(
-            value="/delete/collaborator",
+            value="/delete/collab",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -131,9 +131,7 @@ public interface IQuizController {
                                                 @NonNull Authentication authentication);
 
     @DeleteMapping(
-            value="/delete/collaborator/{authorId}",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
+            value="/delete/collaborator/{authorId}"
     )
     @Operation(summary = "This method removes a collaborator from a quiz.")
     @ApiResponses(value = {

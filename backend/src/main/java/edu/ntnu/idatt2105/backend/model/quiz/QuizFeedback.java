@@ -36,13 +36,13 @@ public class QuizFeedback {
     @Schema(description = "The feedback sent by the user.")
     private String feedback;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "quiz_id")
     @ToString.Exclude
     @Schema(description = "The quiz the feedback is being added to.")
     private Quiz quiz;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     @ToString.Exclude
     @Schema(description = "The user adding the feedback.")

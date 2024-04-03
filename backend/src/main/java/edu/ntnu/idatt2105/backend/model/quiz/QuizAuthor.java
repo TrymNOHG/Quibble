@@ -28,13 +28,13 @@ public class QuizAuthor {
     @Schema(description = "The unique identifier for the author of the quiz.")
     private Long quizAuthorId;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "quiz_id")
     @ToString.Exclude
     @Schema(description = "The quiz being collaborated on.")
     private Quiz quiz;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     @ToString.Exclude
     @Schema(description = "The collaborator.")
