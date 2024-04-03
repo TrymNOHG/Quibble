@@ -4,3 +4,5 @@ spring:
     url: jdbc:mysql://db:3306/db
     username: root
     password: yourpassword
+#server:
+#  address: 0.0.0.0
