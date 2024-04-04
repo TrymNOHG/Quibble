@@ -57,7 +57,7 @@ public class Question {
     @Builder.Default
     private Set<MultipleChoice> choices = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "quiz_id")
     @ToString.Exclude
     @Schema(description = "The quiz the question belongs to.")

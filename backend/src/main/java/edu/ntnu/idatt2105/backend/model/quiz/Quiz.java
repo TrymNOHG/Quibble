@@ -49,7 +49,7 @@ public class Quiz {
     @Schema(description = "The difficulty of the question.")
     private Difficulty difficulty;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     @ToString.Exclude
     @Schema(description = "The user who created the quiz.")

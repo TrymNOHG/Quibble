@@ -1,18 +1,16 @@
 package edu.ntnu.idatt2105.backend.controller.pub.users;
 
-import edu.ntnu.idatt2105.backend.dto.security.AuthenticationResponseDTO;
-import edu.ntnu.idatt2105.backend.dto.users.UserLoginDTO;
-import edu.ntnu.idatt2105.backend.dto.users.UserRegisterDTO;
+import edu.ntnu.idatt2105.backend.dto.users.MultipleUserDTO;
+import edu.ntnu.idatt2105.backend.model.users.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springdoc.core.annotations.ParameterObject;
+import lombok.NonNull;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * This interface outlines the various functionality the public endpoint for user should have.
@@ -25,43 +23,24 @@ public interface IUserController {
     // Load basic info, Find user by search, register
 
     /**
-     * This endpoint is used to register a new user.
+     * This method retrieves user's through fuzzy searching by username.
      *
-     * @param user The user information.
      * @return ResponseEntity showing whether the operation was successful.
      */
-    @PostMapping("/register")
-    @Operation(summary = "This endpoint registers a new user")
+    @GetMapping(
+            value="/get"
+    )
+    @Operation(summary = "This method retrieves user's through fuzzy searching by username.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "User was successfully registered and sent an " +
-                    "authentication token.",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = AuthenticationResponseDTO.class))),
-            @ApiResponse(responseCode = "400", description = "If user already exists.", content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = AuthenticationResponseDTO.class)
-            ))
-    })
-    ResponseEntity<Object> register(@ParameterObject @RequestBody UserRegisterDTO user, HttpServletResponse response);
+            @ApiResponse(responseCode = "200", description = "Successful retrieval of users.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = User.class)) }),
+            @ApiResponse(responseCode = "400", description = "Unsuccessful retrieval of users.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = User.class)) })
+    }
+    )
+    ResponseEntity<MultipleUserDTO> findUsersByUsername(@RequestParam(defaultValue = "") @NonNull String username,
+                                                        @RequestParam(defaultValue = "5") int number);
 
-    /**
-     * This endpoint is used to log in a user.
-     *
-     * @param user The user information.
-     * @return     ResponseEntity showing whether the operation was successful.
-     */
-    @PostMapping("/login")
-    @Operation(summary = "This endpoint logs in a user")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "User was successfully logged. Token returned.",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = AuthenticationResponseDTO.class))),
-            @ApiResponse(responseCode = "401", description = "User credentials invalid.", content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = AuthenticationResponseDTO.class)
-            ))
-    })
-    ResponseEntity<Object> login(@ParameterObject @RequestBody UserLoginDTO user);
 }

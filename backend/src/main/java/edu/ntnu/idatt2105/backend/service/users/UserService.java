@@ -1,11 +1,10 @@
 package edu.ntnu.idatt2105.backend.service.users;
 
 import edu.ntnu.idatt2105.backend.config.UserConfig;
-import edu.ntnu.idatt2105.backend.controller.priv.users.UserController;
+import edu.ntnu.idatt2105.backend.dto.users.MultipleUserDTO;
 import edu.ntnu.idatt2105.backend.dto.users.UserLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.users.UserUpdateDTO;
 import edu.ntnu.idatt2105.backend.exception.exists.ExistsException;
-import edu.ntnu.idatt2105.backend.exception.exists.UserExistsException;
 import edu.ntnu.idatt2105.backend.mapper.users.UserMapper;
 import edu.ntnu.idatt2105.backend.model.users.User;
 import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
@@ -13,6 +12,10 @@ import edu.ntnu.idatt2105.backend.service.images.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,8 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.nio.file.FileSystemException;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Service class for getting user information from their email.
@@ -88,6 +92,54 @@ public class UserService implements UserDetailsService {
         return userLoadDTO;
     }
 
+    /**
+     * This method gets a set of users based on a fuzzy search of their username.
+     * @param fuzzyUsername     The input, username, to the fuzzy search algorithm
+     * @return                  A multiple user DTO, containing a set of UserLoadDTO.
+     */
+    public MultipleUserDTO getUsersByUsernameFuzzy(String fuzzyUsername) {
+        LOGGER.info("Looking for users that match the username: " + fuzzyUsername);
+        Set<User> users = userRepository.findByUsernameContainingIgnoreCase(fuzzyUsername)
+                .orElseThrow(() -> new UsernameNotFoundException(fuzzyUsername));
+
+        LOGGER.info("Converting users to MultipleUserDTO");
+        return userMapper.usersToMultipleUserLoadDTO(users);
+    }
+
+    /**
+     * This method gets a specifically-sized set of users based on a fuzzy search of their username.
+     * @param fuzzyUsername     The input, username, to the fuzzy search algorithm.
+     * @param numberUsers       The number of users to retrieve.
+     * @return                  A multiple user DTO, containing a set of UserLoadDTO.
+     */
+    public MultipleUserDTO getNumberUsersByUsernameFuzzy(String fuzzyUsername, int numberUsers) {
+        LOGGER.info("Looking for users that match the username: " + fuzzyUsername);
+        if(numberUsers <= 0) {
+            return getUsersByUsernameFuzzy(fuzzyUsername);
+        }
+        else {
+            Pageable pageable = PageRequest.of(0, numberUsers);
+            Set<User> users = userRepository
+                    .findByUsernameContainingIgnoreCase(fuzzyUsername, pageable)
+                    .orElseThrow(() -> new UsernameNotFoundException(fuzzyUsername))
+                    .toSet();
+
+            LOGGER.info("Converting users to MultipleUserDTO");
+            return userMapper.usersToMultipleUserLoadDTO(users);
+        }
+    }
+
+    /**
+     * This method retrieves a page of user's that match the fuzzy search on username.
+     * @param fuzzyUsername     Username to fuzzy search for in the database.
+     * @param page              Page specifications, giving size and page index.
+     * @return                  Page of users.
+     */
+    private Page<User> getPageUsersByUsernameFuzzy(String fuzzyUsername, Pageable page) {
+        return userRepository.findByUsernameContainingIgnoreCase(fuzzyUsername, page)
+                .orElseThrow(() -> new UsernameNotFoundException(fuzzyUsername));
+    }
+
 
     /**
      * Update user information.
@@ -113,6 +165,7 @@ public class UserService implements UserDetailsService {
 
         if(userUpdateDTO.profilePicture() != null){
             String newProfilePicLink = imageService.saveImage(userUpdateDTO.profilePicture(), userUpdateDTO.userId());
+            LOGGER.info("New Profile Pic Link: " + newProfilePicLink);
             user.setProfilePicLink(newProfilePicLink);
         }
 

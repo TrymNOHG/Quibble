@@ -28,14 +28,14 @@ public class QuizCategory {
     @Schema(description = "The unique identifier for the quiz category")
     private Long quizCategoryId;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
     @ToString.Exclude
     @Schema(description = "The specific category.")
     private Category category;
 
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "quiz_id")
     @ToString.Exclude
     @Schema(description = "The quiz the category belongs to.")

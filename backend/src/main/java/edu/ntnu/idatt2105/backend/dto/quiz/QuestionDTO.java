@@ -11,5 +11,6 @@ public record QuestionDTO(
       @NonNull  String question,
       @NonNull  String answer,
       @NonNull  String questionType,
+      @NonNull String difficulty,
       @NonNull  List<String> options
 ) {}
