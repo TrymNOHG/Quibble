@@ -53,17 +53,21 @@
       <font-awesome-icon
           id="add"
           icon="fa-solid fa-circle-plus"
-          @click="addNewQuestion=true"
+          @click="addNewQuestion"
       />
       <label for="csvFileInput" style="cursor: pointer;">
       <font-awesome-icon
           id="upload"
           icon="fa-solid fa-upload"
-          @click="uploadQuiz=true"
       />
       </label>
-      <input id="csvFileInput" type="file" @change="addNewQuestion" style="display: none;" accept=".csv"/>
+      <input id="csvFileInput" type="file" @change="uploadQuiz" style="display: none;" accept=".csv"/>
 
+      <font-awesome-icon
+          id="download"
+          icon="fa-solid fa-download"
+          @click="downloadQuiz()"
+      />
     </div>
     <div class="header"></div>
     <div class="questions_list">
@@ -83,10 +87,10 @@
 
 <script>
 import {ref} from 'vue';
-import {useQuizCreateStore} from '@/stores/counter.js';
+import {useQuizCreateStore, useQuizStore} from '@/stores/counter.js';
 import QuestionCreateList from "@/components/create_quiz/question-create-list.vue";
 import router from "@/router/index.js";
-import {createQuizCreateDTOFromCSV} from "@/features/QuizCSV.js";
+import {createQuizCreateDTOFromCSV, downloadQuizCSV} from "@/features/QuizCSV.js";
 
 export default {
   components: { QuestionCreateList },
@@ -187,13 +191,20 @@ export default {
 
     const uploadQuiz = async (file) => {
       try{
-        let quizCreateDTO = createQuizCreateDTOFromCSV(file)
+        console.log("Uploading Quiz")
+        let quizCreateDTO = await createQuizCreateDTOFromCSV(file)
         //TODO: change all values currently being display
         console.log(quizCreateDTO)
       } catch (error) {
-
+        console.log(error)
       }
     }
+
+    const downloadQuiz = () => {
+      //TODO: this might not be right.
+      downloadQuizCSV(useQuizStore().currentQuiz, useQuizStore().currentQuiz.quizName)
+    }
+
 
     return {
       question_list,
@@ -206,7 +217,8 @@ export default {
       newQuestion,
       showEdit,
       createQuiz,
-      uploadQuiz
+      uploadQuiz,
+      downloadQuiz
     };
   }
 };
