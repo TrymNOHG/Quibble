@@ -55,6 +55,15 @@
           icon="fa-solid fa-circle-plus"
           @click="addNewQuestion=true"
       />
+      <label for="csvFileInput" style="cursor: pointer;">
+      <font-awesome-icon
+          id="upload"
+          icon="fa-solid fa-upload"
+          @click="uploadQuiz=true"
+      />
+      </label>
+      <input id="csvFileInput" type="file" @change="addNewQuestion" style="display: none;" accept=".csv"/>
+
     </div>
     <div class="header"></div>
     <div class="questions_list">
@@ -77,6 +86,7 @@ import {ref} from 'vue';
 import {useQuizCreateStore} from '@/stores/counter.js';
 import QuestionCreateList from "@/components/create_quiz/question-create-list.vue";
 import router from "@/router/index.js";
+import {createQuizCreateDTOFromCSV} from "@/features/QuizCSV.js";
 
 export default {
   components: { QuestionCreateList },
@@ -175,6 +185,16 @@ export default {
       }
     };
 
+    const uploadQuiz = async (file) => {
+      try{
+        let quizCreateDTO = createQuizCreateDTOFromCSV(file)
+        //TODO: change all values currently being display
+        console.log(quizCreateDTO)
+      } catch (error) {
+
+      }
+    }
+
     return {
       question_list,
       createQuestion,
@@ -185,7 +205,8 @@ export default {
       addNewQuestion,
       newQuestion,
       showEdit,
-      createQuiz
+      createQuiz,
+      uploadQuiz
     };
   }
 };

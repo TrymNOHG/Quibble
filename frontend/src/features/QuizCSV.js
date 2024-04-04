@@ -3,7 +3,7 @@
  * @param csvFile
  * @returns {{difficulty: null, quizName: null, questions: [], quizDescription: null, categories: []}}
  */
-const createQuizCreateDTOFromCSV = (csvFile) => {
+export const createQuizCreateDTOFromCSV = (csvFile) => {
     const lines = csvFile.split("\n");
     let quizCreateDTO = {
         quizName: null,
@@ -58,22 +58,31 @@ const createQuizCreateDTOFromCSV = (csvFile) => {
  * @param quizCreateDTO
  * @param fileName
  */
-const downloadQuizCSV = (quizCreateDTO, fileName) => {
+export const downloadQuizCSV = (quizCreateDTO, fileName) => {
     if(quizCreateDTO === null){
         throw Error("Invalid quiz DTO")
     }
+    console.log(quizCreateDTO.quizName)
     const lines = []
     lines[0] = [quizCreateDTO.quizName, quizCreateDTO.quizDescription, quizCreateDTO.difficulty].join(",")
-    lines[1] = quizCreateDTO.categories.join(",")
-    for(let question in quizCreateDTO.questions) {
-        lines.push([question.question, question.answer, question.type, question.choices.length].join(","))
-        if (question.type.toUpperCase() === 'MULTIPLE_CHOICE') {
-            for (let choice in question.choices) {
-                lines.push([choice.alternative, choice.isCorrect].join(","))
-            }
-        }
+    if(quizCreateDTO.categories && quizCreateDTO.categories.length !== 0) {
+        lines[1] = quizCreateDTO.categories.join(",")
     }
+    for(let question of quizCreateDTO.questions) {
+        if(question.choices && question.choices.length !== 0){
+            lines.push([question.question, question.answer, question.type, question.choices.length].join(","))
+            if (question.type.toUpperCase() === 'MULTIPLE_CHOICE') {
+                for (let choice of question.choices) {
+                    lines.push([choice.alternative, choice.isCorrect].join(","))
+                }
+            }
+        } else{
+            lines.push([question.question, question.answer, question.type].join(","))
+        }
 
+    }
+    console.log(lines)
+    console.log(quizCreateDTO)
     const csvData = lines.join("\n")
     downloadCSV(csvData, fileName)
 }
@@ -96,6 +105,5 @@ const downloadCSV = (data, filename) => {
     link.download = filename;
     link.click();
 
-    document.body.removeChild(link);
     URL.revokeObjectURL(url);
 }

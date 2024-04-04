@@ -6,7 +6,8 @@
         <label for="fileInput" style="cursor: pointer;">
           <img class="editIcon" src="@/assets/images/edit.svg" alt="Change">
         </label>
-        <input id="fileInput" type="file" @change="onProfilePictureChange" style="display: none;" />
+        <input id="fileInput" type="file" @change="onProfilePictureChange" style="display: none;"
+               accept="image/jpeg, image/png"/>
         <img
             v-show="profileData.profilePicture !== defaultProfilePicture"
             class="deleteIcon"
