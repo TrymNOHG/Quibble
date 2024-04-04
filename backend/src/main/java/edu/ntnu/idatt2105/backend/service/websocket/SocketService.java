@@ -90,6 +90,7 @@ public class SocketService {
         server.addDisconnectListener(this::onDisconnect);
         server.addEventListener("createGame", CreateGameDTO.class, this::createGame);
         server.addEventListener("joinGame", JoinGameDTO.class, this::joinGame);
+        server.addEventListener("checkGameExists", String.class, this::checkGameExists);
         server.addEventListener("startGame", GameValidationDTO.class, this::startGame);
         server.addEventListener("nextQuestion", GameValidationDTO.class, this::nextQuestion);
         server.addEventListener("answerQuestion", SubmitAnswerDTO.class, this::answerQuestion);
@@ -158,6 +159,23 @@ public class SocketService {
         client.joinRoom(code);
         logger.info("Host rooms: "+ getRoomCode(client));
         client.sendEvent("gameCreated", code);
+    }
+
+    /**
+     * Send "checkGameExists" from client.
+     * Checks if a game is already created with the given code. If the game exists, the client gets True (1),
+     * else the client gets False (0).
+     *
+     * @param client The client that sent the event
+     * @param code The code of the game
+     * @param ackRequest The ack request
+     */
+    private void checkGameExists(SocketIOClient client, String code, AckRequest ackRequest) {
+        if (gameService.getGame(code) == null) {
+            client.sendEvent("gameExists", true);
+        } else {
+            client.sendEvent("gameExists", false);
+        }
     }
 
     /**
