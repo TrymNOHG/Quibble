@@ -59,7 +59,7 @@ coverage
 dist
 dist-ssr
 *.local
-package-lock.json
+/frontend/package-lock.json
 
 /cypress/videos/
 /cypress/screenshots/
