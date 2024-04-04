@@ -3,7 +3,9 @@ package edu.ntnu.idatt2105.backend.controller.priv.quiz;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizUpdateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionCreateDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionEditDTO;
 import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
 import edu.ntnu.idatt2105.backend.model.quiz.QuizAuthor;
 import io.swagger.v3.oas.annotations.Operation;
@@ -67,9 +69,7 @@ public interface IQuizController {
     ResponseEntity<QuizLoadDTO> updateQuiz(@RequestBody @NonNull QuizUpdateDTO quizUpdateDTO, @NonNull Authentication authentication);
 
     @DeleteMapping(
-            value="/delete/{quizId}",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
+            value="/delete/{quizId}"
     )
     @Operation(summary = "This method deletes a quiz given its id.")
     @ApiResponses(value = {
@@ -104,8 +104,8 @@ public interface IQuizController {
                             schema = @Schema(implementation = QuizAuthor.class)) })
     }
     )
-    ResponseEntity<QuizLoadDTO> addCollaborator(@RequestBody @NonNull QuizAuthorDTO newCollaborator,
-                                                @NonNull Authentication authentication);
+    ResponseEntity<QuizAuthorLoadDTO> addCollaborator(@RequestBody @NonNull QuizAuthorDTO newCollaborator,
+                                                      @NonNull Authentication authentication);
 
     /**
      * This method removes a collaborator from a quiz.
@@ -113,7 +113,7 @@ public interface IQuizController {
      * @return ResponseEntity showing whether the operation was successful.
      */
     @DeleteMapping(
-            value="/delete/{userId}",
+            value="/delete/collab",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -127,8 +127,24 @@ public interface IQuizController {
                             schema = @Schema(implementation = QuizAuthor.class)) })
     }
     )
-    ResponseEntity<QuizLoadDTO> removeCollaborator(@PathVariable @NonNull Long userId,
+    ResponseEntity<Object> removeCollaborator(@RequestBody @NonNull QuizAuthorDTO removeCollaborator,
                                                 @NonNull Authentication authentication);
+
+    @DeleteMapping(
+            value="/delete/collaborator/{authorId}"
+    )
+    @Operation(summary = "This method removes a collaborator from a quiz.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful removal of collaborator.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = QuizAuthor.class)) }),
+            @ApiResponse(responseCode = "403", description = "Unauthorized removal of collaborator.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = QuizAuthor.class)) })
+    }
+    )
+    ResponseEntity<Object> removeCollaborator(@PathVariable @NonNull Long authorId,
+                                              @NonNull Authentication authentication);
 
     /**
      * This method adds a new question to a quiz.
@@ -151,5 +167,37 @@ public interface IQuizController {
     }
     )
     ResponseEntity<QuizLoadDTO> addQuestion(@RequestBody @NonNull QuestionCreateDTO questionCreateDTO, @NonNull Authentication authentication);
+
+    @PatchMapping(
+            value="/edit/question",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @Operation(summary = "This method edits a question of a given quiz")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful edit of question.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = QuizAuthor.class)) }),
+            @ApiResponse(responseCode = "403", description = "Unauthorized edit of question.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = QuizAuthor.class)) })
+    }
+    )
+    ResponseEntity<QuizLoadDTO> editQuestion(@RequestBody @NonNull QuestionEditDTO questionEditDTO, @NonNull Authentication authentication);
+
+    @DeleteMapping(
+            value="/delete/question/{questionId}"
+    )
+    @Operation(summary = "This method deletes a question of a given quiz")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful deletion of question.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = QuizAuthor.class)) }),
+            @ApiResponse(responseCode = "403", description = "Unauthorized deletion of question.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = QuizAuthor.class)) })
+    }
+    )
+    ResponseEntity<Object> deleteQuestion(@PathVariable @NonNull Long questionId, @NonNull Authentication authentication);
 
 }

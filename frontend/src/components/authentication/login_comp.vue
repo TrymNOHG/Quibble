@@ -51,8 +51,8 @@ import * as yup from "yup";
 import { useField, useForm } from "vee-validate";
 import { useUserStore } from "@/stores/counter.js";
 import { ref } from "vue";
-import router from "@/router";
-import { loginUser } from "@/services/UserService";
+import router from "@/router/index.js";
+import { loginUser } from "@/services/UserService.js";
 import { RouterLink } from 'vue-router'
 import Basic_button from "@/components/BasicComponents/basic_button.vue";
 import {useI18n} from "vue-i18n";

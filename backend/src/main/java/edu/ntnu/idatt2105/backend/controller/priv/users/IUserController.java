@@ -12,10 +12,7 @@ import lombok.NonNull;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.FileSystemException;
 
@@ -35,7 +32,7 @@ public interface IUserController {
      */
     @PatchMapping(
             value="/update",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Operation(summary = "This method updates the user's information.")
@@ -48,7 +45,7 @@ public interface IUserController {
                             schema = @Schema(implementation = User.class)) })
     }
     )
-    ResponseEntity<UserLoadDTO> updateUser(@RequestBody @NonNull UserUpdateDTO userUpdateDTO, @NonNull Authentication authentication) throws FileSystemException;
+    ResponseEntity<UserLoadDTO> updateUser(@ModelAttribute @NonNull UserUpdateDTO userUpdateDTO, @NonNull Authentication authentication) throws FileSystemException;
 
 
     /**

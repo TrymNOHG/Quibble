@@ -10,20 +10,20 @@
         <div class="popup_input">
           <label for="question_type">{{ $t('new_question.type_label') }}:</label>
           <select class="input" v-model="newQuestion.type" id="question_type">
-            <option class="input" value="truefalse">{{ $t('new_question.true_false_option') }}</option>
-            <option class="input" value="multiplechoice">{{ $t('new_question.multiple_choice_option') }}</option>
+            <option class="input" value="true_false">{{ $t('new_question.true_false_option') }}</option>
+            <option class="input" value="multiple_choice">{{ $t('new_question.multiple_choice_option') }}</option>
           </select>
         </div>
-        <div class="truefalse" v-if="newQuestion.type==='truefalse'">
+        <div class="true_false" v-if="newQuestion.type==='true_false'">
           <div class="popup_input">
             <label for="answer">{{ $t('new_question.answer_label') }}:</label>
-            <select class="input-truefalse" v-model="newQuestion.answer" id="answer">
+            <select class="input-true_false" v-model="newQuestion.answer" id="answer">
               <option class="input" value="true">{{ $t('new_question.true_option') }}</option>
               <option class="input" value="false">{{ $t('new_question.false_option') }}</option>
             </select>
           </div>
         </div>
-        <div class="multiple" v-else-if="newQuestion.type==='multiplechoice'">
+        <div class="multiple" v-else-if="newQuestion.type==='multiple_choice'">
           <div v-for="(choice, index) in newQuestion.choices" :key="index" class="answer-option">
             <label :for="'choice' + index">{{ $t('new_question.answer_label') }} {{ index + 1 }}</label>
             <input type="text" v-model="choice.alternative" :id="'choice' + index" class="input answer">
@@ -44,7 +44,12 @@
   </div>
   <div class="comp">
     <div class="buttons">
-      <router-link class="btn" to="/myquiz" @click="createQuiz()">{{ $t('new_question.create_quiz_button') }}</router-link>
+      <button
+          class="btn"
+          to="/myquiz"
+          @click="createQuiz()"
+      >{{ $t('new_question.create_quiz_button') }}
+      </button>
       <font-awesome-icon
           id="add"
           icon="fa-solid fa-circle-plus"
@@ -53,8 +58,7 @@
     </div>
     <div class="header"></div>
     <div class="questions_list">
-      <div class="buttons bottomline" >
-      </div>
+      <div class="buttons bottomline" ></div>
       <div class="encap_List">
         <question-create-list
             class="list"
@@ -69,9 +73,10 @@
 </template>
 
 <script>
-import { ref } from 'vue';
-import { useQuizCreateStore } from '@/stores/counter.js';
+import {ref} from 'vue';
+import {useQuizCreateStore} from '@/stores/counter.js';
 import QuestionCreateList from "@/components/create_quiz/question-create-list.vue";
+import router from "@/router/index.js";
 
 export default {
   components: { QuestionCreateList },
@@ -83,20 +88,21 @@ export default {
     const question_list = ref(store.templateQuiz.questions);
 
     const newQuestion = ref({
-      question: ref(''),
-      answer: ref(''),
-      type: ref('truefalse'),
-      choices: ref([
-        { alternative: ref('Option 1'), isCorrect: ref(false) },
-        { alternative: ref('Option 2'), isCorrect: ref(false) },
-        { alternative: ref('Option 3'), isCorrect: ref(false) },
-        { alternative: ref('Option 4'), isCorrect: ref(false) }
-      ])
+      quizId: null,
+      question:'',
+      answer:'',
+      type:'true_false',
+      choices:[
+        { alternative: 'Option 1', isCorrect: false },
+        { alternative: 'Option 2', isCorrect: false },
+        { alternative: 'Option 3', isCorrect: false },
+        { alternative: 'Option 4', isCorrect: false }
+      ]
     });
 
-    const createQuestion = () => {
+     const createQuestion = () => {
       if (newQuestion.value.type === 'true_false') {
-        newQuestion.value.answer = newQuestion.value.choices[0].isCorrect ? 'true' : 'false';
+        newQuestion.value.choices = null;
       } else if (newQuestion.value.type === 'multiple_choice') {
         const correctChoice = newQuestion.value.choices.find(choice => choice.isCorrect);
         if (correctChoice) {
@@ -117,7 +123,7 @@ export default {
 
     const cancelCreate = () => {
       newQuestion.value.question = '';
-      newQuestion.value.type = 'truefalse';
+      newQuestion.value.type = 'true_false';
       newQuestion.value.answer = '';
       newQuestion.value.choices.forEach(choice => {
         choice.alternative = '';
@@ -128,6 +134,7 @@ export default {
     };
 
     const showEdit = (question) => {
+      console.log(question)
       newQuestion.value.question = question.question;
       newQuestion.value.answer = question.answer;
       newQuestion.value.type = question.type;
@@ -145,22 +152,28 @@ export default {
       if (index !== -1) {
         question_list.value.splice(index, 1);
       }
+      console.log(question_list)
     };
 
     const addEdit = () => {
-      const editedQuestion = {
+      question_list.value[newQuestion.value.id] = {
         question: newQuestion.value.question,
         answer: newQuestion.value.answer,
         type: newQuestion.value.type,
         choices: newQuestion.value.choices
       };
-      question_list.value[newQuestion.value.id] = editedQuestion;
       cancelCreate();
     }
 
-    const createQuiz = () => {
-      store.createQuiz(question_list);
-    }
+    const createQuiz = async () => {
+      try {
+        await store.createQuiz(question_list);
+        setTimeout(()=> {}, 500);
+        await router.push('/home');
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
     return {
       question_list,
@@ -196,7 +209,7 @@ export default {
   width: 35%;
 }
 
-.truefalse,
+.true_false,
 .multiple {
   margin-top: 10%;
 }
@@ -210,7 +223,7 @@ export default {
   flex-direction: column;
 }
 
-.truefalse {
+.true_false {
   display: flex;
   align-content: start;
 }
@@ -225,7 +238,7 @@ export default {
   width: 80%;
 }
 
-.input-truefalse {
+.input-true_false {
   height: 25px;
   width: 240%;
 }

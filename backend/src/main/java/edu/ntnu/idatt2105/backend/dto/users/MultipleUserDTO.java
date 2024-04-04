@@ -3,7 +3,7 @@ package edu.ntnu.idatt2105.backend.dto.users;
 import lombok.Builder;
 import lombok.NonNull;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * This DTO allows multiple UserLoadDTOs to be sent. This can be useful for instances such as quiz authors.
@@ -13,5 +13,5 @@ import java.util.List;
  * @version 1.0 23.03.2024
  */
 @Builder
-public record MultipleUserDTO(@NonNull List<UserLoadDTO> users) {
+public record MultipleUserDTO(@NonNull Set<UserLoadDTO> users) {
 }

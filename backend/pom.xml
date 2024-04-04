@@ -70,6 +70,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!--Jaro-Winkler Distance-->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>1.10.0</version>
+        </dependency>
+
         <!--Spring Security OAuth2-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
