@@ -1,5 +1,6 @@
 package edu.ntnu.idatt2105.backend.config.filters;
 
+import edu.ntnu.idatt2105.backend.service.AuthenticationService;
 import edu.ntnu.idatt2105.backend.service.JWTTokenService;
 import edu.ntnu.idatt2105.backend.dto.security.RSAKeyPairDTO;
 import edu.ntnu.idatt2105.backend.repo.users.RefreshTokenRepository;
@@ -52,7 +53,6 @@ public class SecurityConfiguration {
     private final UserService userService;
     private final RSAKeyPairDTO rsaKeyPairDTO;
     private final JWTTokenService jwtTokenService;
-    private final RefreshTokenRepository refreshTokenRepository;
     private final LogoutHandlerService logoutHandlerService;
 
     private final String API_ENDPOINT_STRING = "/api/v1";
@@ -132,9 +132,9 @@ public class SecurityConfiguration {
         return commonHttpSecurity(httpSecurity, PUBLIC+"/auth/refresh-token/**")
                 .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()))
-                .addFilterBefore(new JWTRefreshFilterChain(
-                        rsaKeyPairDTO, refreshTokenRepository, jwtTokenService
-                ), UsernamePasswordAuthenticationFilter.class)
+//                .addFilterBefore(new JWTRefreshFilterChain(
+//                        rsaKeyPairDTO, refreshTokenRepository, jwtTokenService, authenticationService
+//                ), UsernamePasswordAuthenticationFilter.class)
                 .httpBasic(withDefaults()) // Correct?
                 .build();
     }
@@ -154,9 +154,11 @@ public class SecurityConfiguration {
         return commonHttpSecurity(httpSecurity, PUBLIC+"/auth/logout/**")
                 .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()))
-                .addFilterBefore(
-                        new JWTRefreshFilterChain(rsaKeyPairDTO, refreshTokenRepository, jwtTokenService), LogoutFilter.class
-                )
+//                .addFilterBefore(
+//                        new JWTRefreshFilterChain(
+//                                rsaKeyPairDTO, refreshTokenRepository, jwtTokenService, authenticationService
+//                        ), LogoutFilter.class
+//                )
                 .logout(logout -> logout
                         .logoutUrl(API_ENDPOINT_STRING + PUBLIC + "/auth/logout")
                         .addLogoutHandler(logoutHandlerService)

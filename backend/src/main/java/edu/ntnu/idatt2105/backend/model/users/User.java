@@ -53,11 +53,11 @@ public class User {
 
     @Column(name = "show_activity")
     @Schema(description = "Whether user wants activity shown on public profile.")
-    private boolean showActivity;
+    private boolean showActivity = false;
 
     @Column(name = "show_feedback")
     @Schema(description = "Whether user wants feedback shown on public profile.")
-    private boolean showFeedback;
+    private boolean showFeedback = false;
 
     @Column(name = "profile_picture")
     @Schema(description = "A link to the user's profile picture.")
