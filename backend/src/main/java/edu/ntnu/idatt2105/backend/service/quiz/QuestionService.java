@@ -41,7 +41,7 @@ public class QuestionService {
         return QuestionDTO.builder()
                 .id(question.getQuestionId())
                 .question(question.getQuestion())
-                .answer(question.getAnswer())
+                .answer(getCorrectAnswer(questionId))
                 .difficulty(question.getDifficulty().name())
                 .questionType(question.getQuestionType().name())
                 .options(question.getChoices().stream().map(MultipleChoice::getAlternative).toList())
