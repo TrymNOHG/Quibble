@@ -195,7 +195,7 @@ public class SocketService {
      * @param data The data sent with the event
      * @param ackRequest The ack request
      */
-    private void joinGame(SocketIOClient client, JoinGameDTO data, AckRequest ackRequest) {
+    public void joinGame(SocketIOClient client, JoinGameDTO data, AckRequest ackRequest) {
         logger.info("joinGame event received: " + data);
         Game game = gameService.getGame(data.code());
         if (game == null) {
@@ -205,6 +205,7 @@ public class SocketService {
 
         boolean hasToken = data.jwt() != null;
         if (hasToken) { // Logged in user scenario
+            logger.info("Adding logged in player to game: " + client.getSessionId() + " with jwt: " + data.jwt());
             Jwt jwt = jwtTokenService.getJwt(data.jwt());
             if (!jwtTokenService.isValidToken(jwt)) {
                 client.sendEvent("invalidToken", "Invalid token");
@@ -214,6 +215,7 @@ public class SocketService {
                 logger.info("User is already in the game, rejoining! WebsocketID updated. User email: " + jwt.getSubject());
             } else {
                 server.getRoomOperations("playerJoined", jwt.getSubject());
+                logger.info("User joining the game! User email: " + jwt.getSubject());
             }
             if (game.isStarted()) {
                 client.sendEvent("waitForQuestion", "The game has already started");
@@ -223,6 +225,7 @@ public class SocketService {
             }
 
         } else { // Anonymous user scenario
+            logger.info("Adding anon player to game: " + client.getSessionId());
             // Rejoining won't really work, as the user will have another session ID when rejoining.
             // Instead, cookies or some other temp storage could be a solution
             game.addPlayer(client.getSessionId(), data.username());

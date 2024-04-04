@@ -62,6 +62,9 @@ public class SocketIoConfig {
     public void stopSocketIOServer() {
         if (isTesting)
             return;
+        if(socketIOServer == null) {
+            return;
+        }
         logger.info("Stopping socket.io server");
         socketIOServer.stop();
     }

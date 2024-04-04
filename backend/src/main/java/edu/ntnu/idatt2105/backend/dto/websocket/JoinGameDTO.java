@@ -3,6 +3,7 @@ package edu.ntnu.idatt2105.backend.dto.websocket;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
 /**
  * DTO for joining a game. This is used when a user wants to join a game. User is anonymous if the jwt is not provided.
@@ -14,6 +15,7 @@ import jakarta.validation.constraints.NotNull;
  * @author Brage Halvorsen Kvamme
  * @version 1.0 31.03.2024
  */
+@Builder
 public record JoinGameDTO (
     @Nullable @JsonProperty String jwt,
     @Nullable @JsonProperty String username,
