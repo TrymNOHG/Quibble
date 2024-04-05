@@ -41,7 +41,6 @@ public class JWTTokenGenerationServiceTest {
     public void setUp() {
         // Setup logic here
         User user = User.builder()
-                .profilePicLink("profilePicLink")
                 .username("username")
                 .email(email)
                 .password("password")

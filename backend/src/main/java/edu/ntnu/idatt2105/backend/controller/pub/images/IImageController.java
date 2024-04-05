@@ -17,43 +17,43 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.io.IOException;
 
 public interface IImageController {
-
-    // Retrieve images using link.
-
-
-    /**
-     * This method retrieves a photo from the server.
-     *
-     * @return ResponseEntity showing whether the operation was successful.
-     */
-    @GetMapping(
-            value="/{userId}/{imagePath}"
-    )
-    @Operation(summary = "This method retrieves a photo from the server.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successful retrieval of photo.",
-                    content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = User.class)) }),
-    }
-    )
-    ResponseEntity<ImageLoadDTO> getImage(@PathVariable @NonNull String userId, @PathVariable @NonNull String imagePath) throws IOException;
-
-    /**
-     * This method retrieves a photo from the server.
-     *
-     * @return ResponseEntity showing whether the operation was successful.
-     */
-    @GetMapping(
-            value="/{imagePath}"
-    )
-    @Operation(summary = "This method retrieves a photo from the server.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successful retrieval of photo.",
-                    content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = User.class)) }),
-    }
-    )
-    ResponseEntity<ImageLoadDTO> getImage(@PathVariable @NonNull String imagePath) throws IOException;
+//
+//    // Retrieve images using link.
+//
+//
+//    /**
+//     * This method retrieves a photo from the server.
+//     *
+//     * @return ResponseEntity showing whether the operation was successful.
+//     */
+//    @GetMapping(
+//            value="/{userId}/{imagePath}"
+//    )
+//    @Operation(summary = "This method retrieves a photo from the server.")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "Successful retrieval of photo.",
+//                    content = { @Content(mediaType = "application/json",
+//                            schema = @Schema(implementation = User.class)) }),
+//    }
+//    )
+//    ResponseEntity<ImageLoadDTO> getImage(@PathVariable @NonNull String userId, @PathVariable @NonNull String imagePath) throws IOException;
+//
+//    /**
+//     * This method retrieves a photo from the server.
+//     *
+//     * @return ResponseEntity showing whether the operation was successful.
+//     */
+//    @GetMapping(
+//            value="/{imagePath}"
+//    )
+//    @Operation(summary = "This method retrieves a photo from the server.")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "Successful retrieval of photo.",
+//                    content = { @Content(mediaType = "application/json",
+//                            schema = @Schema(implementation = User.class)) }),
+//    }
+//    )
+//    ResponseEntity<ImageLoadDTO> getImage(@PathVariable @NonNull String imagePath) throws IOException;
 
 
 }

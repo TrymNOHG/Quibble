@@ -72,8 +72,8 @@ public class Game {
      * @param sessionID The websocket session ID of the player.
      * @param username The username of the player.
      */
-    public void addPlayer(UUID sessionID, String username) {
-        anonymousPlayers.put(sessionID, new AnonymousPlayer(username));
+    public void addPlayer(UUID sessionID, String username, String imageId) {
+        anonymousPlayers.put(sessionID, new AnonymousPlayer(username, imageId));
     }
 
     /**
@@ -92,18 +92,17 @@ public class Game {
             User user = player.getUser();
             assert leaderboardDTO.player() != null;
             leaderboardDTO.player().add(PlayerScoreDTO.builder()
-                    .profilePicture(user.getProfilePicLink())
                     .username(user.getUsername())
                     .score(player.getScore())
+                    .imageId(user.getUserId().toString())
                     .build());
         }
 
-        String shrekImage = "https://i.pinimg.com/550x/91/77/a1/9177a1f681a6f81b52d945199a9114e5.jpg";
         anonymousPlayers.forEach(
                 (key, value) -> {
                     assert leaderboardDTO.player() != null;
                     leaderboardDTO.player().add(PlayerScoreDTO.builder()
-                            .profilePicture(shrekImage)
+                            .imageId(value.getImageId())
                             .username(value.getUsername())
                             .score(value.getScore())
                             .build());
@@ -117,7 +116,7 @@ public class Game {
      */
     public void startGame() {
         started = true;
-        questionIndex = 0;
+        this.questionIndex = 0;
     }
 
     /**
@@ -127,7 +126,7 @@ public class Game {
      * @return True if there is a next question, false otherwise.
      */
     public boolean nextQuestion() {
-        return ++questionIndex < quiz.getQuestions().size() && started;
+        return ++this.questionIndex < quiz.getQuestions().size() && started;
     }
 
     /**
@@ -136,7 +135,7 @@ public class Game {
      * @return The current question in the game room.
      */
     public Question getCurrentQuestion() {
-        return questions.get(questionIndex);
+        return questions.get(this.questionIndex);
     }
 
     /**
