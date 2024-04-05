@@ -116,7 +116,7 @@ public class Game {
      */
     public void startGame() {
         started = true;
-        questionIndex = 0;
+        this.questionIndex = 0;
     }
 
     /**
@@ -126,7 +126,7 @@ public class Game {
      * @return True if there is a next question, false otherwise.
      */
     public boolean nextQuestion() {
-        return ++questionIndex < quiz.getQuestions().size() && started;
+        return ++this.questionIndex < quiz.getQuestions().size() && started;
     }
 
     /**
@@ -135,7 +135,7 @@ public class Game {
      * @return The current question in the game room.
      */
     public Question getCurrentQuestion() {
-        return questions.get(questionIndex);
+        return questions.get(this.questionIndex);
     }
 
     /**

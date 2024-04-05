@@ -64,6 +64,7 @@ public class QuestionService {
                 .build();
     }
 
+    @Transactional
     public SendAlternativesDTO getAlternatives(long questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow();
         return SendAlternativesDTO.builder()
@@ -72,6 +73,7 @@ public class QuestionService {
                 .build();
     }
 
+    @Transactional
     public String getCorrectAnswer(Long questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow();
         if (question.getAnswer() == null || question.getAnswer().isBlank()) {
