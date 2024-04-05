@@ -1,6 +1,8 @@
 package edu.ntnu.idatt2105.backend.service.quiz;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizFilterDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadAllDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryCreateDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorLoadDTO;
 import edu.ntnu.idatt2105.backend.mapper.quiz.QuizAuthorMapper;
@@ -204,6 +206,10 @@ public class QuizService {
         LOGGER.info("Collaborator found.");
         quizAuthorRepository.delete(quizAuthor);
         LOGGER.info("Collaborator removed.");
+    }
+
+    public QuizCategoryLoadDTO addCategory(QuizCategoryCreateDTO quizCategoryCreateDTO) {
+        return null;
     }
 
 }

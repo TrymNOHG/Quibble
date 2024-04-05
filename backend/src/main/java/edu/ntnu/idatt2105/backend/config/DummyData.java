@@ -1,5 +1,6 @@
 package edu.ntnu.idatt2105.backend.config;
 
+import edu.ntnu.idatt2105.backend.model.category.Category;
 import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
 import edu.ntnu.idatt2105.backend.model.quiz.Difficulty;
 import edu.ntnu.idatt2105.backend.model.quiz.QuizAuthor;
@@ -7,6 +8,7 @@ import edu.ntnu.idatt2105.backend.model.quiz.question.MultipleChoice;
 import edu.ntnu.idatt2105.backend.model.quiz.question.Question;
 import edu.ntnu.idatt2105.backend.model.quiz.question.QuestionType;
 import edu.ntnu.idatt2105.backend.model.users.User;
+import edu.ntnu.idatt2105.backend.repo.category.CategoryRepository;
 import edu.ntnu.idatt2105.backend.repo.quiz.QuizAuthorRepository;
 import edu.ntnu.idatt2105.backend.repo.quiz.QuizRepository;
 import edu.ntnu.idatt2105.backend.repo.quiz.question.MultipleChoiceRepository;
@@ -18,6 +20,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -39,6 +42,7 @@ public class DummyData implements CommandLineRunner {
     private final QuestionRepository questionRepository;
     private final MultipleChoiceRepository multipleChoiceRepository;
     private final Logger logger = Logger.getLogger(DummyData.class.getName());
+    private final CategoryRepository categoryRepository;
 
     /**
      * This method is responsible for inserting dummy data into the database on startup. If the data is already there,
@@ -138,5 +142,24 @@ public class DummyData implements CommandLineRunner {
         quizAuthorRepository.save(quizAuthor);
         logger.info("Successfully added quiz author");
 
+        // Create categories
+        Set<Category> categories = createListOfCategories(
+                new String[]{"School", "Movies", "Hobbies", "Sports"}
+        );
+
+        categoryRepository.saveAll(categories);
+    }
+
+    private Set<Category> createListOfCategories(String[] categoryNames) {
+        Set<Category> categories = new HashSet<>();
+        for(String name : categoryNames) {
+            categories.add(
+                    Category
+                    .builder()
+                    .categoryName(name)
+                    .build()
+            );
+        }
+        return categories;
     }
 }
