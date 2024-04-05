@@ -6,7 +6,8 @@ import {
 import {getPictureFromUser} from "@/services/ImageService.js";
 
 import {
-  addCollaborator,
+  addCategory,
+  addCollaborator, addKeyword,
   addQuestion,
   createQuiz,
   deleteQuestionById,
@@ -107,6 +108,8 @@ export const useQuizStore = defineStore('storeQuiz', {
         keywords: [],
         Image: "",
       },
+
+      category_list: ["Movies","School","Sport","Geography"]
     }
   },
 
@@ -136,7 +139,7 @@ export const useQuizStore = defineStore('storeQuiz', {
       }
     },
 
-    isAdmin() {
+    isAdmin(adminId) {
       return this.currentQuiz.adminId === useUserStore().user.userId;
     },
 
@@ -228,6 +231,17 @@ export const useQuizStore = defineStore('storeQuiz', {
       return this.currentQuiz;
     },
 
+    async updateQuiz(quizUpdateDTO) {
+
+      console.log(quizUpdateDTO)
+      await updateQuiz(quizUpdateDTO)
+          .then(response => {
+            console.log(response)
+          }).catch(error => {
+            console.warn("error", error)
+          })
+    },
+
     async addAuthor(author) {
       const quizAuthorDTO = {
         userId: author.userId,
@@ -311,39 +325,27 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
   },
 
   actions: {
-    async deleteTag(tag) {
-
-    },
-
-
-    async addTag(newTag) {
-
-    },
-
     async createQuiz(questions) {
       let createdQuiz = null;
       this.templateQuiz.questions = questions.value;
 
       await createQuiz(this.templateQuiz.quizName)
           .then(response => {
-            console.log(response)
             createdQuiz = response;
           }).catch(error => {
-            console.warn("error", error)
-          })
+            console.warn("Error creating quiz:", error);
+          });
 
       const quizUpdateDTO = {
         "quizId": createdQuiz.quizId,
         "newName": createdQuiz.quizName,
         "newDescription": this.templateQuiz.quizDescription,
         "difficulty": this.templateQuiz.quizDifficulty.toUpperCase(),
-      }
+      };
 
-      // Array to hold promises for adding questions
       const addQuestionPromises = [];
 
-      // Loop through each question
-      console.log(this.templateQuiz.questions)
+      console.log(this.templateQuiz.questions);
       this.templateQuiz.questions.forEach(question => {
         const questionCreateDTO = {
           "quizId": createdQuiz.quizId,
@@ -355,21 +357,55 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
         addQuestionPromises.push(addQuestion(questionCreateDTO));
       });
 
-      // Execute all promises to add questions
       await Promise.all(addQuestionPromises)
           .then(responses => {
             createdQuiz = responses[responses.length - 1];
           }).catch(error => {
-            console.warn("error", error);
+            console.warn("Error adding questions:", error);
           });
 
-      // Update the quiz after adding all questions
+      const addKeywordPromises = [];
+      this.templateQuiz.keywords.forEach(keyword => {
+        console.log(keyword)
+        const keywordDTO = {
+          "keywordId": keyword.categoryId,
+          "keywordName": keyword
+        };
+        addKeywordPromises.push(addKeyword(keywordDTO));
+      });
+      this.templateQuiz.keywords = [];
+
+      await Promise.all(addKeywordPromises)
+          .then(responses => {
+            console.log("Keywords added:", responses);
+          }).catch(error => {
+            console.warn("Error adding keywords:", error);
+          });
+
+      const addCategoryPromises = [];
+      this.templateQuiz.categories.forEach(category => {
+        console.log(category)
+        const categoryDTO = {
+          "categoryId": category.categoryId,
+          "categoryName": category.newName
+        };
+        addCategoryPromises.push(addCategory(categoryDTO));
+      });
+      this.templateQuiz.categories = [];
+
+      await Promise.all(addCategoryPromises)
+          .then(responses => {
+            console.log("Categories added:", responses);
+          }).catch(error => {
+            console.warn("Error adding categories:", error);
+          });
+
       await updateQuiz(quizUpdateDTO)
           .then(response => {
             console.log(response);
             createdQuiz = response;
           }).catch(error => {
-            console.warn("error", error);
+            console.warn("Error updating quiz:", error);
           });
     },
   },

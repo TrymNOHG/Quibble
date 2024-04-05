@@ -11,6 +11,7 @@ export const createQuizCreateDTOFromCSV = async (event) => {
         reader.onload = (e) => {
             const csvFile = e.target.result;
             const lines = csvFile.split("\n");
+            console.log(lines)
 
             let quizCreateDTO = {
                 quizName: null,

@@ -53,7 +53,7 @@
       <font-awesome-icon
           id="add"
           icon="fa-solid fa-circle-plus"
-          @click="addNewQuestion"
+          @click="addNewQuestion = true"
       />
       <label for="csvFileInput" style="cursor: pointer;">
       <font-awesome-icon
@@ -201,7 +201,6 @@ export default {
     }
 
     const downloadQuiz = () => {
-      //TODO: this might not be right.
       downloadQuizCSV(useQuizStore().currentQuiz, useQuizStore().currentQuiz.quizName)
     }
 

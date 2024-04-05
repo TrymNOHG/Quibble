@@ -18,68 +18,84 @@
           @click="toggleSearchBar"
       />
     </div>
-    <div v-if="showFilter" class="dropdown_phone">
-      <font-awesome-icon class="filter_bar" icon="fa-bars" @click="toggleDropdownPhone"/>
-      <div class="dropdown" @click="toggleDropdown" v-if="!dropdownPhone">
-        <div class="dropdown-content" v-show="true">
-          <div @click="selectDifficulty('')">{{ $t('buttons.ALL_DIFFICULTIES') }}</div>
-          <div @click="selectDifficulty('Easy')">{{ $t('dropdown_options.EASY') }}</div>
-          <div @click="selectDifficulty('Medium')">{{ $t('dropdown_options.MEDIUM') }}</div>
-          <div @click="selectDifficulty('Hard')">{{ $t('dropdown_options.HARD') }}</div>
-        </div>
-      </div>
-    </div>
-    <div class="dropdown" @click="toggleDropdown" v-if="!showFilter">
-      {{ selectedDifficulty ? selectedDifficulty : $t('buttons.ALL_DIFFICULTIES') }}
+    <div class="dropdown">
+      <font-awesome-icon class="filter_bar" icon="fa-bars" @click="toggleDropdown"/>
       <div class="dropdown-content" v-show="dropdownOpen">
-        <div @click="selectDifficulty('')">{{ $t('buttons.ALL_DIFFICULTIES') }}</div>
-        <div @click="selectDifficulty('Easy')">{{ $t('dropdown_options.EASY') }}</div>
-        <div @click="selectDifficulty('Medium')">{{ $t('dropdown_options.MEDIUM') }}</div>
-        <div @click="selectDifficulty('Hard')">{{ $t('dropdown_options.HARD') }}</div>
+        <div class="options-row">
+          <div v-for="difficulty in difficulties" :key="difficulty">
+            <input
+                type="checkbox"
+                :id="difficulty"
+                :value="difficulty"
+                v-model="selectedDifficulties"
+                @change="emitDifficulties"
+            />
+            <label :for="difficulty">{{ $t(`dropdown_options.${difficulty.toUpperCase()}`) }}</label>
+          </div>
+        </div>
+        <div class="options-row">
+          <div v-for="category in categories" :key="category">
+            <input
+                type="checkbox"
+                :id="category"
+                :value="category"
+                v-model="selectedCategories"
+                @change="emitCategories"
+            />
+            <label :for="category">{{ category }}</label>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
-
 <script setup>
-import {getCurrentInstance, onMounted, ref} from "vue";
+import { getCurrentInstance, onMounted, ref, watchEffect } from "vue";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import {useQuizStore} from "@/stores/counter.js";
 
-const searchInput = ref("");
 const showSearchBar = ref(true);
-const showFilter = ref(true);
-const selectedDifficulty = ref('');
+const quizStore = useQuizStore();
+const selectedDifficulties = ref([]);
+const selectedCategories = ref([]);
 const dropdownOpen = ref(false);
-const dropdownPhone = ref(false);
+const difficulties = ref(["Easy", "Medium", "Hard"]);
+const categories = quizStore.category_list;
 
 const { emit } = getCurrentInstance();
 
-function toggleDropdownPhone() {
-  dropdownPhone.value = !dropdownPhone.value;
-  console.log(dropdownPhone)
-}
 function toggleDropdown() {
   dropdownOpen.value = !dropdownOpen.value;
-}
-function selectDifficulty(difficulty) {
-  selectedDifficulty.value = difficulty;
-  emit('difficultySelected', difficulty);
-  dropdownOpen.value = false;
 }
 
 function toggleSearchBar() {
   showSearchBar.value = !showSearchBar.value;
 }
 
+function emitCategories() {
+  emit("categorySelected", selectedCategories.value);
+}
+
+function emitDifficulties() {
+  emit("difficultySelected", selectedDifficulties.value);
+}
+
 onMounted(() => {
   showSearchBar.value = !(window.innerWidth <= 428);
-  showFilter.value = (window.innerWidth <= 428);
 });
+
+const rows = ref([]);
+rows.value.push({ difficulties: difficulties.value });
+rows.value.push({ categories: categories });
 
 </script>
 
 <style scoped>
+.options-row {
+  display: flex;
+  justify-content: space-between;
+}
 
 .dropdown {
   position: relative;
@@ -136,6 +152,10 @@ onMounted(() => {
   display: none;
 }
 
+.filter_bar {
+  scale: 1.5;
+}
+
 @media only screen and (max-width: 428px) {
   .search-container {
     position: fixed;
@@ -162,12 +182,18 @@ onMounted(() => {
     scale: 1.5;
   }
 
-  .filter_bar {
+  .search-filter-icon {
     display: flex;
     cursor: pointer;
-    margin-top: 30px;
-    scale: 2.2;
-    margin-left: 15px;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    scale: 2;
+    margin-left: auto;
+    margin-right: auto;
+    position: fixed;
+    right: 35px;
+    top: 5%;
   }
 
   .dropdown {
@@ -202,5 +228,37 @@ onMounted(() => {
   .dropdown:hover .dropdown-content {
     display: block;
   }
+
+  .filter_bar {
+    display: flex;
+    cursor: pointer;
+    margin-top: 10px;
+    scale: 2.2;
+    margin-left: auto;
+    position: fixed;
+    top: 8%;
+    left: 25px;
+  }
+
+  .dropdown-content {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    margin-left: auto;
+    position: fixed;
+    top: 8%;
+    left: 25px;
+    width: 80%;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-size: larger;
 }
+
+  .options-row {
+    flex-direction: column;
+  }
+}
+
 </style>

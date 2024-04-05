@@ -5,19 +5,37 @@
         <img class="quiz-img" :src="quiz.Image" alt="Quiz Image"/>
       </div>
       <div class="quiz-details">
-        <div class="quiz-details">
+        <div class="quiz-detail-header">
           <h2>{{quiz.quizName}}</h2>
+          <font-awesome-icon
+              id="edit"
+              icon="fa-solid fa-pen-to-square"
+              @click="editQuizInfo()"
+              v-if="(isEditor || isAuthor)"
+          />
+        </div>
+        <div>
+          <input v-if="isEditing" class="input-area" type="text" id="quizName" v-model="quizUpdate.newName">
+        </div>
+        <div>
           <p>
             <strong>{{ $t('dropdown_options.DIFFICULTY') }}:</strong>
             {{ $t('dropdown_options.' + quiz.difficulty) }}
           </p>
-          <p>{{ $t('quiz_card.QUESTIONS_LABEL') }}:
-            {{ quiz.questions.length }}
-          </p>
-          <p>{{ $t('quiz_card.DESCRIPTION') }}:
-            {{ quiz.quizDescription }}
-          </p>
+          <select v-if="isEditing" class="input-area" id="difficulty" v-model="quizUpdate.difficulty">
+            <option value="Easy">{{ $t('dropdown_options.EASY') }}</option>
+            <option value="Medium">{{ $t('dropdown_options.MEDIUM') }}</option>
+            <option value="Hard">{{ $t('dropdown_options.HARD') }}</option>
+          </select>
         </div>
+        <div>
+          <p>{{ $t('quiz_card.QUESTIONS_LABEL') }}: {{ quiz.questions.length }}</p>
+        </div>
+        <div>
+          <p>{{ $t('quiz_card.DESCRIPTION') }}: {{ quizUpdate.quizDescription }}</p>
+          <textarea v-if="isEditing" class="input-area" id="description" v-model="quizUpdate.newDescription"></textarea>
+        </div>
+        <button v-if="isEditing" class="input-area" @click="saveEdit()">Save edit</button>
       </div>
     </div>
     <div class="authors">
@@ -50,6 +68,7 @@
           <div class="user-list">
             <user_list
                 v-for="author in collaboratorList.users"
+                :key="author.id"
                 :user-data="author"
                 @adduser="addAuthor(author)"
             />
@@ -95,12 +114,34 @@ export default {
     const store = useQuizStore();
     let isAuthor = ref(true);
     let isEditor = ref(true);
+    let isEditing = ref(false);
     let quizAuthors = ref(store.currentQuiz.collaborators === null ? [] : store.currentQuiz.collaborators);
     let collaboratorList = ref([]);
     const searchQuery = ref('');
 
+    let quizUpdate = {
+      quizId: store.currentQuiz.quizId,
+      newName:  store.currentQuiz.quizName,
+      newDescription: store.currentQuiz.quizDescription,
+      difficulty: store.currentQuiz.quizDifficulty
+    }
+
+    const editQuizInfo = () => {
+      isEditing.value = true;
+    };
+
+    const saveEdit = async () => {
+      try {
+        console.log(searchQuery.value)
+        return await store.updateQuiz(quizUpdate);
+      } catch (error) {
+        console.error('Error editing quiz:', error);
+      }
+      isEditing.value = false;
+    };
+
     onMounted( () => {
-      isAuthor.value = store.isAdmin()
+      isAuthor.value = store.isAdmin(store.currentQuiz.adminId)
       checkEditor();
     });
 
@@ -151,6 +192,9 @@ export default {
 
     return {
       quizAuthors,
+      quizUpdate,
+      editQuizInfo,
+      isEditing,
       deleteAuthor,
       showPopUP,
       showPopup,
@@ -161,13 +205,34 @@ export default {
       isAuthor,
       searchQuery,
       filteredUsers,
-      collaboratorList
+      collaboratorList,
+      saveEdit
     };
   }
 }
 </script>
 
 <style scoped>
+
+.input-area {
+  width: 80%;
+  height: 40px;
+  font-size: medium;
+}
+
+#edit {
+  scale: 1.5;
+}
+
+.quiz-detail-header {
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .user-list {
   max-height: 200px;
   overflow-y: auto;
@@ -254,6 +319,7 @@ button{
 
 #add {
   scale: 1.5;
+  margin-right: 0;
 }
 
 #add:hover {

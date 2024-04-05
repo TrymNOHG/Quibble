@@ -44,13 +44,27 @@
         <div class="popup-content">
           <h3>{{ $t('quiz_details.add_tag_category') }}</h3>
           <div class="input-group">
-            <span class="add-span">{{ $t('quiz_details.tag_label') }}</span>
-            <input type="text" v-model="newTag.name"/>
             <span class="add-span">{{ $t('quiz_details.type_label') }}</span>
-            <select class="add-area" v-model="newTag.type">
+            <select class="add-area" v-model="choice">
               <option value="Category">{{ $t('dropdown_options.CATEGORY') }}</option>
               <option value="Keyword">{{ $t('dropdown_options.KEYWORD') }}</option>
             </select>
+          </div>
+          <div v-if="choice === 'Keyword'">
+            <div class="input-group">
+              <span class="add-span">{{ $t('quiz_details.tag_label') }}</span>
+              <input type="text" v-model="newKeyword.keyword"/>
+            </div>
+          </div>
+          <div v-if="choice === 'Category'">
+            <div class="input-group">
+              <span class="add-span">{{ $t('dropdown_options.CATEGORY') }}</span>
+              <div v-for="(category, index) in categories" :key="index" class="category-box">
+                <span>{{ category }}</span>
+                <input class="checkbox" type="checkbox" v-model="chosenCategory[index]">
+              </div>
+
+            </div>
           </div>
           <div class="button-group">
             <button @click="addTag">{{ $t('quiz_details.add_button') }}</button>
@@ -65,7 +79,7 @@
 <script>
 import { ref } from "vue";
 import Tag_list from "@/components/create_quiz/tag_list.vue";
-import { useQuizCreateStore } from "@/stores/counter.js";
+import {useQuizCreateStore, useQuizStore} from "@/stores/counter.js";
 
 export default {
   components: { Tag_list },
@@ -73,15 +87,13 @@ export default {
   setup() {
     const showPopup = ref(false);
     const store = useQuizCreateStore();
+    const quizStore = useQuizStore();
     const template_quiz = ref(store.templateQuiz);
-    const template_tags = ref([
-      ...template_quiz.value.categories.map(category => ({ id: category.id, name: category.name, type: 'Category' })),
-      ...template_quiz.value.keywords.map(keyword => ({ id: null, name: keyword, type: 'Keyword' }))
-    ]);
-    const newTag = ref({
-      name: '',
-      type: 'Category'
-    });
+    const template_tags = ref([]);
+    const categories = quizStore.category_list;
+    const chosenCategory = ref([false, false, false, false, false]);
+    const choice = ref("Category");
+    const newKeyword = ref({ keywordId: null, keyword: '' });
 
     const handleImageUpload = (event) => {
       const file = event.target.files[0];
@@ -95,20 +107,35 @@ export default {
     };
 
     const addTag = () => {
-      if (newTag.value.name.trim() !== '') {
-        for (const tag of template_tags.value) {
-          if (tag.name === newTag.value.name) {
-            console.log("Tag already exists");
-            return;
-          }
+      if (choice.value === 'Keyword') {
+        const existingKeywordIndex = template_tags.value.findIndex(tag => tag.type === 'Keyword' && tag.name === newKeyword.value.keyword);
+        if (existingKeywordIndex === -1) {
+          template_tags.value.push({ type: 'Keyword', name: newKeyword.value.keyword });
+          store.templateQuiz.keywords.push(newKeyword.value.keyword )
+        } else {
+          console.log("Keyword already exists.");
         }
-
-        template_tags.value.push({ ...newTag.value });
-        newTag.value.name = '';
-        newTag.value.type = 'Category';
-        showPopup.value = false;
+      } else if (choice.value === 'Category') {
+        categories.forEach((category, index) => {
+          if (chosenCategory.value[index]) {
+            const existingCategoryIndex = template_tags.value.findIndex(tag => tag.type === 'Category' && tag.name === category);
+            if (existingCategoryIndex === -1) {
+              store.templateQuiz.categories.push(category)
+              template_tags.value.push({ type: 'Category', name: category });
+            }
+          } else {
+            const existingCategoryIndex = template_tags.value.findIndex(tag => tag.type === 'Category' && tag.name === category);
+            if (existingCategoryIndex !== -1) {
+              template_tags.value.splice(existingCategoryIndex, 1);
+            }
+          }
+        });
       }
+
+      newKeyword.value.keyword = '';
+      showPopup.value = false;
     };
+
 
     const deleteTag = (tagToDelete) => {
       const index = template_tags.value.findIndex(tag => tag.name === tagToDelete.name);
@@ -118,8 +145,7 @@ export default {
     };
 
     const closePopup = () => {
-      newTag.value.name = '';
-      newTag.value.type = 'Category';
+      newKeyword.value.keyword = '';
       showPopup.value = false;
     };
 
@@ -131,13 +157,73 @@ export default {
       deleteTag,
       closePopup,
       showPopup,
-      newTag
+      categories,
+      chosenCategory,
+      newKeyword,
+      choice
     };
   }
 }
 </script>
 
+
 <style scoped>
+.checkbox {
+  width: 20px;
+  height: 20px;
+  padding: 0px;
+  margin-left: 0px;
+}
+
+.popup-content {
+  display: flex;
+  flex-direction: column;
+  background-color: #fefefe;
+  margin: 5% auto;
+  padding: 20px;
+  border-radius: 5px;
+  width: 20%;
+}
+
+ul {
+  display: flex;
+  flex-wrap: nowrap;
+  list-style: none;
+  padding: 0;
+  flex-direction: column;
+  align-content: center;
+  justify-content: space-evenly;
+  align-items: stretch;
+}
+
+.category-box {
+  margin-bottom: 5px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  background-color: rgba(181, 35, 252, 0.61);
+  color: white;
+  border: 1px solid black;
+  border-radius: 10px;
+  height: 35px;
+  align-items: center;
+  justify-content: space-between;
+  justify-items: center;
+}
+
+.input-group ul {
+  padding: 0;
+}
+
+ul li {
+  display: flex;
+  align-items: center;
+}
+
+.input-group input[checkbox] {
+  width: 20px;
+  height: 20px;
+}
 .input-area {
   height: 40px;
   width: 80%;
@@ -198,22 +284,11 @@ button {
   z-index: 999;
 }
 
-.popup-content {
-  display: flex;
-  flex-direction: column;
-  background-color: #fefefe;
-  margin: 20% auto;
-  padding: 20px;
-  border-radius: 5px;
-  width: 20%;
-}
-
 .input-group {
   margin-bottom: 10px;
 }
 
 .input-group input {
-  width: 100%;
   height: 25px;
 }
 
@@ -230,6 +305,11 @@ button {
 
 .button-group button {
   width: 100px;
+}
+
+.input-group[data-v-3eddfc8c] {
+  margin-bottom: 10px;
+  display: grid;
 }
 
 .header {
