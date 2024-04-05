@@ -17,8 +17,15 @@
     </div>
 
     <!-- Feedback -->
-    <div v-if="showFeedback" :class="{'correct-feedback': isAnswerCorrect, 'incorrect-feedback': !isAnswerCorrect}">
+    <div v-if="showFeedback &&  isSinglePlayer" :class="{'correct-feedback': isAnswerCorrect, 'incorrect-feedback': !isAnswerCorrect}">
       <p>{{ feedbackMessage }}</p>
+    </div>
+
+    <!-- Multiplayer Feedback -->
+    <div v-if="!isSinglePlayer && showAnswersProp" class="multiplayer-feedback-container">
+      <div class="multiplayer-feedback">
+        The correct answer is: <strong>{{ question.answer }}</strong>. <br>
+      </div>
     </div>
 
     <!-- Progress Bar -->
@@ -74,7 +81,7 @@ export default {
         } else {
           handleTimeOut();
         }
-      }, 10); // Update every second
+      }, 1000); // Update every second
     };
 
     const stopTimer = () => {
@@ -200,5 +207,42 @@ button {
   height: 10px;
   background-color: #4CAF50;
   border-radius: 5px;
+}
+
+.multiplayer-feedback-container {
+  margin-top: 20px;
+  padding: 20px;
+  background: linear-gradient(145deg, #CC00FF, #2196F3); /* Gradient to blend with score and fireworks theme */
+  color: white;
+  border-radius: 15px;
+  width: 80%;
+  max-width: 600px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  animation: fadeIn 2s forwards;
+  position: relative;
+  overflow: hidden; /* Ensure nothing spills outside the border-radius */
+}
+
+.multiplayer-feedback::after {
+  content: "";
+  position: absolute;
+  top: -50px; right: -50px; bottom: -50px; left: -50px;
+  background: repeating-conic-gradient(from 45deg, #ff8, #f08 90deg, #408 180deg, #08f 270deg);
+  z-index: -1;
+  opacity: 0.2;
+  animation: spin 20s linear infinite;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 </style>

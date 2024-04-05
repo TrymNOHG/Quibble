@@ -3,7 +3,7 @@
     <h2>{{ $t('titles.LOGIN') }}</h2>
     <form @submit.prevent="submit" :class="{ 'has-errors': has_err }">
       <div class="input_fields">
-        <label for="username">{{ $t('placeholders.USERNAME') }}</label>
+        <label for="username">{{ $t('placeholders.EMAIL') }}</label>
         <input
             type="text"
             required
@@ -12,7 +12,7 @@
             class="input-field"
             aria-labelledby="usernameLabel"
             :class="{ 'error': errors && errors['username'] }"
-            :placeholder="$t('placeholders.USERNAME')"
+            :placeholder="$t('placeholders.EMAIL')"
         />
         <div v-if="errors && errors['username']" class="error-message">
           {{ errors["username"] }}
@@ -98,6 +98,9 @@ export default {
           .then(async (response) => {
             if (response !== undefined) {
               store.setToken(response.data.token);
+              store.setTokenExpires(response.data.token_expiration);
+              console.log(response.data.token_expiration)
+              console.log(store.tokenExpired)
               await store.fetchUserData();
               await router.push("/home");
             }

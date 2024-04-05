@@ -15,6 +15,7 @@ export const useUserStore = defineStore('storeUser', {
   state: () => {
     return{
       sessionToken: null,
+      sessionTokenExpires: null,
 
       user: {
         userId: "",
@@ -30,6 +31,9 @@ export const useUserStore = defineStore('storeUser', {
   actions: {
     setToken(value) {
       this.sessionToken = value
+    },
+    setTokenExpires(value) {
+        this.sessionTokenExpires = value
     },
     setShowActivity(value) {
       this.user.showActivity = value
@@ -56,6 +60,7 @@ export const useUserStore = defineStore('storeUser', {
       localStorage.removeItem("sessionToken")
       localStorage.removeItem("user")
       this.setToken(null)
+      this.setTokenExpires(null)
       useQuizStore().resetCurrentQuiz()
       //TODO: invalidate token in backend.
     }
@@ -64,7 +69,12 @@ export const useUserStore = defineStore('storeUser', {
   getters: {
     getUserData() {return this.user},
     isAuth() {return this.sessionToken !== null}, //TODO: should check if token is valid...
-    getToken() {return this.sessionToken}
+    getToken() {return this.sessionToken},
+    tokenExpired() {
+      const expiryDate = new Date(this.sessionTokenExpires);
+      // Compare with the current time
+      return expiryDate.getTime() < Date.now();
+    }
   },
 
   persist: {

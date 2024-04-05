@@ -2,7 +2,7 @@
   <div class="game-host">
     <h1>replace with quizname</h1> <!todo quiz name>
 
-    <basic_button v-if="!gameStarted && !gameCode" @click="createGame" :button_text="$t('startGame')"></basic_button>
+    <basic_button v-if="!gameStarted && !gameCode" @click="createGame" :button_text="$t('createGame')"></basic_button>
     <p v-else> Game Code: {{ gameCode }}</p>
     <basic_button v-if="gameCode && !gameStarted" @click="startGame":button_text="$t('startGame')"></basic_button>
 
@@ -133,6 +133,10 @@ export default {
           players.value.push(player);
           console.log("Player joined", player);
         });
+        gameService.onPlayerLeft((player) => {
+          players.value = players.value.filter((p) => p.id !== player.id);
+          console.log("Player left", player);
+        });
         gameService.onGetQuestion((question) => {
           previewPhase.value = true;
           currentQuestion.value = question;
@@ -144,8 +148,10 @@ export default {
           MultipleChoice.showAnswers = 1; // todo real value
           showAnswers.value = true;
         });
-        gameService.onEveryOneAnswered(() => {
-            revealAnswer();
+        gameService.onEveryOneAnswered((message) => {
+          console.log("Everyone answered")
+          console.log(message)
+          revealAnswer();
         });
         gameService.onGetScoreBoard((scoreBoard) => {
           scores.value = scoreBoard.player;
@@ -182,8 +188,9 @@ export default {
       };
 
       const handleScoreDone = () => {
-        showScoreboard.value = false;
         nextQuestion()
+        showScoreboard.value = false;
+
         // Optionally, transition to the next question or end the quiz
       };
 

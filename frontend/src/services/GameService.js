@@ -88,18 +88,17 @@ class GameService {
     }
 
     onEveryOneAnswered(callback) {
-        this.socket.on('everyOneAnswered', callback);
+        this.socket.on('everyoneAnswered', callback);
     }
 
-    onGetScoreBoard(callback) {
-        this.socket.on('getScoreBoard', callback);
-    }
 
     onPlayerJoined(callback) {
         this.socket.on('playerJoined', callback);
     }
 
-
+    onPlayerLeft(callback) {
+        this.socket.on('playerLeft', callback);
+    }
 
 
 

@@ -92,8 +92,7 @@ import BasicButton from "@/components/BasicComponents/basic_button.vue";
 import {ref, watch, computed, toRefs} from 'vue';
 import * as yup from "yup";
 import { useField, useForm } from "vee-validate";
-import router from "@/router/index.js";
-import {useUserStore} from "@/stores/counter.js";
+
 
 export default {
   name: 'UserProfile',
@@ -180,12 +179,12 @@ export default {
     }
 
     function logout() {
-      useUserStore().logoutUser()
-      router.push("/home");
+      emit('logout');
+
     }
 
     const deleteUser = () => {
-      router.push("/home");
+      emit('deleteUser');
     }
 
     async function emitUpdatePassword() {

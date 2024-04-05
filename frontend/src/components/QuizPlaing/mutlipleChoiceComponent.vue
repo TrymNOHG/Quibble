@@ -81,7 +81,7 @@ export default {
         } else {
           handleTimeOut();
         }
-      }, 10);
+      }, 1000);
     };
 
     const handleTimeOut = () => {

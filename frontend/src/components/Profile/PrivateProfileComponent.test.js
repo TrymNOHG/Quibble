@@ -17,11 +17,9 @@ describe('UserProfile Defaults', () => {
 
         // Since profileData is an object, we need to access its properties through the component's instance
         // Adjust these assertions based on how you access the props in your component
-        expect(wrapper.vm.profileData.firstName).toBe('john');
-        expect(wrapper.vm.profileData.lastName).toBe('doe');
         expect(wrapper.vm.profileData.username).toBe('johndoe');
         expect(wrapper.vm.profileData.email).toBe('john@doe.org');
-        expect(wrapper.vm.profileData.picture).toBe('https://placehold.co/600x400');
+        expect(wrapper.vm.profileData.profilePicture).toBe('https://placehold.co/600x400');
     });
 });
 
@@ -29,8 +27,6 @@ describe('UserProfile Defaults', () => {
 describe('PrivateProfileComponent', () => {
     let wrapper;
     const profileData = {
-        firstName: 'Jane',
-        lastName: 'Doe',
         username: 'janedoe',
         email: 'jane@example.com',
         picture: 'https://placehold.co/600x400',
@@ -50,8 +46,6 @@ describe('PrivateProfileComponent', () => {
 
     // Test for rendering user data
     it('renders user data correctly', () => {
-        expect(wrapper.text()).toContain(profileData.firstName);
-        expect(wrapper.text()).toContain(profileData.lastName);
         expect(wrapper.text()).toContain(profileData.username);
         expect(wrapper.text()).toContain(profileData.email);
         expect(wrapper.find('.profile-picture').attributes('src')).toBe(profileData.picture);

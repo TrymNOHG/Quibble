@@ -10,15 +10,20 @@
         @toggleChangePassword="handleToggleChangePassword"
         @updateShowActivity="handleUpdateShowActivity"
         @updateShowFeedbackOnProfile="handleUpdateShowFeedbackOnProfile"
+        @deleteUser="handleDeleteUser"
         :profile-data="loadUserData()"
     />
   </div>
 </template>
 
+
+
+
 <script>
 import PrivateProfileComponent from "@/components/Profile/PrivateProfileComponent.vue";
 import {useUserStore} from "@/stores/counter.js"; // Ensure this matches your imported component file name
 import {updateUser, updateUserShowActivity, updateUserShowFeedback} from "@/services/UserService.js";
+import router from "@/router/index.js";
 
 export default {
   name: "ProfileView",
@@ -41,6 +46,7 @@ export default {
 
     handleLogout() {
       useUserStore().logoutUser()
+      router.push("/");
     },
 
     handleChangePicture(file) {
@@ -91,6 +97,13 @@ export default {
         //TODO: handle error.
       });
     },
+
+    handleDeleteUser() {
+      outer.push("/");
+      console.log("Deleting user account");
+      // Implement your logic here to delete the user account
+    },
+
   },
 };
 </script>
