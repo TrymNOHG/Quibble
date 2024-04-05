@@ -12,7 +12,6 @@ export const fetchQuizzes = async (page, size) => {
                 Authorization: `Bearer ${await sessionToken()}`,
             }
         });
-        console.log(response);
         return response.data.content;
     } catch (error) {
         throw error.response ? error.response.data : error.message;
@@ -28,7 +27,6 @@ export const createQuiz = async (quizName) => {
                 Authorization: `Bearer ${await sessionToken()}`,
             }
         });
-        console.log("Bruh  ", response.data)
         return response.data;
     } catch (error) {
         throw error.response ? error.response.data : error.message;
@@ -43,7 +41,6 @@ export const updateQuiz = async (quizUpdateDTO) => {
                     Authorization: `Bearer ${await sessionToken()}`,
                 }
             });
-        console.log("Bruh  ", response.data)
         return response.data;
     } catch (error) {
         throw error.response ? error.response.data : error.message;
@@ -57,7 +54,6 @@ export const deleteQuizById = async (QuizId) => {
                 Authorization: `Bearer ${await sessionToken()}`,
             }
         });
-        console.log(response);
         return response.data;
     } catch (error) {
         throw error.response ? error.response.data : error.message;
@@ -72,7 +68,6 @@ export const addQuestion = async (questionCreateDTO) => {
                     Authorization: `Bearer ${await sessionToken()}`,
                 }
             });
-        console.log("Bruh2  ", response.data)
         return response.data;
     } catch (error) {
         throw error.response ? error.response.data : error.message;
@@ -86,7 +81,6 @@ export const deleteQuestionById = async (questionId) => {
                 Authorization: `Bearer ${await sessionToken()}`,
             }
         });
-        console.log(response);
         return response.data;
     } catch (error) {
         throw error.response ? error.response.data : error.message;
@@ -123,7 +117,6 @@ export const addCollaborator = async (quizAuthorDTO) => {
 };
 
 export const removeCollaborator = async (authorId) => {
-    console.log(authorId)
     try {
         const response = await axios.delete(`${BASE_URL_PRIV}/delete/collaborator/${authorId}`,
             {
@@ -131,7 +124,6 @@ export const removeCollaborator = async (authorId) => {
                     Authorization: `Bearer ${await sessionToken()}`,
                 }
             });
-        console.log(response);
         return response.data;
     } catch (error) {
         throw error.response ? error.response.data : error.message;
@@ -140,7 +132,7 @@ export const removeCollaborator = async (authorId) => {
 
 export const addCategory = async (categoryDTO) => {
     try {
-        const response = await axios.post(`${BASE_URL_PRIV}/create/question`,
+        const response = await axios.post(`${BASE_URL_PRIV}/create/category`,
             categoryDTO, {
                 headers: {
                     Authorization: `Bearer ${await sessionToken()}`,

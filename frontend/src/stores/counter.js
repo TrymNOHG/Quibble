@@ -331,7 +331,6 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
 
       await createQuiz(this.templateQuiz.quizName)
           .then(response => {
-            console.log(response);
             createdQuiz = response;
           }).catch(error => {
             console.warn("Error creating quiz:", error);
@@ -367,12 +366,14 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
 
       const addKeywordPromises = [];
       this.templateQuiz.keywords.forEach(keyword => {
+        console.log(keyword)
         const keywordDTO = {
           "keywordId": keyword.categoryId,
           "keywordName": keyword
         };
         addKeywordPromises.push(addKeyword(keywordDTO));
       });
+      this.templateQuiz.keywords = [];
 
       await Promise.all(addKeywordPromises)
           .then(responses => {
@@ -383,12 +384,14 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
 
       const addCategoryPromises = [];
       this.templateQuiz.categories.forEach(category => {
+        console.log(category)
         const categoryDTO = {
           "categoryId": category.categoryId,
           "categoryName": category.newName
         };
         addCategoryPromises.push(addCategory(categoryDTO));
       });
+      this.templateQuiz.categories = [];
 
       await Promise.all(addCategoryPromises)
           .then(responses => {
