@@ -36,7 +36,7 @@ public class RankedChoice {
     @Schema(description = "An option to the question.")
     private String alternative;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "question_id")
     @ToString.Exclude
     @Schema(description = "The question the choice belongs to.")

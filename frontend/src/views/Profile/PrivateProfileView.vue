@@ -4,8 +4,8 @@
         @updateUserProfile="handleUpdateUserProfile"
         @updatePassword="handleUpdatePassword"
         @logout="handleLogout"
-        @changePicture="handleChangePicture"
-        @deletePicture="handleDeletePicture"
+        @changeProfilePicture="handleChangePicture"
+        @deleteProfilePicture="handleDeletePicture"
         @toggleEdit="handleToggleEdit"
         @toggleChangePassword="handleToggleChangePassword"
         @updateShowActivity="handleUpdateShowActivity"
@@ -31,6 +31,7 @@ export default {
 
   methods: {
     loadUserData() {
+      // useUserStore().fetchUserData()
       console.log(useUserStore().getUserData)
       return useUserStore().getUserData
     },
@@ -50,11 +51,15 @@ export default {
     },
 
     handleChangePicture(file) {
-      console.log("Changing picture to:", file.name);
-      let userUpdateDTO = {
-        'userId' : useUserStore().user.userId,
-        'profilePicture' : file,
-      }
+      let userUpdateDTO = new FormData();
+      userUpdateDTO.append('userId', useUserStore().user.userId);
+      userUpdateDTO.append('profilePicture', file);
+      updateUser(userUpdateDTO).then(r => {
+        useUserStore().fetchUserData()
+      }).catch(e => {
+        //TODO: handle error.
+      });
+
     },
 
     handleDeletePicture(pictureUrl) {

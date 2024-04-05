@@ -46,6 +46,20 @@ export const checkSuperUser = async (quizId) => {
     })
 }
 
+export const fetchUserByUsername = async (username) => {
+    try {
+        const response = await axios.get(`${BASE_URL}/public/users/get?username=${username}&number=10`,{
+            headers: {
+                Authorization: `Bearer ${await sessionToken()}`,
+            }
+        });
+        console.log(response.data)
+        return response.data;
+    } catch (error) {
+        throw error.response ? error.response.data : error.message;
+    }
+};
+
 // Public Endpoints
 
 
@@ -70,6 +84,7 @@ export const getUser = async () => {
 export const updateUser = async (userUpdateDTO) => {
     return axios.patch(`${BASE_URL}/private/users/update`, userUpdateDTO, {
         headers: {
+            'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${await sessionToken()}`,
         },
     });
@@ -89,6 +104,7 @@ export const updateUserShowActivity = async (newShowActivity) => {
 export const updateUserShowFeedback = async (newShowFeedback) => {
     return axios.patch(`${BASE_URL}/private/users/update/showFeedback`, newShowFeedback, {
         headers: {
+            'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${await sessionToken()}`,
         },
     });

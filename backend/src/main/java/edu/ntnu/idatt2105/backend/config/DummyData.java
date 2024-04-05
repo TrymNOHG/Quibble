@@ -2,6 +2,7 @@ package edu.ntnu.idatt2105.backend.config;
 
 import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
 import edu.ntnu.idatt2105.backend.model.quiz.Difficulty;
+import edu.ntnu.idatt2105.backend.model.quiz.QuizAuthor;
 import edu.ntnu.idatt2105.backend.model.quiz.question.MultipleChoice;
 import edu.ntnu.idatt2105.backend.model.quiz.question.Question;
 import edu.ntnu.idatt2105.backend.model.quiz.question.QuestionType;
@@ -44,21 +45,33 @@ public class DummyData implements CommandLineRunner {
      * don't insert it.
      *
      * @param args The command line arguments
-     * @throws Exception If something goes wrong
      */
     @Transactional
     @Override
-    public void run(String... args) throws Exception{
+    public void run(String... args) {
         User user = User.builder()
                 .username("TestUser")
                 .email("test@test.test")
                 .password(passwordEncoder.encode("password"))
-                .profilePicLink("https://www.google.com")
                 .build();
 
         if (userRepository.findByUsername(user.getUsername()).isEmpty()) {
             logger.info("TestUser: not found in database, adding TestUser to database");
             userRepository.save(user);
+        } else {
+            logger.info("TestUser: already in database");
+            return;
+        }
+
+        User user2 = User.builder()
+                .username("test User2")
+                .email("test2@test.test")
+                .password(passwordEncoder.encode("password"))
+                .build();
+
+        if (userRepository.findByUsername(user2.getUsername()).isEmpty()) {
+            logger.info("TestUser: not found in database, adding TestUser to database");
+            user2 = userRepository.save(user2);
         } else {
             logger.info("TestUser: already in database");
             return;
@@ -72,9 +85,18 @@ public class DummyData implements CommandLineRunner {
                 .difficulty(Difficulty.EASY)
                 .build();
 
+        if (quizRepository.findByQuizName(quiz.getQuizName()).isEmpty()) {// QuizName is not unique, but this is for testing purposes.
+            logger.info("TestQuiz: Capitals of Scandinavia Quiz not found in database, adding quiz to database");
+            quiz = quizRepository.save(quiz);
+            logger.info("TestQuiz: Capitals of Scandinavia Quiz added to database");
+        } else {
+            logger.info("TestQuiz: already in database");
+        }
+
         Question question1 = Question.builder()
                 .question("What is the capital of Norway?")
                 .questionType(QuestionType.MULTIPLE_CHOICE)
+                .answer("Oslo")
                 .quiz(quiz)
                 .build();
 
@@ -104,12 +126,14 @@ public class DummyData implements CommandLineRunner {
         questionRepository.save(question2);
         questionRepository.save(question3);
 
-        if (quizRepository.findByQuizName(quiz.getQuizName()).isEmpty()) {// QuizName is not unique, but this is for testing purposes.
-            logger.info("TestQuiz: Capitals of Scandinavia Quiz not found in database, adding quiz to database");
-            quizRepository.save(quiz);
-            logger.info("TestQuiz: Capitals of Scandinavia Quiz added to database");
-        } else {
-            logger.info("TestQuiz: already in database");
-        }
+        QuizAuthor quizAuthor = QuizAuthor
+                .builder()
+                .user(user2)
+                .quiz(quiz)
+                .build();
+
+        quizAuthorRepository.save(quizAuthor);
+        logger.info("Successfully added quiz author");
+
     }
 }

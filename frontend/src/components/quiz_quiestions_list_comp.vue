@@ -10,20 +10,20 @@
         <div class="popup_input">
           <label for="question_type">{{ $t('new_question.type_label') }}:</label>
           <select class="input" v-model="editQuestion.type" id="question_type">
-            <option class="input" value="true_false">{{ $t('new_question.true_false_option') }}</option>
-            <option class="input" value="multiple_choice">{{ $t('new_question.multiple_choice_option') }}</option>
+            <option class="input" value="TRUE_FALSE">{{ $t('new_question.true_false_option') }}</option>
+            <option class="input" value="MULTIPLE_CHOICE">{{ $t('new_question.multiple_choice_option') }}</option>
           </select>
         </div>
-        <div class="truefalse" v-if="editQuestion.type==='true_false'">
+        <div class="true_false" v-if="editQuestion.type==='TRUE_FALSE'">
           <div class="popup_input">
             <label for="answer">{{ $t('new_question.answer_label') }}:</label>
-            <select class="input-truefalse" v-model="editQuestion.answer" id="answer">
+            <select class="input-true_false" v-model="editQuestion.answer" id="answer">
               <option class="input" value="true">{{ $t('new_question.true_option') }}</option>
               <option class="input" value="false">{{ $t('new_question.false_option') }}</option>
             </select>
           </div>
         </div>
-        <div class="multiple" v-else-if="editQuestion.type==='multiple_choice'">
+        <div class="multiple" v-else-if="editQuestion.type==='MULTIPLE_CHOICE'">
           <div v-for="(choice, index) in editQuestion.choices" :key="index" class="answer-option">
             <label :for="'choice' + index">{{ $t('new_question.answer_label') }} {{ index + 1 }}</label>
             <input type="text" v-model="choice.alternative" :id="'choice' + index" class="input answer">
@@ -59,6 +59,11 @@
           @click="addToMyquiz()">
         Add to MyQuiz
       </button>
+      <font-awesome-icon
+          id="download"
+          icon="fa-solid fa-download"
+          @click="downloadQuiz()"
+      />
     </div>
     <div class="header"></div>
     <div class="questions_list">
@@ -72,7 +77,7 @@
             class="list"
             v-for="q in question_list"
             :q="q"
-            @deleteQuestion="deleteQuestion(q.id)"
+            @deleteQuestion="deleteQuestion(q)"
             @editQuestion="showEdit(q)"
         />
       </div>
@@ -84,9 +89,11 @@
 import QuestionList from "@/components/BasicComponents/questionList.vue";
 import { ref } from "vue";
 import { useQuizStore } from "@/stores/counter.js";
+import QuestionCreateList from "@/components/create_quiz/question-create-list.vue";
+import { downloadQuizCSV } from "@/features/QuizCSV"
 
 export default {
-  components: { QuestionList },
+  components: { QuestionCreateList, QuestionList },
 
   setup() {
     const store = useQuizStore();
@@ -97,19 +104,30 @@ export default {
     let question_list = ref(store.currentQuiz.questions);
 
     const editQuestion = ref({
-      question: ref(''),
-      answer: ref(''),
-      type: ref('true_false'),
-      choices: ref([
-        { alternative: ref('Option 1'), isCorrect: ref(false) },
-        { alternative: ref('Option 2'), isCorrect: ref(false) },
-        { alternative: ref('Option 3'), isCorrect: ref(false) },
-        { alternative: ref('Option 4'), isCorrect: ref(false) }
-      ])
+      quizId: null,
+      questionId: null,
+      question:'',
+      answer:'',
+      type:'TRUE_FALSE',
+      choices:[
+        { alternative: 'Option 1', isCorrect: false },
+        { alternative: 'Option 2', isCorrect: false },
+        { alternative: 'Option 3', isCorrect: false },
+        { alternative: 'Option 4', isCorrect: false }
+      ]
     });
 
-    const deleteQuestion = (questionId) => {
-      store.deleteQuestion(questionId);
+    const deleteQuestion = async (question) => {
+      const index = question_list.value.indexOf(question);
+      if (index !== -1) {
+        question_list.value.splice(index, 1);
+      }
+
+      try {
+        await store.deleteQuestion(question.questionId);
+      } catch (error) {
+        console.error('Error editing question:', error);
+      }
     };
 
     const deleteQuiz = () => {
@@ -120,10 +138,11 @@ export default {
       store.addQuiz();
     }
 
+
     const createQuestion = () => {
-      if (editQuestion.value.type === 'true_false') {
-        editQuestion.value.answer = editQuestion.value.choices[0].isCorrect ? 'true' : 'false';
-      } else if (editQuestion.value.type === 'multiple_choice') {
+      if (editQuestion.value.type === 'TRUE_FALSE') {
+        editQuestion.value.choices = null;
+      } else if (editQuestion.value.type === 'MULTIPLE_CHOICE') {
         const correctChoice = editQuestion.value.choices.find(choice => choice.isCorrect);
         if (correctChoice) {
           editQuestion.value.answer = correctChoice.alternative;
@@ -132,12 +151,14 @@ export default {
         }
       }
       store.addQuestion(editQuestion.value);
+      question_list.value.push(editQuestion.value);
       addNewQuestion.value = false;
       edit.value = false;
     };
 
 
     const showEdit = (question) => {
+      console.log(question)
       editQuestion.value = { ...question };
       edit.value = true;
     };
@@ -146,17 +167,27 @@ export default {
       addNewQuestion.value = true;
     };
 
-    const addEdit = () => {
-      store.editQuestion(editQuestion.value);
-      edit.value = false;
-    }
+    const addEdit = async () => {
+      const index = question_list.value.indexOf(editQuestion.value);
+      if (index !== -1) {
+        question_list.value.splice(index, 1);
+      }
+
+      try {
+        await store.editQuestion(editQuestion.value);
+        edit.value = false;
+      } catch (error) {
+        console.error('Error editing question:', error);
+      }
+    };
+
 
     const cancelCreate = () => {
       editQuestion.value = {
         quizId: null,
         question: "",
         answer: "",
-        type: "truefalse",
+        type: "TRUE_FALSE",
         choices: [
           { alternative: "", isCorrect: false },
           { alternative: "", isCorrect: false },
@@ -167,6 +198,11 @@ export default {
       edit.value = false;
       addNewQuestion.value = false;
     };
+
+    const downloadQuiz = () => {
+      console.log("Qwer")
+      downloadQuizCSV(store.currentQuiz, store.currentQuiz.quizName)
+    }
 
     return {
       addNew,
@@ -182,7 +218,8 @@ export default {
       deleteQuestion,
       edit,
       editQuestion,
-      addNewQuestion
+      addNewQuestion,
+      downloadQuiz
     }
   }
 }

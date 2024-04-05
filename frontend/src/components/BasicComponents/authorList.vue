@@ -16,7 +16,7 @@
         <span>{{ author.username }}</span>
       </router-link>
       <div class="actions">
-        <font-awesome-icon class="trash-icon" icon="fa-solid fa-trash" @click="showPopupProp = true" v-if="isEditor || isAuth"/>
+        <font-awesome-icon class="trash-icon" icon="fa-solid fa-trash" @click="showPopupProp = true" v-if="isEditor || isAuthor"/>
       </div>
     </div>
   </div>
@@ -32,18 +32,21 @@ export default {
       type: Object,
       required: true,
       default: () => ({
+        email: String,
+        profilePicture: String,
+        showActivity: false,
+        showFeedback: false,
         userId: Number,
         username: String,
       })
-    }
+    },
+    isEditor: false,
+    isAuthor: false
   },
 
   setup() {
-    const store = useQuizStore();
     const showPopupProp = ref(false);
     const { emit } = getCurrentInstance();
-    const isAuth = ref(store.isAdmin(store.currentQuiz.admin_id));
-    const isEditor = ref(store.isEditor)
 
     const deleteAuthor = (author) => {
       emit("deleteAuthor", author);
@@ -58,8 +61,6 @@ export default {
       showPopupProp,
       deleteAuthor,
       closePopup,
-      isAuth,
-      isEditor
     };
   }
 }

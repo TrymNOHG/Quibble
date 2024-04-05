@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import {
+  fetchUserByUsername,
   getUser
 } from "@/services/UserService.js";
 import {getPictureFromUser} from "@/services/ImageService.js";
@@ -7,7 +8,13 @@ import {getPictureFromUser} from "@/services/ImageService.js";
 import {
   addCollaborator,
   addQuestion,
-  createQuiz, deleteQuizById, removeCollaborator, updateQuiz
+  createQuiz,
+  deleteQuestionById,
+  deleteQuizById,
+  fetchQuizzes,
+  patchQuestion,
+  removeCollaborator,
+  updateQuiz
 } from "@/services/QuizService.js"
 
 export const useUserStore = defineStore('storeUser', {
@@ -46,7 +53,7 @@ export const useUserStore = defineStore('storeUser', {
       await getUser()
           .then(response => {
             this.user = response.data
-            getPictureFromUser('2', 'profile_pic.PNG').then(response =>{
+            getPictureFromUser('2', response.data.profilePicture).then(response =>{
               this.user.profilePicture = `data:${response.data.contentType};base64,${response.data.image}`;
             }).catch(e => {
               console.log(e)
@@ -94,13 +101,14 @@ export const useQuizStore = defineStore('storeQuiz', {
         quizName: "",
         quizDifficulty: "",
         quizDescription: "",
-        admin_id: null,
+        adminId: null,
         feedback: [],
-        collaborators: [],
+        collaborators: Set,
         categories: [],
         questions: [
           {
             quizId: null,
+            questionId: null,
             question: "",
             answer: "",
             type: "",
@@ -114,25 +122,33 @@ export const useQuizStore = defineStore('storeQuiz', {
   },
 
   actions: {
-    async loadQuizzes(searchword, difficulty, pageIndex, numberOfQuizzes) {
-      /*
+    //searchword, difficulty, pageIndex,
+    //TODO: search, diff, page
+
+    async loadQuizzes(page, size) {
       try {
-        const response = await fetchQuizzes(searchword, difficulty, pageIndex, numberOfQuizzes);
-        this.allQuizzes = [ ...response.content ];
+        const response = await fetchQuizzes(page, size);
+        console.log(response)
+        this.allQuizzes = [ ...response ];
         return this.allQuizzes;
       } catch (error) {
           console.error("Failed to load previous page:", error);
-          pageIndex.value--;
       }
-       */
     },
 
-    async isAdmin(quizAdminId) {
-      return quizAdminId === useUserStore().user.userId;
+    async filterAuthor(searchQuery) {
+      try {
+        console.log(searchQuery)
+        const response = await fetchUserByUsername(searchQuery);
+        console.log(response)
+        return response;
+      } catch (error) {
+        console.error("Failed to load previous page:", error);
+      }
     },
 
-    async isCollaborator() {
-
+    isAdmin() {
+      return this.currentQuiz.adminId === useUserStore().user.userId;
     },
 
     async deleteCurrentQuiz() {
@@ -145,10 +161,23 @@ export const useQuizStore = defineStore('storeQuiz', {
     },
 
     async editQuestion(editedQuestion){
-      /*
-      TODO: axioscall
-      editQuestionById(this.currentQuiz.quizId, editedQuestion.id)
-      */
+      console.log(editedQuestion.quizId)
+      console.log(this.currentQuiz.quizId)
+      const editQuestionDTO = {
+        "quizId": editedQuestion.quizId,
+        "questionId": editedQuestion.questionId,
+        "question": editedQuestion.question,
+        "type": editedQuestion.type,
+        "choices": editedQuestion.choices
+      }
+
+      await patchQuestion(editQuestionDTO)
+          .then(responses => {
+            console.log(responses);
+            return responses;
+          }).catch(error => {
+            console.warn("error", error);
+          });
     },
 
     async addQuestion(newQuestion){
@@ -156,11 +185,9 @@ export const useQuizStore = defineStore('storeQuiz', {
         "quizId": this.currentQuiz.quizId,
         "question": newQuestion.question,
         "answer": newQuestion.answer,
-        "type": newQuestion.type.toUpperCase(),
+        "type": newQuestion.type,
         "choices": newQuestion.choices
       };
-
-      console.log(questionCreateDTO)
 
       await addQuestion(questionCreateDTO)
           .then(responses => {
@@ -178,31 +205,29 @@ export const useQuizStore = defineStore('storeQuiz', {
     },
 
     async deleteQuestion(question_id) {
-      for (let index = 0; index < this.currentQuiz.question_list.length; index++) {
-        if (question_id === this.currentQuiz.question_list[index].id) {
-          this.currentQuiz.question_list.splice(index, 1);
-          /*
-          TODO: fjerne q i backend
-          response = deleteQuestion(q.id)
-          this.currentQuiz.Questions = response;
-           */
-          break;
-        }
-      }
-      return this.currentQuiz.question_list;
-    },
-
-    async deleteAuth(auth) {
-
-      await removeCollaborator(auth.username)
+      console.log(question_id)
+      await deleteQuestionById(question_id)
           .then(response => {
             console.log(response)
           }).catch(error => {
             console.warn("error", error)
           })
-
-      return this.currentQuiz.collaborators;
     },
+
+    async deleteAuth(auth) {
+      try {
+        const response = await removeCollaborator(auth.quizAuthorId);
+        const index = this.currentQuiz.collaborators.findIndex(author => author.quizAuthorId === auth.quizAuthorId);
+        if (index !== -1) {
+          this.currentQuiz.collaborators.splice(index, 1);
+        } else {
+          console.warn("Author not found in collaborators array");
+        }
+      } catch (error) {
+        console.error("Error deleting author:", error);
+      }
+    },
+
 
     async setCurrentQuizById(quiz) {
       console.log(quiz)
@@ -214,15 +239,15 @@ export const useQuizStore = defineStore('storeQuiz', {
       return this.currentQuiz;
     },
 
-    async addAuthor(newAuthor) {
-      this.currentQuiz.collaborators.push({id: 4, username: newAuthor.username});
+    async addAuthor(author) {
       const quizAuthorDTO = {
-        username: newAuthor.username,
+        userId: author.userId,
         quizId: this.currentQuiz.quizId
       };
       await addCollaborator(quizAuthorDTO)
           .then(response => {
             console.log(response)
+            this.currentQuiz.collaborators.push(response)
           }).catch(error => {
             console.warn("error", error)
           })
@@ -236,6 +261,10 @@ export const useQuizStore = defineStore('storeQuiz', {
       this.isEditor = false;
     },
   },
+
+  persist: {
+    storage: sessionStorage
+  }
 })
 
 export const useQuizCreateStore = defineStore('storeQuizCreate', {
@@ -279,10 +308,10 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
             answer: "Black Hole",
             type: "multiple_choice",
             choices: [
-              { alternative: "Sun", isCorrect: false, questionId: 3 },
-              { alternative: "Earth", isCorrect: false, questionId: 3 },
-              { alternative: "Venus", isCorrect: false, questionId: 3 },
-              { alternative: "Black Hole", isCorrect: true, questionId: 3 }
+              { alternative: "Sun", isCorrect: false },
+              { alternative: "Earth", isCorrect: false },
+              { alternative: "Venus", isCorrect: false },
+              { alternative: "Black Hole", isCorrect: true }
             ]
           },
         ],
@@ -325,6 +354,7 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
       const addQuestionPromises = [];
 
       // Loop through each question
+      console.log(this.templateQuiz.questions)
       this.templateQuiz.questions.forEach(question => {
         const questionCreateDTO = {
           "quizId": createdQuiz.quizId,
@@ -339,7 +369,6 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
       // Execute all promises to add questions
       await Promise.all(addQuestionPromises)
           .then(responses => {
-            console.log(responses);
             createdQuiz = responses[responses.length - 1];
           }).catch(error => {
             console.warn("error", error);
@@ -355,4 +384,7 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
           });
     },
   },
+  persist: {
+    storage: sessionStorage
+  }
 })

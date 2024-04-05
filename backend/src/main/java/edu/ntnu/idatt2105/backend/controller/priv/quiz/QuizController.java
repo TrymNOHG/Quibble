@@ -3,7 +3,10 @@ package edu.ntnu.idatt2105.backend.controller.priv.quiz;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizUpdateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionCreateDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionEditDTO;
+import edu.ntnu.idatt2105.backend.service.quiz.QuestionService;
 import edu.ntnu.idatt2105.backend.service.quiz.QuizService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +35,7 @@ import java.util.logging.Logger;
 public class QuizController implements IQuizController{
 
     private final QuizService quizService;
+    private final QuestionService questionService;
     Logger logger = Logger.getLogger(QuizController.class.getName());
 
     @Override
@@ -49,30 +53,55 @@ public class QuizController implements IQuizController{
     @Override
     public ResponseEntity<QuizLoadDTO> deleteQuiz(@NonNull Long quizId, @NonNull Authentication authentication) {
         logger.info("Deleting quiz with ID: {}" + quizId);
+        quizService.deleteQuiz(quizId);
         return ResponseEntity.ok(null);
     }
 
     @Override
-    public ResponseEntity<QuizLoadDTO> addCollaborator(@NonNull QuizAuthorDTO newCollaborator, @NonNull Authentication authentication) {
+    public ResponseEntity<QuizAuthorLoadDTO> addCollaborator(@NonNull QuizAuthorDTO newCollaborator, @NonNull Authentication authentication) {
         logger.info("adding collaborator");
+        //TODO: check that user is owner or collaborator
         // Check if already part of quiz
         // Check is authorized
         // Check is admin? exists? etc.
         // Other edge cases...
-        return null;
+        return ResponseEntity.ok(quizService.addCollaborator(newCollaborator));
     }
 
     @Override
-    public ResponseEntity<QuizLoadDTO> removeCollaborator(@NonNull Long userId, @NonNull Authentication authentication) {
+    public ResponseEntity<Object> removeCollaborator(@NonNull QuizAuthorDTO removeCollaborator, @NonNull Authentication authentication) {
         logger.info("deleting collaborator");
-        return null;
+        //TODO: check that user is owner or collaborator
+        quizService.removeCollaborator(removeCollaborator);
+        return ResponseEntity.ok("Deletion was successful");
+    }
+
+    @Override
+    public ResponseEntity<Object> removeCollaborator(@NonNull Long authorId, @NonNull Authentication authentication) {
+        logger.info("deleting collaborator");
+        //TODO: check that user is owner or collaborator
+        quizService.removeCollaborator(authorId);
+        return ResponseEntity.ok("Deletion was successful");
     }
 
     @Override
     public ResponseEntity<QuizLoadDTO> addQuestion(@NonNull QuestionCreateDTO questionCreateDTO, @NonNull Authentication authentication) {
         //TODO: check that user is owner or collaborator
-        QuizLoadDTO quizLoadDTO = quizService.addQuestion(questionCreateDTO);
+        //TODO: make method that checks if user is owner or collaborator of quiz.
+        QuizLoadDTO quizLoadDTO = questionService.addQuestion(questionCreateDTO);
         return ResponseEntity.ok(quizLoadDTO);
+    }
+
+    @Override
+    public ResponseEntity<QuizLoadDTO> editQuestion(@NonNull QuestionEditDTO questionEditDTO, @NonNull Authentication authentication) {
+        QuizLoadDTO quizLoadDTO = questionService.editQuestion(questionEditDTO);
+        return ResponseEntity.ok(quizLoadDTO);
+    }
+
+    @Override
+    public ResponseEntity<Object> deleteQuestion(@NonNull Long questionId, @NonNull Authentication authentication) {
+        questionService.deleteQuestion(questionId);
+        return ResponseEntity.ok("Successful Deletion");
     }
 
 

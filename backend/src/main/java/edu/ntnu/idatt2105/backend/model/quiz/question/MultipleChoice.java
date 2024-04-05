@@ -36,7 +36,7 @@ public class MultipleChoice {
     @Schema(description = "Whether the option is correct.")
     private boolean isCorrect;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "question_id")
     @ToString.Exclude
     @Schema(description = "The question the choice belongs to.")

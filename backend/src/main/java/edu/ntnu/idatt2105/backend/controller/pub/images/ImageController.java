@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,45 +32,18 @@ import java.util.List;
 @RequiredArgsConstructor
 @CrossOrigin("*")
 @Slf4j
-@RequestMapping(value = "/api/v1/public/image")
-public class ImageController implements IImageController{
+@RequestMapping("/api/v1/public/image")
+public class ImageController implements IImageController {
 
     private final ImageService imageService;
 
-//    @Override
-//    public ResponseEntity<Resource> getImage(@NonNull String userId, @NonNull String imagePath) {
-//       log.info("Retrieving image with path : " + imagePath);
-//       String fullPath = userId + "/" + imagePath;
-//       Resource imageResource = imageService.loadImage(fullPath);
-//       return ResponseEntity.ok().header(
-//               HttpHeaders.CONTENT_DISPOSITION,
-//               "attachment; filename=\"" + imageResource.getFilename() + "\""
-//       ).body(imageResource);
-//    }
-
-//    @Override
-//    public ResponseEntity<Resource> getImage(@NonNull String imagePath) {
-//        log.info("Retrieving image with path : " + imagePath);
-//        Resource imageResource = imageService.loadImage(imagePath);
-//        return ResponseEntity.ok().header(
-//                HttpHeaders.CONTENT_DISPOSITION,
-//                "attachment; filename=\"" + imageResource.getFilename() + "\""
-//        ).body(imageResource);
-//    }
-
-    @Override
-    public ResponseEntity<ImageLoadDTO> getImage(@NonNull String userId, @NonNull String imagePath) throws IOException {
-        log.info("Retrieving image with path : " + imagePath);
-        String fullPath = userId + "/" + imagePath;
-        ImageLoadDTO image = imageService.loadImage(fullPath);
-        return ResponseEntity.ok().body(image);
+    @GetMapping("/{image}")
+    public ResponseEntity<Resource> getFile(@PathVariable String image) {
+        try {
+            log.info("Getting image");
+            return imageService.getFile(image);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
     }
-
-    @Override
-    public ResponseEntity<ImageLoadDTO> getImage(@NonNull String imagePath) throws IOException {
-        log.info("Retrieving image with path : " + imagePath);
-        ImageLoadDTO image = imageService.loadImage(imagePath);
-        return ResponseEntity.ok().body(image);
-    }
-
 }

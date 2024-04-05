@@ -2,13 +2,13 @@ package edu.ntnu.idatt2105.backend.mapper.users;
 
 import edu.ntnu.idatt2105.backend.dto.users.MultipleUserDTO;
 import edu.ntnu.idatt2105.backend.dto.users.UserLoadDTO;
-import edu.ntnu.idatt2105.backend.mapper.quiz.QuizHistoryMapper;
 import edu.ntnu.idatt2105.backend.model.users.User;
 import edu.ntnu.idatt2105.backend.service.images.ImageService;
-import edu.ntnu.idatt2105.backend.mapper.quiz.QuizFeedbackMapper;
 import org.mapstruct.Mapper;
+import org.springframework.context.annotation.Bean;
 
-import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This class creates mapping between the User model and its respective DTOs.
@@ -26,15 +26,19 @@ public interface UserMapper {
                 .email(user.getEmail())
                 .username(user.getUsername())
 //                .feedbacks(QuizFeedbackMapper.INSTANCE.multipleQuizFeedbackToDTO(user.getFeedbacks()))
-                .profilePicture(user.getProfilePicLink())
                 .showActivity(user.isShowActivity())
                 .showFeedback(user.isShowFeedback())
 //                .quizHistory(QuizHistoryMapper.INSTANCE.multipleQuizHistoryToDTO(user.getQuizHistory()))
                 .build();
     }
 
-    default MultipleUserDTO userToMultipleUserLoadDTO(List<User> users) {
-        List<UserLoadDTO> userLoadDTOS =  users.stream().map(this::userToUserLoadDTO).toList();
+    /**
+     * This method converts users to a DTO containing a set of UserLoadDTOs.
+     * @param users     A set of users.
+     * @return          MultipleUserDTO.
+     */
+    default MultipleUserDTO usersToMultipleUserLoadDTO(Set<User> users) {
+        Set<UserLoadDTO> userLoadDTOS =  users.stream().map(this::userToUserLoadDTO).collect(Collectors.toSet());
         return MultipleUserDTO.builder().users(userLoadDTOS).build();
     }
 

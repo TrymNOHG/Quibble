@@ -5,7 +5,7 @@
         <div class="popup-content">
           <h3>{{ $t('delete_modal.TITLE') }}</h3>
           <div class="button-group">
-            <button @click="deleteQuestion(question.id)">{{ $t('delete_modal.YES') }}</button>
+            <button @click="deleteQuestion">{{ $t('delete_modal.YES') }}</button>
             <button @click="closePopup">{{ $t('delete_modal.NO') }}</button>
           </div>
         </div>
@@ -53,8 +53,8 @@ export default {
   setup(props, { emit }) {
     const showPopupProp = ref(false);
 
-    const deleteQuestion = (questionId) => {
-      emit("deleteQuestion", questionId);
+    const deleteQuestion = () => {
+      emit("deleteQuestion", props.question.id);
       showPopupProp.value = false;
     };
 

@@ -3,14 +3,17 @@
     <div class="profile-profilePicture-container">
       <img :src="profileData.profilePicture" alt="Profile profilePicture" class="profile-profilePicture" />
       <div class="profile-profilePicture-overlay">
-        <img class="editIcon" src="@/assets/images/edit.svg" alt="Change" @click="onprofilePictureChange" />
-        <input id="profilePicture" type="file" @change="onprofilePictureChange" style="display: none;" />
+        <label for="fileInput" style="cursor: pointer;">
+          <img class="editIcon" src="@/assets/images/edit.svg" alt="Change">
+        </label>
+        <input id="fileInput" type="file" @change="onProfilePictureChange" style="display: none;"
+               accept="image/jpeg, image/png"/>
         <img
-            v-show="profileData.profilePicture !== defaultprofilePicture"
+            v-show="profileData.profilePicture !== defaultProfilePicture"
             class="deleteIcon"
             src="@/assets/images/delete-icn.svg"
             alt="Delete"
-            @click="onDeleteprofilePicture"
+            @click="onDeleteProfilePicture"
         />
       </div>
     </div>
@@ -125,7 +128,7 @@ export default {
       newPassword: '',
       confirmPassword: '',
     });
-    const defaultprofilePicture = computed(() => 'https://placehold.co/600x400');
+    const defaultProfilePicture = computed(() => 'https://placehold.co/600x400');
 
     // Form fields managed by vee-validate
     const validationSchema = yup.object({
@@ -199,18 +202,18 @@ export default {
       }
     }
 
-    function onprofilePictureChange(event) {
+    function onProfilePictureChange(event) {
       const file = event.target.files[0];
-      if (file) emit('changeprofilePicture', file);
+      if (file) emit('changeProfilePicture', file);
     }
 
-    function onDeleteprofilePicture() {
-      emit('deleteprofilePicture', props.profileData.profilePicture);
+    function onDeleteProfilePicture() {
+      emit('deleteProfilePicture', props.profileData.profilePicture);
     }
 
     return {
       hasErrors,
-      defaultprofilePicture,
+      defaultProfilePicture,
       isEditing,
       isChangingPassword,
       passwordData,
@@ -222,8 +225,8 @@ export default {
       deleteUser,
       toggleEdit,
       toggleChangePassword,
-      onprofilePictureChange,
-      onDeleteprofilePicture,
+      onProfilePictureChange,
+      onDeleteProfilePicture,
       // firstName,
       // lastName,
       username,

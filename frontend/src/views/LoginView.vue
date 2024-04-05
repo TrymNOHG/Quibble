@@ -9,7 +9,7 @@
 <script>
 
 
-import login_comp from "@/components/login_comp.vue";
+import login_comp from "@/components/authentication/login_comp.vue";
 
 export default {
   question: "LoginView",
