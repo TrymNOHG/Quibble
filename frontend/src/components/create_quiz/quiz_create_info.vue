@@ -60,10 +60,9 @@
             <div class="input-group">
               <span class="add-span">{{ $t('dropdown_options.CATEGORY') }}</span>
               <div v-for="(category, index) in categories" :key="index" class="category-box">
-                <span>{{ category }}</span>
+                <span>{{ category.categoryName }}</span>
                 <input class="checkbox" type="checkbox" v-model="chosenCategory[index]">
               </div>
-
             </div>
           </div>
           <div class="button-group">
@@ -118,13 +117,13 @@ export default {
       } else if (choice.value === 'Category') {
         categories.forEach((category, index) => {
           if (chosenCategory.value[index]) {
-            const existingCategoryIndex = template_tags.value.findIndex(tag => tag.type === 'Category' && tag.name === category);
+            const existingCategoryIndex = template_tags.value.findIndex(tag => tag.type === 'Category' && tag.name === category.categoryName);
             if (existingCategoryIndex === -1) {
               store.templateQuiz.categories.push(category)
-              template_tags.value.push({ type: 'Category', name: category });
+              template_tags.value.push({ type: 'Category', name: category.categoryName });
             }
           } else {
-            const existingCategoryIndex = template_tags.value.findIndex(tag => tag.type === 'Category' && tag.name === category);
+            const existingCategoryIndex = template_tags.value.findIndex(tag => tag.type === 'Category' && tag.name === category.categoryName);
             if (existingCategoryIndex !== -1) {
               template_tags.value.splice(existingCategoryIndex, 1);
             }

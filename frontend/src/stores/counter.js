@@ -11,7 +11,7 @@ import {
   addQuestion,
   createQuiz,
   deleteQuestionById,
-  deleteQuizById,
+  deleteQuizById, fetchCategories,
   fetchQuizzes,
   patchQuestion,
   removeCollaborator,
@@ -89,7 +89,7 @@ export const useQuizStore = defineStore('storeQuiz', {
       currentQuiz: {
         quizId: null,
         quizName: "",
-        quizDifficulty: "",
+        difficulty: "",
         quizDescription: "",
         adminId: null,
         feedback: [],
@@ -109,7 +109,10 @@ export const useQuizStore = defineStore('storeQuiz', {
         Image: "",
       },
 
-      category_list: ["Movies","School","Sport","Geography"]
+      category_list: [{
+        categoryId: null,
+        categoryName: "",
+      }]
     }
   },
 
@@ -147,6 +150,16 @@ export const useQuizStore = defineStore('storeQuiz', {
       await deleteQuizById(this.currentQuiz.quizId)
           .then(response => {
             console.log(response)
+          }).catch(error => {
+            console.warn("error", error)
+          })
+    },
+
+    async loadCategories() {
+      await fetchCategories()
+          .then(response => {
+            console.log(response)
+            this.category_list = response.categories;
           }).catch(error => {
             console.warn("error", error)
           })
@@ -208,7 +221,7 @@ export const useQuizStore = defineStore('storeQuiz', {
 
     async deleteAuth(auth) {
       try {
-        const response = await removeCollaborator(auth.quizAuthorId);
+        await removeCollaborator(auth.quizAuthorId);
         const index = this.currentQuiz.collaborators.findIndex(author => author.quizAuthorId === auth.quizAuthorId);
         if (index !== -1) {
           this.currentQuiz.collaborators.splice(index, 1);
@@ -228,6 +241,7 @@ export const useQuizStore = defineStore('storeQuiz', {
         this.isAuth = true;
         this.isEditor = true;
       }
+
       return this.currentQuiz;
     },
 
@@ -368,9 +382,10 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
       this.templateQuiz.keywords.forEach(keyword => {
         console.log(keyword)
         const keywordDTO = {
-          "keywordId": keyword.categoryId,
+          "quizId": createdQuiz.quizId,
           "keywordName": keyword
         };
+        //TODO: her lages det keywords. Dette funker ikke trym
         addKeywordPromises.push(addKeyword(keywordDTO));
       });
       this.templateQuiz.keywords = [];
@@ -385,11 +400,12 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
       const addCategoryPromises = [];
       this.templateQuiz.categories.forEach(category => {
         console.log(category)
-        const categoryDTO = {
-          "categoryId": category.categoryId,
-          "categoryName": category.newName
+        const QuizCategoryCreateDTO = {
+          "quizId": createdQuiz.quizId,
+          "categoryId": category.categoryId
         };
-        addCategoryPromises.push(addCategory(categoryDTO));
+        //TODO: her lages det categories. Dette funker trym
+        addCategoryPromises.push(addCategory(QuizCategoryCreateDTO));
       });
       this.templateQuiz.categories = [];
 

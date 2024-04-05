@@ -117,6 +117,4 @@ public class QuizController implements IQuizController{
         quizService.removeQuizCategory(quizCategoryId);
         return ResponseEntity.ok("Successful Deletion");
     }
-
-
 }

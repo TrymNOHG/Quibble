@@ -32,7 +32,7 @@
           <p>{{ $t('quiz_card.QUESTIONS_LABEL') }}: {{ quiz.questions.length }}</p>
         </div>
         <div>
-          <p>{{ $t('quiz_card.DESCRIPTION') }}: {{ quizUpdate.quizDescription }}</p>
+          <p>{{ $t('quiz_card.DESCRIPTION') }}: {{ quiz.quizDescription }}</p>
           <textarea v-if="isEditing" class="input-area" id="description" v-model="quizUpdate.newDescription"></textarea>
         </div>
         <button v-if="isEditing" class="input-area" @click="saveEdit()">Save edit</button>
@@ -118,6 +118,8 @@ export default {
     let quizAuthors = ref(store.currentQuiz.collaborators === null ? [] : store.currentQuiz.collaborators);
     let collaboratorList = ref([]);
     const searchQuery = ref('');
+
+    console.log(store.currentQuiz.quizDifficulty)
 
     let quizUpdate = {
       quizId: store.currentQuiz.quizId,

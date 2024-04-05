@@ -21,7 +21,7 @@
 
 <script setup>
 import SearchInput from "@/components/BasicComponents/searchbar.vue";
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref } from 'vue';
 import One_quiz_rectangle from "@/components/BasicComponents/one_quiz_rectangle.vue";
 import { useQuizStore } from "@/stores/counter.js";
 
@@ -30,8 +30,10 @@ let displayedQuizzes = ref([]);
 let difficulty_selected = ref([]);
 let category_selected = ref([]);
 let page = ref(0);
+const store = useQuizStore();
 
 onMounted(async () => {
+  await store.loadCategories();
   await loadQuizzes();
 });
 
@@ -69,8 +71,8 @@ async function getNextQuiz() {
       try {
         page.value++;
         const s = (searchInput.value === '') ? null : searchInput.value;
-        const d = (difficulty_selected.value === '') ? null : difficulty_selected.value;
-        const c = (category_selected.value === '') ? null : category_selected.value;
+        const d = (difficulty_selected.value === []) ? null : difficulty_selected.value;
+        const c = (category_selected.value === []) ? null : category_selected.value;
         displayedQuizzes.value = displayedQuizzes.value.concat(await useQuizStore().loadQuizzes(page.value, 10, s, d, c));
       } catch (e) {
         page.value--;

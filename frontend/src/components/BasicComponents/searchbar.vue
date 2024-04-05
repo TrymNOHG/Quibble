@@ -34,15 +34,15 @@
           </div>
         </div>
         <div class="options-row">
-          <div v-for="category in categories" :key="category">
+          <div v-for="category in categories" :key="category.id">
             <input
                 type="checkbox"
-                :id="category"
+                :id="category.id"
                 :value="category"
                 v-model="selectedCategories"
                 @change="emitCategories"
             />
-            <label :for="category">{{ category }}</label>
+            <label :for="category.id">{{ category.categoryName }}</label>
           </div>
         </div>
       </div>
@@ -62,6 +62,7 @@ const selectedCategories = ref([]);
 const dropdownOpen = ref(false);
 const difficulties = ref(["Easy", "Medium", "Hard"]);
 const categories = quizStore.category_list;
+console.log("asdasdasd", categories[0].categoryName)
 
 const { emit } = getCurrentInstance();
 
