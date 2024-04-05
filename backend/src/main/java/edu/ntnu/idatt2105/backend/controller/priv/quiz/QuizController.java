@@ -114,7 +114,8 @@ public class QuizController implements IQuizController{
 
     @Override
     public ResponseEntity<Object> deleteQuizCategory(@NonNull Long quizCategoryId, @NonNull Authentication authentication) {
-        return null;
+        quizService.removeQuizCategory(quizCategoryId);
+        return ResponseEntity.ok("Successful Deletion");
     }
 
 
