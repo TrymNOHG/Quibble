@@ -58,7 +58,6 @@ public class QuestionService {
                 .id(question.getQuestionId())
                 .question(question.getQuestion())
                 .answer(getCorrectAnswer(questionId))
-                .difficulty(question.getDifficulty().name())
                 .questionType(question.getQuestionType().name())
                 .options(question.getChoices().stream().map(MultipleChoice::getAlternative).toList())
                 .build();

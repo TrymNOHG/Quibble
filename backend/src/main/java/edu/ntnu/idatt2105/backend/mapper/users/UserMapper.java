@@ -5,6 +5,7 @@ import edu.ntnu.idatt2105.backend.dto.users.UserLoadDTO;
 import edu.ntnu.idatt2105.backend.model.users.User;
 import edu.ntnu.idatt2105.backend.service.images.ImageService;
 import org.mapstruct.Mapper;
+import org.springframework.context.annotation.Bean;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -25,7 +26,6 @@ public interface UserMapper {
                 .email(user.getEmail())
                 .username(user.getUsername())
 //                .feedbacks(QuizFeedbackMapper.INSTANCE.multipleQuizFeedbackToDTO(user.getFeedbacks()))
-                .profilePicture(user.getProfilePicLink())
                 .showActivity(user.isShowActivity())
                 .showFeedback(user.isShowFeedback())
 //                .quizHistory(QuizHistoryMapper.INSTANCE.multipleQuizHistoryToDTO(user.getQuizHistory()))

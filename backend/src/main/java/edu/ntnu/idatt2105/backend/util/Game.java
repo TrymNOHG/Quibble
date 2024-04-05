@@ -92,7 +92,6 @@ public class Game {
             User user = player.getUser();
             assert leaderboardDTO.player() != null;
             leaderboardDTO.player().add(PlayerScoreDTO.builder()
-                    .profilePicture(user.getProfilePicLink())
                     .username(user.getUsername())
                     .score(player.getScore())
                     .build());
