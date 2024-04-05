@@ -1,4 +1,5 @@
 package edu.ntnu.idatt2105.backend.service.quiz;
+import edu.ntnu.idatt2105.backend.dto.category.MultipleCategoryDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizFilterDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadAllDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryCreateDTO;
@@ -6,6 +7,7 @@ import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorLoadDTO;
 import edu.ntnu.idatt2105.backend.exception.notfound.CategoryNotFoundException;
+import edu.ntnu.idatt2105.backend.mapper.category.CategoryMapper;
 import edu.ntnu.idatt2105.backend.mapper.quiz.QuizAuthorMapper;
 import edu.ntnu.idatt2105.backend.mapper.quiz.QuizCategoryMapper;
 import edu.ntnu.idatt2105.backend.model.category.Category;
@@ -221,13 +223,16 @@ public class QuizService {
      * @param quizCategoryCreateDTO     The data transfer object for quiz category creation.
      * @return                          A DTO containing the information of the saved quiz category.
      */
-    public QuizCategoryLoadDTO addCategory(QuizCategoryCreateDTO quizCategoryCreateDTO) {
+    public QuizCategoryLoadDTO addQuizCategory(QuizCategoryCreateDTO quizCategoryCreateDTO) {
+        LOGGER.info("Attempting to find quiz.");
         Quiz quiz = quizRepository.findById(quizCategoryCreateDTO.quizId())
                 .orElseThrow(() -> new QuizNotFoundException(quizCategoryCreateDTO.quizId().toString()));
 
+        LOGGER.info("Quiz found. Attempting to find category.");
         Category category = categoryRepository.findById(quizCategoryCreateDTO.quizId())
                 .orElseThrow(() -> new CategoryNotFoundException(quizCategoryCreateDTO.quizId().toString()));
 
+        LOGGER.info("Category found. Creating quizCategory.");
         QuizCategory quizCategory = QuizCategory
                 .builder()
                 .category(category)
@@ -235,7 +240,20 @@ public class QuizService {
                 .build();
 
         QuizCategory savedQuizCategory = quizCategoryRepository.save(quizCategory);
+        LOGGER.info("QuizCategory is saved.");
         return QuizCategoryMapper.INSTANCE.quizCategoryToQuizCategoryLoadDTO(savedQuizCategory);
+    }
+
+    /**
+     * This method retrieves all the categories in the database.
+     * @return  A multiple category DTO.
+     */
+    public MultipleCategoryDTO getAllCategories() {
+        LOGGER.info("Attempting to retrieve all categories from database.");
+        List<Category> categories = categoryRepository.findAll();
+        LOGGER.info("All categories retrieved. Now, converting categories to "
+                + MultipleCategoryDTO.class.getSimpleName());
+        return CategoryMapper.INSTANCE.categoriesToMultipleCategoryDTO(categories);
     }
 
     /**

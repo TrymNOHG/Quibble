@@ -108,7 +108,7 @@ public class QuizController implements IQuizController{
 
     @Override
     public ResponseEntity<QuizCategoryLoadDTO> addCategory(@NonNull QuizCategoryCreateDTO quizCategoryCreateDTO, @NonNull Authentication authentication) {
-        QuizCategoryLoadDTO quizCategoryLoadDTO = quizService.addCategory(quizCategoryCreateDTO);
+        QuizCategoryLoadDTO quizCategoryLoadDTO = quizService.addQuizCategory(quizCategoryCreateDTO);
         return ResponseEntity.ok(quizCategoryLoadDTO);
     }
 
