@@ -2,6 +2,8 @@ package edu.ntnu.idatt2105.backend.controller.priv.quiz;
 
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizUpdateDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryCreateDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionCreateDTO;
@@ -102,6 +104,17 @@ public class QuizController implements IQuizController{
     public ResponseEntity<Object> deleteQuestion(@NonNull Long questionId, @NonNull Authentication authentication) {
         questionService.deleteQuestion(questionId);
         return ResponseEntity.ok("Successful Deletion");
+    }
+
+    @Override
+    public ResponseEntity<QuizCategoryLoadDTO> addCategory(@NonNull QuizCategoryCreateDTO quizCategoryCreateDTO, @NonNull Authentication authentication) {
+        QuizCategoryLoadDTO quizCategoryLoadDTO = quizService.addCategory(quizCategoryCreateDTO);
+        return ResponseEntity.ok(quizCategoryLoadDTO);
+    }
+
+    @Override
+    public ResponseEntity<Object> deleteQuizCategory(@NonNull Long quizCategoryId, @NonNull Authentication authentication) {
+        return null;
     }
 
 
