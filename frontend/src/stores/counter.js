@@ -6,7 +6,8 @@ import {
 import {getPictureFromUser} from "@/services/ImageService.js";
 
 import {
-  addCollaborator,
+  addCategory,
+  addCollaborator, addKeyword,
   addQuestion,
   createQuiz,
   deleteQuestionById,
@@ -107,6 +108,8 @@ export const useQuizStore = defineStore('storeQuiz', {
         keywords: [],
         Image: "",
       },
+
+      category_list: ["Movies","School","Sport","Geography"]
     }
   },
 
@@ -322,15 +325,6 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
   },
 
   actions: {
-    async deleteTag(tag) {
-
-    },
-
-
-    async addTag(newTag) {
-
-    },
-
     async createQuiz(questions) {
       let createdQuiz = null;
       this.templateQuiz.questions = questions.value;
@@ -373,7 +367,10 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
 
       const addKeywordPromises = [];
       this.templateQuiz.keywords.forEach(keyword => {
-        const keywordDTO = { ...KeywordDTO, name: keyword };
+        const keywordDTO = {
+          "keywordId": keyword.categoryId,
+          "keywordName": keyword
+        };
         addKeywordPromises.push(addKeyword(keywordDTO));
       });
 
@@ -386,7 +383,10 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
 
       const addCategoryPromises = [];
       this.templateQuiz.categories.forEach(category => {
-        const categoryDTO = { ...CategoryDTO, name: category };
+        const categoryDTO = {
+          "categoryId": category.categoryId,
+          "categoryName": category.newName
+        };
         addCategoryPromises.push(addCategory(categoryDTO));
       });
 

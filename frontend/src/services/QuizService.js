@@ -137,3 +137,33 @@ export const removeCollaborator = async (authorId) => {
         throw error.response ? error.response.data : error.message;
     }
 };
+
+export const addCategory = async (categoryDTO) => {
+    try {
+        const response = await axios.post(`${BASE_URL_PRIV}/create/question`,
+            categoryDTO, {
+                headers: {
+                    Authorization: `Bearer ${await sessionToken()}`,
+                }
+            });
+        console.log("cat  ", response.data)
+        return response.data;
+    } catch (error) {
+        throw error.response ? error.response.data : error.message;
+    }
+};
+
+export const addKeyword = async (keywordDTO) => {
+    try {
+        const response = await axios.post(`${BASE_URL_PRIV}/create/question`,
+            keywordDTO, {
+                headers: {
+                    Authorization: `Bearer ${await sessionToken()}`,
+                }
+            });
+        console.log("key  ", response.data)
+        return response.data;
+    } catch (error) {
+        throw error.response ? error.response.data : error.message;
+    }
+};

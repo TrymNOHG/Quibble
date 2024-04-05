@@ -28,6 +28,7 @@
                 :id="difficulty"
                 :value="difficulty"
                 v-model="selectedDifficulties"
+                @change="emitDifficulties"
             />
             <label :for="difficulty">{{ $t(`dropdown_options.${difficulty.toUpperCase()}`) }}</label>
           </div>
@@ -39,6 +40,7 @@
                 :id="category"
                 :value="category"
                 v-model="selectedCategories"
+                @change="emitCategories"
             />
             <label :for="category">{{ category }}</label>
           </div>
@@ -51,13 +53,15 @@
 <script setup>
 import { getCurrentInstance, onMounted, ref, watchEffect } from "vue";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import {useQuizStore} from "@/stores/counter.js";
 
 const showSearchBar = ref(true);
+const quizStore = useQuizStore();
 const selectedDifficulties = ref([]);
 const selectedCategories = ref([]);
 const dropdownOpen = ref(false);
 const difficulties = ref(["Easy", "Medium", "Hard"]);
-const categories = ref(["Category1", "Category2", "Category3", "Category4"]);
+const categories = quizStore.category_list;
 
 const { emit } = getCurrentInstance();
 
@@ -69,18 +73,22 @@ function toggleSearchBar() {
   showSearchBar.value = !showSearchBar.value;
 }
 
+function emitCategories() {
+  emit("categorySelected", selectedCategories.value);
+}
+
+function emitDifficulties() {
+  emit("difficultySelected", selectedDifficulties.value);
+}
+
 onMounted(() => {
   showSearchBar.value = !(window.innerWidth <= 428);
 });
 
-watchEffect(() => {
-  console.log(selectedDifficulties.value);
-  console.log(selectedCategories.value);
-});
-
 const rows = ref([]);
 rows.value.push({ difficulties: difficulties.value });
-rows.value.push({ categories: categories.value });
+rows.value.push({ categories: categories });
+
 </script>
 
 <style scoped>
