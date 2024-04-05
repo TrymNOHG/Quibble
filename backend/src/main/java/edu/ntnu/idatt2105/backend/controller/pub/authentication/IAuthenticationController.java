@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -81,7 +82,7 @@ public interface IAuthenticationController {
     /**
      * Endpoint for refreshing the access token. This endpoint returns a new access token.
      *
-     * @param authorizationHeader The authorization header
+     * @param refreshToken The refreshToken
      * @return The new access token
      */
     @ApiResponses(value = {
@@ -93,10 +94,9 @@ public interface IAuthenticationController {
                     Refreshes the access token using the provided refresh token. Send the refresh token as an
                     Authorization header. The new access token is returned in the response body.
                     """)
-    @PreAuthorize("hasAuthority('SCOPE_REFRESH_TOKEN')")
-    @PostMapping ("/refresh-token")
+    //@PreAuthorize("hasAuthority('SCOPE_REFRESH_TOKEN')")
+    @PostMapping ("/get-access-token-from-refresh-token")
     ResponseEntity<AuthenticationResponseDTO> getAccessTokenFromRefreshToken(
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader
+            @CookieValue(value = "refresh_token", defaultValue = "") String refreshToken
     );
-
 }

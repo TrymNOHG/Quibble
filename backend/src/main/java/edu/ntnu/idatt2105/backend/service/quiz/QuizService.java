@@ -1,4 +1,5 @@
 package edu.ntnu.idatt2105.backend.service.quiz;
+import edu.ntnu.idatt2105.backend.dto.quiz.QuizFilterDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadAllDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorLoadDTO;
@@ -16,11 +17,13 @@ import edu.ntnu.idatt2105.backend.repo.quiz.QuizRepository;
 import edu.ntnu.idatt2105.backend.repo.quiz.question.MultipleChoiceRepository;
 import edu.ntnu.idatt2105.backend.repo.quiz.question.QuestionRepository;
 import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
+import edu.ntnu.idatt2105.backend.specification.quiz.QuizSpecification;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -90,6 +93,17 @@ public class QuizService {
     public Page<QuizLoadDTO> getPage(Pageable pageable) {
         Page<Quiz> allQuizzes = quizRepository.findAll(pageable);
         return quizMapper.quizPageToQuizLoadDTOPage(allQuizzes);
+    }
+
+    /**
+     * This method retrieves quizzes based on the filter DTO.
+     * @param quizFilterDTO     Quiz filter DTO.
+     * @return                  Page of quiz load DTOs.
+     */
+    public Page<QuizLoadDTO> getFilteredQuizzes(QuizFilterDTO quizFilterDTO) {
+        Pageable pageable = PageRequest.of(quizFilterDTO.pageNumber(),quizFilterDTO.pageSize());
+        Page<Quiz> quizPage = quizRepository.findAll(QuizSpecification.filterQuizzes(quizFilterDTO), pageable);
+        return quizMapper.quizPageToQuizLoadDTOPage(quizPage);
     }
 
     @Transactional

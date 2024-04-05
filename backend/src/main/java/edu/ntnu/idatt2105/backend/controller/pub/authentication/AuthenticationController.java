@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -29,7 +28,7 @@ import java.util.logging.Logger;
  */
 @RequestMapping("/api/v1/public/auth")
 @RestController
-@RequiredArgsConstructor
+@RequiredArgsConstructor // allow credentials yes
 @CrossOrigin("*")
 @SecurityScheme(
         name = "basicAuth",
@@ -44,7 +43,7 @@ public class AuthenticationController implements IAuthenticationController {
     @Override
     public ResponseEntity<AuthenticationResponseDTO> login(Authentication authentication, HttpServletResponse httpServletResponse) {
         logger.info("Starting Login Process.");
-        AuthenticationResponseDTO authenticationResponseDTO = authenticationService.getTokensFromAuth(authentication, httpServletResponse);
+        AuthenticationResponseDTO authenticationResponseDTO = authenticationService.login(authentication, httpServletResponse);
         logger.info("Login Process Completed.");
         return ResponseEntity.ok().body(authenticationResponseDTO);
     }
@@ -67,9 +66,8 @@ public class AuthenticationController implements IAuthenticationController {
 
     @Override
     public ResponseEntity<AuthenticationResponseDTO> getAccessTokenFromRefreshToken(
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader){
-        return ResponseEntity.ok(authenticationService.getAccessTokenFromRefreshToken(authorizationHeader));
+            @CookieValue(value = "refresh_token", defaultValue = "") String refreshToken
+    ){
+        return ResponseEntity.ok(authenticationService.getAccessTokenFromRefreshToken(refreshToken));
     }
-
-
 }
