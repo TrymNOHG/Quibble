@@ -13,6 +13,7 @@
     </div>
     <div class="question-item">
       <div class="question-info">
+        <input type="checkbox" :checked="selected" @change="toggleQuestion">
         <span>{{ question.question }}</span>
         <div class="actions">
           <font-awesome-icon
@@ -47,6 +48,10 @@ export default {
         answer: String,
         type: String,
       })
+    },
+    selected: {
+      type: Boolean,
+      default: false
     }
   },
 
@@ -66,12 +71,27 @@ export default {
       showPopupProp.value = false;
     };
 
+    const toggleQuestion = (event) => {
+      const isSelected = event.target.checked;
+      emit('selection-change', { question: props.question, isSelected });
+    };
+
+
     return {
       showPopupProp,
       editQuestion,
       deleteQuestion,
       closePopup,
+      toggleQuestion
     };
+  },
+
+  methods: {
+    deselect(newVal)
+    {
+      console.log(newVal)
+      this.selected = false;
+    }
   }
 }
 

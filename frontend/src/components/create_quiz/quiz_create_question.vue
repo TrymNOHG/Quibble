@@ -71,7 +71,14 @@
     </div>
     <div class="header"></div>
     <div class="questions_list">
-      <div class="buttons bottomline" ></div>
+      <div class="buttons bottomline" >
+        <font-awesome-icon
+          id="download"
+          icon="fa-solid fa-trash"
+          v-if="selectedQuestions.length !== 0"
+          @click="deleteSelectedQuestions()"
+      />
+      </div>
       <div class="encap_List">
         <question-create-list
             class="list"
@@ -79,27 +86,30 @@
             :question="q"
             @deleteQuestion="deleteQuestion(q)"
             @editQuestion="showEdit(q)"
+            @selection-change="changeSelectedQuestions"
+            ref="questionItems"
         />
       </div>
+
     </div>
   </div>
 </template>
 
 <script>
-import {ref} from 'vue';
+import {onMounted, ref} from 'vue';
 import {useQuizCreateStore, useQuizStore} from '@/stores/counter.js';
 import QuestionCreateList from "@/components/create_quiz/question-create-list.vue";
 import router from "@/router/index.js";
-import {createQuizCreateDTOFromCSV, downloadQuizCSV} from "@/features/QuizCSV.js";
+import {createQuizCreateDTOFromCSV, downloadQuizCSV } from "@/features/QuizCSV.js";
 
 export default {
   components: { QuestionCreateList },
-
   setup() {
     const store = useQuizCreateStore();
     const addNewQuestion = ref(false);
     const editQuestion = ref(false);
     const question_list = ref(store.templateQuiz.questions);
+    const selectedQuestions = ref([]);
 
     const newQuestion = ref({
       quizId: null,
@@ -161,7 +171,7 @@ export default {
       editQuestion.value = true;
     };
 
-    const deleteQuestion = (question) => {
+    let deleteQuestion = (question) => {
       const index = question_list.value.indexOf(question);
       if (index !== -1) {
         question_list.value.splice(index, 1);
@@ -193,6 +203,18 @@ export default {
       try{
         console.log("Uploading Quiz")
         let quizCreateDTO = await createQuizCreateDTOFromCSV(file)
+        for (let quest of quizCreateDTO.questions) {
+          newQuestion.value = {
+            quizId: null,
+            questionId: null,
+            question: quest.question,
+            answer: quest.answer,
+            type: quest.type,
+            choices: quest.choices
+          }
+          addNewQuestion.value = true;
+          await createQuestion()
+        }
         //TODO: change all values currently being display
         console.log(quizCreateDTO)
       } catch (error) {
@@ -204,9 +226,19 @@ export default {
       downloadQuizCSV(useQuizStore().currentQuiz, useQuizStore().currentQuiz.quizName)
     }
 
+    const changeSelectedQuestions = (e) => {
+      if(e.isSelected) {
+        selectedQuestions.value.push(e.question);
+      } else {
+        selectedQuestions.value = selectedQuestions.value.filter(q => q !== e.question);
+      }
+      console.log(selectedQuestions.value)
+    }
+
 
     return {
       question_list,
+      selectedQuestions,
       createQuestion,
       addEdit,
       editQuestion,
@@ -217,8 +249,23 @@ export default {
       showEdit,
       createQuiz,
       uploadQuiz,
-      downloadQuiz
+      downloadQuiz,
+      changeSelectedQuestions
     };
+  },
+  methods: {
+    deleteSelectedQuestions(){
+      console.log(this.selectedQuestions)
+      for(let question of this.selectedQuestions) {
+        this.deleteQuestion(question)
+      }
+      this.selectedQuestions = [];
+      const childComponents = this.$refs.questionItems;
+      console.log(childComponents)
+      // for(let comp in childComponents) {
+      //   comp.deselect("deselect");
+      // }
+    }
   }
 };
 </script>
