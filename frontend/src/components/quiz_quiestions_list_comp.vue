@@ -59,6 +59,11 @@
           @click="addToMyquiz()">
         Add to MyQuiz
       </button>
+      <font-awesome-icon
+          id="download"
+          icon="fa-solid fa-download"
+          @click="downloadQuiz()"
+      />
     </div>
     <div class="header"></div>
     <div class="questions_list">
@@ -85,6 +90,7 @@ import QuestionList from "@/components/BasicComponents/questionList.vue";
 import { ref } from "vue";
 import { useQuizStore } from "@/stores/counter.js";
 import QuestionCreateList from "@/components/create_quiz/question-create-list.vue";
+import { downloadQuizCSV } from "@/features/QuizCSV"
 import router from "@/router/index.js";
 
 export default {
@@ -198,6 +204,11 @@ export default {
       addNewQuestion.value = false;
     };
 
+    const downloadQuiz = () => {
+      console.log("Qwer")
+      downloadQuizCSV(store.currentQuiz, store.currentQuiz.quizName)
+    }
+
     return {
       addNew,
       cancelCreate,
@@ -212,7 +223,8 @@ export default {
       deleteQuestion,
       edit,
       editQuestion,
-      addNewQuestion
+      addNewQuestion,
+      downloadQuiz
     }
   }
 }

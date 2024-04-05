@@ -1,8 +1,10 @@
 package edu.ntnu.idatt2105.backend.controller.pub.quiz;
 
+import edu.ntnu.idatt2105.backend.dto.quiz.QuizFilterDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadAllDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
 import edu.ntnu.idatt2105.backend.service.quiz.QuizService;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -41,5 +43,11 @@ public class QuizController implements IQuizController{
         Pageable pageable = PageRequest.of(page, size);
         Page<QuizLoadDTO> quizLoadPage = quizService.getPage(pageable);
         return ResponseEntity.ok(quizLoadPage);
+    }
+
+    @Override
+    public ResponseEntity<Page<QuizLoadDTO>> getQuizzes(@NonNull QuizFilterDTO quizFilterDTO) {
+        Page<QuizLoadDTO> quizLoadPage = quizService.getFilteredQuizzes(quizFilterDTO);
+        return null;
     }
 }
