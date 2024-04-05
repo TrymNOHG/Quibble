@@ -9,6 +9,7 @@ import edu.ntnu.idatt2105.backend.repo.users.RefreshTokenRepository;
 import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
 import edu.ntnu.idatt2105.backend.service.images.ImageService;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -33,6 +36,7 @@ import java.util.logging.Logger;
 public class AuthenticationService {
     private final UserRepository userRepository;
     private final JWTTokenGenerationService jwtTokenGenerationService;
+    private final JWTTokenService jwtTokenService;
     private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final ImageService imageService;
@@ -47,7 +51,7 @@ public class AuthenticationService {
      * @param httpServletResponse The http response object.
      * @return AuthenticationResponseDTO containing the access token.
      */
-    public AuthenticationResponseDTO getTokensFromAuth(
+    public AuthenticationResponseDTO login (
             Authentication authentication, HttpServletResponse httpServletResponse
     ) {
         try {
@@ -55,25 +59,10 @@ public class AuthenticationService {
             User user = userRepository.findByEmail(authentication.getName()).orElseThrow(
                     ()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
             );
-            // Check username as well...
 
-            String refreshToken = jwtTokenGenerationService.generateRefreshToken(user.getEmail());
+            setRefreshTokenInDatabaseAndCookie(user, httpServletResponse);
 
-
-            RefreshToken refreshTokenEntity = RefreshToken.builder()
-                    .user(user)
-                    .token(refreshToken)
-                    .revoked(false)
-                    .build();
-            refreshTokenRepository.save(refreshTokenEntity);
-
-            setRefreshTokenCookie(httpServletResponse, refreshToken);
-
-            return AuthenticationResponseDTO.builder()
-                    .token(jwtTokenGenerationService.generateToken(user.getEmail()))
-                    .tokenExpiration(60*15)
-                    .username(user.getEmail())
-                    .tokenType(TokenType.Bearer).build();
+            return getAccessTokenAuthDTO(user.getEmail());
 
         } catch (Exception e) {
             log.warning(e.getMessage());
@@ -138,24 +127,9 @@ public class AuthenticationService {
             log.info("Creating image directory for user.");
             imageService.initializeUserDir(savedUser.getUserId());
 
-            String accessToken = jwtTokenGenerationService.generateToken(savedUser.getEmail());
-            String refreshToken = jwtTokenGenerationService.generateRefreshToken(savedUser.getEmail());
-            log.info("Tokens created successfully");
-            RefreshToken refreshTokenEntity = RefreshToken.builder()
-                    .user(savedUser)
-                    .token(refreshToken)
-                    .revoked(false)
-                    .build();
-            refreshTokenRepository.save(refreshTokenEntity);
-
-            setRefreshTokenCookie(httpServletResponse, refreshToken);
+            setRefreshTokenInDatabaseAndCookie(savedUser, httpServletResponse);
             log.info("User created successfully");
-            return AuthenticationResponseDTO.builder()
-                    .token(accessToken)
-                    .tokenExpiration(5 * 60)
-                    .username(savedUser.getUsername())
-                    .tokenType(TokenType.Bearer)
-                    .build();
+            return getAccessTokenAuthDTO(savedUser.getEmail());
         } catch (Exception e) {
             log.info("Error while creating user: " + e.getMessage());
             throw new ResponseStatusException(
@@ -183,31 +157,50 @@ public class AuthenticationService {
     /**
      * Gets a new access token from a refresh token.
      *
-     * @param authorizationHeader The authorization header containing the refresh token.
+     * @param refreshToken The refresh token.
      * @return AuthenticationResponseDTO containing the access token.
      */
-    public AuthenticationResponseDTO getAccessTokenFromRefreshToken(String authorizationHeader) {
-        if(!authorizationHeader.startsWith("Bearer ")){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No bearer token found in header");
+    public AuthenticationResponseDTO getAccessTokenFromRefreshToken(String refreshToken) {
+        //String refreshToken = getRefreshTokenFromCookie(request);
+        if (refreshToken == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No refresh token found");
         }
-
-        final String refreshToken = authorizationHeader.substring(7);
-
+        // Check if the token is revoked in the database
         RefreshToken refreshTokenDatabaseEntry = refreshTokenRepository.findByToken(refreshToken)
                 .filter(token -> !token.isRevoked())
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid refresh token"));
+        // Check if the token is expired
+
+        if (!jwtTokenService.isValidToken(jwtTokenService.getJwt(refreshToken))) {
+            refreshTokenDatabaseEntry.setRevoked(true);
+            refreshTokenRepository.save(refreshTokenDatabaseEntry);
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Refresh token expired");
+        }
 
         User user = refreshTokenDatabaseEntry.getUser();
         Authentication authentication =  createAuthenticationObject(user);
+        log.info("Getting access token from refresh token");
+        return  getAccessTokenAuthDTO(user.getEmail());
+    }
 
-        String accessToken = jwtTokenGenerationService.generateToken(user.getEmail());
-
-        return  AuthenticationResponseDTO.builder()
-                .token(accessToken)
-                .tokenExpiration(15 * 60)
-                .username(user.getEmail())
-                .tokenType(TokenType.Bearer)
-                .build();
+    /**
+     * Gets a refresh token from a cookie in the http request.
+     * Throws an exception if no refresh token cookie is found.
+     *
+     * @param request The http request object.
+     * @return The refresh token.
+     */
+    public String getRefreshTokenFromCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No refresh token cookie found");
+        }
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("refresh_token")) {
+                return cookie.getValue();
+            }
+        }
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No refresh token cookie found");
     }
 
     /**
@@ -226,4 +219,38 @@ public class AuthenticationService {
         );
     }
 
+    /**
+     * Creates an AuthenticationResponseDTO object containing an access token. The access token is generated from the
+     * user's email.
+     *
+     * @param email The email of the user.
+     * @return The AuthenticationResponseDTO object.
+     */
+    private AuthenticationResponseDTO getAccessTokenAuthDTO(String email) {
+        return AuthenticationResponseDTO.builder()
+                .token(jwtTokenGenerationService.generateToken(email))
+                .tokenExpiration(LocalDateTime.now().plusMinutes(15).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                .tokenType(TokenType.ACCESS_TOKEN)
+                .username(email)
+                .build();
+    }
+
+    /**
+     * Sets a refresh token in the database and as a cookie.
+     *
+     * @param user The user object.
+     * @param httpServletResponse The http response object.
+     */
+    private void setRefreshTokenInDatabaseAndCookie(
+            User user, HttpServletResponse httpServletResponse
+    ) {
+        String refreshToken = jwtTokenGenerationService.generateRefreshToken(user.getEmail());
+        RefreshToken refreshTokenEntity = RefreshToken.builder()
+                .user(user)
+                .token(refreshToken)
+                .revoked(false)
+                .build();
+        refreshTokenRepository.save(refreshTokenEntity);
+        setRefreshTokenCookie(httpServletResponse, refreshToken);
+    }
 }
