@@ -97,7 +97,7 @@ public class ImageService {
     public void setDefaultProfilePic(Long userId) {
         try {
             Random random = new Random();
-            Files.copy(Paths.get(STORAGE_DIRECTORY+"/default"+"-"+random.nextInt(1, 6)),
+            Files.copy(Paths.get(STORAGE_DIRECTORY+"/default-"+random.nextInt(1, 6)),
                     Paths.get(STORAGE_DIRECTORY+"/"+userId),
                     StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {

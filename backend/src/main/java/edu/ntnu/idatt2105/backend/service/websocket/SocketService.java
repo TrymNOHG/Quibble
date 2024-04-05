@@ -4,6 +4,7 @@ import com.corundumstudio.socketio.AckRequest;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
 import edu.ntnu.idatt2105.backend.dto.websocket.*;
+import edu.ntnu.idatt2105.backend.model.users.User;
 import edu.ntnu.idatt2105.backend.service.JWTTokenService;
 import edu.ntnu.idatt2105.backend.service.images.ImageService;
 import edu.ntnu.idatt2105.backend.service.quiz.QuestionService;
@@ -12,6 +13,7 @@ import edu.ntnu.idatt2105.backend.util.Game;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.util.Pair;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.core.env.Environment;
@@ -94,7 +96,7 @@ public class SocketService {
         server.addDisconnectListener(this::onDisconnect);
         server.addEventListener("createGame", CreateGameDTO.class, this::onCreateGame);
         server.addEventListener("joinGame", JoinGameDTO.class, this::onJoinGame);
-        server.addEventListener("checkGameExists", String.class, this::onCheckGameExists);
+        server.addEventListener("checkGameExists", JoinGameDTO.class, this::onCheckGameExists);
         server.addEventListener("startGame", GameValidationDTO.class, this::onStartGame);
         server.addEventListener("nextQuestion", GameValidationDTO.class, this::onNextQuestion);
         server.addEventListener("answerQuestion", SubmitAnswerDTO.class, this::onAnswerQuestion);
@@ -123,12 +125,16 @@ public class SocketService {
      */
     private void onDisconnect(SocketIOClient client) {
         logger.info("a user disconnected: " + client.getSessionId());
-        if(gameService.deleteAnonUserFromGame(client.getSessionId())) {
-            logger.info("Anon player deleted from game: " + client.getSessionId());
-            String code = getRoomCode(client);
-            String username = gameService.getGame(code).getAnonymousPlayers().get(client.getSessionId()).getUsername();
-            server.getRoomOperations(code).sendEvent("playerLeft", username);
+        Pair<String, String> codeUsername = gameService.deleteAnonUserFromGame(client.getSessionId());
+        if (codeUsername != null) {
+            String code = codeUsername.getFirst();
+            String username = codeUsername.getSecond();
+            if(!code.isBlank() && !username.isBlank()) {
+                logger.info("Anon player deleted from game: " + client.getSessionId());
+                server.getRoomOperations(code).sendEvent("playerLeft", username);
+            }
         }
+
 
         if(gameService.deleteGameFromUUID(client.getSessionId())) {
             server.getRoomOperations(getRoomCode(client)).sendEvent("gameEnded", "The game has ended");
@@ -171,11 +177,11 @@ public class SocketService {
      * else the client gets False (0).
      *
      * @param client The client that sent the event
-     * @param code The code of the game
+     * @param data The data sent with the event
      * @param ackRequest The ack request
      */
-    private void onCheckGameExists(SocketIOClient client, String code, AckRequest ackRequest) {
-        if (gameService.getGame(code) == null) {
+    private void onCheckGameExists(SocketIOClient client, JoinGameDTO data, AckRequest ackRequest) {
+        if (gameService.getGame(data.code()) != null) {
             client.sendEvent("gameExists", true);
             client.sendEvent("defaultImages", imageService.getDefaultProfilePicIds());
         } else {
@@ -216,11 +222,15 @@ public class SocketService {
                 client.sendEvent("invalidToken", "Invalid token");
                 return;
             }
-            if (!game.addPlayer(userService.getUserByEmail(jwt.getSubject()), client.getSessionId())) {
+            User user = userService.getUserByEmail(jwt.getSubject());
+            if (!game.addPlayer(user, client.getSessionId())) {
                 logger.info("User is already in the game, rejoining! WebsocketID updated. User email: " + jwt.getSubject());
             } else {
                 server.getRoomOperations(game.getCode()).sendEvent("playerJoined",
-                        PlayerJoinedDTO.builder().username(jwt.getSubject()).profilePicture(data.imageId())
+                        PlayerJoinedDTO.builder()
+                                .profilePicture(user.getUserId().toString())
+                                .username(user.getUsername())
+                                .build()
                 );
                 logger.info("User joining the game! User email: " + jwt.getSubject());
             }
@@ -235,9 +245,13 @@ public class SocketService {
             logger.info("Adding anon player to game: " + client.getSessionId());
             // Rejoining won't really work, as the user will have another session ID when rejoining.
             // Instead, cookies or some other temp storage could be a solution
-            game.addPlayer(client.getSessionId(), data.username());
+            game.addPlayer(client.getSessionId(), data.username(), data.imageId());
             server.getRoomOperations(game.getCode()).sendEvent("playerJoined",
-                    PlayerJoinedDTO.builder().username(data.username()).profilePicture(data.imageId())
+                    PlayerJoinedDTO.builder()
+                            .profilePicture(data.imageId())
+                            .username(data.username())
+                            .profilePicture(data.imageId())
+                            .build()
             );
         }
 
@@ -452,7 +466,7 @@ public class SocketService {
      * @return The room code of the client
      */
     private String getRoomCode(SocketIOClient client) {
-        logger.info("all rooms from lient " + client.getSessionId() + ": " + client.getAllRooms().toString());
+        logger.info("all rooms from client " + client.getSessionId() + ": " + client.getAllRooms().toString());
         return client.getAllRooms().stream().filter(room -> !room.isBlank()).findFirst().orElse(null);
     }
 }

@@ -72,8 +72,8 @@ public class Game {
      * @param sessionID The websocket session ID of the player.
      * @param username The username of the player.
      */
-    public void addPlayer(UUID sessionID, String username) {
-        anonymousPlayers.put(sessionID, new AnonymousPlayer(username));
+    public void addPlayer(UUID sessionID, String username, String imageId) {
+        anonymousPlayers.put(sessionID, new AnonymousPlayer(username, imageId));
     }
 
     /**
@@ -94,15 +94,15 @@ public class Game {
             leaderboardDTO.player().add(PlayerScoreDTO.builder()
                     .username(user.getUsername())
                     .score(player.getScore())
+                    .imageId(user.getUserId().toString())
                     .build());
         }
 
-        String shrekImage = "https://i.pinimg.com/550x/91/77/a1/9177a1f681a6f81b52d945199a9114e5.jpg";
         anonymousPlayers.forEach(
                 (key, value) -> {
                     assert leaderboardDTO.player() != null;
                     leaderboardDTO.player().add(PlayerScoreDTO.builder()
-                            .profilePicture(shrekImage)
+                            .imageId(value.getImageId())
                             .username(value.getUsername())
                             .score(value.getScore())
                             .build());
