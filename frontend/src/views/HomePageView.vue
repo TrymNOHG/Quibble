@@ -32,6 +32,8 @@ let page = ref(0);
 
 
 onMounted(async () => {
+  setTimeout(() => {},1000)
+  console.log("hello")
   await loadQuizzes();
 });
 

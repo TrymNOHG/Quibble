@@ -136,7 +136,7 @@ export const useQuizStore = defineStore('storeQuiz', {
       }
     },
 
-    isAdmin() {
+    isAdmin(adminId) {
       return this.currentQuiz.adminId === useUserStore().user.userId;
     },
 
@@ -226,6 +226,17 @@ export const useQuizStore = defineStore('storeQuiz', {
         this.isEditor = true;
       }
       return this.currentQuiz;
+    },
+
+    async updateQuiz(quizUpdateDTO) {
+
+      console.log(quizUpdateDTO)
+      await updateQuiz(quizUpdateDTO)
+          .then(response => {
+            console.log(response)
+          }).catch(error => {
+            console.warn("error", error)
+          })
     },
 
     async addAuthor(author) {

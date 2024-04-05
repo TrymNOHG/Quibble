@@ -46,13 +46,13 @@
     <div class="buttons">
       <button>{{ $t('buttons.ONE_PLAYER') }}</button>
       <button>{{ $t('buttons.MULTI_PLAYER') }}</button>
-      <router-link
+      <button
           class="btn"
           to="/home"
           v-if="isAuthor"
           @click="deleteQuiz()">
         {{ $t('buttons.DELETE_QUIZ') }}
-      </router-link>
+      </button>
       <button
           class="btn"
           v-if="!isAuthor & !isEditor"
@@ -85,6 +85,7 @@ import QuestionList from "@/components/BasicComponents/questionList.vue";
 import { ref } from "vue";
 import { useQuizStore } from "@/stores/counter.js";
 import QuestionCreateList from "@/components/create_quiz/question-create-list.vue";
+import router from "@/router/index.js";
 
 export default {
   components: { QuestionCreateList, QuestionList },
@@ -93,7 +94,7 @@ export default {
     const store = useQuizStore();
     const addNewQuestion = ref(false);
     const edit = ref(false);
-    const isAuthor = ref(store.isAdmin(store.currentQuiz.admin_id));
+    const isAuthor = ref(store.isAdmin(store.currentQuiz.adminId));
     const isEditor = ref(store.isEditor);
     let question_list = ref(store.currentQuiz.questions);
 
@@ -124,14 +125,20 @@ export default {
       }
     };
 
-    const deleteQuiz = () => {
-      store.deleteCurrentQuiz();
+    const deleteQuiz = async () => {
+      try {
+        await store.deleteCurrentQuiz();
+        setTimeout(() => {
+        }, 500);
+        await router.push('/home');
+      } catch (error) {
+        console.error(error);
+      }
     }
 
     const addToMyquiz = () => {
       store.addQuiz();
     }
-
 
     const createQuestion = () => {
       if (editQuestion.value.type === 'TRUE_FALSE') {
@@ -149,7 +156,6 @@ export default {
       addNewQuestion.value = false;
       edit.value = false;
     };
-
 
     const showEdit = (question) => {
       console.log(question)
@@ -174,7 +180,6 @@ export default {
         console.error('Error editing question:', error);
       }
     };
-
 
     const cancelCreate = () => {
       editQuestion.value = {

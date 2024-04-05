@@ -32,16 +32,12 @@
             <font-awesome-icon class="icon" icon="fa-solid fa-circle-plus" />
           </li>
         </router-link>
-<!--        <router-link to="/myquiz">-->
-<!--          <li>-->
-<!--            <font-awesome-icon class="icon" icon="fa-solid fa-circle-plus" />-->
-<!--          </li>-->
-<!--        </router-link>-->
         <router-link to="/profile">
           <li>
             <font-awesome-icon class="icon" icon="fa-solid fa-circle-user" />
           </li>
         </router-link>
+        <div class="language" @click="changeLang()">{{ language }}</div>
       </ul>
     </nav>
   </header>
@@ -50,9 +46,32 @@
 
 <script>
 import TheWelcomeComponent from "@/components/TheWelcomeComponent.vue";
+import {ref} from "vue";
+import {useI18n} from "vue-i18n";
 
 export default {
   components: { TheWelcomeComponent },
+
+  setup() {
+   let language = ref("NO");
+   const { locale } = useI18n();
+
+    const changeLang =  () => {
+     if (language.value === "EN") {
+       locale.value = "NO";
+       language.value = "NO";
+     }
+     else {
+       language.value = "EN";
+       locale.value = "EN";
+     }
+   };
+
+   return {
+     language,
+     changeLang
+   }
+  }
 }
 </script>
 
@@ -65,6 +84,23 @@ header {
   align-items: center;
   align-content: center;
   justify-content: space-between;
+}
+
+.language {
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  color: white;
+  top: 15px;
+}
+
+.language {
+  margin-left: 25px;
+  margin-right: 25px;
+}
+
+.language:hover {
+  scale: 1.2;
 }
 
 #logo {
@@ -87,9 +123,9 @@ nav ul {
 
 li {
   color: white;
-  display: flex; /* Ensure flexbox is being used */
-  justify-content: center; /* Center horizontally */
-  align-items: center; /* Center vertically */
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin: 10px;
   background-color: rgba(19, 155, 250, 0.88);
   width: 60px;
@@ -118,11 +154,16 @@ li:hover {
     z-index: 1;
   }
 
+  .language {
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+
   nav {
     display: flex;
     justify-content: space-evenly;
     width: 100%;
-    padding: 10px;
+    padding: 5px;
   }
 
   .header_text {
