@@ -4,13 +4,16 @@ import com.corundumstudio.socketio.AckRequest;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
 import edu.ntnu.idatt2105.backend.dto.websocket.*;
+import edu.ntnu.idatt2105.backend.model.users.User;
 import edu.ntnu.idatt2105.backend.service.JWTTokenService;
+import edu.ntnu.idatt2105.backend.service.images.ImageService;
 import edu.ntnu.idatt2105.backend.service.quiz.QuestionService;
 import edu.ntnu.idatt2105.backend.service.users.UserService;
 import edu.ntnu.idatt2105.backend.util.Game;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.util.Pair;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.core.env.Environment;
@@ -56,6 +59,8 @@ import java.util.logging.Logger;
  * <p>- beginAnswering
  * <p>- questionAnswered
  * <p>- yourScore
+ * <p>- defaultImages: String list of image ids
+ * <p>- gameExists: boolean
  *
  * @version 1.1 30.03.2024
  * @author Brage Halvorsen Kvamme
@@ -70,6 +75,7 @@ public class SocketService {
     private final UserService userService;
     private final QuestionService questionService;
     private final Environment env;
+    private final ImageService imageService;
 
 
     /**
@@ -88,14 +94,15 @@ public class SocketService {
         }
         server.addConnectListener(this::onConnect);
         server.addDisconnectListener(this::onDisconnect);
-        server.addEventListener("createGame", CreateGameDTO.class, this::createGame);
-        server.addEventListener("joinGame", JoinGameDTO.class, this::joinGame);
-        server.addEventListener("startGame", GameValidationDTO.class, this::startGame);
-        server.addEventListener("nextQuestion", GameValidationDTO.class, this::nextQuestion);
-        server.addEventListener("answerQuestion", SubmitAnswerDTO.class, this::answerQuestion);
-        server.addEventListener("revealAnswer", GameValidationDTO.class, this::revealAnswer);
-        server.addEventListener("beginAnswering", GameValidationDTO.class, this::beginAnswering);
-        server.addEventListener("getScoreBoard", GameValidationDTO.class, this::getScoreBoard);
+        server.addEventListener("createGame", CreateGameDTO.class, this::onCreateGame);
+        server.addEventListener("joinGame", JoinGameDTO.class, this::onJoinGame);
+        server.addEventListener("checkGameExists", JoinGameDTO.class, this::onCheckGameExists);
+        server.addEventListener("startGame", GameValidationDTO.class, this::onStartGame);
+        server.addEventListener("nextQuestion", GameValidationDTO.class, this::onNextQuestion);
+        server.addEventListener("answerQuestion", SubmitAnswerDTO.class, this::onAnswerQuestion);
+        server.addEventListener("revealAnswer", GameValidationDTO.class, this::onRevealAnswer);
+        server.addEventListener("beginAnswering", GameValidationDTO.class, this::onBeginAnswering);
+        server.addEventListener("getScoreBoard", GameValidationDTO.class, this::onGetScoreBoard);
 
         server.start();
     }
@@ -118,12 +125,16 @@ public class SocketService {
      */
     private void onDisconnect(SocketIOClient client) {
         logger.info("a user disconnected: " + client.getSessionId());
-        if(gameService.deleteAnonUserFromGame(client.getSessionId())) {
-            logger.info("Anon player deleted from game: " + client.getSessionId());
-            String code = getRoomCode(client);
-            String username = gameService.getGame(code).getAnonymousPlayers().get(client.getSessionId()).getUsername();
-            server.getRoomOperations(code).sendEvent("playerLeft", username);
+        Pair<String, String> codeUsername = gameService.deleteAnonUserFromGame(client.getSessionId());
+        if (codeUsername != null) {
+            String code = codeUsername.getFirst();
+            String username = codeUsername.getSecond();
+            if(!code.isBlank() && !username.isBlank()) {
+                logger.info("Anon player deleted from game: " + client.getSessionId());
+                server.getRoomOperations(code).sendEvent("playerLeft", username);
+            }
         }
+
 
         if(gameService.deleteGameFromUUID(client.getSessionId())) {
             server.getRoomOperations(getRoomCode(client)).sendEvent("gameEnded", "The game has ended");
@@ -144,7 +155,7 @@ public class SocketService {
      * @param ackRequest The ack request
      */
     @Transactional
-    public void createGame(SocketIOClient client, CreateGameDTO data, AckRequest ackRequest) {
+    public void onCreateGame(SocketIOClient client, CreateGameDTO data, AckRequest ackRequest) {
         logger.info("createGame event received: " + data);
         String token = data.jwt();
         Jwt jwt = jwtTokenService.getJwt(token);
@@ -158,6 +169,24 @@ public class SocketService {
         client.joinRoom(code);
         logger.info("Host rooms: "+ getRoomCode(client));
         client.sendEvent("gameCreated", code);
+    }
+
+    /**
+     * Send "checkGameExists" from client.
+     * Checks if a game is already created with the given code. If the game exists, the client gets True (1),
+     * else the client gets False (0).
+     *
+     * @param client The client that sent the event
+     * @param data The data sent with the event
+     * @param ackRequest The ack request
+     */
+    private void onCheckGameExists(SocketIOClient client, JoinGameDTO data, AckRequest ackRequest) {
+        if (gameService.getGame(data.code()) != null) {
+            client.sendEvent("gameExists", true);
+            client.sendEvent("defaultImages", imageService.getDefaultProfilePicIds());
+        } else {
+            client.sendEvent("gameExists", false);
+        }
     }
 
     /**
@@ -177,7 +206,7 @@ public class SocketService {
      * @param data The data sent with the event
      * @param ackRequest The ack request
      */
-    private void joinGame(SocketIOClient client, JoinGameDTO data, AckRequest ackRequest) {
+    public void onJoinGame(SocketIOClient client, JoinGameDTO data, AckRequest ackRequest) {
         logger.info("joinGame event received: " + data);
         Game game = gameService.getGame(data.code());
         if (game == null) {
@@ -187,15 +216,23 @@ public class SocketService {
 
         boolean hasToken = data.jwt() != null;
         if (hasToken) { // Logged in user scenario
+            logger.info("Adding logged in player to game: " + client.getSessionId() + " with jwt: " + data.jwt());
             Jwt jwt = jwtTokenService.getJwt(data.jwt());
             if (!jwtTokenService.isValidToken(jwt)) {
                 client.sendEvent("invalidToken", "Invalid token");
                 return;
             }
-            if (!game.addPlayer(userService.getUserByEmail(jwt.getSubject()), client.getSessionId())) {
+            User user = userService.getUserByEmail(jwt.getSubject());
+            if (!game.addPlayer(user, client.getSessionId())) {
                 logger.info("User is already in the game, rejoining! WebsocketID updated. User email: " + jwt.getSubject());
             } else {
-                server.getRoomOperations("playerJoined", jwt.getSubject());
+                server.getRoomOperations(game.getCode()).sendEvent("playerJoined",
+                        PlayerJoinedDTO.builder()
+                                .profilePicture(user.getUserId().toString())
+                                .username(user.getUsername())
+                                .build()
+                );
+                logger.info("User joining the game! User email: " + jwt.getSubject());
             }
             if (game.isStarted()) {
                 client.sendEvent("waitForQuestion", "The game has already started");
@@ -205,11 +242,17 @@ public class SocketService {
             }
 
         } else { // Anonymous user scenario
+            logger.info("Adding anon player to game: " + client.getSessionId());
             // Rejoining won't really work, as the user will have another session ID when rejoining.
             // Instead, cookies or some other temp storage could be a solution
-            game.addPlayer(client.getSessionId(), data.username());
-            server.getRoomOperations("playerJoined", data.username());
-
+            game.addPlayer(client.getSessionId(), data.username(), data.imageId());
+            server.getRoomOperations(game.getCode()).sendEvent("playerJoined",
+                    PlayerJoinedDTO.builder()
+                            .profilePicture(data.imageId())
+                            .username(data.username())
+                            .profilePicture(data.imageId())
+                            .build()
+            );
         }
 
         logger.info("anon players " + game.getAnonymousPlayers().toString());
@@ -230,7 +273,7 @@ public class SocketService {
      * @param ackRequest The ack request
      */
     @Transactional
-    public void startGame(SocketIOClient client, GameValidationDTO data, AckRequest ackRequest) {
+    public void onStartGame(SocketIOClient client, GameValidationDTO data, AckRequest ackRequest) {
         logger.info("startGame event received: " + data);
         Game game = validateIsHostAndReturnGame(client, data);
         if (game == null)
@@ -251,7 +294,7 @@ public class SocketService {
      * @param data The data sent with the event
      * @param ackRequest The ack request
      */
-    private void nextQuestion(SocketIOClient client, GameValidationDTO data, AckRequest ackRequest) {
+    private void onNextQuestion(SocketIOClient client, GameValidationDTO data, AckRequest ackRequest) {
         logger.info("nextQuestion event received: " + data);
         Game game = validateIsHostAndReturnGame(client, data);
         if (game == null)
@@ -280,7 +323,7 @@ public class SocketService {
      * @param data The data sent with the event
      * @param ackRequest The ack request
      */
-    private void beginAnswering(SocketIOClient client, GameValidationDTO data, AckRequest ackRequest) {
+    private void onBeginAnswering(SocketIOClient client, GameValidationDTO data, AckRequest ackRequest) {
         logger.info("beginAnswering event received: " + data);
         Game game = validateIsHostAndReturnGame(client, data);
         if (game == null) {
@@ -302,7 +345,7 @@ public class SocketService {
      * @param data The data sent with the event
      * @param ackRequest The ack request
      */
-    private void answerQuestion(SocketIOClient client, SubmitAnswerDTO data, AckRequest ackRequest) {
+    private void onAnswerQuestion(SocketIOClient client, SubmitAnswerDTO data, AckRequest ackRequest) {
         boolean isPlayerSignedIn = data.jwt() != null;
 
         logger.info("answerQuestion event received: " + data);
@@ -353,7 +396,7 @@ public class SocketService {
      * @param data The data sent with the event
      * @param ackRequest The ack request
      */
-    private void revealAnswer(SocketIOClient client, GameValidationDTO data, AckRequest ackRequest) {
+    private void onRevealAnswer(SocketIOClient client, GameValidationDTO data, AckRequest ackRequest) {
         logger.info("revealAnswer event received from client: " + client.getSessionId());
         Game game = validateIsHostAndReturnGame(client, data);
         if (game == null)
@@ -375,7 +418,7 @@ public class SocketService {
      * @param data The data sent with the event
      * @param ackRequest The ack request
      */
-    private void getScoreBoard(SocketIOClient client, GameValidationDTO data, AckRequest ackRequest) {
+    private void onGetScoreBoard(SocketIOClient client, GameValidationDTO data, AckRequest ackRequest) {
         logger.info("getScoreBoard event received from client: " + client.getSessionId());
         Game game = validateIsHostAndReturnGame(client, data);
         if (game == null)
@@ -423,7 +466,7 @@ public class SocketService {
      * @return The room code of the client
      */
     private String getRoomCode(SocketIOClient client) {
-        logger.info("all rooms from lient " + client.getSessionId() + ": " + client.getAllRooms().toString());
+        logger.info("all rooms from client " + client.getSessionId() + ": " + client.getAllRooms().toString());
         return client.getAllRooms().stream().filter(room -> !room.isBlank()).findFirst().orElse(null);
     }
 }

@@ -47,11 +47,11 @@ public class SocketIoConfig {
                 host.set("0.0.0.0");
             }
         });
-
         config.setHostname(host.get());
         config.setPort(3000);
 
         socketIOServer = new SocketIOServer(config);
+
         return socketIOServer;
     }
 
@@ -62,6 +62,9 @@ public class SocketIoConfig {
     public void stopSocketIOServer() {
         if (isTesting)
             return;
+        if(socketIOServer == null) {
+            return;
+        }
         logger.info("Stopping socket.io server");
         socketIOServer.stop();
     }

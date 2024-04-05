@@ -49,16 +49,14 @@ public class DummyData implements CommandLineRunner {
      * don't insert it.
      *
      * @param args The command line arguments
-     * @throws Exception If something goes wrong
      */
     @Transactional
     @Override
-    public void run(String... args) throws Exception{
+    public void run(String... args) {
         User user = User.builder()
                 .username("TestUser")
                 .email("test@test.test")
                 .password(passwordEncoder.encode("password"))
-                .profilePicLink("https://www.google.com")
                 .build();
 
         if (userRepository.findByUsername(user.getUsername()).isEmpty()) {
@@ -73,7 +71,6 @@ public class DummyData implements CommandLineRunner {
                 .username("test User2")
                 .email("test2@test.test")
                 .password(passwordEncoder.encode("password"))
-                .profilePicLink("https://www.google.com")
                 .build();
 
         if (userRepository.findByUsername(user2.getUsername()).isEmpty()) {

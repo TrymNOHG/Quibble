@@ -15,6 +15,7 @@ import edu.ntnu.idatt2105.backend.util.Game;
 import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.util.Pair;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
@@ -129,10 +130,23 @@ public class GameService {
      * Deletes an anonymous user from a game.
      *
      * @param uuid The UUID of the anonymous user to be deleted.
-     * @return True if the user was deleted, false if the user was not found.
+     * @return code of the game the player was removed from, or null if the player was not found.
      */
-    public boolean deleteAnonUserFromGame(UUID uuid) {
-        return rooms.values().stream().anyMatch(game -> game.getAnonymousPlayers().remove(uuid) != null);
+    public Pair<String, String> deleteAnonUserFromGame(UUID uuid) {
+
+        for (Map.Entry<String, Game> entry : rooms.entrySet()) {
+            Game game = entry.getValue();
+            if (game.getAnonymousPlayers().containsKey(uuid)) {
+                String username = game.getAnonymousPlayers().get(uuid).getUsername();
+                if (game.getAnonymousPlayers().remove(uuid) != null) {
+                    // Player was removed, return the game's code
+                    return Pair.of(entry.getKey(), username);
+                }
+            }
+
+        }
+        // No player removed, return null
+        return null;
     }
 
     /**

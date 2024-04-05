@@ -47,7 +47,7 @@ public class GameTest {
         @Test
         void Add_anonymous_player_test() {
             UUID uuid = UUID.randomUUID();
-            game.addPlayer(uuid, "anonymous");
+            game.addPlayer(uuid, "anonymous", "default-1");
             assertEquals("anonymous", game.getAnonymousPlayers().get(uuid).getUsername());
         }
 

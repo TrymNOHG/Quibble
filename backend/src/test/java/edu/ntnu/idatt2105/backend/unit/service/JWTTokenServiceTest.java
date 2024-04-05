@@ -47,7 +47,6 @@ public class JWTTokenServiceTest {
     public void setUp() {
         // Setup logic here
         user = User.builder()
-                .profilePicLink("profilePicLink")
                 .username("username")
                 .email("email")
                 .password("password")

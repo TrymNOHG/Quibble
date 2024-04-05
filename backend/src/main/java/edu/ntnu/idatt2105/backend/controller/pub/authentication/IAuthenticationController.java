@@ -13,10 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * This interface contains the methods of the AuthenticationController.
@@ -73,10 +71,13 @@ public interface IAuthenticationController {
             description = """
                     Registers a new user and returns the access and refresh tokens. The access token is returned in the response body, and the refresh token is returned as a cookie. Provide user registration details in the request body.
                     """)
-    @PostMapping("/signup")
+    @PostMapping(value = "/signup", consumes = {"multipart/form-data"})
     ResponseEntity<AuthenticationResponseDTO> signup(
-            @Valid @RequestBody UserRegisterDTO userRegisterDTO,
-            HttpServletResponse httpServletResponse, BindingResult bindingResult
+            @RequestParam("username") String username,
+            @RequestParam("password") String password,
+            @RequestParam("email") String email,
+            @RequestParam(name = "image", required = false) MultipartFile imageFile,
+            HttpServletResponse httpServletResponse
     );
 
     /**
