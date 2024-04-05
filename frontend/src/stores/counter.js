@@ -3,7 +3,7 @@ import {
   fetchUserByUsername,
   getUser
 } from "@/services/UserService.js";
-import {getPictureFromUser} from "@/services/ImageService.js";
+import {getPictureFromID} from "@/services/ImageService.js";
 
 import {
   addCollaborator,
@@ -53,11 +53,8 @@ export const useUserStore = defineStore('storeUser', {
       await getUser()
           .then(response => {
             this.user = response.data
-            getPictureFromUser('2', response.data.profilePicture).then(response =>{
-              this.user.profilePicture = `data:${response.data.contentType};base64,${response.data.image}`;
-            }).catch(e => {
-              console.log(e)
-            });
+            this.user.profilePicture = getPictureFromID(this.user.userId);
+
           }).catch(error  => {
             console.warn("error", error)
           })

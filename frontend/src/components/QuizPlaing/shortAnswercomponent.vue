@@ -72,6 +72,11 @@ export default {
       stopTimer();
     });
 
+    watch(() => props.showAnswersProp, (newValue) => {
+      stopTimer()
+      emit('timerDone');
+    });
+
     const startTimer = () => {
       stopTimer(); // Ensure no timers are running
       timer.value = setInterval(() => {

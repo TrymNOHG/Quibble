@@ -29,8 +29,20 @@ class GameService {
     }
 
     // Join an existing game
-    joinGame(code, jwt, username, callback) {
-        this.socket.emit('joinGame', { code, jwt, username }, callback);
+    joinGame(joinGameDTO, callback) {
+        this.socket.emit('joinGame', joinGameDTO, callback);
+    }
+
+    onGameJoined(callback) {
+        this.socket.on('gameJoined', callback);
+    }
+
+    onDefaultImages(callback) {
+        this.socket.on('defaultImages', callback);
+    }
+
+    checkGameExists(gameCode, callback) {
+        this.socket.emit('checkGameExists', gameCode, callback);
     }
 
     // Start the game (host only)

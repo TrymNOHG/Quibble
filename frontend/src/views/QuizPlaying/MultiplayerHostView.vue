@@ -37,14 +37,8 @@
           @timerDone="handleTimerDone"
       />
     </div>
-
     <!-- Show player list -->
-    <div v-if="players.length > 0 && !gameStarted">
-      <h2>Players:</h2>
-      <ul>
-        <li v-for="player in players" :key="player.id">{{ player }}</li>
-      </ul>
-    </div>
+    <playerPreviewComponent :players="players" v-if="players.length > 0 && !gameStarted" />
   </div>
 </template>
 
@@ -57,6 +51,7 @@ import MultipleChoice from '@/components/QuizPlaing/mutlipleChoiceComponent.vue'
 import ShortAnswer from '@/components/QuizPlaing/shortAnswercomponent.vue';
 import scoreComponent from "@/components/QuizPlaing/scoreComponent.vue";
 import basic_button from "@/components/BasicComponents/basic_button.vue";
+import playerPreviewComponent from "@/components/QuizPlaing/playerPreviewComponent.vue";
 
 
 
@@ -66,7 +61,8 @@ export default {
     MultipleChoice,
     scoreComponent,
     ShortAnswer,
-    basic_button
+    basic_button,
+    playerPreviewComponent
   },
   setup() {
     const gameCode = ref(null);
@@ -188,9 +184,10 @@ export default {
       };
 
       const handleScoreDone = () => {
-        nextQuestion()
-        showScoreboard.value = false;
-
+        if (!gameEnded.value) {
+          nextQuestion()
+          showScoreboard.value = false;
+        }
         // Optionally, transition to the next question or end the quiz
       };
 

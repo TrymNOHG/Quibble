@@ -56,6 +56,8 @@ export default {
 
     watch(() => props.showAnswersProp, (newValue) => {
       showAnswers.value = newValue;
+      stopTimer()
+      emit('timerDone');
     });
 
     const correctSound = new Audio("src/assets/sound/correct.mp3");

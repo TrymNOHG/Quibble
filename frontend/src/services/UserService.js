@@ -33,7 +33,15 @@ export const getNewAccessToken = async () => {
 //     'email'    : ''
 // }
 export const registerUser = async (userRegisterDTO) => {
-    return axios.post(`${BASE_URL}/public/auth/signup`, userRegisterDTO);
+    const formData = new FormData();
+    for (const key in userRegisterDTO) {
+        formData.append(key, userRegisterDTO[key]);
+    }
+    return axios.post(`${BASE_URL}/public/auth/signup`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
 }
 
 
