@@ -7,6 +7,6 @@ import lombok.Builder;
 public record UserRegisterDTO(
         @JsonProperty("username") String username,
         @JsonProperty("password") String password,
-        @JsonProperty("email") String email,
-        @JsonProperty("profile_picture") String profilePicLink
+        @JsonProperty("email") String email
+
 ) {}

@@ -19,5 +19,6 @@ import lombok.Builder;
 public record JoinGameDTO (
     @Nullable @JsonProperty String jwt,
     @Nullable @JsonProperty String username,
-    @NotNull @JsonProperty String code
+    @NotNull @JsonProperty String code,
+    @Nullable @JsonProperty String imageId
 ) {}

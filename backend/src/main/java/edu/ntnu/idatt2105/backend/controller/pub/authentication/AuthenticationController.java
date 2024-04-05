@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -49,17 +50,19 @@ public class AuthenticationController implements IAuthenticationController {
     }
 
     @Override
-    public ResponseEntity<AuthenticationResponseDTO> signup(@Valid @RequestBody UserRegisterDTO userRegisterDTO,
-                                          HttpServletResponse httpServletResponse, BindingResult bindingResult){
+    public ResponseEntity<AuthenticationResponseDTO> signup(
+            @RequestParam("username") String username,
+            @RequestParam("password") String password,
+            @RequestParam("email") String email,
+            @RequestParam(name = "image", required = false) MultipartFile imageFile,
+            HttpServletResponse httpServletResponse
+    ) {
         logger.info("Calling signup endpoint");
-        if (bindingResult.hasErrors()) {
-            List<String> e = bindingResult.getAllErrors().stream()
-                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                    .toList();
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.toString());
-        }
+        UserRegisterDTO userRegisterDTO = new UserRegisterDTO(username, password, email);
 
-        AuthenticationResponseDTO authenticationResponseDTO = authenticationService.registerUser(userRegisterDTO,httpServletResponse);
+        AuthenticationResponseDTO authenticationResponseDTO = authenticationService.registerUser(
+                userRegisterDTO, httpServletResponse, imageFile
+        );
         logger.info("Sign-up Process Completed.");
         return ResponseEntity.ok(authenticationResponseDTO);
     }

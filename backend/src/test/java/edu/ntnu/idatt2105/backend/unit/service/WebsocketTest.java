@@ -115,7 +115,7 @@ public class WebsocketTest {
                 .quizId(1)
                 .jwt(jwt)
                 .build();
-        websocketService.createGame(client, data, ackRequest);
+        websocketService.onCreateGame(client, data, ackRequest);
 
         assertEquals(1, reachedGameCreated.get());
     }
@@ -160,7 +160,7 @@ public class WebsocketTest {
                 .quizId(1)
                 .jwt(jwt)
                 .build();
-        websocketService.createGame(client, data, ackRequest);
+        websocketService.onCreateGame(client, data, ackRequest);
         assertEquals(1, reachedGameCreated.get());
 
         when(client.getSessionId()).thenReturn(uuid);
@@ -169,7 +169,7 @@ public class WebsocketTest {
                 .code(code.get())
                 .jwt(jwt)
                 .build();
-        websocketService.joinGame(client, gameData, ackRequest);
+        websocketService.onJoinGame(client, gameData, ackRequest);
         assertEquals(1, reachedPlayerJoined.get());
     }
 

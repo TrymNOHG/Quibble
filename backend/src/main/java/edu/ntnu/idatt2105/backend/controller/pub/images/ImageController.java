@@ -32,18 +32,18 @@ import java.util.List;
 @RequiredArgsConstructor
 @CrossOrigin("*")
 @Slf4j
-@RequestMapping(value = "/api/v1/public/image")
+@RequestMapping("/api/v1/public/image")
 public class ImageController implements IImageController {
 
     private final ImageService imageService;
 
-    @GetMapping("/api/v1/public/{image}")
+    @GetMapping("/{image}")
     public ResponseEntity<Resource> getFile(@PathVariable String image) {
         try {
+            log.info("Getting image");
             return imageService.getFile(image);
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
     }
-
 }

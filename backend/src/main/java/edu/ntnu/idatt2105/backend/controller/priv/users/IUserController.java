@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.nio.file.FileSystemException;
 
 /**
@@ -45,7 +46,7 @@ public interface IUserController {
                             schema = @Schema(implementation = User.class)) })
     }
     )
-    ResponseEntity<UserLoadDTO> updateUser(@ModelAttribute @NonNull UserUpdateDTO userUpdateDTO, @NonNull Authentication authentication) throws FileSystemException;
+    ResponseEntity<UserLoadDTO> updateUser(@ModelAttribute @NonNull UserUpdateDTO userUpdateDTO, @NonNull Authentication authentication) throws IOException;
 
 
     /**
