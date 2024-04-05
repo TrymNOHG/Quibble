@@ -13,5 +13,8 @@ import lombok.NonNull;
  * @version 1.0 23.03.2024
  */
 @Builder
-public record CategoryDTO(@NonNull Long categoryId, @NonNull String categoryName, String categoryDescription) {
+public record CategoryDTO(@NonNull Long categoryId,
+
+                          @NonNull String categoryName,
+                          String categoryDescription) {
 }

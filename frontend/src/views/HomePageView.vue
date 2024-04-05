@@ -78,6 +78,7 @@ async function handleDifficulty(difficulty) {
 }
 
 async function handleSearchInput() {
+  console.log(searchInput.value)
   try {
     const s = (searchInput.value === '') ? null : searchInput.value;
     const d = (difficulty_selected.value === '') ? null : difficulty_selected.value;
