@@ -6,6 +6,9 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 certificates/
+backend/src/main/resources/images/*
+## Leave the default image
+!backend/src/main/resources/images/default-**
 
 ## DB
 /db/**

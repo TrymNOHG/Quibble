@@ -29,7 +29,7 @@ import java.util.logging.Logger;
  */
 @RequestMapping("/api/v1/public/auth")
 @RestController
-@RequiredArgsConstructor // allow credentials yes
+@RequiredArgsConstructor
 @CrossOrigin("*")
 @SecurityScheme(
         name = "basicAuth",
