@@ -5,7 +5,11 @@ import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryCreateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorLoadDTO;
+import edu.ntnu.idatt2105.backend.exception.notfound.CategoryNotFoundException;
 import edu.ntnu.idatt2105.backend.mapper.quiz.QuizAuthorMapper;
+import edu.ntnu.idatt2105.backend.mapper.quiz.QuizCategoryMapper;
+import edu.ntnu.idatt2105.backend.model.category.Category;
+import edu.ntnu.idatt2105.backend.model.category.QuizCategory;
 import edu.ntnu.idatt2105.backend.model.quiz.Difficulty;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizUpdateDTO;
@@ -14,6 +18,8 @@ import edu.ntnu.idatt2105.backend.mapper.quiz.QuizMapper;
 import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
 import edu.ntnu.idatt2105.backend.model.quiz.QuizAuthor;
 import edu.ntnu.idatt2105.backend.model.users.User;
+import edu.ntnu.idatt2105.backend.repo.category.CategoryRepository;
+import edu.ntnu.idatt2105.backend.repo.category.QuizCategoryRepository;
 import edu.ntnu.idatt2105.backend.repo.quiz.QuizAuthorRepository;
 import edu.ntnu.idatt2105.backend.repo.quiz.QuizRepository;
 import edu.ntnu.idatt2105.backend.repo.quiz.question.MultipleChoiceRepository;
@@ -51,6 +57,8 @@ public class QuizService {
     private final QuizMapper quizMapper;
     private final MultipleChoiceRepository multipleChoiceRepository;
     private final QuizAuthorRepository quizAuthorRepository;
+    private final CategoryRepository categoryRepository;
+    private final QuizCategoryRepository quizCategoryRepository;
 
     public Quiz getQuizById(long quizId) {
         return quizRepository.findById(quizId)
@@ -208,8 +216,41 @@ public class QuizService {
         LOGGER.info("Collaborator removed.");
     }
 
+    /**
+     * This method adds a new category to a pre-existing quiz.
+     * @param quizCategoryCreateDTO     The data transfer object for quiz category creation.
+     * @return                          A DTO containing the information of the saved quiz category.
+     */
     public QuizCategoryLoadDTO addCategory(QuizCategoryCreateDTO quizCategoryCreateDTO) {
-        return null;
+        Quiz quiz = quizRepository.findById(quizCategoryCreateDTO.quizId())
+                .orElseThrow(() -> new QuizNotFoundException(quizCategoryCreateDTO.quizId().toString()));
+
+        Category category = categoryRepository.findById(quizCategoryCreateDTO.quizId())
+                .orElseThrow(() -> new CategoryNotFoundException(quizCategoryCreateDTO.quizId().toString()));
+
+        QuizCategory quizCategory = QuizCategory
+                .builder()
+                .category(category)
+                .quiz(quiz)
+                .build();
+
+        QuizCategory savedQuizCategory = quizCategoryRepository.save(quizCategory);
+        return QuizCategoryMapper.INSTANCE.quizCategoryToQuizCategoryLoadDTO(savedQuizCategory);
+    }
+
+    /**
+     * This method removes a category from a quiz.
+     * @param quizCategoryId   The id of the quiz category.
+     */
+    public void removeQuizCategory(Long quizCategoryId) {
+        //TODO: check that the user trying to remove the collaborator can.
+        LOGGER.info("Looking for quiz category.");
+        QuizCategory quizCategory = quizCategoryRepository
+                .findById(quizCategoryId)
+                .orElseThrow(() -> new CategoryNotFoundException("QuizCategory Id: " + quizCategoryId));
+        LOGGER.info("Quiz category found.");
+        quizCategoryRepository.delete(quizCategory);
+        LOGGER.info("Quiz category removed.");
     }
 
 }
