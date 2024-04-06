@@ -7,3 +7,6 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 #server:
 #  address: 0.0.0.0
+logging:
+  level:
+    web: debug

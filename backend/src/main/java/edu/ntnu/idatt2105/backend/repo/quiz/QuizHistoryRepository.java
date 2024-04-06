@@ -13,4 +13,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface QuizHistoryRepository extends JpaRepository<QuizHistory, Long>, JpaSpecificationExecutor<QuizHistory> {
+
 }
