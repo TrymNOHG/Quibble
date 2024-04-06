@@ -1,5 +1,5 @@
 <template>
-  <header>
+  <header v-if="!isOnRoot">
     <router-link to="/home" aria-label="Go to Home page">
       <img
           id="logo"
@@ -7,13 +7,12 @@
           src="@/assets/images/logov1.png"/>
     </router-link>
     <router-link class="header_text" to="/home">
-      <h1 class="header_text">Quibble</h1>
+      <h1 class="header_text">{{ headerText }}</h1>
     </router-link>
     <nav>
       <ul>
         <router-link to="/home">
           <li>
-
               <font-awesome-icon class="icon" icon="fa-solid fa-home"/>
           </li>
         </router-link>
@@ -32,16 +31,12 @@
             <font-awesome-icon class="icon" icon="fa-solid fa-circle-plus" />
           </li>
         </router-link>
-<!--        <router-link to="/myquiz">-->
-<!--          <li>-->
-<!--            <font-awesome-icon class="icon" icon="fa-solid fa-circle-plus" />-->
-<!--          </li>-->
-<!--        </router-link>-->
         <router-link to="/profile">
           <li>
             <font-awesome-icon class="icon" icon="fa-solid fa-circle-user" />
           </li>
         </router-link>
+        <div class="language" @click="changeLang()">{{ language }}</div>
       </ul>
     </nav>
   </header>
@@ -50,9 +45,48 @@
 
 <script>
 import TheWelcomeComponent from "@/components/TheWelcomeComponent.vue";
+import {ref, computed} from "vue";
+import {useI18n} from "vue-i18n";
+import {useRoute} from "vue-router";
 
 export default {
   components: { TheWelcomeComponent },
+
+  setup() {
+   let language = ref("NO");
+   const { locale } = useI18n();
+   const route = useRoute();
+   const isOnRoot = computed(()=>{
+     return route.path === "/";
+   });
+
+    const headerText = computed(() => {
+      if (route.path === "/home"){return "Home"}
+      if (route.path === "/myquiz"){return "My Quizzes"}
+      if (route.path === "/quiz"){return "Quiz"}
+      if (route.path === "/profile"){return "Profile"}
+      if (route.path === "/create"){return "Create"}
+
+    });
+
+    const changeLang =  () => {
+     if (language.value === "EN") {
+       locale.value = "NO";
+       language.value = "NO";
+     }
+     else {
+       language.value = "EN";
+       locale.value = "EN";
+     }
+   };
+
+   return {
+     language,
+     changeLang,
+     headerText,
+     isOnRoot
+   }
+  }
 }
 </script>
 
@@ -67,6 +101,23 @@ header {
   justify-content: space-between;
 }
 
+.language {
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  color: white;
+  top: 15px;
+}
+
+.language {
+  margin-left: 25px;
+  margin-right: 25px;
+}
+
+.language:hover {
+  scale: 1.2;
+}
+
 #logo {
   width: 100px;
   height: 100px;
@@ -76,6 +127,7 @@ header {
   color: white;
   font-weight: bold;
   margin-left: 15%;
+  width: max-content;
   text-decoration: none !important;
 }
 
@@ -87,9 +139,9 @@ nav ul {
 
 li {
   color: white;
-  display: flex; /* Ensure flexbox is being used */
-  justify-content: center; /* Center horizontally */
-  align-items: center; /* Center vertically */
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin: 10px;
   background-color: rgba(19, 155, 250, 0.88);
   width: 60px;
@@ -118,11 +170,16 @@ li:hover {
     z-index: 1;
   }
 
+  .language {
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+
   nav {
     display: flex;
     justify-content: space-evenly;
     width: 100%;
-    padding: 10px;
+    padding: 5px;
   }
 
   .header_text {

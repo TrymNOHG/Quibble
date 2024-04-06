@@ -5,18 +5,65 @@
     />
     <quiz_create_question
         class="btn_questionList"
+        @createQuiz="saveQuiz"
     />
   </div>
 </template>
 
-<script setup>
+<script>
 
-import {useQuizCreateStore} from "@/stores/counter.js";
+import {useQuizCreateStore, useQuizStore} from "@/stores/counter.js";
+import {addCategories, addCategory} from "@/services/QuizService.js";
 import Quiz_create_info from "@/components/create_quiz/quiz_create_info.vue";
 import Quiz_create_question from "@/components/create_quiz/quiz_create_question.vue";
+import {ref} from "vue";
+import router from "@/router/index.js";
+export default {
+  components: {Quiz_create_info, Quiz_create_question},
+  setup(){
+    const store = useQuizCreateStore();
+    const quiz = store.templateQuiz;
+    const categories = ref([])
 
-const store = useQuizCreateStore();
-const quiz = store.templateQuiz;
+    const saveQuiz = async (question_list) => {
+      let questionList = question_list.question_list
+      let categoryIds = store.templateQuiz.categories.map(category => category.categoryId)
+      try {
+        await store.createQuiz(questionList);
+
+        let categoriesDTO = {
+          quizId : store.templateQuiz.quizId,
+          categoryIds : categoryIds
+        }
+        console.log("caters", categoriesDTO)
+        await addCategories(categoriesDTO)
+        setTimeout(()=> {}, 500);
+        await router.push('/home');
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    const addCategory = (category) => {
+      console.log("Adding category: ", category)
+      categories.value.push(category)
+    }
+
+    const removeCategory = (category) => {
+      categories.value = categories.value.filter(c => c !== category)
+    }
+
+
+    return {
+      store,
+      quiz,
+      saveQuiz,
+      addCategory,
+      removeCategory
+    };
+  }
+}
+
 
 </script>
 

@@ -19,7 +19,7 @@
         </div>
       </div>
       <div class="login_register_text">
-        <h4>
+        <h4 v-if="isOnRoot">
           {{ $t('login_register_text.LOGIN_MESSAGE') }}
           <router-link to="/login">{{ $t('login_register_text.LOGIN') }}</router-link>,
           {{ $t('login_register_text.OR') }}
@@ -32,7 +32,8 @@
 
 <script>
 import { useI18n } from 'vue-i18n';
-import {useRouter} from "vue-router";
+import {computed} from "vue";
+import {useRouter, useRoute} from "vue-router";
 import {ref} from "vue";
 
 export default {
@@ -42,7 +43,12 @@ export default {
   setup() {
     const { t } = useI18n();
     const router = useRouter();
+    const route = useRoute();
     const gamepin = ref("");
+
+    const isOnRoot = computed(()=>{
+      return route.path === "/";
+    });
 
     const hide_txt = () => {
       const inputField = document.querySelector('.pin_input');
@@ -71,6 +77,7 @@ export default {
     return {
       hide_txt,
       show_txt,
+      isOnRoot,
       gamepin,
       startGame
     }

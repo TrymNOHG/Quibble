@@ -2,10 +2,15 @@ package edu.ntnu.idatt2105.backend.controller.priv.quiz;
 
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizUpdateDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryCreateDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryCreateMultDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryLoadDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryLoadMultDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionCreateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionEditDTO;
+import edu.ntnu.idatt2105.backend.model.category.QuizCategory;
 import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
 import edu.ntnu.idatt2105.backend.model.quiz.QuizAuthor;
 import io.swagger.v3.oas.annotations.Operation;
@@ -199,5 +204,67 @@ public interface IQuizController {
     }
     )
     ResponseEntity<Object> deleteQuestion(@PathVariable @NonNull Long questionId, @NonNull Authentication authentication);
+
+
+    /**
+     * This method adds a new category to a quiz.
+     *
+     * @return ResponseEntity showing whether the operation was successful.
+     */
+    @PostMapping(
+            value="/create/category",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @Operation(summary = "This method adds a new category to a given quiz")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful addition of category.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = QuizCategory.class)) }),
+            @ApiResponse(responseCode = "403", description = "Unauthorized addition of category.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = QuizCategory.class)) })
+    }
+    )
+    ResponseEntity<QuizCategoryLoadDTO> addCategory(@RequestBody @NonNull QuizCategoryCreateDTO quizCategoryCreateDTO, @NonNull Authentication authentication);
+
+    /**
+     * This method adds a new category to a quiz.
+     *
+     * @return ResponseEntity showing whether the operation was successful.
+     */
+    @PostMapping(
+            value="/create/categories",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @Operation(summary = "This method adds a new categories to a given quiz")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful addition of categories.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = QuizCategory.class)) }),
+            @ApiResponse(responseCode = "403", description = "Unauthorized addition of categories.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = QuizCategory.class)) })
+    }
+    )
+    ResponseEntity<QuizCategoryLoadMultDTO> addCategories(@RequestBody @NonNull QuizCategoryCreateMultDTO quizCategoryCreateMultDTO, @NonNull Authentication authentication);
+
+
+    @DeleteMapping(
+            value="/delete/category/{quizCategoryId}"
+    )
+    @Operation(summary = "This method deletes a category of a given quiz")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful deletion of category.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = QuizCategory.class)) }),
+            @ApiResponse(responseCode = "403", description = "Unauthorized deletion of category.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = QuizCategory.class)) })
+    }
+    )
+    ResponseEntity<Object> deleteQuizCategory(@PathVariable @NonNull Long quizCategoryId, @NonNull Authentication authentication);
+
 
 }

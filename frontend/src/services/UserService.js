@@ -18,7 +18,7 @@ export const loginUser = async (userLoginDTO) => {
 }
 
 export const getNewAccessToken = async () => {
-    return axios.post(`${BASE_URL}/public/auth/get-access-token-from-refresh-token`, {}, {
+    return axios.post(`${BASE_URL}/public/auth/refresh-token/get`, {}, {
         withCredentials: true,
         headers: {
         },
@@ -99,7 +99,6 @@ export const updateUser = async (userUpdateDTO) => {
 }
 
 
-//TODO: use userUpdateDTO
 export const updateUserShowActivity = async (newShowActivity) => {
     console.log(newShowActivity)
     return axios.patch(`${BASE_URL}/private/users/update/showActivity`, newShowActivity, {
