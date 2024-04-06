@@ -145,6 +145,23 @@ export const addCategory = async (categoryDTO) => {
     }
 };
 
+export const addCategories = async (categoriesDTO) => {
+    if(categoriesDTO === null) {
+        throw Error("Category DTO is null")
+    }
+    try {
+        const response = await axios.post(`${BASE_URL_PRIV}/create/categories`,
+            categoriesDTO, {
+                headers: {
+                    Authorization: `Bearer ${await sessionToken()}`,
+                }
+            });
+        return response.data;
+    } catch (error) {
+        throw error.response ? error.response.data : error.message;
+    }
+};
+
 export const addKeyword = async (keywordDTO) => {
     try {
         const response = await axios.post(`${BASE_URL_PRIV}/create/question`,

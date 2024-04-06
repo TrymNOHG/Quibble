@@ -18,6 +18,8 @@ import {
   updateQuiz
 } from "@/services/QuizService.js"
 
+import { getAllCategories } from "@/services/CategoryService";
+
 export const useUserStore = defineStore('storeUser', {
 
   state: () => {
@@ -109,7 +111,7 @@ export const useQuizStore = defineStore('storeQuiz', {
         Image: "",
       },
 
-      category_list: ["Movies","School","Sport","Geography"]
+      category_list: getAllCategories()
     }
   },
 
@@ -274,7 +276,7 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
   state: () => {
     return {
       templateQuiz: {
-        QuizId: null,
+        quizId: null,
         quizName: "TemplateQuiz",
         quizDifficulty: "Easy",
         quizDescription: "Template quiz, change the quiz as wanted",
@@ -332,6 +334,7 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
       await createQuiz(this.templateQuiz.quizName)
           .then(response => {
             createdQuiz = response;
+            this.templateQuiz.quizId = response.quizId
           }).catch(error => {
             console.warn("Error creating quiz:", error);
           });
@@ -389,7 +392,7 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
           "categoryId": category.categoryId,
           "categoryName": category.newName
         };
-        addCategoryPromises.push(addCategory(categoryDTO));
+        //addCategoryPromises.push(addCategory(categoryDTO));
       });
       this.templateQuiz.categories = [];
 

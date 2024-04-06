@@ -86,7 +86,7 @@
             :question="q"
             @deleteQuestion="deleteQuestion(q)"
             @editQuestion="showEdit(q)"
-            @selection-change="changeSelectedQuestions"
+            @selectionChange="changeSelectedQuestions"
             ref="questionItems"
         />
       </div>
@@ -103,8 +103,11 @@ import router from "@/router/index.js";
 import {createQuizCreateDTOFromCSV, downloadQuizCSV } from "@/features/QuizCSV.js";
 
 export default {
+  name: 'quiz_create_question',
   components: { QuestionCreateList },
-  setup() {
+  props: {
+  },
+  setup(props, { emit }) {
     const store = useQuizCreateStore();
     const addNewQuestion = ref(false);
     const editQuestion = ref(false);
@@ -189,14 +192,8 @@ export default {
       cancelCreate();
     }
 
-    const createQuiz = async () => {
-      try {
-        await store.createQuiz(question_list);
-        setTimeout(()=> {}, 500);
-        await router.push('/home');
-      } catch (error) {
-        console.error(error);
-      }
+    const createQuiz = () => {
+      emit('createQuiz', {question_list})
     };
 
     const uploadQuiz = async (file) => {

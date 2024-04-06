@@ -3,7 +3,9 @@ package edu.ntnu.idatt2105.backend.controller.priv.quiz;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizUpdateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryCreateDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryCreateMultDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryLoadDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryLoadMultDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionCreateDTO;
@@ -110,6 +112,12 @@ public class QuizController implements IQuizController{
     public ResponseEntity<QuizCategoryLoadDTO> addCategory(@NonNull QuizCategoryCreateDTO quizCategoryCreateDTO, @NonNull Authentication authentication) {
         QuizCategoryLoadDTO quizCategoryLoadDTO = quizService.addQuizCategory(quizCategoryCreateDTO);
         return ResponseEntity.ok(quizCategoryLoadDTO);
+    }
+
+    @Override
+    public ResponseEntity<QuizCategoryLoadMultDTO> addCategories(@NonNull QuizCategoryCreateMultDTO quizCategoryCreateMultDTO, @NonNull Authentication authentication) {
+        QuizCategoryLoadMultDTO quizCategoryLoadMultDTO = quizService.addQuizCategories(quizCategoryCreateMultDTO);
+        return ResponseEntity.ok(quizCategoryLoadMultDTO);
     }
 
     @Override

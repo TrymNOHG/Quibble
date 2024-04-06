@@ -73,7 +73,7 @@ export default {
 
     const toggleQuestion = (event) => {
       const isSelected = event.target.checked;
-      emit('selection-change', { question: props.question, isSelected });
+      emit('selectionChange', { question: props.question, isSelected });
     };
 
 

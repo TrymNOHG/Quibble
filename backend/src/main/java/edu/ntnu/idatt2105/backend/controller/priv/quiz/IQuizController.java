@@ -3,7 +3,9 @@ package edu.ntnu.idatt2105.backend.controller.priv.quiz;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizUpdateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryCreateDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryCreateMultDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryLoadDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryLoadMultDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionCreateDTO;
@@ -225,6 +227,29 @@ public interface IQuizController {
     }
     )
     ResponseEntity<QuizCategoryLoadDTO> addCategory(@RequestBody @NonNull QuizCategoryCreateDTO quizCategoryCreateDTO, @NonNull Authentication authentication);
+
+    /**
+     * This method adds a new category to a quiz.
+     *
+     * @return ResponseEntity showing whether the operation was successful.
+     */
+    @PostMapping(
+            value="/create/categories",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @Operation(summary = "This method adds a new categories to a given quiz")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful addition of categories.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = QuizCategory.class)) }),
+            @ApiResponse(responseCode = "403", description = "Unauthorized addition of categories.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = QuizCategory.class)) })
+    }
+    )
+    ResponseEntity<QuizCategoryLoadMultDTO> addCategories(@RequestBody @NonNull QuizCategoryCreateMultDTO quizCategoryCreateMultDTO, @NonNull Authentication authentication);
+
 
     @DeleteMapping(
             value="/delete/category/{quizCategoryId}"

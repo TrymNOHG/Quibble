@@ -3,7 +3,9 @@ import edu.ntnu.idatt2105.backend.dto.category.MultipleCategoryDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizFilterDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadAllDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryCreateDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryCreateMultDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryLoadDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryLoadMultDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorLoadDTO;
 import edu.ntnu.idatt2105.backend.exception.notfound.CategoryNotFoundException;
@@ -38,7 +40,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -229,8 +233,8 @@ public class QuizService {
                 .orElseThrow(() -> new QuizNotFoundException(quizCategoryCreateDTO.quizId().toString()));
 
         LOGGER.info("Quiz found. Attempting to find category.");
-        Category category = categoryRepository.findById(quizCategoryCreateDTO.quizId())
-                .orElseThrow(() -> new CategoryNotFoundException(quizCategoryCreateDTO.quizId().toString()));
+        Category category = categoryRepository.findById(quizCategoryCreateDTO.categoryId())
+                .orElseThrow(() -> new CategoryNotFoundException(quizCategoryCreateDTO.categoryId().toString()));
 
         LOGGER.info("Category found. Creating quizCategory.");
         QuizCategory quizCategory = QuizCategory
@@ -242,6 +246,25 @@ public class QuizService {
         QuizCategory savedQuizCategory = quizCategoryRepository.save(quizCategory);
         LOGGER.info("QuizCategory is saved.");
         return QuizCategoryMapper.INSTANCE.quizCategoryToQuizCategoryLoadDTO(savedQuizCategory);
+    }
+
+    /**
+     * This method saves multiple quiz categories at the same time through quiz category create multiple dto.
+     * @param quizCategoryCreateMultDTO     All the categories to save.
+     * @return                              All the saved quiz categories as a DTO.
+     */
+    public QuizCategoryLoadMultDTO addQuizCategories(QuizCategoryCreateMultDTO quizCategoryCreateMultDTO){
+        LOGGER.info("Adding all the quiz categories.");
+        Set<QuizCategoryLoadDTO> quizCategoryLoadDTOS = new HashSet<>();
+        for(Long categoryId : quizCategoryCreateMultDTO.categoryIds()) {
+            quizCategoryLoadDTOS.add(this.addQuizCategory(QuizCategoryCreateDTO
+                    .builder()
+                            .categoryId(categoryId)
+                            .quizId(quizCategoryCreateMultDTO.quizId())
+                    .build()));
+        }
+        LOGGER.info("All quiz categories are saved.");
+        return QuizCategoryLoadMultDTO.builder().quizCategories(quizCategoryLoadDTOS).build();
     }
 
     /**
