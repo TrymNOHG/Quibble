@@ -6,6 +6,7 @@ import edu.ntnu.idatt2105.backend.dto.quiz.question.MultipleChoiceCreateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.MultipleChoiceDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionCreateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionEditDTO;
+import edu.ntnu.idatt2105.backend.dto.websocket.AlternativeDTO;
 import edu.ntnu.idatt2105.backend.dto.websocket.SendAlternativesDTO;
 import edu.ntnu.idatt2105.backend.exception.notfound.NotFoundException;
 import edu.ntnu.idatt2105.backend.exception.notfound.QuestionNotFoundException;
@@ -23,7 +24,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
 import java.util.logging.Logger;
+
+import static edu.ntnu.idatt2105.backend.util.SortingUtil.sortListWithUuidSeed;
 
 /**
  * Service class for handling questions.
@@ -43,27 +47,38 @@ public class QuestionService {
     Logger LOGGER = Logger.getLogger(QuestionService.class.getName());
 
     @Transactional
-    public QuestionDTO getQuestionDTO(long questionId) {
+    public QuestionDTO getQuestionDTO(long questionId, UUID hostUUID) {
         Question question = questionRepository.findById(questionId).orElseThrow();
         return QuestionDTO.builder()
                 .id(question.getQuestionId())
                 .question(question.getQuestion())
                 .answer(getCorrectAnswer(questionId))
                 .questionType(question.getQuestionType().name())
-                .options(
-                        question.getChoices().stream()
-                                .map(
-                                        MultipleChoiceMapper.INSTANCE::multipleChoiceToMultipleChoiceDTO
-                                ).toList())
+                .options(sortListWithUuidSeed(
+                        question.getChoices()
+                                .stream()
+                                .map(MultipleChoiceMapper.INSTANCE::multipleChoiceToMultipleChoiceDTO)
+                                .toList(),
+                        hostUUID,
+                        MultipleChoiceDTO::alternative // Assuming MultipleChoiceDTO has a getAlternative method
+                ))
                 .build();
     }
 
+    // Adjust the getAlternatives method similarly
     @Transactional
-    public SendAlternativesDTO getAlternatives(long questionId) {
+    public SendAlternativesDTO getAlternatives(long questionId, UUID hostUUID) {
         Question question = questionRepository.findById(questionId).orElseThrow();
         return SendAlternativesDTO.builder()
                 .questionType(question.getQuestionType().name())
-                .alternatives(question.getChoices().stream().map(MultipleChoice::getAlternative).toArray(String[]::new))
+                .options(sortListWithUuidSeed(
+                        question.getChoices()
+                                .stream()
+                                .map(choice -> AlternativeDTO.builder().alternative(choice.getAlternative()).build())
+                                .toList(),
+                        hostUUID,
+                        AlternativeDTO::alternative
+                ))
                 .build();
     }
 
@@ -91,8 +106,13 @@ public class QuestionService {
         // Might be a little unnecessary to send the whole quiz again...
         //Check if Quiz exist
         LOGGER.info("Attempting to retrieve quiz");
-        Quiz quiz = quizRepository.findById(questionCreateDTO.quizId())
-                .orElseThrow(() -> new QuizNotFoundException(questionCreateDTO.quizId().toString()));
+        Quiz quiz = quizRepository.findById(
+                questionCreateDTO.quizId()
+                )
+                .orElseThrow(
+                        () -> new QuizNotFoundException(questionCreateDTO.quizId().toString()
+                        )
+                );
         LOGGER.info("Quiz found.");
         LOGGER.info("Creating Question object.");
         Question question = QuestionMapper.INSTANCE.questionCreateDTOToQuestion(questionCreateDTO);
@@ -111,8 +131,12 @@ public class QuestionService {
         }
 
         LOGGER.info("Retrieving newest quiz.");
-        return quizMapper.quizToQuizLoadDTO(quizRepository.findById(questionCreateDTO.quizId())
-                .orElseThrow(() -> new QuizNotFoundException(questionCreateDTO.quizId().toString())));
+        return quizMapper.quizToQuizLoadDTO(
+                quizRepository.findById(questionCreateDTO.quizId())
+                .orElseThrow(
+                        () -> new QuizNotFoundException(questionCreateDTO.quizId().toString())
+                )
+        );
     }
 
     /**
@@ -129,7 +153,9 @@ public class QuestionService {
         LOGGER.info("Quiz found.");
         LOGGER.info("Retrieving Question object.");
         Question question = questionRepository.findById(questionEditDTO.questionId())
-                .orElseThrow(() -> new QuestionNotFoundException(questionEditDTO.quizId().toString()));
+                .orElseThrow(
+                        () -> new QuestionNotFoundException(questionEditDTO.quizId().toString())
+                );
 
         LOGGER.info("Editing Question.");
 

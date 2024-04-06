@@ -5,6 +5,7 @@ import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
 import edu.ntnu.idatt2105.backend.dto.websocket.*;
 import edu.ntnu.idatt2105.backend.model.users.User;
+import edu.ntnu.idatt2105.backend.service.quiz.QuizHistoryService;
 import edu.ntnu.idatt2105.backend.service.security.JWTTokenService;
 import edu.ntnu.idatt2105.backend.service.images.ImageService;
 import edu.ntnu.idatt2105.backend.service.quiz.QuestionService;
@@ -76,6 +77,7 @@ public class SocketService {
     private final QuestionService questionService;
     private final Environment env;
     private final ImageService imageService;
+    private final QuizHistoryService quizHistoryService;
 
 
     /**
@@ -279,7 +281,7 @@ public class SocketService {
         if (game == null)
             return;
         game.startGame();
-        client.sendEvent("getQuestion", questionService.getQuestionDTO(game.getCurrentQuestion().getQuestionId()));
+        client.sendEvent("getQuestion", questionService.getQuestionDTO(game.getCurrentQuestion().getQuestionId(), game.getHostUUID()));
         server.getRoomOperations(game.getCode()).sendEvent("waitForQuestion", "The game is starting");
     }
 
@@ -303,13 +305,15 @@ public class SocketService {
             // Send the question and alternatives to everyone in the room. The host can show the question on a screen.
             // The players can answer the question.
             client.sendEvent(
-                    "getQuestion", questionService.getQuestionDTO(game.getCurrentQuestion().getQuestionId())
+                    "getQuestion", questionService.getQuestionDTO(game.getCurrentQuestion().getQuestionId(), game.getHostUUID())
             );
             server.getRoomOperations(game.getCode()).sendEvent(
                     "waitForQuestion", "The question has started. Look at the screen!"
             );
         } else {
             server.getRoomOperations(game.getCode()).sendEvent("gameEnded", "The game has ended");
+            server.getRoomOperations(game.getCode()).sendEvent("quizId", game.getQuiz().getQuizId());
+            quizHistoryService.addHistory(game.getPlayers(), game.getQuiz());
         }
     }
 

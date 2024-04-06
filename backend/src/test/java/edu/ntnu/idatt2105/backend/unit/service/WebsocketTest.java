@@ -2,7 +2,11 @@ package edu.ntnu.idatt2105.backend.unit.service;
 
 
 import com.corundumstudio.socketio.*;
+import edu.ntnu.idatt2105.backend.dto.quiz.QuestionDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.question.MultipleChoiceCreateDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionCreateDTO;
 import edu.ntnu.idatt2105.backend.dto.websocket.CreateGameDTO;
+import edu.ntnu.idatt2105.backend.dto.websocket.GameValidationDTO;
 import edu.ntnu.idatt2105.backend.dto.websocket.JoinGameDTO;
 import edu.ntnu.idatt2105.backend.model.quiz.Difficulty;
 import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
@@ -14,6 +18,8 @@ import edu.ntnu.idatt2105.backend.repo.quiz.QuizRepository;
 import edu.ntnu.idatt2105.backend.repo.quiz.question.MultipleChoiceRepository;
 import edu.ntnu.idatt2105.backend.repo.quiz.question.QuestionRepository;
 import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
+import edu.ntnu.idatt2105.backend.service.quiz.QuizHistoryService;
+import edu.ntnu.idatt2105.backend.service.quiz.QuizService;
 import edu.ntnu.idatt2105.backend.service.security.JWTTokenGenerationService;
 import edu.ntnu.idatt2105.backend.service.security.JWTTokenService;
 import edu.ntnu.idatt2105.backend.service.images.ImageService;
@@ -21,6 +27,7 @@ import edu.ntnu.idatt2105.backend.service.quiz.QuestionService;
 import edu.ntnu.idatt2105.backend.service.users.UserService;
 import edu.ntnu.idatt2105.backend.service.websocket.GameService;
 import edu.ntnu.idatt2105.backend.service.websocket.SocketService;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,10 +37,14 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.env.Environment;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -74,6 +85,10 @@ public class WebsocketTest {
     private QuestionRepository questionRepository;
     @Autowired
     private MultipleChoiceRepository multipleChoiceRepository;
+    @Autowired
+    private QuizService quizService;
+    @Autowired
+    private QuizHistoryService quizHistoryService;
 
     @MockBean
     private SocketIOServer server;
@@ -89,20 +104,27 @@ public class WebsocketTest {
     private final AtomicInteger reachedGameCreated = new AtomicInteger();
     private final AtomicReference<String> code = new AtomicReference<>();
     private final AtomicInteger reachedGameJoined = new AtomicInteger();
+    private final AtomicInteger reachedGetQuestion = new AtomicInteger();
 
 
 
     // This took way to long haha
     @BeforeEach
+    @Transactional
     public void setUp() {
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken("test@test.test", null, Collections.emptyList());
+        SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+        securityContext.setAuthentication(authentication);
+        SecurityContextHolder.setContext(securityContext);
         // Set up websocket service with mocked websocket server
         websocketService = new SocketService(
-                server, gameService, jwtTokenService, userService, questionService, env, imageService
+                server, gameService, jwtTokenService, userService, questionService, env, imageService, quizHistoryService
         );
 
         user = User.builder()
-                .username("testMister")
-                .email("testMister@testMister")
+                .username("test")
+                .email("test@test.test")
                 .password("password")
                 .build();
         userRepository.save(user);
@@ -111,30 +133,23 @@ public class WebsocketTest {
 
         uuid = UUID.randomUUID();
 
-        Set<MultipleChoice> choices = Set.of(
-                MultipleChoice.builder().alternative("Oslo").isCorrect(true).build(),
-                MultipleChoice.builder().alternative("Bergen").isCorrect(false).build(),
-                MultipleChoice.builder().alternative("Trondheim").isCorrect(false).build(),
-                MultipleChoice.builder().alternative("Stavanger").isCorrect(false).build()
-        );
-        Question question1 = Question.builder()
-                .question("What is the capital of Norway?")
-                .questionType(QuestionType.MULTIPLE_CHOICE)
-                .answer("Oslo")
-                .choices(choices)
-                .build();
-        Quiz newQuiz = Quiz.builder()
-                .quizName("Capitals of Scandinavia")
-                .quizDescription("A quiz about the capitals of Scandinavia")
-                .admin(user)
-                .difficulty(Difficulty.EASY)
-                .questions(Set.of(question1))
-                .build();
-        quizRepository.save(newQuiz);
-
-        questionRepository.save(question1);
-
-        multipleChoiceRepository.saveAll(choices);
+        quizService.createQuiz("test quiz", "test@test.test");
+        questionService.addQuestion(QuestionCreateDTO.builder()
+                .question("test question")
+                .answer("test answer")
+                .type(QuestionType.MULTIPLE_CHOICE)
+                .quizId(1L)
+                .build());
+        questionService.addQuestion(QuestionCreateDTO.builder()
+                .question("test question")
+                .answer("test answer")
+                .type(QuestionType.MULTIPLE_CHOICE)
+                .quizId(1L)
+                .choices(Collections.singleton(MultipleChoiceCreateDTO.builder()
+                        .alternative("choice")
+                        .isCorrect(true)
+                        .build()))
+                .build());
 
         doAnswer(invocation -> {
             Object arg0 = invocation.getArgument(0);
@@ -151,10 +166,13 @@ public class WebsocketTest {
                 log.info("Game joined: " + arg1);
                 reachedGameJoined.getAndIncrement();
             }
+            if("getQuestion".equals(arg0)) {
+                log.info("Game started: " + arg1);
+                reachedGetQuestion.getAndIncrement();
+            }
             return null;
-        }).when(client).sendEvent(anyString(), anyString());
+        }).when(client).sendEvent(anyString(), any());
         when(server.getRoomOperations(anyString())).thenReturn(mock(BroadcastOperations.class));
-
     }
 
     @Test
@@ -189,6 +207,23 @@ public class WebsocketTest {
         Join_game_logged_in_test();
         when(client.getAllRooms()).thenReturn(Set.of(code.get()));
         websocketService.onDisconnect(client);
+    }
+
+    @Test
+    void Start_game_test() {
+        CreateGameDTO data = CreateGameDTO.builder()
+                .quizId(1L)
+                .jwt(jwt)
+                .build();
+        websocketService.onCreateGame(client, data, ackRequest);
+
+
+        when(client.getAllRooms()).thenReturn(Set.of(code.get()));
+        GameValidationDTO data2 = GameValidationDTO.builder()
+                .jwt(jwt)
+                .build();
+        websocketService.onStartGame(client, data2, ackRequest);
+        assertEquals(1, reachedGetQuestion.get());
     }
 
 }

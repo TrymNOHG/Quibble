@@ -29,7 +29,7 @@ public class Game {
     private final Map<UUID, AnonymousPlayer> anonymousPlayers = new HashMap<>();
     private User host;
     private UUID hostUUID;
-    private int questionIndex = -1;
+    private int questionIndex = 0;
     private Quiz quiz;
     private boolean started = false;
     private List<Question> questions;

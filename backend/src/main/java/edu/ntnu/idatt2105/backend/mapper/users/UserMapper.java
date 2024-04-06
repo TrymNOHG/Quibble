@@ -4,6 +4,7 @@ import edu.ntnu.idatt2105.backend.dto.users.MultipleUserDTO;
 import edu.ntnu.idatt2105.backend.dto.users.UserLoadDTO;
 import edu.ntnu.idatt2105.backend.model.users.User;
 import edu.ntnu.idatt2105.backend.service.images.ImageService;
+import lombok.RequiredArgsConstructor;
 import org.mapstruct.Mapper;
 import org.springframework.context.annotation.Bean;
 
@@ -18,7 +19,6 @@ import java.util.stream.Collectors;
  */
 @Mapper(componentModel = "spring")
 public interface UserMapper {
-    ImageService imageService = new ImageService();
 
     default UserLoadDTO userToUserLoadDTO(User user) {
         return UserLoadDTO.builder()

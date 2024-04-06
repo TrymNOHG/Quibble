@@ -70,11 +70,7 @@ public class JWTFilterChain extends OncePerRequestFilter {
                 UserDetails userDetails = jwtTokenService.getUserDetails(email);
                 if(jwtTokenService.isValidToken(jwtToken, userDetails)){
 
-                    UsernamePasswordAuthenticationToken newToken = new UsernamePasswordAuthenticationToken(
-                            userDetails,
-                            null,
-                            userDetails.getAuthorities()
-                    );
+                    UsernamePasswordAuthenticationToken newToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
                     newToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 

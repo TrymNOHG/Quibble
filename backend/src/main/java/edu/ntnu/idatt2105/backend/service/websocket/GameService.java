@@ -155,7 +155,7 @@ public class GameService {
     public SendAlternativesDTO getAlternatives(String code) {
         Game game = rooms.get(code);
         Question question = game.getQuestions().get(game.getQuestionIndex());
-        return questionService.getAlternatives(question.getQuestionId());
+        return questionService.getAlternatives(question.getQuestionId(), game.getHostUUID());
     }
 
     /**

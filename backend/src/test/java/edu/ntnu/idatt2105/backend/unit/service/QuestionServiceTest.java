@@ -8,12 +8,8 @@ import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.MultipleChoiceCreateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionCreateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionEditDTO;
-import edu.ntnu.idatt2105.backend.model.quiz.Difficulty;
-import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
 import edu.ntnu.idatt2105.backend.model.quiz.question.QuestionType;
 import edu.ntnu.idatt2105.backend.model.users.User;
-import edu.ntnu.idatt2105.backend.repo.quiz.QuizRepository;
-import edu.ntnu.idatt2105.backend.repo.quiz.question.QuestionRepository;
 import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
 import edu.ntnu.idatt2105.backend.service.quiz.QuestionService;
 import edu.ntnu.idatt2105.backend.service.quiz.QuizService;
@@ -33,6 +29,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Collections;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,8 +40,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 class QuestionServiceTest {
 
-    @Autowired
-    private QuizRepository quizRepository;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -94,9 +89,9 @@ class QuestionServiceTest {
                 .quizId(quizLoadDTO.quizId())
                 .build());
         long firstQuestionId = quizLoadDTO.questions().stream().findFirst().get().questionId();
-        assertEquals("test question", questionService.getQuestionDTO(firstQuestionId).question());
-        assertEquals("test answer", questionService.getQuestionDTO(firstQuestionId).answer());
-        assertEquals(QuestionType.SHORT_ANSWER.name(), questionService.getQuestionDTO(firstQuestionId).questionType());
+        assertEquals("test question", questionService.getQuestionDTO(firstQuestionId, UUID.randomUUID()).question());
+        assertEquals("test answer", questionService.getQuestionDTO(firstQuestionId, UUID.randomUUID()).answer());
+        assertEquals(QuestionType.SHORT_ANSWER.name(), questionService.getQuestionDTO(firstQuestionId, UUID.randomUUID()).questionType());
     }
 
     @Test
@@ -116,8 +111,7 @@ class QuestionServiceTest {
                 .quizId(quizLoadDTO.quizId())
                 .build());
 
-        long firstQuestionId = quizLoadDTO.questions().stream().findFirst().get().questionId();
-        QuestionDTO dto = questionService.getQuestionDTO(quizLoadDTO.quizId());
+        QuestionDTO dto = questionService.getQuestionDTO(quizLoadDTO.quizId(), UUID.randomUUID());
         assertEquals("edited question", dto.question());
         assertEquals("edited answer", dto.answer());
         assertEquals(QuestionType.MULTIPLE_CHOICE.name(), dto.questionType());
@@ -133,7 +127,7 @@ class QuestionServiceTest {
                 .quizId(1L)
                 .build());
         questionService.deleteQuestion(1L);
-        assertThrows(NoSuchElementException.class, () -> questionService.getQuestionDTO(1L));
+        assertThrows(NoSuchElementException.class, () -> questionService.getQuestionDTO(1L, UUID.randomUUID()));
     }
 
     @Test

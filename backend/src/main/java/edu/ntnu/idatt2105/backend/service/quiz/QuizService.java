@@ -70,6 +70,7 @@ public class QuizService {
     private final CategoryRepository categoryRepository;
     private final QuizCategoryRepository quizCategoryRepository;
 
+    @Transactional
     public Quiz getQuizById(long quizId) {
         return quizRepository.findById(quizId)
                 .orElseThrow(() -> new IllegalArgumentException("Quiz with id " + quizId + " not found"));
