@@ -1,18 +1,11 @@
 package edu.ntnu.idatt2105.backend.unit.service;
 
 import edu.ntnu.idatt2105.backend.dto.quiz.QuestionDTO;
-import edu.ntnu.idatt2105.backend.dto.quiz.QuizFilterDTO;
-import edu.ntnu.idatt2105.backend.dto.quiz.QuizUpdateDTO;
-import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.MultipleChoiceCreateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionCreateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionEditDTO;
-import edu.ntnu.idatt2105.backend.model.quiz.Difficulty;
-import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
 import edu.ntnu.idatt2105.backend.model.quiz.question.QuestionType;
 import edu.ntnu.idatt2105.backend.model.users.User;
-import edu.ntnu.idatt2105.backend.repo.quiz.QuizRepository;
-import edu.ntnu.idatt2105.backend.repo.quiz.question.QuestionRepository;
 import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
 import edu.ntnu.idatt2105.backend.service.quiz.QuestionService;
 import edu.ntnu.idatt2105.backend.service.quiz.QuizService;
@@ -43,8 +36,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 class QuestionServiceTest {
 
-    @Autowired
-    private QuizRepository quizRepository;
     @Autowired
     private UserRepository userRepository;
     @Autowired

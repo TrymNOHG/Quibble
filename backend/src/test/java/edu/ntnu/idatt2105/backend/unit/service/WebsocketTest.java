@@ -173,7 +173,6 @@ public class WebsocketTest {
             return null;
         }).when(client).sendEvent(anyString(), any());
         when(server.getRoomOperations(anyString())).thenReturn(mock(BroadcastOperations.class));
-
     }
 
     @Test
