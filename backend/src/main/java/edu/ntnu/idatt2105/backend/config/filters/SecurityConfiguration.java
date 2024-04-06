@@ -1,9 +1,7 @@
 package edu.ntnu.idatt2105.backend.config.filters;
 
-import edu.ntnu.idatt2105.backend.service.AuthenticationService;
 import edu.ntnu.idatt2105.backend.service.JWTTokenService;
 import edu.ntnu.idatt2105.backend.dto.security.RSAKeyPairDTO;
-import edu.ntnu.idatt2105.backend.repo.users.RefreshTokenRepository;
 import edu.ntnu.idatt2105.backend.service.LogoutHandlerService;
 import edu.ntnu.idatt2105.backend.service.users.UserService;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +32,11 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -70,12 +73,28 @@ public class SecurityConfiguration {
     private HttpSecurity commonHttpSecurity(HttpSecurity httpSecurity, String antPattern) throws Exception {
         return httpSecurity
                 .securityMatcher(new AntPathRequestMatcher(API_ENDPOINT_STRING + antPattern))
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(ex -> {
                     ex.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint());
                     ex.accessDeniedHandler(new BearerTokenAccessDeniedHandler());
                 });
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Auth-Token"));
+        configuration.setExposedHeaders(List.of("X-Auth-Token"));
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
+        configuration.setAllowedOriginPatterns(List.of("*"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     /**
@@ -130,12 +149,7 @@ public class SecurityConfiguration {
     @Order(3)
     public SecurityFilterChain refreshTokenFilter(HttpSecurity httpSecurity) throws Exception{
         return commonHttpSecurity(httpSecurity, PUBLIC+"/auth/refresh-token/**")
-                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()))
-//                .addFilterBefore(new JWTRefreshFilterChain(
-//                        rsaKeyPairDTO, refreshTokenRepository, jwtTokenService, authenticationService
-//                ), UsernamePasswordAuthenticationFilter.class)
-                .httpBasic(withDefaults()) // Correct?
                 .build();
     }
 
@@ -154,11 +168,6 @@ public class SecurityConfiguration {
         return commonHttpSecurity(httpSecurity, PUBLIC+"/auth/logout/**")
                 .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()))
-//                .addFilterBefore(
-//                        new JWTRefreshFilterChain(
-//                                rsaKeyPairDTO, refreshTokenRepository, jwtTokenService, authenticationService
-//                        ), LogoutFilter.class
-//                )
                 .logout(logout -> logout
                         .logoutUrl(API_ENDPOINT_STRING + PUBLIC + "/auth/logout")
                         .addLogoutHandler(logoutHandlerService)

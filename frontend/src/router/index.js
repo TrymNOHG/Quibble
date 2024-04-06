@@ -94,7 +94,7 @@ router.beforeEach((to, from, next) => {
         next({ path: '/' });
     }
     else if (notRequiresAuth) {
-        if (['/register', '/login'].includes(to.path) && isAuthenticated) {
+        if (['/', '/register', '/login'].includes(to.path) && isAuthenticated) {
           next({ path: '/home' });
         } else {
             next();

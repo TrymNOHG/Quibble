@@ -33,7 +33,7 @@
 <script>
 import { useI18n } from 'vue-i18n';
 import {computed} from "vue";
-import {useRouter} from "vue-router";
+import {useRoute} from "vue-router";
 import {ref} from "vue";
 
 export default {
@@ -42,11 +42,11 @@ export default {
 
   setup() {
     const { t } = useI18n();
-    const router = useRouter();
+    const router = useRoute();
     const gamepin = ref("");
 
     const isOnRoot = computed(()=>{
-      return route.path === "/";
+      return router.path === "/";
     });
 
     const hide_txt = () => {

@@ -1,18 +1,13 @@
 package edu.ntnu.idatt2105.backend.controller.pub.authentication;
 
 import edu.ntnu.idatt2105.backend.dto.security.AuthenticationResponseDTO;
-import edu.ntnu.idatt2105.backend.dto.users.UserRegisterDTO;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -58,9 +53,7 @@ public interface IAuthenticationController {
      * Endpoint for signing up. This endpoint registers a new user and returns the access and refresh token.
      * The access token is returned in the response body and the refresh token is returned as a cookie.
      *
-     * @param userRegisterDTO The user register dto
      * @param httpServletResponse The http response
-     * @param bindingResult The binding result
      * @return The access token
      */
     @ApiResponses(value = {
@@ -96,7 +89,7 @@ public interface IAuthenticationController {
                     Authorization header. The new access token is returned in the response body.
                     """)
     //@PreAuthorize("hasAuthority('SCOPE_REFRESH_TOKEN')")
-    @PostMapping ("/get-access-token-from-refresh-token")
+    @PostMapping ("/refresh-token/get")
     ResponseEntity<AuthenticationResponseDTO> getAccessTokenFromRefreshToken(
             @CookieValue(value = "refresh_token", defaultValue = "") String refreshToken
     );

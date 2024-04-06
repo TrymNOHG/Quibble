@@ -9,7 +9,6 @@ import edu.ntnu.idatt2105.backend.repo.users.RefreshTokenRepository;
 import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
 import edu.ntnu.idatt2105.backend.service.images.ImageService;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -182,6 +181,7 @@ public class AuthenticationService {
         User user = refreshTokenDatabaseEntry.getUser();
         Authentication authentication =  createAuthenticationObject(user);
         log.info("Getting access token from refresh token");
+        log.info(getAccessTokenAuthDTO(user.getEmail()).toString());
         return  getAccessTokenAuthDTO(user.getEmail());
     }
 

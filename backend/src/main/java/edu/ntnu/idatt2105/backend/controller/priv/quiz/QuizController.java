@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 @RestController("privateQuizController")
 @EnableAutoConfiguration
 @RequiredArgsConstructor
-@CrossOrigin("*")
+//@CrossOrigin("*")
 @Slf4j
 @RequestMapping(value = "/api/v1/private/quiz")
 public class QuizController implements IQuizController{
