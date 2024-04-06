@@ -96,4 +96,15 @@ public class Quiz {
     @Schema(description = "The quiz's keywords.")
     @Builder.Default
     private Set<QuizKeyword> keywords = new HashSet<>();
+
+    public void addQuestion(Question question) {
+        questions.add(question);
+        question.setQuiz(this);
+    }
+
+    public void addAuthor(QuizAuthor author) {
+        collaborators.add(author);
+        author.setQuiz(this);
+    }
+
 }

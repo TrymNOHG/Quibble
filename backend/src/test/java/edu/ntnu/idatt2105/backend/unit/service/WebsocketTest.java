@@ -4,10 +4,18 @@ package edu.ntnu.idatt2105.backend.unit.service;
 import com.corundumstudio.socketio.*;
 import edu.ntnu.idatt2105.backend.dto.websocket.CreateGameDTO;
 import edu.ntnu.idatt2105.backend.dto.websocket.JoinGameDTO;
+import edu.ntnu.idatt2105.backend.model.quiz.Difficulty;
+import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
+import edu.ntnu.idatt2105.backend.model.quiz.question.MultipleChoice;
+import edu.ntnu.idatt2105.backend.model.quiz.question.Question;
+import edu.ntnu.idatt2105.backend.model.quiz.question.QuestionType;
 import edu.ntnu.idatt2105.backend.model.users.User;
+import edu.ntnu.idatt2105.backend.repo.quiz.QuizRepository;
+import edu.ntnu.idatt2105.backend.repo.quiz.question.MultipleChoiceRepository;
+import edu.ntnu.idatt2105.backend.repo.quiz.question.QuestionRepository;
 import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
-import edu.ntnu.idatt2105.backend.service.JWTTokenGenerationService;
-import edu.ntnu.idatt2105.backend.service.JWTTokenService;
+import edu.ntnu.idatt2105.backend.service.security.JWTTokenGenerationService;
+import edu.ntnu.idatt2105.backend.service.security.JWTTokenService;
 import edu.ntnu.idatt2105.backend.service.images.ImageService;
 import edu.ntnu.idatt2105.backend.service.quiz.QuestionService;
 import edu.ntnu.idatt2105.backend.service.users.UserService;
@@ -26,6 +34,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -59,6 +68,12 @@ public class WebsocketTest {
     private UserRepository userRepository;
     @Autowired
     private ImageService imageService;
+    @Autowired
+    private QuizRepository quizRepository;
+    @Autowired
+    private QuestionRepository questionRepository;
+    @Autowired
+    private MultipleChoiceRepository multipleChoiceRepository;
 
     @MockBean
     private SocketIOServer server;
@@ -71,7 +86,13 @@ public class WebsocketTest {
     private String jwt;
     private UUID uuid;
     private User user;
+    private final AtomicInteger reachedGameCreated = new AtomicInteger();
+    private final AtomicReference<String> code = new AtomicReference<>();
+    private final AtomicInteger reachedGameJoined = new AtomicInteger();
 
+
+
+    // This took way to long haha
     @BeforeEach
     public void setUp() {
         // Set up websocket service with mocked websocket server
@@ -89,16 +110,35 @@ public class WebsocketTest {
         jwt = jwtTokenGenerationService.generateToken(user.getEmail());
 
         uuid = UUID.randomUUID();
-    }
 
-    @Test
-    void Create_game_test() {
-        AtomicInteger reachedGameCreated = new AtomicInteger();
-        AtomicReference<String> code = new AtomicReference<>();
+        Set<MultipleChoice> choices = Set.of(
+                MultipleChoice.builder().alternative("Oslo").isCorrect(true).build(),
+                MultipleChoice.builder().alternative("Bergen").isCorrect(false).build(),
+                MultipleChoice.builder().alternative("Trondheim").isCorrect(false).build(),
+                MultipleChoice.builder().alternative("Stavanger").isCorrect(false).build()
+        );
+        Question question1 = Question.builder()
+                .question("What is the capital of Norway?")
+                .questionType(QuestionType.MULTIPLE_CHOICE)
+                .answer("Oslo")
+                .choices(choices)
+                .build();
+        Quiz newQuiz = Quiz.builder()
+                .quizName("Capitals of Scandinavia")
+                .quizDescription("A quiz about the capitals of Scandinavia")
+                .admin(user)
+                .difficulty(Difficulty.EASY)
+                .questions(Set.of(question1))
+                .build();
+        quizRepository.save(newQuiz);
+
+        questionRepository.save(question1);
+
+        multipleChoiceRepository.saveAll(choices);
+
         doAnswer(invocation -> {
             Object arg0 = invocation.getArgument(0);
             Object arg1 = invocation.getArgument(1);
-
             if ("invalidToken".equals(arg0) && "Invalid token".equals(arg1)) {
                 // Fail the test if this method is called with these arguments
                 fail("sendEvent was called with invalidToken and Invalid token");
@@ -106,77 +146,49 @@ public class WebsocketTest {
             if("gameCreated".equals(arg0) && arg1 instanceof String && ((String) arg1).length() == 4) {
                 reachedGameCreated.getAndIncrement();
                 code.set((String) arg1);
-                return null;
+            }
+            if("gameJoined".equals(arg0) && arg1 instanceof String) {
+                log.info("Game joined: " + arg1);
+                reachedGameJoined.getAndIncrement();
             }
             return null;
         }).when(client).sendEvent(anyString(), anyString());
+        when(server.getRoomOperations(anyString())).thenReturn(mock(BroadcastOperations.class));
 
+    }
+
+    @Test
+    void Create_game_test() {
         CreateGameDTO data = CreateGameDTO.builder()
                 .quizId(1)
                 .jwt(jwt)
                 .build();
         websocketService.onCreateGame(client, data, ackRequest);
-
         assertEquals(1, reachedGameCreated.get());
     }
 
-//    @Test
-//    void Join_game_logged_in_test() {
-//        AtomicInteger reachedGameCreated = new AtomicInteger();
-//        AtomicInteger reachedPlayerJoined = new AtomicInteger();
-//        AtomicReference<String> code = new AtomicReference<>();
-//        doAnswer(invocation -> {
-//            Object arg0 = invocation.getArgument(0);
-//            Object arg1 = invocation.getArgument(1);
-//            if ("invalidToken".equals(arg0) && "Invalid token".equals(arg1)) {
-//                // Fail the test if this method is called with these arguments
-//                fail("sendEvent was called with invalidToken and Invalid token");
-//            }
-//            if("gameCreated".equals(arg0) && arg1 instanceof String && ((String) arg1).length() == 4) {
-//                reachedGameCreated.getAndIncrement();
-//                code.set((String) arg1);
-//                return null;
-//            }
-//            if("playerJoined".equals(arg0) && arg1 instanceof String) {
-//                log.info("Player joined: " + arg1);
-//                reachedPlayerJoined.getAndIncrement();
-//                return null;
-//            }
-//            return null;
-//        }).when(client).sendEvent(anyString(), anyString());
-//        when(server.getRoomOperations(anyString())).thenReturn(mock(BroadcastOperations.class));
-////        doAnswer(invocation -> {
-////            Object arg0 = invocation.getArgument(0);
-////            if (!arg0.equals(code.get())) {
-////                fail("getRoomOperations was called with wrong code: " + arg0);
-////            }
-////            return client;
-////        })
-//        CreateGameDTO data = CreateGameDTO.builder()
-//                .quizId(1)
-//                .jwt(jwt)
-//                .build();
-//        websocketService.onCreateGame(client, data, ackRequest);
-//        assertEquals(1, reachedGameCreated.get());
-//
-//        when(client.getSessionId()).thenReturn(uuid);
-//        when(client.getAllRooms()).thenReturn(null);
-//        JoinGameDTO gameData = JoinGameDTO.builder()
-//                .code(code.get())
-//                .jwt(jwt)
-//                .build();
-//        websocketService.onJoinGame(client, gameData, ackRequest);
-//        assertEquals(1, reachedPlayerJoined.get());
-//    }
+    @Test
+    void Join_game_logged_in_test() {
+        when(client.getSessionId()).thenReturn(uuid);
+        CreateGameDTO data = CreateGameDTO.builder()
+                .quizId(1)
+                .jwt(jwt)
+                .build();
+        websocketService.onCreateGame(client, data, ackRequest);
+        assertEquals(1, reachedGameCreated.get());
+        JoinGameDTO gameData = JoinGameDTO.builder()
+                .code(code.get())
+                .jwt(jwt)
+                .build();
+        websocketService.onJoinGame(client, gameData, ackRequest);
+        assertEquals(1, reachedGameJoined.get());
+    }
 
-//    @Test
-//    void Player_disconnect_test() {
-//        //doReturn(true).when(client).sendEvent("playerDisconnected", anyString());
-//
-//        //gameService.createGame(user.)
-//        when(client.getSessionId()).thenReturn(uuid);
-//        when(client.getAllRooms()).thenReturn(null);
-//        websocketService.onDisconnect(client);
-//    }
+    @Test
+    void Player_disconnect_test() {
+        Join_game_logged_in_test();
+        when(client.getAllRooms()).thenReturn(Set.of(code.get()));
+        websocketService.onDisconnect(client);
+    }
 
 }

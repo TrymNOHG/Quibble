@@ -42,16 +42,6 @@ public class QuestionService {
     private final QuizMapper quizMapper;
     Logger LOGGER = Logger.getLogger(QuestionService.class.getName());
 
-    public boolean isCorrectAnswer(Question question, String answer) {
-        return switch (question.getQuestionType()) {
-            case MULTIPLE_CHOICE -> question.getChoices().stream().anyMatch(
-                    choice -> choice.isCorrect() && choice.getAlternative().equalsIgnoreCase(answer)
-            );
-            case TRUE_FALSE, SHORT_ANSWER, LONG_ANSWER, FILL_IN_BLANK, FLASHCARD -> question.getAnswer().equalsIgnoreCase(answer);
-            default -> question.getAnswer().equalsIgnoreCase(answer);
-        };
-    }
-
     @Transactional
     public QuestionDTO getQuestionDTO(long questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow();
@@ -60,7 +50,11 @@ public class QuestionService {
                 .question(question.getQuestion())
                 .answer(getCorrectAnswer(questionId))
                 .questionType(question.getQuestionType().name())
-                .options(question.getChoices().stream().map(MultipleChoice::getAlternative).toList())
+                .options(
+                        question.getChoices().stream()
+                                .map(
+                                        MultipleChoiceMapper.INSTANCE::multipleChoiceToMultipleChoiceDTO
+                                ).toList())
                 .build();
     }
 
@@ -102,10 +96,11 @@ public class QuestionService {
         LOGGER.info("Quiz found.");
         LOGGER.info("Creating Question object.");
         Question question = QuestionMapper.INSTANCE.questionCreateDTOToQuestion(questionCreateDTO);
-        question.setQuiz(quiz);
+        quiz.addQuestion(question);
 
         LOGGER.info("Saving question to database.");
         Question savedQuestion = questionRepository.save(question);
+        quizRepository.save(quiz);
         LOGGER.info("Question saved to database!");
 
         if (questionCreateDTO.choices() != null) {

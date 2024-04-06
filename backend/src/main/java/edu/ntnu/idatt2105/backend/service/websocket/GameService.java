@@ -2,21 +2,16 @@ package edu.ntnu.idatt2105.backend.service.websocket;
 
 import edu.ntnu.idatt2105.backend.dto.websocket.SendAlternativesDTO;
 import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
-import edu.ntnu.idatt2105.backend.model.quiz.question.MultipleChoice;
 import edu.ntnu.idatt2105.backend.model.quiz.question.Question;
 import edu.ntnu.idatt2105.backend.model.users.User;
 import edu.ntnu.idatt2105.backend.repo.quiz.QuizRepository;
-import edu.ntnu.idatt2105.backend.repo.quiz.question.MultipleChoiceRepository;
 import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
-import edu.ntnu.idatt2105.backend.service.JWTTokenService;
+import edu.ntnu.idatt2105.backend.service.security.JWTTokenService;
 import edu.ntnu.idatt2105.backend.service.quiz.QuestionService;
-import edu.ntnu.idatt2105.backend.service.quiz.QuizService;
 import edu.ntnu.idatt2105.backend.util.Game;
 import jakarta.transaction.Transactional;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.util.Pair;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -74,7 +69,9 @@ public class GameService {
         User host = userRepository.findByEmail(hostEmail).orElseThrow();
         String code = generateRandomCode();
         logger.info("Creating game with code: " + code);
-        Quiz quiz = quizRepository.findById(quizId).orElseThrow();
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(
+                () -> new IllegalArgumentException("Quiz with id " + quizId + " not found")
+        );
         for (Question q : quiz.getQuestions()) {
             logger.info(q.getQuestion());
         }

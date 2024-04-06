@@ -2,7 +2,10 @@ package edu.ntnu.idatt2105.backend.controller.priv.users;
 
 import edu.ntnu.idatt2105.backend.dto.users.UserLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.users.UserUpdateDTO;
+import edu.ntnu.idatt2105.backend.service.security.AuthenticationService;
+import edu.ntnu.idatt2105.backend.service.images.ImageService;
 import edu.ntnu.idatt2105.backend.service.users.UserService;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.nio.file.FileSystemException;
 
 /**
  * This controller provides the private endpoint for users.
@@ -31,6 +33,8 @@ import java.nio.file.FileSystemException;
 public class UserController implements IUserController{
 
     private final UserService userService;
+    private final ImageService imageService;
+    private final AuthenticationService authenticationService;
 
     @Override
     public ResponseEntity<UserLoadDTO> updateUser(
@@ -38,6 +42,12 @@ public class UserController implements IUserController{
     ) throws IOException {
         UserLoadDTO userLoadDTO = userService.updateUser(userUpdateDTO);
         return ResponseEntity.ok(userLoadDTO);
+    }
+
+    @Override
+    public ResponseEntity<String> deleteProfilePicture(@NonNull Authentication authentication) throws IOException {
+        imageService.setDefaultProfilePic(authenticationService.getLoggedInUserId());
+        return ResponseEntity.ok("Profile picture deleted.");
     }
 
     @Override

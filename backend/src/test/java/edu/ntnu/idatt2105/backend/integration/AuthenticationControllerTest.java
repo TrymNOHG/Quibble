@@ -1,27 +1,30 @@
 package edu.ntnu.idatt2105.backend.integration;
 
-import edu.ntnu.idatt2105.backend.config.SocketIoConfig;
-import edu.ntnu.idatt2105.backend.controller.pub.authentication.AuthenticationController;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.ntnu.idatt2105.backend.dto.security.AuthenticationResponseDTO;
 import edu.ntnu.idatt2105.backend.dto.users.UserRegisterDTO;
-import edu.ntnu.idatt2105.backend.service.AuthenticationService;
+import edu.ntnu.idatt2105.backend.service.security.AuthenticationService;
+import edu.ntnu.idatt2105.backend.service.security.JWTTokenGenerationService;
+import edu.ntnu.idatt2105.backend.service.security.JWTTokenService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
-import java.awt.*;
+import java.util.Arrays;
 
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -35,6 +38,17 @@ public class AuthenticationControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private AuthenticationService authenticationService;
+    @Autowired
+    private JWTTokenGenerationService jwtTokenGenerationService;
+    @Autowired
+    private JWTTokenService jwtTokenService;
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Mock
+    private HttpServletResponse httpServletResponse;
 
     @Test
     void Signup_test() throws Exception {
@@ -44,6 +58,15 @@ public class AuthenticationControllerTest {
                 .param("email", "email@email.email")
                 .param("password", "password"))
                 .andExpect(status().isOk());
+    }
+
+    @BeforeEach
+    void setUp() {
+        authenticationService.registerUser(UserRegisterDTO.builder()
+                .username("test")
+                .email("test@test.test")
+                .password("password")
+                .build(), httpServletResponse, null);
     }
 
     @Test
@@ -60,6 +83,21 @@ public class AuthenticationControllerTest {
                         .headers(headers)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void getNewAccessTokenFromRefreshTokenTest() throws Exception {
+        String refreshToken = jwtTokenGenerationService.generateRefreshToken("test@test.test");
+
+        MvcResult mvcResult = mockMvc.perform(post("/api/v1/public/auth/get-access-token-from-refresh-token")
+                        .cookie(new Cookie("refresh_token", refreshToken)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String body = mvcResult.getResponse().getContentAsString();
+        String token = objectMapper.readValue(body, AuthenticationResponseDTO.class).token();
+
+        assertTrue(jwtTokenService.isValidToken(jwtTokenService.getJwt(token)));
     }
 
 }
