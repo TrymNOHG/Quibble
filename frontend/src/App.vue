@@ -11,23 +11,23 @@
     </router-link>
     <nav>
       <ul>
-        <router-link to="/home">
+        <router-link v-show="isAuthenticated" to="/home">
           <li>
 
               <font-awesome-icon class="icon" icon="fa-solid fa-home"/>
           </li>
         </router-link>
-        <router-link to="/quiz">
+        <router-link to="/">
           <li>
             <font-awesome-icon class="icon" icon="fa-solid fa-play" />
           </li>
         </router-link>
-        <router-link to="/myquiz">
+        <router-link  v-show="isAuthenticated" to="/quiz">
           <li>
             <font-awesome-icon class="icon" icon="fa-solid fa-puzzle-piece"/>
           </li>
         </router-link>
-        <router-link to="/create">
+        <router-link v-show="isAuthenticated" to="/create">
           <li>
             <font-awesome-icon class="icon" icon="fa-solid fa-circle-plus" />
           </li>
@@ -39,7 +39,8 @@
 <!--        </router-link>-->
         <router-link to="/profile">
           <li>
-            <font-awesome-icon class="icon" icon="fa-solid fa-circle-user" />
+            <font-awesome-icon v-if="isAuthenticated" class="icon" icon="fa-solid fa-circle-user" />
+            <font-awesome-icon v-else class="icon" icon="fa-solid fa-right-to-bracket" />
           </li>
         </router-link>
       </ul>
@@ -50,10 +51,22 @@
 
 <script>
 import TheWelcomeComponent from "@/components/TheWelcomeComponent.vue";
+import {useUserStore} from "@/stores/counter.js";
+import {computed} from "vue";
 
 export default {
   components: { TheWelcomeComponent },
+  setup() {
+
+    const store = useUserStore();
+    const isAuthenticated = computed(() => store.isAuth);
+    return {
+      isAuthenticated
+    }
+  }
 }
+
+
 </script>
 
 <style scoped>

@@ -100,16 +100,17 @@ export default {
 
     const isCorrect = (index) => {
       return index === correctAnswer.value;
+      //todo fix
     };
 
     const selectAnswer = (choice) => {
-      if (!props.isSinglePlayer || showAnswers.value) return;
+      if (!props.isSinglePlayer && !props.isMultiplayerClient || showAnswers.value) return;
 
       stopTimer();
       selectedAnswer.value = choice;
       showAnswers.value = true;
-      if (this.isMultiplayerClient) {
-        emit('answerSelected', isCorrect(choice));
+      if (props.isMultiplayerClient) {
+        emit('answerSelected', choice);
         return;
       }
       if (isCorrect(choice)) {

@@ -71,8 +71,8 @@ const router = createRouter({
           path: '/quiz/game/:gameId',
           name: 'GameClient',
           component: multiplayerPlayerView,
-          props: true, // Allows the route parameter (gameId) to be passed as a prop to the component
-          meta: { requiresAuth: false } // Adjust based on whether you want this route to require authentication
+          props: true,
+          meta: { requiresAuth: false }
       },
   ]
 })

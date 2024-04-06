@@ -7,24 +7,17 @@
         <input
             type="text"
             required
-            v-model.trim="gamepin"
+            v-model.lazy="gamepin"
             name="GamePin"
             class="pin_input"
             :placeholder="$t('placeholders.GAME_PIN')"
             @focus="hide_txt"
             @blur="show_txt"
+            maxlength="4"
         />
         <div class="button_div">
           <div class="btn" aria-label="Start button" @click="startGame">{{ $t('buttons.START_GAME') }}</div>
         </div>
-      </div>
-      <div class="login_register_text">
-        <h4>
-          {{ $t('login_register_text.LOGIN_MESSAGE') }}
-          <router-link to="/login">{{ $t('login_register_text.LOGIN') }}</router-link>,
-          {{ $t('login_register_text.OR') }}
-          <router-link to="/register">{{ $t('login_register_text.REGISTER') }}</router-link>
-        </h4>
       </div>
     </div>
   </div>
@@ -51,6 +44,7 @@ export default {
       }
     };
 
+
     const show_txt = () => {
       const inputField = document.querySelector('.pin_input');
       if (inputField) {
@@ -61,18 +55,18 @@ export default {
     const startGame = () => {
       // Input validation
       console.log("Starting game with PIN:", gamepin.value);
-      if (!gamepin.value) {
+      if (gamepin.value.length === 4) {
         return;
       }
       console.log("Joining game with PIN:", gamepin.value);
-      router.push({ name: 'GameClient', params: { gameId: gamepin.value } });
+      router.push({ name: 'GameClient', params: { gameId: gamepin.value.toUpperCase() } });
     };
 
     return {
       hide_txt,
       show_txt,
       gamepin,
-      startGame
+      startGame,
     }
   }
 };

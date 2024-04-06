@@ -1,6 +1,6 @@
 <template>
   <div class="game-client">
-    <div v-if="!isAuthenticated && !joined">
+    <div v-if="!isAuthenticated && !joined && gameExists">
       <div class="default-images-container">
         <h2>Select Your Avatar</h2>
         <div class="images-grid">
@@ -15,24 +15,51 @@
     </div>
 
     <template v-else>
-      <div v-if="waitingForQuestion">
-        <p>Waiting for the next question...</p>
+      <div v-if="gameEnded">
+        <p>game has ended your score is {{ score }}</p>
       </div>
-
-      <div v-if="question">
-        <!-- Dynamically render question based on type -->
-
+      <div v-else-if="waitingForQuestion">
+        <p>Waiting for the next question... look at the screen</p>
       </div>
-
-      <div v-if="showScore">
+      <div v-else-if="waitingForAnswer">
+        <p>Waiting for the answer to be revealed...</p>
+      </div>
+      <div v-else-if="answerRevealed">
+        <p v-if="isAnswerCorrect">You answered correctly!</p>
+        <p v-else>You answered incorrectly!</p>
         <p>Your score: {{ score }}</p>
       </div>
+
+      <div v-else-if="question">
+        <MultipleChoice
+            v-if = "question.questionType === 'MULTIPLE_CHOICE'"
+            :question="question"
+            :isSinglePlayer="false"
+            :is-multiplayer-client="true"
+            @answerSelected="handleAnswer"
+        />
+        <ShortAnswer
+            v-else-if = "question.questionType === 'SHORT_ANSWER'"
+            :question="question"
+            :isSinglePlayer="false"
+            :is-multiplayer-client="true"
+        />
+        <TruthOrFalseComponent
+            v-else-if = "question.questionType === 'TRUE_FALSE'"
+            :question="question"
+            :isSinglePlayer="false"
+            :is-multiplayer-client="true"
+        />
+
+      </div>
+
+
     </template>
   </div>
 </template>
 
 <script>
-import {ref, computed, onMounted} from 'vue';
+import {ref, computed, onMounted, onUnmounted, onBeforeUnmount} from 'vue';
 import gameService from "@/services/GameService.js";
 import { useRoute } from 'vue-router';
 import {useUserStore} from "@/stores/counter.js";
@@ -40,12 +67,19 @@ import BasicButton from "@/components/BasicComponents/basic_button.vue";
 import sessionToken from "@/features/SessionToken.js";
 import { getPictureFromID } from "@/services/ImageService.js";
 import Basic_button from "@/components/BasicComponents/basic_button.vue"; // Assuming this function exists
+import multipleChoiceComponent from "@/components/QuizPlaing/mutlipleChoiceComponent.vue";
+import ShortAnswer from "@/components/QuizPlaing/shortAnswercomponent.vue";
+import MultipleChoice from "@/components/QuizPlaing/mutlipleChoiceComponent.vue";
+import TruthOrFalseComponent from "@/components/QuizPlaing/TruthOrFalseComponent.vue";
+import router from "@/router/index.js";
 
 
 export default {
   components: {
+    TruthOrFalseComponent, MultipleChoice, ShortAnswer,
     Basic_button,
     BasicButton,
+    multipleChoiceComponent,
   },
   setup() {
     const route = useRoute();
@@ -57,10 +91,16 @@ export default {
     const joined = ref(false);
     const waitingForQuestion = ref(false);
     const question = ref(null);
-    const showScore = ref(false);
     const score = ref(0);
     const defaultImages = ref([]);
     const defaultImageChoice = ref('');
+
+    const waitingForAnswer = ref(false); // New property
+    const answerRevealed = ref(false); // New property
+    const isAnswerCorrect = ref(false); // New property
+    const quizid = ref('');
+    const gameEnded = ref(false);
+    const gameExists = ref(false);
 
 
     const selectImage = (imageId) => {
@@ -68,13 +108,8 @@ export default {
     };
 
     const getPictureURL = (imageId) => {
-      // Assuming getPictureFromID translates ID to URL
       return getPictureFromID(imageId);
     };
-
-
-
-
 
     const joinGameAsGuest = () => {
       if (playerName.value.trim() && defaultImages.value.includes(defaultImageChoice.value) && defaultImages.value.length > 0)  {
@@ -83,9 +118,7 @@ export default {
           code: gameId.value,
           imageId: defaultImageChoice.value, // Replace with actual image ID
         }
-
         gameService.joinGame(joinGameDTO, (response) => {
-
         });
       } else {
         alert("Please enter a name to join the game.");
@@ -103,15 +136,74 @@ export default {
         defaultImages.value = response;
         console.log("Default images", defaultImages.value)
       });
+      gameService.onbeginAnswering( (response) => {
+        console.log("beginAnswering", response)
+        answerRevealed.value = false;
+        waitingForQuestion.value = false;
+        question.value = response;
+        waitingForAnswer.value = false;
+      });
+      gameService.onWaitForQuestion( (response) => {
+        console.log("Waiting for question", response)
+        waitingForQuestion.value = true;
+        question.value = null;
+        answerRevealed.value = false;
+      });
+      gameService.onYourScore( (response) => {
+        console.log("Your score", response)
+        score.value = response;
+      });
+      gameService.onAnswerRevealed( (response) => {
+        isAnswerCorrect.value = response === true;
+        answerRevealed.value = true;
+        waitingForAnswer.value = false;
+      });
+      gameService.onGameEnded( (response) => {
+        console.log("Game ended", response)
+        gameEnded.value = true;
+        // Implement game end logic
+      });
+      gameService.onQuizId( (response) => {
+        console.log("Quiz ID", response)
+        quizid.value = response;
+      });
+      gameService.onGameDoesNotExist( (response) => {
+        console.log("Game does not exist", response)
+        // Implement game does not exist logic
+        router.push("/");
+      });
+      gameService.onGameExists( (response) => {
+        console.log("Game exists", response)
+        if (response === false) {
+          router.push("/");
+        }
+        gameExists.value = true
+        // Implement game exists logic
+      });
       // Implement event listeners as shown in the previous example
     };
 
     const handleAnswer = (answer) => {
-      // Handle the answer
-    };
-
-    const getQuestionComponent = (type) => {
-      // Determine the component based on question type
+      console.log("Answering question", answer)
+      if (isAuthenticated.value) {
+        const answerDto = {
+          answer: answer,
+          code: gameId.value,
+          jwt: sessionToken(),
+        }
+        gameService.answerQuestion(answerDto, (response) => {
+          console.log("Answered question", response);
+        });
+      } else {
+        const answerDto = {
+          answer: answer,
+          code: gameId.value,
+        }
+        gameService.answerQuestion(answerDto, (response) => {
+          console.log("Answered question", response);
+        });
+      }
+      waitingForAnswer.value = true;
     };
 
     onMounted(async () => {
@@ -135,6 +227,12 @@ export default {
         console.log("Not authenticated")
       }
 
+
+      onUnmounted(async () => {
+        console.log("Disconnecting")
+        await gameService.disconnect();
+      });
+
     });
 
     return {
@@ -143,15 +241,18 @@ export default {
       joined,
       waitingForQuestion,
       question,
-      showScore,
       score,
       joinGameAsGuest,
       handleAnswer,
-      getQuestionComponent,
       selectImage,
       getPictureURL,
       defaultImages,
       defaultImageChoice,
+      waitingForAnswer,
+      answerRevealed,
+      isAnswerCorrect,
+      gameEnded,
+      gameExists,
     };
   },
 };

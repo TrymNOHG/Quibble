@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import {ref, onMounted, onUnmounted, onBeforeUnmount} from 'vue';
 import gameService from "@/services/GameService.js";
 import sessionToken from "@/features/SessionToken.js";
 import PreviewQuestion from "@/components/QuizPlaing/PreviewQuestion.vue";
@@ -186,6 +186,11 @@ export default {
         setupListeners();
         console.log("Game service connected", gameService);
       });
+
+      onUnmounted(async () => {
+        await gameService.disconnect();
+      });
+
 
 
       const handlePreviewEnd = () => {
