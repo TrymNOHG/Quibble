@@ -39,13 +39,10 @@ public class AuthenticationControllerTest {
     @Test
     void Signup_test() throws Exception {
         mockMvc.perform(post("/api/v1/public/auth/signup")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                        {
-                            "username": "username",
-                            "email": "email@mail.mail",
-                            "password": "password"
-                        }"""))
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .param("username", "username")
+                .param("email", "email@email.email")
+                .param("password", "password"))
                 .andExpect(status().isOk());
     }
 

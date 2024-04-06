@@ -59,10 +59,6 @@ public class User {
     @Schema(description = "Whether user wants feedback shown on public profile.")
     private boolean showFeedback = false;
 
-    @Column(name = "profile_picture")
-    @Schema(description = "A link to the user's profile picture.")
-    private String profilePicLink;
-
     @OneToMany(mappedBy = "admin")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ToString.Exclude

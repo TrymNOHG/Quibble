@@ -16,6 +16,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -148,9 +151,16 @@ public class UserService implements UserDetailsService {
      * @return The updated user.
      */
     @Transactional
-    public UserLoadDTO updateUser(UserUpdateDTO userUpdateDTO) throws FileSystemException {
+    public UserLoadDTO updateUser(UserUpdateDTO userUpdateDTO) throws IOException {
         LOGGER.info(String.format("%s wants to update.", userUpdateDTO));
-        // TODO: Check that user is updating self. Need userId from authentication...
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        long userId = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User email: " + email)).getUserId();
+        if (userId != userUpdateDTO.userId()) {
+            LOGGER.warn("User is not updating self.");
+            throw new UsernameNotFoundException("User id: " + userUpdateDTO.userId());
+        }
 
         User user = userRepository.findById(userUpdateDTO.userId())
                 .orElseThrow(() -> new UsernameNotFoundException("User id: " + userUpdateDTO.userId()));
@@ -164,9 +174,8 @@ public class UserService implements UserDetailsService {
         }
 
         if(userUpdateDTO.profilePicture() != null){
-            String newProfilePicLink = imageService.saveImage(userUpdateDTO.profilePicture(), userUpdateDTO.userId());
-            LOGGER.info("New Profile Pic Link: " + newProfilePicLink);
-            user.setProfilePicLink(newProfilePicLink);
+            imageService.saveImage(userUpdateDTO.profilePicture(), userUpdateDTO.userId());
+            LOGGER.info("New Profile Pic Set");
         }
 
         if(userUpdateDTO.showActivity() != null){
@@ -190,7 +199,7 @@ public class UserService implements UserDetailsService {
     public void deleteUser(Long userId) throws IOException {
         // TODO: Check that user is actually user.
         userRepository.deleteById(userId);
-        imageService.removeUserDir(userId);
+        imageService.removeImage(userId);
     }
 
 }

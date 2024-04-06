@@ -70,7 +70,10 @@
       <div class="buttons bottomline" >
         <button v-if="isEditor || isAuthor" @click="addNew">{{ $t('buttons.NEW_QUESTION') }}</button>
         <h2 class="question_text">{{ $t('titles.QUESTION_LIST') }}</h2>
-        <button v-if="isEditor || isAuthor">{{ $t('buttons.IMPORT_QUESTION') }}</button>
+        <label for="csvFileInput" class="custom-file-upload" v-if="isEditor || isAuthor">
+          {{ $t('buttons.IMPORT_QUESTION') }}
+          <input id="csvFileInput" type="file" @change="importQuestions" accept=".csv"/>
+        </label>
       </div>
       <div class="encap_List">
         <question-list
@@ -90,7 +93,7 @@ import QuestionList from "@/components/BasicComponents/questionList.vue";
 import { ref } from "vue";
 import { useQuizStore } from "@/stores/counter.js";
 import QuestionCreateList from "@/components/create_quiz/question-create-list.vue";
-import { downloadQuizCSV } from "@/features/QuizCSV"
+import {downloadQuizCSV, uploadQuestionsFromCSV} from "@/features/QuizCSV"
 import router from "@/router/index.js";
 
 export default {
@@ -157,8 +160,10 @@ export default {
           editQuestion.value.answer = '';
         }
       }
+      console.log("qwerqwer", editQuestion.value)
       store.addQuestion(editQuestion.value);
       question_list.value.push(editQuestion.value);
+      console.log(question_list.value)
       addNewQuestion.value = false;
       edit.value = false;
     };
@@ -209,6 +214,24 @@ export default {
       downloadQuizCSV(store.currentQuiz, store.currentQuiz.quizName)
     }
 
+    const importQuestions = async (event) => {
+      let questions = await uploadQuestionsFromCSV(event)
+      console.log(questions)
+      for (let quest of questions) {
+        editQuestion.value = {
+          quizId: null,
+          questionId: null,
+          question: quest.question,
+          answer: quest.answer,
+          type: quest.type,
+          choices: quest.choices
+        }
+        addNewQuestion.value = true;
+        await createQuestion()
+      }
+      //TODO: add questions
+    }
+
     return {
       addNew,
       cancelCreate,
@@ -224,7 +247,8 @@ export default {
       edit,
       editQuestion,
       addNewQuestion,
-      downloadQuiz
+      downloadQuiz,
+      importQuestions
     }
   }
 }
@@ -293,7 +317,7 @@ export default {
   margin-left: 10px;
 }
 
-.btn {
+.btn, .custom-file-upload {
   width: 15%;
   height: 35px;
   color: white;
@@ -307,7 +331,7 @@ export default {
   border: 2px solid black;
 }
 
-.btn:hover {
+.btn:hover, .custom-file-upload:hover {
   scale: 1.05;
   cursor: pointer;
   background-color: #7e1f9c;
@@ -346,7 +370,7 @@ export default {
   display: flex;
 }
 
-button{
+button {
   width: 15%;
   height: 35px;
   color: white;

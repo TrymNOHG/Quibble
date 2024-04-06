@@ -65,6 +65,56 @@ export const createQuizCreateDTOFromCSV = async (event) => {
 }
 
 /**
+ * This method retrieves a questions from a csv file
+ * @returns {{difficulty: null, quizName: null, questions: [], quizDescription: null, categories: []}}
+ * @param event
+ */
+export const uploadQuestionsFromCSV = async (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    return new Promise((resolve, reject) => {
+        reader.onload = (e) => {
+            const csvFile = e.target.result;
+            const lines = csvFile.split("\n");
+
+            let questions = []
+
+            lines.shift()
+            lines.shift()
+
+            for (let i = 0; i < lines.length; i++) {
+                let question = lines[i].split(",")
+                if (question.length === 3) {
+                    let [question, answer, type] = lines.shift().split(",")
+                    questions.push({question, answer, type})
+                } else if (question.length === 4) {
+                    let [question, answer, type, choicesLength] = lines.shift().split(",")
+                    let choices = []
+                    for (let j = 0; j < choicesLength; j++) {
+                        let [alternative, isCorrect] = lines.shift().split(",")
+                        choices.push({alternative, isCorrect})
+                    }
+                    questions.push({question, answer, type, choices})
+                } else {
+                    throw Error("Invalid format.")
+                }
+                i -= 1;
+            }
+
+            // console.log(quizCreateDTO)
+            resolve(questions);
+        };
+
+        reader.onerror = function () {
+            reject(new Error('Failed to read the file.'));
+        };
+        reader.readAsText(file);
+    });
+
+}
+
+/**
  * This method provides functionality for downloading a quiz as a csv.
  * Structure:
  * <p>
@@ -83,7 +133,9 @@ export const downloadQuizCSV = (quizCreateDTO, fileName) => {
     }
     console.log(quizCreateDTO.quizName)
     const lines = []
-    lines[0] = [quizCreateDTO.quizName, quizCreateDTO.quizDescription, quizCreateDTO.difficulty].join(",")
+    lines[0] = [quizCreateDTO.quizName.replace(",", ""),
+        quizCreateDTO.quizDescription.replace(",", ""),
+        quizCreateDTO.difficulty].join(",")
     if(quizCreateDTO.categories && quizCreateDTO.categories.length !== 0) {
         lines[1] = quizCreateDTO.categories.join(",")
     } else {
@@ -91,14 +143,18 @@ export const downloadQuizCSV = (quizCreateDTO, fileName) => {
     }
     for(let question of quizCreateDTO.questions) {
         if(question.choices && question.choices.length !== 0){
-            lines.push([question.question, question.answer, question.type, question.choices.length].join(","))
-            if (question.type.toUpperCase() === 'MULTIPLE_CHOICE') {
+            lines.push([question.question.replace(",", ""),
+                question.answer.replace(",", ""),
+                question.type,
+                question.choices.length].join(","))
+            if (question.type.toUpperCase() === 'MULTIPLE_CHOICE' || question.type.toUpperCase() === 'TRUE_FALSE') {
                 for (let choice of question.choices) {
-                    lines.push([choice.alternative, choice.isCorrect].join(","))
+                    lines.push([choice.alternative.replace(",", ""), choice.isCorrect].join(","))
                 }
             }
         } else{
-            lines.push([question.question, question.answer, question.type].join(","))
+            lines.push([question.question.replace(",", ""),
+                question.answer.replace(",", ""), question.type].join(","))
         }
 
     }

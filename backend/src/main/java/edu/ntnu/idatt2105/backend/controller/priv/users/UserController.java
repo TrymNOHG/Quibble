@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.nio.file.FileSystemException;
 
 /**
@@ -32,7 +33,9 @@ public class UserController implements IUserController{
     private final UserService userService;
 
     @Override
-    public ResponseEntity<UserLoadDTO> updateUser(@NotNull UserUpdateDTO userUpdateDTO, @NotNull Authentication authentication) throws FileSystemException {
+    public ResponseEntity<UserLoadDTO> updateUser(
+            @NotNull UserUpdateDTO userUpdateDTO, @NotNull Authentication authentication
+    ) throws IOException {
         UserLoadDTO userLoadDTO = userService.updateUser(userUpdateDTO);
         return ResponseEntity.ok(userLoadDTO);
     }

@@ -147,6 +147,23 @@ export const addCategory = async (QuizCategoryCreateDTO) => {
     }
 };
 
+export const addCategories = async (categoriesDTO) => {
+    if(categoriesDTO === null) {
+        throw Error("Category DTO is null")
+    }
+    try {
+        const response = await axios.post(`${BASE_URL_PRIV}/create/categories`,
+            categoriesDTO, {
+                headers: {
+                    Authorization: `Bearer ${await sessionToken()}`,
+                }
+            });
+        return response.data;
+    } catch (error) {
+        throw error.response ? error.response.data : error.message;
+    }
+};
+
 export const deleteCategory = async (quizCategoryId, quizId) => {
     try {
         const response = await axios.delete(`${BASE_URL_PRIV}/delete/category/${quizCategoryId}`,

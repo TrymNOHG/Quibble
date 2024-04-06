@@ -76,9 +76,10 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import {onMounted, ref} from "vue";
 import Tag_list from "@/components/create_quiz/tag_list.vue";
 import {useQuizCreateStore, useQuizStore} from "@/stores/counter.js";
+import {getAllCategories} from "@/services/CategoryService.js";
 
 export default {
   components: { Tag_list },
@@ -89,10 +90,18 @@ export default {
     const quizStore = useQuizStore();
     const template_quiz = ref(store.templateQuiz);
     const template_tags = ref([]);
-    const categories = quizStore.category_list;
+    const categories = ref([])
+    getAllCategories().then(response => {
+      categories.value = response
+    })
+    console.log("Qweqwer", categories)
     const chosenCategory = ref([false, false, false, false, false]);
     const choice = ref("Category");
     const newKeyword = ref({ keywordId: null, keyword: '' });
+
+    onMounted(() => {
+      store.templateQuiz.categories = []
+    })
 
     const handleImageUpload = (event) => {
       const file = event.target.files[0];
@@ -115,11 +124,12 @@ export default {
           console.log("Keyword already exists.");
         }
       } else if (choice.value === 'Category') {
-        categories.forEach((category, index) => {
+        categories.value.forEach((category, index) => {
           if (chosenCategory.value[index]) {
             const existingCategoryIndex = template_tags.value.findIndex(tag => tag.type === 'Category' && tag.name === category.categoryName);
             if (existingCategoryIndex === -1) {
               store.templateQuiz.categories.push(category)
+              template_tags.value.push({ type: 'Category', name: category.categoryName, categoryId: category.categoryId });
               template_tags.value.push({ type: 'Category', name: category.categoryName });
             }
           } else {

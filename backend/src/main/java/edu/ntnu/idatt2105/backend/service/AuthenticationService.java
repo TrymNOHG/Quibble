@@ -18,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
@@ -83,8 +84,8 @@ public class AuthenticationService {
      * @return AuthenticationResponseDTO containing the access token.
      */
     public AuthenticationResponseDTO registerUser(UserRegisterDTO userRegistrationDto,
-                                                  HttpServletResponse httpServletResponse) {
-
+                                                  HttpServletResponse httpServletResponse, MultipartFile imageFile
+    ) {
         if (userRegistrationDto.username().length() < 3 || userRegistrationDto.username().length() > 64
                 || userRegistrationDto.password().length() < 8 || userRegistrationDto.password().length() > 64) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -95,47 +96,48 @@ public class AuthenticationService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email format");
         }
 
-        String profilePicLink;
-        if (userRegistrationDto.profilePicLink() != null && !userRegistrationDto.profilePicLink().matches("^(http|https)://.*$")) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid profile picture link");
-        } else {
-            profilePicLink = "profile_pic.PNG";
-        }
-
         log.info("Registering user with email: " + userRegistrationDto.email());
         if (userRepository.findByUsername(userRegistrationDto.username()).isPresent()
                 || userRepository.findByEmail(userRegistrationDto.email()).isPresent()) {
-            log.info("User already exists");
+            log.info("User already exists email: " + userRegistrationDto.email() + " username: " + userRegistrationDto.username());
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User Already Exist");
         }
+        User savedUser;
         try{
-            log.info("User does not exist, creating a user object");
-            log.info(userRegistrationDto.toString());
-            log.info("Profilepiclink: " + profilePicLink);
             User newUser = User.builder()
                     .email(userRegistrationDto.email())
                     .username(userRegistrationDto.username())
                     .password(passwordEncoder.encode(userRegistrationDto.password()))
-                    .profilePicLink(profilePicLink) // TODO: Nå kan man legge inn hva som helst av linker. Er det sketchy?
                     .showActivity(true)
                     .showFeedback(false)
                     .build();
             log.info("User object created successfully");
             Authentication authentication = createAuthenticationObject(newUser);
-            User savedUser = userRepository.save(newUser);
-
-            log.info("Creating image directory for user.");
-            imageService.initializeUserDir(savedUser.getUserId());
+            savedUser = userRepository.save(newUser);
 
             setRefreshTokenInDatabaseAndCookie(savedUser, httpServletResponse);
             log.info("User created successfully");
-            return getAccessTokenAuthDTO(savedUser.getEmail());
+
         } catch (Exception e) {
             log.info("Error while creating user: " + e.getMessage());
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong while creating user"
             );
         }
+        try {
+            if (imageFile == null) {
+                imageService.setDefaultProfilePic(savedUser.getUserId());
+            } else {
+                imageService.saveImage(imageFile, savedUser.getUserId());
+            }
+        } catch (Exception e) {
+            log.info("Error while saving image: " + e.getMessage());
+            imageService.setDefaultProfilePic(savedUser.getUserId());
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong while saving image"
+            );
+        }
+        return getAccessTokenAuthDTO(savedUser.getEmail());
     }
 
     /**
@@ -181,26 +183,6 @@ public class AuthenticationService {
         Authentication authentication =  createAuthenticationObject(user);
         log.info("Getting access token from refresh token");
         return  getAccessTokenAuthDTO(user.getEmail());
-    }
-
-    /**
-     * Gets a refresh token from a cookie in the http request.
-     * Throws an exception if no refresh token cookie is found.
-     *
-     * @param request The http request object.
-     * @return The refresh token.
-     */
-    public String getRefreshTokenFromCookie(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No refresh token cookie found");
-        }
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("refresh_token")) {
-                return cookie.getValue();
-            }
-        }
-        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No refresh token cookie found");
     }
 
     /**

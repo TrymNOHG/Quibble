@@ -21,6 +21,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AnonymousPlayer {
     @NonNull private String username;
+    @NonNull private String imageId;
     private int score = 0;
     private Map<Integer, Boolean> correctAnswers = new HashMap<>();
     private Map<Integer, Instant> answerTimes = new HashMap<>();

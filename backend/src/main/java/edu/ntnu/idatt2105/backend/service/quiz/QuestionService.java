@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 /**
  * Service class for handling questions.
  *
- * @version 1.0 31.05.2021
+ * @version 1.1 31.05.2021
  * @author brage
  * @see Question
  */
@@ -52,17 +52,19 @@ public class QuestionService {
         };
     }
 
+    @Transactional
     public QuestionDTO getQuestionDTO(long questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow();
         return QuestionDTO.builder()
                 .id(question.getQuestionId())
                 .question(question.getQuestion())
-                .answer(question.getAnswer())
+                .answer(getCorrectAnswer(questionId))
                 .questionType(question.getQuestionType().name())
                 .options(question.getChoices().stream().map(MultipleChoice::getAlternative).toList())
                 .build();
     }
 
+    @Transactional
     public SendAlternativesDTO getAlternatives(long questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow();
         return SendAlternativesDTO.builder()
@@ -71,6 +73,7 @@ public class QuestionService {
                 .build();
     }
 
+    @Transactional
     public String getCorrectAnswer(Long questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow();
         if (question.getAnswer() == null || question.getAnswer().isBlank()) {
