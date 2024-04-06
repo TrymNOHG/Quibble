@@ -2,6 +2,7 @@ package edu.ntnu.idatt2105.backend.unit.service;
 
 import edu.ntnu.idatt2105.backend.dto.quiz.QuestionDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizFilterDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizUpdateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.MultipleChoiceCreateDTO;
@@ -72,47 +73,51 @@ class QuestionServiceTest {
     @Test
     @Transactional
     void Create_question_test() {
-        quizService.createQuiz("test quiz", "test@test.test");
+        QuizLoadDTO quizLoadDTO = quizService.createQuiz("test quiz", "test@test.test");
         questionService.addQuestion(QuestionCreateDTO.builder()
                 .question("test question")
                 .answer("test answer")
                 .type(QuestionType.SHORT_ANSWER)
-                .quizId(1L)
+                .choices(null)
+                .quizId(quizLoadDTO.quizId())
                 .build());
-        assertEquals(1, quizService.getQuizById(1L).getQuestions().size());
+        assertEquals(1, quizService.getQuizById(quizLoadDTO.quizId()).getQuestions().size());
     }
 
     @Test
     void Get_question_dto_test() {
-        quizService.createQuiz("test quiz", "test@test.test");
-        questionService.addQuestion(QuestionCreateDTO.builder()
+        QuizLoadDTO quizLoadDTO = quizService.createQuiz("test quiz", "test@test.test");
+        quizLoadDTO = questionService.addQuestion(QuestionCreateDTO.builder()
                 .question("test question")
                 .answer("test answer")
                 .type(QuestionType.SHORT_ANSWER)
-                .quizId(1L)
+                .quizId(quizLoadDTO.quizId())
                 .build());
-        assertEquals("test question", questionService.getQuestionDTO(1L).question());
-        assertEquals("test answer", questionService.getQuestionDTO(1L).answer());
-        assertEquals(QuestionType.SHORT_ANSWER.name(), questionService.getQuestionDTO(1L).questionType());
+        long firstQuestionId = quizLoadDTO.questions().stream().findFirst().get().questionId();
+        assertEquals("test question", questionService.getQuestionDTO(firstQuestionId).question());
+        assertEquals("test answer", questionService.getQuestionDTO(firstQuestionId).answer());
+        assertEquals(QuestionType.SHORT_ANSWER.name(), questionService.getQuestionDTO(firstQuestionId).questionType());
     }
 
     @Test
     void Edit_question_test() {
-        quizService.createQuiz("test quiz", "test@test.test");
-        questionService.addQuestion(QuestionCreateDTO.builder()
+        QuizLoadDTO quizLoadDTO = quizService.createQuiz("test quiz", "test@test.test");
+        quizLoadDTO = questionService.addQuestion(QuestionCreateDTO.builder()
                 .question("test question")
                 .answer("test answer")
                 .type(QuestionType.SHORT_ANSWER)
-                .quizId(1L)
+                .quizId(quizLoadDTO.quizId())
                 .build());
         questionService.editQuestion(QuestionEditDTO.builder()
                 .question("edited question")
                 .answer("edited answer")
                 .type(QuestionType.MULTIPLE_CHOICE)
                 .questionId(1L)
-                .quizId(1L)
+                .quizId(quizLoadDTO.quizId())
                 .build());
-        QuestionDTO dto = questionService.getQuestionDTO(1L);
+
+        long firstQuestionId = quizLoadDTO.questions().stream().findFirst().get().questionId();
+        QuestionDTO dto = questionService.getQuestionDTO(quizLoadDTO.quizId());
         assertEquals("edited question", dto.question());
         assertEquals("edited answer", dto.answer());
         assertEquals(QuestionType.MULTIPLE_CHOICE.name(), dto.questionType());

@@ -62,11 +62,15 @@ public class AuthenticationControllerTest {
 
     @BeforeEach
     void setUp() {
-        authenticationService.registerUser(UserRegisterDTO.builder()
-                .username("test")
-                .email("test@test.test")
-                .password("password")
-                .build(), httpServletResponse, null);
+        try {
+            authenticationService.registerUser(UserRegisterDTO.builder()
+                    .username("test")
+                    .email("test@test.test")
+                    .password("password")
+                    .build(), httpServletResponse, null);
+        } catch (Exception ignored) {
+
+        }
     }
 
     @Test
@@ -89,7 +93,7 @@ public class AuthenticationControllerTest {
     void getNewAccessTokenFromRefreshTokenTest() throws Exception {
         String refreshToken = jwtTokenGenerationService.generateRefreshToken("test@test.test");
 
-        MvcResult mvcResult = mockMvc.perform(post("/api/v1/public/auth/get-access-token-from-refresh-token")
+        MvcResult mvcResult = mockMvc.perform(post("/api/v1/public/auth/refresh-token/get")
                         .cookie(new Cookie("refresh_token", refreshToken)))
                 .andExpect(status().isOk())
                 .andReturn();

@@ -14,7 +14,6 @@
           v-for="(quiz, index) in displayedQuizzes"
           :key="index"
           :quiz="quiz"
-          @setCurrentQuiz="setCurrentQuiz"
       />
     </div>
     <div id="inf_scroll"/>
@@ -23,11 +22,11 @@
 
 <script setup>
 import SearchInput from "@/components/BasicComponents/searchbar.vue";
-import { onMounted, ref } from 'vue';
+import {onMounted, ref} from 'vue';
 import One_quiz_rectangle from "@/components/BasicComponents/one_quiz_rectangle.vue";
-import { useQuizStore } from "@/stores/counter.js";
+import {useQuizStore} from "@/stores/counter.js";
 
-const searchInput =  ref('');
+const searchInput = ref('');
 let displayedQuizzes = ref([]);
 let difficulty_selected = ref([]);
 let category_selected = ref([]);
@@ -42,7 +41,7 @@ onMounted(async () => {
   await loadQuizzes();
 });
 
-onMounted( () => {
+onMounted(() => {
   getNextQuiz();
 });
 
@@ -50,10 +49,6 @@ async function handleDifficulty(difficulty) {
   difficulty_selected.value = difficulty;
   page.value = 0;
   await loadQuizzes();
-}
-
-async function setCurrentQuiz(quiz) {
-  await quizStore.setCurrentQuizById(quiz);
 }
 
 async function handleCategory(category) {
@@ -68,21 +63,10 @@ async function loadQuizzes() {
     const d = (difficulty_selected.value === []) ? null : difficulty_selected.value;
     const c = (category_selected.value === []) ? null : category_selected.value;
 
-    // class QuizFilterDTO {
-    //   constructor(name, categories, pageSize, pageNumber) {
-    //     this.name = name;
-    //     this.categories = categories;
-    //     this.pageSize = pageSize;
-    //     this.pageNumber = pageNumber;
-    //   }
-    // }
-    //
-    // const quizFilterDTO = new QuizFilterDTO(s, c.map(category => category.categoryName), 12, page.value)
-
     const quizFilterDTO = {
       "name": s,
-      "difficulties": d.map(diff => String(diff).toUpperCase()),
-      "categories": c.map(category => category.categoryName),
+      "difficulties": d,
+      "categories": c,
       "pageSize": 12,
       "pageNumber": page.value
     }

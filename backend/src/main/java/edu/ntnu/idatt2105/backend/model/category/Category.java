@@ -39,7 +39,6 @@ public class Category {
     private String categoryName;
 
     @Column(name = "category_desc", length = 255)
-    @NonNull
     @Schema(description = "The description of the category.")
     private String categoryDescription;
 

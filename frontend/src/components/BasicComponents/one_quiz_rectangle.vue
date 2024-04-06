@@ -16,6 +16,7 @@
 
 <script>
 import {useQuizStore} from "@/stores/counter.js";
+import {getCurrentInstance} from "vue";
 export default {
   props: {
     quiz: {
@@ -36,19 +37,19 @@ export default {
     }
   },
 
-  setup() {
+  setup(props) {
     const quizStore = useQuizStore();
+    const { emit } = getCurrentInstance();
+
+    const setCurrentQuiz = () => {
+      emit("setCurrentQuiz", props.quiz)
+    }
 
     return {
+      setCurrentQuiz,
       quizStore,
     }
   },
-
-  methods: {
-    setCurrentQuiz() {
-      this.quizStore.setCurrentQuizById(this.quiz);
-    }
-  }
 }
 
 </script>

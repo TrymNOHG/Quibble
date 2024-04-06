@@ -53,25 +53,33 @@
       <font-awesome-icon
           id="add"
           icon="fa-solid fa-circle-plus"
-          @click="addNewQuestion"
+          @click="addNewQuestion = true"
       />
-      <label for="csvFileInput" style="cursor: pointer;">
-      <font-awesome-icon
-          id="upload"
-          icon="fa-solid fa-upload"
-      />
+      <label class="download_div" for="csvFileInput" style="cursor: pointer;">
+
+        <font-awesome-icon
+            id="download"
+            icon="fa-solid fa-upload"  />
+
       </label>
       <input id="csvFileInput" type="file" @change="uploadQuiz" style="display: none;" accept=".csv"/>
-
-      <font-awesome-icon
-          id="download"
-          icon="fa-solid fa-download"
-          @click="downloadQuiz()"
-      />
+      <div class="download_div">
+        <font-awesome-icon
+            id="download"
+            icon="fa-solid fa-download"
+            @click="downloadQuiz()"/>
+      </div>
     </div>
     <div class="header"></div>
     <div class="questions_list">
-      <div class="buttons bottomline" ></div>
+      <div class="buttons bottomline" >
+        <font-awesome-icon
+          id="download"
+          icon="fa-solid fa-trash"
+          v-if="selectedQuestions.length !== 0"
+          @click="deleteSelectedQuestions()"
+      />
+      </div>
       <div class="encap_List">
         <question-create-list
             class="list"
@@ -79,27 +87,33 @@
             :question="q"
             @deleteQuestion="deleteQuestion(q)"
             @editQuestion="showEdit(q)"
+            @selectionChange="changeSelectedQuestions"
+            ref="questionItems"
         />
       </div>
+
     </div>
   </div>
 </template>
 
 <script>
-import {ref} from 'vue';
+import {onMounted, ref} from 'vue';
 import {useQuizCreateStore, useQuizStore} from '@/stores/counter.js';
 import QuestionCreateList from "@/components/create_quiz/question-create-list.vue";
 import router from "@/router/index.js";
-import {createQuizCreateDTOFromCSV, downloadQuizCSV} from "@/features/QuizCSV.js";
+import {createQuizCreateDTOFromCSV, downloadQuizCSV } from "@/features/QuizCSV.js";
 
 export default {
+  name: 'quiz_create_question',
   components: { QuestionCreateList },
-
-  setup() {
+  props: {
+  },
+  setup(props, { emit }) {
     const store = useQuizCreateStore();
     const addNewQuestion = ref(false);
     const editQuestion = ref(false);
     const question_list = ref(store.templateQuiz.questions);
+    const selectedQuestions = ref([]);
 
     const newQuestion = ref({
       quizId: null,
@@ -161,7 +175,7 @@ export default {
       editQuestion.value = true;
     };
 
-    const deleteQuestion = (question) => {
+    let deleteQuestion = (question) => {
       const index = question_list.value.indexOf(question);
       if (index !== -1) {
         question_list.value.splice(index, 1);
@@ -179,20 +193,26 @@ export default {
       cancelCreate();
     }
 
-    const createQuiz = async () => {
-      try {
-        await store.createQuiz(question_list);
-        setTimeout(()=> {}, 500);
-        await router.push('/home');
-      } catch (error) {
-        console.error(error);
-      }
+    const createQuiz = () => {
+      emit('createQuiz', {question_list})
     };
 
     const uploadQuiz = async (file) => {
       try{
         console.log("Uploading Quiz")
         let quizCreateDTO = await createQuizCreateDTOFromCSV(file)
+        for (let quest of quizCreateDTO.questions) {
+          newQuestion.value = {
+            quizId: null,
+            questionId: null,
+            question: quest.question,
+            answer: quest.answer,
+            type: quest.type,
+            choices: quest.choices
+          }
+          addNewQuestion.value = true;
+          await createQuestion()
+        }
         //TODO: change all values currently being display
         console.log(quizCreateDTO)
       } catch (error) {
@@ -201,13 +221,22 @@ export default {
     }
 
     const downloadQuiz = () => {
-      //TODO: this might not be right.
       downloadQuizCSV(useQuizStore().currentQuiz, useQuizStore().currentQuiz.quizName)
+    }
+
+    const changeSelectedQuestions = (e) => {
+      if(e.isSelected) {
+        selectedQuestions.value.push(e.question);
+      } else {
+        selectedQuestions.value = selectedQuestions.value.filter(q => q !== e.question);
+      }
+      console.log(selectedQuestions.value)
     }
 
 
     return {
       question_list,
+      selectedQuestions,
       createQuestion,
       addEdit,
       editQuestion,
@@ -218,13 +247,48 @@ export default {
       showEdit,
       createQuiz,
       uploadQuiz,
-      downloadQuiz
+      downloadQuiz,
+      changeSelectedQuestions
     };
+  },
+  methods: {
+    deleteSelectedQuestions(){
+      console.log(this.selectedQuestions)
+      for(let question of this.selectedQuestions) {
+        this.deleteQuestion(question)
+      }
+      this.selectedQuestions = [];
+      const childComponents = this.$refs.questionItems;
+      console.log(childComponents)
+      // for(let comp in childComponents) {
+      //   comp.deselect("deselect");
+      // }
+    }
   }
 };
 </script>
 
 <style scoped>
+#csvFileInput {
+  width: 100px;
+}
+
+.download_div{
+  width: 35px;
+  display: flex;
+  height: 35px;
+  background-color: rgba(178, 0, 255, 0.1);
+  border-radius: 20px;
+  flex-direction: row;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  border: solid black 2px;
+}
+
+#download {
+  scale: 1.5
+}
 
 .popup-content{
   width: 350px
@@ -298,6 +362,7 @@ export default {
   transition: background-color 0.3s;
   text-decoration: none;
   border: 2px solid black;
+  margin-bottom: 0;
 }
 
 .btn:hover {

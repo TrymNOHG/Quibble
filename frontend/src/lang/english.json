@@ -33,7 +33,9 @@
     "LOGIN": "log in",
     "OR": "or",
     "REGISTER": "register for free",
-    "NO_ACCOUNT_MESSAGE": "Don't have an account?"
+    "NO_ACCOUNT_MESSAGE": "Don't have an account?",
+    "LOGIN_ERR": "Uppps... Wrong email or password",
+    "REGISTER_ERR": "Uppps... account already exists"
   },
   "quiz_card": {
     "QUESTIONS_LABEL": "Questions",
@@ -44,7 +46,11 @@
   },
   "error_messages": {
     "USERNAME_REQUIRED": "Username is required",
-    "PASSWORD_REQUIRED": "Password is required"
+    "PASSWORD_REQUIRED": "Password is required",
+    "EMAIL_REQUIRED": "Email is required",
+    "EMAIL_MUST": "Email must be at least 4 characters",
+    "EMAIL": "Must be email",
+    "PASS_MUST": "Password must be at least 8 characters"
   },
   "dropdown_options": {
     "DIFFICULTY": "Difficulty",

@@ -46,31 +46,35 @@
     <div class="buttons">
       <button>{{ $t('buttons.ONE_PLAYER') }}</button>
       <button>{{ $t('buttons.MULTI_PLAYER') }}</button>
-      <router-link
+      <button
           class="btn"
           to="/home"
           v-if="isAuthor"
           @click="deleteQuiz()">
         {{ $t('buttons.DELETE_QUIZ') }}
-      </router-link>
+      </button>
       <button
           class="btn"
           v-if="!isAuthor & !isEditor"
           @click="addToMyquiz()">
         Add to MyQuiz
       </button>
-      <font-awesome-icon
-          id="download"
-          icon="fa-solid fa-download"
-          @click="downloadQuiz()"
-      />
+      <div id="download_div">
+        <font-awesome-icon
+            id="download"
+            icon="fa-solid fa-download"
+            @click="downloadQuiz()"  />
+      </div>
     </div>
     <div class="header"></div>
     <div class="questions_list">
       <div class="buttons bottomline" >
         <button v-if="isEditor || isAuthor" @click="addNew">{{ $t('buttons.NEW_QUESTION') }}</button>
         <h2 class="question_text">{{ $t('titles.QUESTION_LIST') }}</h2>
-        <button v-if="isEditor || isAuthor">{{ $t('buttons.IMPORT_QUESTION') }}</button>
+        <label for="csvFileInput" class="custom-file-upload" v-if="isEditor || isAuthor">
+          {{ $t('buttons.IMPORT_QUESTION') }}
+          <input id="csvFileInput" type="file" @change="importQuestions" accept=".csv"/>
+        </label>
       </div>
       <div class="encap_List">
         <question-list
@@ -90,17 +94,22 @@ import QuestionList from "@/components/BasicComponents/questionList.vue";
 import { ref } from "vue";
 import { useQuizStore } from "@/stores/counter.js";
 import QuestionCreateList from "@/components/create_quiz/question-create-list.vue";
-import { downloadQuizCSV } from "@/features/QuizCSV"
+import {downloadQuizCSV, uploadQuestionsFromCSV} from "@/features/QuizCSV"
+import router from "@/router/index.js";
+import Quiz_info_comp from "@/components/quiz_info_comp.vue";
 
 export default {
-  components: { QuestionCreateList, QuestionList },
+  components: {Quiz_info_comp, QuestionCreateList, QuestionList },
+
+  props: {
+    isAuthor: null,
+    isEditor: null,
+  },
 
   setup() {
     const store = useQuizStore();
     const addNewQuestion = ref(false);
     const edit = ref(false);
-    const isAuthor = ref(store.isAdmin(store.currentQuiz.admin_id));
-    const isEditor = ref(store.isEditor);
     let question_list = ref(store.currentQuiz.questions);
 
     const editQuestion = ref({
@@ -130,14 +139,20 @@ export default {
       }
     };
 
-    const deleteQuiz = () => {
-      store.deleteCurrentQuiz();
+    const deleteQuiz = async () => {
+      try {
+        await store.deleteCurrentQuiz();
+        setTimeout(() => {
+        }, 500);
+        await router.push('/home');
+      } catch (error) {
+        console.error(error);
+      }
     }
 
     const addToMyquiz = () => {
       store.addQuiz();
     }
-
 
     const createQuestion = () => {
       if (editQuestion.value.type === 'TRUE_FALSE') {
@@ -150,12 +165,13 @@ export default {
           editQuestion.value.answer = '';
         }
       }
+      console.log("qwerqwer", editQuestion.value)
       store.addQuestion(editQuestion.value);
       question_list.value.push(editQuestion.value);
+      console.log(question_list.value)
       addNewQuestion.value = false;
       edit.value = false;
     };
-
 
     const showEdit = (question) => {
       console.log(question)
@@ -181,7 +197,6 @@ export default {
       }
     };
 
-
     const cancelCreate = () => {
       editQuestion.value = {
         quizId: null,
@@ -204,6 +219,24 @@ export default {
       downloadQuizCSV(store.currentQuiz, store.currentQuiz.quizName)
     }
 
+    const importQuestions = async (event) => {
+      let questions = await uploadQuestionsFromCSV(event)
+      console.log(questions)
+      for (let quest of questions) {
+        editQuestion.value = {
+          quizId: null,
+          questionId: null,
+          question: quest.question,
+          answer: quest.answer,
+          type: quest.type,
+          choices: quest.choices
+        }
+        addNewQuestion.value = true;
+        await createQuestion()
+      }
+      //TODO: add questions
+    }
+
     return {
       addNew,
       cancelCreate,
@@ -212,14 +245,13 @@ export default {
       addEdit,
       deleteQuiz,
       addToMyquiz,
-      isAuthor,
-      isEditor,
       question_list,
       deleteQuestion,
       edit,
       editQuestion,
       addNewQuestion,
-      downloadQuiz
+      downloadQuiz,
+      importQuestions
     }
   }
 }
@@ -228,6 +260,23 @@ export default {
 
 
 <style scoped>
+#download_div{
+  width: 35px;
+  display: flex;
+  height: 35px;
+  background-color: rgba(178, 0, 255, 0.1);
+  border-radius: 20px;
+  flex-direction: row;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  border: solid black 2px;
+}
+
+#download {
+  scale: 1.5
+}
+
 .popup-content{
   width: 350px
 }
@@ -244,7 +293,6 @@ export default {
   width: 35%;
 }
 
-.truefalse,
 .multiple {
   margin-top: 10%;
 }
@@ -258,11 +306,6 @@ export default {
   flex-direction: column;
 }
 
-.truefalse {
-  display: flex;
-  align-content: start;
-}
-
 .popup_input {
   display: flex;
   flex-direction: column;
@@ -271,11 +314,6 @@ export default {
 .input {
   height: 25px;
   width: 80%;
-}
-
-.input-truefalse {
-  height: 25px;
-  width: 240%;
 }
 
 .answer-option {
@@ -288,7 +326,7 @@ export default {
   margin-left: 10px;
 }
 
-.btn {
+.btn, .custom-file-upload {
   width: 15%;
   height: 35px;
   color: white;
@@ -302,7 +340,7 @@ export default {
   border: 2px solid black;
 }
 
-.btn:hover {
+.btn:hover, .custom-file-upload:hover {
   scale: 1.05;
   cursor: pointer;
   background-color: #7e1f9c;
@@ -341,7 +379,7 @@ export default {
   display: flex;
 }
 
-button{
+button {
   width: 15%;
   height: 35px;
   color: white;
