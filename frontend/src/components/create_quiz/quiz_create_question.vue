@@ -55,19 +55,20 @@
           icon="fa-solid fa-circle-plus"
           @click="addNewQuestion = true"
       />
-      <label for="csvFileInput" style="cursor: pointer;">
-      <font-awesome-icon
-          id="upload"
-          icon="fa-solid fa-upload"
-      />
+      <label class="download_div" for="csvFileInput" style="cursor: pointer;">
+
+        <font-awesome-icon
+            id="download"
+            icon="fa-solid fa-upload"  />
+
       </label>
       <input id="csvFileInput" type="file" @change="uploadQuiz" style="display: none;" accept=".csv"/>
-
-      <font-awesome-icon
-          id="download"
-          icon="fa-solid fa-download"
-          @click="downloadQuiz()"
-      />
+      <div class="download_div">
+        <font-awesome-icon
+            id="download"
+            icon="fa-solid fa-download"
+            @click="downloadQuiz()"/>
+      </div>
     </div>
     <div class="header"></div>
     <div class="questions_list">
@@ -268,6 +269,26 @@ export default {
 </script>
 
 <style scoped>
+#csvFileInput {
+  width: 100px;
+}
+
+.download_div{
+  width: 35px;
+  display: flex;
+  height: 35px;
+  background-color: rgba(178, 0, 255, 0.1);
+  border-radius: 20px;
+  flex-direction: row;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  border: solid black 2px;
+}
+
+#download {
+  scale: 1.5
+}
 
 .popup-content{
   width: 350px
@@ -341,6 +362,7 @@ export default {
   transition: background-color 0.3s;
   text-decoration: none;
   border: 2px solid black;
+  margin-bottom: 0;
 }
 
 .btn:hover {

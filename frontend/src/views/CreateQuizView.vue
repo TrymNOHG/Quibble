@@ -28,7 +28,6 @@ export default {
     const saveQuiz = async (question_list) => {
       let questionList = question_list.question_list
       let categoryIds = store.templateQuiz.categories.map(category => category.categoryId)
-      // throw Error("breakpoint")
       try {
         await store.createQuiz(questionList);
 

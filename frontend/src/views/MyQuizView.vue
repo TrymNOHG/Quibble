@@ -14,7 +14,6 @@
           v-for="(quiz, index) in displayedQuizzes"
           :key="index"
           :quiz="quiz"
-          @setCurrentQuiz="setCurrentQuiz"
       />
     </div>
     <div id="inf_scroll"/>
@@ -23,11 +22,11 @@
 
 <script setup>
 import SearchInput from "@/components/BasicComponents/searchbar.vue";
-import { onMounted, ref } from 'vue';
+import {onMounted, ref} from 'vue';
 import One_quiz_rectangle from "@/components/BasicComponents/one_quiz_rectangle.vue";
-import { useQuizStore } from "@/stores/counter.js";
+import {useQuizStore} from "@/stores/counter.js";
 
-const searchInput =  ref('');
+const searchInput = ref('');
 let displayedQuizzes = ref([]);
 let difficulty_selected = ref([]);
 let category_selected = ref([]);
@@ -42,7 +41,7 @@ onMounted(async () => {
   await loadQuizzes();
 });
 
-onMounted( () => {
+onMounted(() => {
   getNextQuiz();
 });
 
@@ -50,10 +49,6 @@ async function handleDifficulty(difficulty) {
   difficulty_selected.value = difficulty;
   page.value = 0;
   await loadQuizzes();
-}
-
-async function setCurrentQuiz(quiz) {
-  await quizStore.setCurrentQuizById(quiz);
 }
 
 async function handleCategory(category) {

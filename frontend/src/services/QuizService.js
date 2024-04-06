@@ -3,6 +3,7 @@ import sessionToken from "@/features/SessionToken.js";
 
 const BASE_URL_PRIV = "http://localhost:8080/api/v1/private/quiz"
 const BASE_URL_PUB = "http://localhost:8080/api/v1/public/quiz"
+const BASE_URL_PUB_CAT = "http://localhost:8080/api/v1/public/category"
 
 
 export const fetchQuizzes = async (page, size) => {
@@ -17,6 +18,20 @@ export const fetchQuizzes = async (page, size) => {
         throw error.response ? error.response.data : error.message;
     }
 };
+
+export const fetchMyQuizzes = async (page, size) => {
+    try {
+        const response = await axios.get(`${BASE_URL_PRIV}/get?page=${page}&size=${size}`, {
+            headers: {
+                Authorization: `Bearer ${await sessionToken()}`,
+            }
+        });
+        return response.data.content;
+    } catch (error) {
+        throw error.response ? error.response.data : error.message;
+    }
+};
+
 
 export const createQuiz = async (quizName) => {
     try {
@@ -34,6 +49,7 @@ export const createQuiz = async (quizName) => {
 };
 
 export const updateQuiz = async (quizUpdateDTO) => {
+    console.log(quizUpdateDTO)
     try {
         const response = await axios.patch(`${BASE_URL_PRIV}/update`,
             quizUpdateDTO, {
@@ -130,10 +146,11 @@ export const removeCollaborator = async (authorId) => {
     }
 };
 
-export const addCategory = async (categoryDTO) => {
+export const addCategory = async (QuizCategoryCreateDTO) => {
+    console.log(QuizCategoryCreateDTO)
     try {
         const response = await axios.post(`${BASE_URL_PRIV}/create/category`,
-            categoryDTO, {
+            QuizCategoryCreateDTO, {
                 headers: {
                     Authorization: `Bearer ${await sessionToken()}`,
                 }
@@ -162,9 +179,23 @@ export const addCategories = async (categoriesDTO) => {
     }
 };
 
+export const deleteCategory = async (quizCategoryId, quizId) => {
+    try {
+        const response = await axios.delete(`${BASE_URL_PRIV}/delete/category/${quizCategoryId}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${await sessionToken()}`,
+                }
+            });
+        return response.data;
+    } catch (error) {
+        throw error.response ? error.response.data : error.message;
+    }
+};
+
 export const addKeyword = async (keywordDTO) => {
     try {
-        const response = await axios.post(`${BASE_URL_PRIV}/create/question`,
+        const response = await axios.post(`${BASE_URL_PRIV}/create/keyword`,
             keywordDTO, {
                 headers: {
                     Authorization: `Bearer ${await sessionToken()}`,
@@ -176,3 +207,20 @@ export const addKeyword = async (keywordDTO) => {
         throw error.response ? error.response.data : error.message;
     }
 };
+
+export const fetchCategories = async () => {
+    try {
+        const response = await axios.get(`${BASE_URL_PUB_CAT}/getAll`,
+            {
+                headers: {
+                    Authorization: `Bearer ${await sessionToken()}`,
+                }
+            });
+        return response.data;
+    } catch (error) {
+        throw error.response ? error.response.data : error.message;
+    }
+};
+
+
+

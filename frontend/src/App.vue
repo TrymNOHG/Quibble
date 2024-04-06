@@ -1,5 +1,5 @@
 <template>
-  <header>
+  <header v-if="!isOnRoot">
     <router-link to="/home" aria-label="Go to Home page">
       <img
           id="logo"
@@ -7,13 +7,12 @@
           src="@/assets/images/logov1.png"/>
     </router-link>
     <router-link class="header_text" to="/home">
-      <h1 class="header_text">Quibble</h1>
+      <h1 class="header_text">{{ headerText }}</h1>
     </router-link>
     <nav>
       <ul>
         <router-link to="/home">
           <li>
-
               <font-awesome-icon class="icon" icon="fa-solid fa-home"/>
           </li>
         </router-link>
@@ -46,8 +45,9 @@
 
 <script>
 import TheWelcomeComponent from "@/components/TheWelcomeComponent.vue";
-import {ref} from "vue";
+import {ref, computed} from "vue";
 import {useI18n} from "vue-i18n";
+import {useRoute} from "vue-router";
 
 export default {
   components: { TheWelcomeComponent },
@@ -55,6 +55,19 @@ export default {
   setup() {
    let language = ref("NO");
    const { locale } = useI18n();
+   const route = useRoute();
+   const isOnRoot = computed(()=>{
+     return route.path === "/";
+   });
+
+    const headerText = computed(() => {
+      if (route.path === "/home"){return "Home"}
+      if (route.path === "/myquiz"){return "My Quizzes"}
+      if (route.path === "/quiz"){return "Quiz"}
+      if (route.path === "/profile"){return "Profile"}
+      if (route.path === "/create"){return "Create"}
+
+    });
 
     const changeLang =  () => {
      if (language.value === "EN") {
@@ -69,7 +82,9 @@ export default {
 
    return {
      language,
-     changeLang
+     changeLang,
+     headerText,
+     isOnRoot
    }
   }
 }
@@ -112,6 +127,7 @@ header {
   color: white;
   font-weight: bold;
   margin-left: 15%;
+  width: max-content;
   text-decoration: none !important;
 }
 

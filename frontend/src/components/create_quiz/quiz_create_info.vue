@@ -63,7 +63,6 @@
                 <span>{{ category.categoryName }}</span>
                 <input class="checkbox" type="checkbox" v-model="chosenCategory[index]">
               </div>
-
             </div>
           </div>
           <div class="button-group">
@@ -127,13 +126,13 @@ export default {
       } else if (choice.value === 'Category') {
         categories.value.forEach((category, index) => {
           if (chosenCategory.value[index]) {
-            const existingCategoryIndex = template_tags.value.findIndex(tag => tag.type === 'Category' && tag.name === category);
+            const existingCategoryIndex = template_tags.value.findIndex(tag => tag.type === 'Category' && tag.name === category.categoryName);
             if (existingCategoryIndex === -1) {
               store.templateQuiz.categories.push(category)
               template_tags.value.push({ type: 'Category', name: category.categoryName, categoryId: category.categoryId });
             }
           } else {
-            const existingCategoryIndex = template_tags.value.findIndex(tag => tag.type === 'Category' && tag.name === category);
+            const existingCategoryIndex = template_tags.value.findIndex(tag => tag.type === 'Category' && tag.name === category.categoryName);
             if (existingCategoryIndex !== -1) {
               template_tags.value.splice(existingCategoryIndex, 1);
             }

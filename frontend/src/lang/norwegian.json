@@ -32,7 +32,9 @@
     "LOGIN": "logge deg inn",
     "OR": "eller",
     "REGISTER": "registrere deg gratis",
-    "NO_ACCOUNT_MESSAGE": "Har du ikke en konto?"
+    "NO_ACCOUNT_MESSAGE": "Har du ikke en konto?",
+    "LOGIN_ERR": "Feil email eller passord, prøv igjen",
+    "REGISTER_ERR": "Feil, bruker eksiterer fra før"
   },
   "quiz_card": {
     "QUESTIONS_LABEL": "Spørsmål",
@@ -43,7 +45,11 @@
   },
   "error_messages": {
     "USERNAME_REQUIRED": "Brukernavn er påkrevd",
-    "PASSWORD_REQUIRED": "Passord er påkrevd"
+    "PASSWORD_REQUIRED": "Passord er påkrevd",
+    "EMAIL_REQUIRED": "Email er påkrevd",
+    "EMAIL_MUST": "Email må være minst 4 langt",
+    "EMAIL": "Må være email",
+    "PASS_MUST": "Passord må være minst 8 langt"
   },
   "dropdown_options": {
     "DIFFICULTY": "Vanskelighetsgrad",
