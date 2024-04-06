@@ -21,16 +21,18 @@
       <p>{{ feedbackMessage }}</p>
     </div>
 
+
+
+    <!-- Progress Bar -->
+    <div class="progress-bar-container">
+      <div class="progress-bar" :style="{width: progressBarWidth + '%'}"></div>
+    </div>
+
     <!-- Multiplayer Feedback -->
     <div v-if="!isSinglePlayer && showAnswersProp" class="multiplayer-feedback-container">
       <div class="multiplayer-feedback">
         The correct answer is: <strong>{{ question.answer }}</strong>. <br>
       </div>
-    </div>
-
-    <!-- Progress Bar -->
-    <div class="progress-bar-container">
-      <div class="progress-bar" :style="{width: progressBarWidth + '%'}"></div>
     </div>
   </div>
 </template>

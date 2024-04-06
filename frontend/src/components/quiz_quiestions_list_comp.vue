@@ -44,8 +44,8 @@
   </div>
   <div class="comp">
     <div class="buttons">
-      <button>{{ $t('buttons.ONE_PLAYER') }}</button>
-      <button>{{ $t('buttons.MULTI_PLAYER') }}</button>
+      <button @click="routeSinglePlayer">{{ $t('buttons.ONE_PLAYER') }}</button>
+      <button @click="routeMultiPlayer">{{ $t('buttons.MULTI_PLAYER') }}</button>
       <router-link
           class="btn"
           to="/home"
@@ -91,6 +91,7 @@ import { ref } from "vue";
 import { useQuizStore } from "@/stores/counter.js";
 import QuestionCreateList from "@/components/create_quiz/question-create-list.vue";
 import { downloadQuizCSV } from "@/features/QuizCSV"
+import router from "@/router/index.js";
 
 export default {
   components: { QuestionCreateList, QuestionList },
@@ -204,6 +205,14 @@ export default {
       downloadQuizCSV(store.currentQuiz, store.currentQuiz.quizName)
     }
 
+    const routeSinglePlayer = () => {
+      router.push('/path-to-single-player'); // replace with your actual path
+    };
+
+    const routeMultiPlayer = () => {
+      router.push('/quiz/multiplayer'); // replace with your actual path
+    };
+
     return {
       addNew,
       cancelCreate,
@@ -219,7 +228,9 @@ export default {
       edit,
       editQuestion,
       addNewQuestion,
-      downloadQuiz
+      downloadQuiz,
+      routeSinglePlayer,
+      routeMultiPlayer
     }
   }
 }

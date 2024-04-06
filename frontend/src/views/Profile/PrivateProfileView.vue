@@ -104,7 +104,7 @@ export default {
     },
 
     handleDeleteUser() {
-      outer.push("/");
+      router.push("/");
       console.log("Deleting user account");
       // Implement your logic here to delete the user account
     },

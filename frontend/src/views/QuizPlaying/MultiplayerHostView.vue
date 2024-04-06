@@ -1,6 +1,6 @@
 <template>
   <div class="game-host">
-    <h1>replace with quizname</h1> <!todo quiz name>
+    <h1>{{quizName}}</h1> <!todo quiz name>
 
     <basic_button v-if="!gameStarted && !gameCode" @click="createGame" :button_text="$t('createGame')"></basic_button>
     <p v-else> Game Code: {{ gameCode }}</p>
@@ -36,6 +36,13 @@
           :showAnswersProp="showAnswers"
           @timerDone="handleTimerDone"
       />
+      <TruthOrFalseComponent
+          v-else-if = "currentQuestion.questionType === 'TRUE_FALSE'"
+          :question="currentQuestion"
+          :isSinglePlayer="false"
+          :showAnswersProp="showAnswers"
+          @timerDone="handleTimerDone"
+      />
     </div>
     <!-- Show player list -->
     <playerPreviewComponent :players="players" v-if="players.length > 0 && !gameStarted" />
@@ -52,6 +59,9 @@ import ShortAnswer from '@/components/QuizPlaing/shortAnswercomponent.vue';
 import scoreComponent from "@/components/QuizPlaing/scoreComponent.vue";
 import basic_button from "@/components/BasicComponents/basic_button.vue";
 import playerPreviewComponent from "@/components/QuizPlaing/playerPreviewComponent.vue";
+import {useQuizStore} from "@/stores/counter.js";
+import router from "@/router/index.js";
+import TruthOrFalseComponent from "@/components/QuizPlaing/TruthOrFalseComponent.vue";
 
 
 
@@ -62,9 +72,11 @@ export default {
     scoreComponent,
     ShortAnswer,
     basic_button,
-    playerPreviewComponent
+    playerPreviewComponent,
+    TruthOrFalseComponent
   },
   setup() {
+    const quizName = ref("Quiz Name"); // todo get quiz name
     const gameCode = ref(null);
     const gameStarted = ref(false);
     const gameEnded = ref(false);
@@ -73,18 +85,27 @@ export default {
     const previewPhase = ref(false); // Track the preview phase
     const showAnswers = ref(false);
     const showScoreboard = ref(false); // New property for scoreboard display
-    const scores = ref([]); // Holds the scores to be displayed
+    const scores = ref([]);
+    const quizId = ref(null)// Holds the scores to be displayed
+    const store = useQuizStore();
 
-    console.log("GameService", gameService);
+
+    if (!store.currentQuiz) {
+      quizId.value = store.currentQuiz.quizId;
+      console.log("No quiz selected")
+      router.push("/home")
+    }
+
+    quizId.value = store.currentQuiz.quizId;
+    quizName.value = store.currentQuiz.quizName;
+
 
 
     const createGame = async () => {
       console.log("Creating game")
       // Assuming jwt and quizId are obtained from your auth system and current quiz context
       const jwt = await sessionToken();// Replace with actual JWT token
-      console.log("JWT", jwt)
-      const quizId = "1"; // Replace with actual quiz ID
-      gameService.createGame(jwt, quizId, (response) => {
+      gameService.createGame(jwt, quizId.value, (response) => {
       });
     };
 
@@ -155,6 +176,8 @@ export default {
         gameService.onGameEnded(() => {
           console.log("Game ended");
           gameEnded.value = true;
+          currentQuestion.value = null;
+          showScoreboard.value = true;
         });
       };
 
@@ -206,6 +229,7 @@ export default {
         scores,
         handleScoreDone,
         gameEnded,
+        quizName
       };
     }
 };

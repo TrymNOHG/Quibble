@@ -1,24 +1,25 @@
 <template>
   <div class="flashcard-container">
-    <!-- Question Card -->
-    <div class="question-card">
+    <!-- Question Card (hidden for multiplayer clients) -->
+    <div class="question-card" v-if="!isMultiplayerClient">
       <div class="card-content" v-html="question.question"></div>
     </div>
 
-    <!-- Temp button to show answers for demo purposes -->
+    <!-- Progress Bar (remains visible as a timer) -->
     <div class="progress-bar-container">
       <div class="progress-bar" :style="{width: progressBarWidth + '%'}"></div>
     </div>
 
-    <!-- Answer Cards Container -->
+    <!-- Answer Cards Container (always visible, but without flip or correct/incorrect class) -->
     <div class="answers-container">
       <div v-for="(choice, index) in question.options" :key="index"
            class="answer-card"
-           :class="{'flip': showAnswers, 'correct': isCorrect(index) && showAnswers, 'incorrect': !isCorrect(index) && showAnswers}"
-           @click="selectAnswer(index)">
-        <div class="card-front">{{ choice }}</div>
-        <div class="card-back">
-          <span v-if="isCorrect(index)">✓</span>
+           :class="{ 'flip': showAnswers && !isMultiplayerClient, 'correct': isMultiplayerClient ? false : choice.isCorrect && showAnswers, 'incorrect': isMultiplayerClient ? false : !choice.isCorrect && showAnswers }"
+           @click="selectAnswer(choice.alternative)">
+        <div class="card-front">{{ choice.alternative }}</div>
+        <!-- Card back content hidden for multiplayer clients -->
+        <div class="card-back" v-if="!isMultiplayerClient">
+          <span v-if="choice.isCorrect">✓</span>
           <span v-else>✕</span>
         </div>
       </div>
@@ -39,12 +40,16 @@ export default {
     },
     isSinglePlayer: {
       type: Boolean,
-      default: true
+      default: false
     },
     showAnswersProp: { // New prop to control the display of answers
       type: Boolean,
-      default: true
-    }
+      default: false
+    },
+    isMultiplayerClient: {
+      type: Boolean,
+      default: false
+    },
   },
   setup(props, { emit, expose }) {
     const showAnswers = ref(props.showAnswersProp);
@@ -52,7 +57,6 @@ export default {
     const timeLeft = ref(90);
     const progressBarWidth = ref(100);
     const timer = ref(null);
-    const correctAnswer = ref(1); //todo real value
 
     watch(() => props.showAnswersProp, (newValue) => {
       showAnswers.value = newValue;
@@ -98,14 +102,17 @@ export default {
       return index === correctAnswer.value;
     };
 
-    const selectAnswer = (index) => {
+    const selectAnswer = (choice) => {
       if (!props.isSinglePlayer || showAnswers.value) return;
 
       stopTimer();
-      selectedAnswer.value = index;
+      selectedAnswer.value = choice;
       showAnswers.value = true;
-
-      if (isCorrect(index)) {
+      if (this.isMultiplayerClient) {
+        emit('answerSelected', isCorrect(choice));
+        return;
+      }
+      if (isCorrect(choice)) {
         correctSound.play().catch((e) => console.error('Error playing sound:', e));
         emit('answerSelected', true);
       } else {
@@ -146,7 +153,6 @@ export default {
       timeLeft,
       progressBarWidth,
       selectAnswer,
-      isCorrect,
     };
   }
 };
