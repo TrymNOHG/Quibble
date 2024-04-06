@@ -10,11 +10,22 @@ const BASE_URL = "http://localhost:8080/api/v1"
 export const loginUser = async (userLoginDTO) => {
     const base64Credentials = btoa(userLoginDTO.emailOrUserName + ':' + userLoginDTO.password);
     return axios.post(`${BASE_URL}/public/auth/login`, {},{
+        withCredentials: true,
         headers: {
             'Authorization': 'Basic ' + base64Credentials
         }
     });
 }
+
+export const getNewAccessToken = async () => {
+    return axios.post(`${BASE_URL}/public/auth/get-access-token-from-refresh-token`, {}, {
+        withCredentials: true,
+        headers: {
+        },
+    });
+};
+
+
 
 // let userRegisterDTO = {
 //     'username' : '',

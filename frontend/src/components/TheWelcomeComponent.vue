@@ -15,7 +15,7 @@
             @blur="show_txt"
         />
         <div class="button_div">
-          <div class="btn" aria-label="Start button">{{ $t('buttons.START_GAME') }}</div>
+          <div class="btn" aria-label="Start button" @click="startGame">{{ $t('buttons.START_GAME') }}</div>
         </div>
       </div>
       <div class="login_register_text">
@@ -32,6 +32,8 @@
 
 <script>
 import { useI18n } from 'vue-i18n';
+import {useRouter} from "vue-router";
+import {ref} from "vue";
 
 export default {
   name: "welcome_page",
@@ -39,8 +41,8 @@ export default {
 
   setup() {
     const { t } = useI18n();
-
-    const gamepin = "";
+    const router = useRouter();
+    const gamepin = ref("");
 
     const hide_txt = () => {
       const inputField = document.querySelector('.pin_input');
@@ -56,10 +58,21 @@ export default {
       }
     };
 
+    const startGame = () => {
+      // Input validation
+      console.log("Starting game with PIN:", gamepin.value);
+      if (!gamepin.value) {
+        return;
+      }
+      console.log("Joining game with PIN:", gamepin.value);
+      router.push({ name: 'GameClient', params: { gameId: gamepin.value } });
+    };
+
     return {
       hide_txt,
       show_txt,
-      gamepin
+      gamepin,
+      startGame
     }
   }
 };

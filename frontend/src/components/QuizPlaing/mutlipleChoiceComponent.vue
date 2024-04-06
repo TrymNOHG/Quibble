@@ -2,7 +2,7 @@
   <div class="flashcard-container">
     <!-- Question Card -->
     <div class="question-card">
-      <div class="card-content" v-html="flashcard.question"></div>
+      <div class="card-content" v-html="question.question"></div>
     </div>
 
     <!-- Temp button to show answers for demo purposes -->
@@ -12,7 +12,7 @@
 
     <!-- Answer Cards Container -->
     <div class="answers-container">
-      <div v-for="(choice, index) in flashcard.choices" :key="index"
+      <div v-for="(choice, index) in question.options" :key="index"
            class="answer-card"
            :class="{'flip': showAnswers, 'correct': isCorrect(index) && showAnswers, 'incorrect': !isCorrect(index) && showAnswers}"
            @click="selectAnswer(index)">
@@ -33,21 +33,32 @@ import {ref, watch, onMounted, onUnmounted} from 'vue';
 
 export default {
   props: {
-    flashcard: {
+    question: {
       type: Object,
       required: true
     },
     isSinglePlayer: {
       type: Boolean,
       default: true
+    },
+    showAnswersProp: { // New prop to control the display of answers
+      type: Boolean,
+      default: true
     }
   },
-  setup(props, { emit }) {
-    const showAnswers = ref(false);
+  setup(props, { emit, expose }) {
+    const showAnswers = ref(props.showAnswersProp);
     const selectedAnswer = ref(null);
     const timeLeft = ref(90);
     const progressBarWidth = ref(100);
     const timer = ref(null);
+    const correctAnswer = ref(1); //todo real value
+
+    watch(() => props.showAnswersProp, (newValue) => {
+      showAnswers.value = newValue;
+      stopTimer()
+      emit('timerDone');
+    });
 
     const correctSound = new Audio("src/assets/sound/correct.mp3");
     const wrongSound = new Audio("src/assets/sound/wrong.mp3");
@@ -77,13 +88,14 @@ export default {
 
     const handleTimeOut = () => {
       stopTimer();
-      wrongSound.currentTime = 0; // Ensure the sound starts from the beginning
-      wrongSound.play().catch((e) => console.error('Error playing sound:', e));
-      showAnswers.value = true;
+      //wrongSound.currentTime = 0; // Ensure the sound starts from the beginning
+      //wrongSound.play().catch((e) => console.error('Error playing sound:', e));
+      //showAnswers.value = true;
+      emit('timerDone'); // Emitting an event for the parent component
     };
 
     const isCorrect = (index) => {
-      return index === props.flashcard.answer;
+      return index === correctAnswer.value;
     };
 
     const selectAnswer = (index) => {
@@ -102,6 +114,8 @@ export default {
       }
     };
 
+
+
     const resetGame = () => {
       showAnswers.value = false;
       selectedAnswer.value = null;
@@ -111,7 +125,7 @@ export default {
       playTimerSound();
     };
 
-    watch(() => props.flashcard, resetGame, { deep: true });
+    watch(() => props.question, resetGame, { deep: true });
 
     onMounted(() => {
       startTimer();
@@ -196,6 +210,11 @@ export default {
 .answer-card:nth-child(2) .card-front { background-color: #03a9f4; } /* Light Blue */
 .answer-card:nth-child(3) .card-front { background-color: #4caf50; } /* Green */
 .answer-card:nth-child(4) .card-front { background-color: #ffa900; } /* Yellow, but w */
+.answer-card:nth-child(5) .card-front { background-color: #9c27b0; } /* Purple */
+.answer-card:nth-child(6) .card-front { background-color: #ff5722; } /* Deep Orange */
+.answer-card:nth-child(7) .card-front { background-color: #607d8b; } /* Blue Grey */
+.answer-card:nth-child(8) .card-front { background-color: #795548; } /* Brown */
+
 
 .card-front, .card-back {
   position: absolute;

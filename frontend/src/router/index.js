@@ -6,8 +6,10 @@ import Quiz_comp from "@/components/QuizPlaing/Quiz_comp.vue";
 import HomePageView from "@/views/HomePageView.vue";
 import CurrentQuizView from "@/views/CurrentQuizView.vue";
 import {useUserStore} from "@/stores/counter.js";
-import ProfileView from "@/views/PrivateProfileView.vue";
+import ProfileView from "@/views/Profile/PrivateProfileView.vue";
+import multiplayerHostView from "@/views/QuizPlaying/MultiplayerHostView.vue";
 import CreateQuizView from "@/views/CreateQuizView.vue";
+import multiplayerPlayerView from "@/views/QuizPlaying/MultiplayerPlayerView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -59,6 +61,19 @@ const router = createRouter({
           component: CreateQuizView,
           meta: { requiresAuth: true }
       },
+        {
+          path: '/quiz/multiplayer',
+          name: 'multiplayer',
+          component: multiplayerHostView,
+          meta: { requiresAuth: true }
+        },
+      {
+          path: '/quiz/game/:gameId',
+          name: 'GameClient',
+          component: multiplayerPlayerView,
+          props: true, // Allows the route parameter (gameId) to be passed as a prop to the component
+          meta: { requiresAuth: false } // Adjust based on whether you want this route to require authentication
+      },
   ]
 })
 
@@ -71,7 +86,7 @@ router.beforeEach((to, from, next) => {
         next({ path: '/' });
     }
     else if (notRequiresAuth) {
-        if (['/', '/register', '/login'].includes(to.path) && isAuthenticated) {
+        if (['/register', '/login'].includes(to.path) && isAuthenticated) {
           next({ path: '/home' });
         } else {
             next();
