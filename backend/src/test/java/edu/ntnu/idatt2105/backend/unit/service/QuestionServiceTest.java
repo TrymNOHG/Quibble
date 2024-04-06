@@ -88,6 +88,7 @@ class QuestionServiceTest {
                 .type(QuestionType.SHORT_ANSWER)
                 .quizId(quizLoadDTO.quizId())
                 .build());
+        long firstQuestionId = quizLoadDTO.questions().stream().findFirst().get().questionId();
         assertEquals("test question", questionService.getQuestionDTO(firstQuestionId, UUID.randomUUID()).question());
         assertEquals("test answer", questionService.getQuestionDTO(firstQuestionId, UUID.randomUUID()).answer());
         assertEquals(QuestionType.SHORT_ANSWER.name(), questionService.getQuestionDTO(firstQuestionId, UUID.randomUUID()).questionType());
