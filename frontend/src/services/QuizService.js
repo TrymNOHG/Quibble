@@ -19,6 +19,19 @@ export const fetchQuizzes = async (page, size) => {
     }
 };
 
+export const fetchFilteredQuizzes = async (quizFilterDTO) => {
+    try {
+        const response = await axios.get(`${BASE_URL_PUB}/getFilter`, {
+            headers: {
+                Authorization: `Bearer ${await sessionToken()}`,
+            }
+        });
+        return response.data.content;
+    } catch (error) {
+        throw error.response ? error.response.data : error.message;
+    }
+};
+
 export const fetchMyQuizzes = async (page, size) => {
     try {
         const response = await axios.get(`${BASE_URL_PRIV}/get?page=${page}&size=${size}`, {

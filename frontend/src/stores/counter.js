@@ -123,8 +123,6 @@ export const useQuizStore = defineStore('storeQuiz', {
   },
 
   actions: {
-    //searchword, difficulty, pageIndex,
-    //TODO: search, diff, page
 
     async loadQuizzes(quizFilterDTO) {
       try {
