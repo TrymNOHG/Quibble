@@ -59,11 +59,12 @@
           @click="addToMyquiz()">
         Add to MyQuiz
       </button>
-      <font-awesome-icon
-          id="download"
-          icon="fa-solid fa-download"
-          @click="downloadQuiz()"
-      />
+      <div id="download_div">
+        <font-awesome-icon
+            id="download"
+            icon="fa-solid fa-download"
+            @click="downloadQuiz()"  />
+      </div>
     </div>
     <div class="header"></div>
     <div class="questions_list">
@@ -95,16 +96,20 @@ import { useQuizStore } from "@/stores/counter.js";
 import QuestionCreateList from "@/components/create_quiz/question-create-list.vue";
 import {downloadQuizCSV, uploadQuestionsFromCSV} from "@/features/QuizCSV"
 import router from "@/router/index.js";
+import Quiz_info_comp from "@/components/quiz_info_comp.vue";
 
 export default {
-  components: { QuestionCreateList, QuestionList },
+  components: {Quiz_info_comp, QuestionCreateList, QuestionList },
+
+  props: {
+    isAuthor: null,
+    isEditor: null,
+  },
 
   setup() {
     const store = useQuizStore();
     const addNewQuestion = ref(false);
     const edit = ref(false);
-    const isAuthor = ref(store.isAdmin(store.currentQuiz.adminId));
-    const isEditor = ref(store.isEditor);
     let question_list = ref(store.currentQuiz.questions);
 
     const editQuestion = ref({
@@ -240,8 +245,6 @@ export default {
       addEdit,
       deleteQuiz,
       addToMyquiz,
-      isAuthor,
-      isEditor,
       question_list,
       deleteQuestion,
       edit,
@@ -257,6 +260,23 @@ export default {
 
 
 <style scoped>
+#download_div{
+  width: 35px;
+  display: flex;
+  height: 35px;
+  background-color: rgba(178, 0, 255, 0.1);
+  border-radius: 20px;
+  flex-direction: row;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  border: solid black 2px;
+}
+
+#download {
+  scale: 1.5
+}
+
 .popup-content{
   width: 350px
 }
@@ -273,7 +293,6 @@ export default {
   width: 35%;
 }
 
-.truefalse,
 .multiple {
   margin-top: 10%;
 }
@@ -287,11 +306,6 @@ export default {
   flex-direction: column;
 }
 
-.truefalse {
-  display: flex;
-  align-content: start;
-}
-
 .popup_input {
   display: flex;
   flex-direction: column;
@@ -300,11 +314,6 @@ export default {
 .input {
   height: 25px;
   width: 80%;
-}
-
-.input-truefalse {
-  height: 25px;
-  width: 240%;
 }
 
 .answer-option {

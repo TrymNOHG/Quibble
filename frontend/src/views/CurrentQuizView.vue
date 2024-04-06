@@ -1,19 +1,66 @@
 <template>
   <div class="page_format">
-    <quiz_info_comp class="info" :quiz="quiz"/>
-    <quiz_questions_list_comp class="btn_questionList" :quiz="quiz"/>
+    <quiz_info_comp
+        class="info"
+        :quiz="quiz"
+        :isAuthor="isAuthor"
+        :isEditor="isEditor"
+        :quizAuthors="quizAuthors"
+        @deleteAuthor="deleteAuthor"
+        @saveEdit="saveEdit"
+        @addAuthor="addAuthor"
+    />
+
+    <quiz_quiestions_list_comp
+        class="btn_questionList"
+        :isAuthor="isAuthor"
+        :isEditor="isEditor"
+    />
   </div>
 </template>
 
 <script setup>
 
-import {useQuizStore} from "@/stores/counter.js";
+import {useQuizStore, useUserStore} from "@/stores/counter.js";
+import {onMounted, ref} from "vue";
+import Quiz_quiestions_list_comp from "@/components/quiz_quiestions_list_comp.vue";
 import Quiz_info_comp from "@/components/quiz_info_comp.vue";
-import Quiz_questions_list_comp from "@/components/quiz_quiestions_list_comp.vue";
+
 
 const store = useQuizStore();
 const quiz = store.currentQuiz;
+const userStore = useUserStore();
 
+let isAuthor = ref(true);
+let isEditor = ref(true);
+let quizAuthors = ref(store.currentQuiz.collaborators === null ? [] : store.currentQuiz.collaborators);
+
+
+onMounted( () => {
+  isAuthor.value = store.isAdmin(store.currentQuiz.adminId)
+  checkEditor();
+});
+
+const checkEditor = () => {
+  isEditor.value = quizAuthors.value.some(author => author.userId === userStore.user.userId);
+};
+
+const deleteAuthor = (author) => {
+  store.deleteAuth(author);
+};
+
+const addAuthor = async (author) => {
+  quizAuthors = await store.addAuthor(author);
+};
+
+const saveEdit = async (quizUpdateDTO) => {
+  try {
+    console.log(quizUpdateDTO)
+    return await store.updateCurrentQuiz(quizUpdateDTO);
+  } catch (error) {
+    console.error('Error editing quiz:', error);
+  }
+};
 
 </script>
 

@@ -264,14 +264,15 @@ export const useQuizStore = defineStore('storeQuiz', {
     },
 
     async addAuthor(author) {
+      console.log(author)
       const quizAuthorDTO = {
-        userId: author.userId,
-        quizId: this.currentQuiz.quizId
+        "userId": author.userId,
+        "quizId": this.currentQuiz.quizId
       };
       await addCollaborator(quizAuthorDTO)
           .then(response => {
             console.log(response)
-            this.currentQuiz.collaborators.push(response)
+            this.currentQuiz.collaborators.push(author)
           }).catch(error => {
             console.warn("error", error)
           })

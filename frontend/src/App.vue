@@ -1,5 +1,5 @@
 <template>
-  <header>
+  <header v-if="!isOnRoot">
     <router-link to="/home" aria-label="Go to Home page">
       <img
           id="logo"
@@ -56,6 +56,9 @@ export default {
    let language = ref("NO");
    const { locale } = useI18n();
    const route = useRoute();
+   const isOnRoot = computed(()=>{
+     return route.path === "/";
+   });
 
     const headerText = computed(() => {
       if (route.path === "/home"){return "Home"}
@@ -80,7 +83,8 @@ export default {
    return {
      language,
      changeLang,
-     headerText
+     headerText,
+     isOnRoot
    }
   }
 }

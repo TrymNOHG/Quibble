@@ -3,19 +3,19 @@
     <h2>{{ $t('titles.LOGIN') }}</h2>
     <form @submit.prevent="submit" :class="{ 'has-errors': has_err }">
       <div class="input_fields">
-        <label for="username">{{ $t('placeholders.USERNAME') }}</label>
+        <label for="email">{{ $t('placeholders.EMAIL') }}</label>
         <input
             type="text"
             required
-            v-model.trim="username"
-            name="username"
+            v-model.trim="email"
+            name="email"
             class="input-field"
-            aria-labelledby="usernameLabel"
-            :class="{ 'error': errors && errors['username'] }"
-            :placeholder="$t('placeholders.USERNAME')"
+            aria-labelledby="emailLabel"
+            :class="{ 'error': errors && errors['email'] }"
+            :placeholder="$t('placeholders.EMAIL')"
         />
-        <div v-if="errors && errors['username']" class="error-message">
-          {{ errors["username"] }}
+        <div v-if="errors && errors['email']" class="error-message">
+          {{ errors["email"] }}
         </div>
 
         <label for="password">{{ $t('placeholders.PASSWORD') }}</label>
@@ -32,7 +32,9 @@
         <div v-if="errors && errors['password']" class="error-message">
           {{ errors["password"] }}
         </div>
-
+        <p>
+          {{submitMessage}}
+        </p>
         <basic_button
             class="submit_button"
             @click="submit"
@@ -70,25 +72,25 @@ export default {
     const { t } = useI18n();
 
     const validationSchema = yup.object({
-      username: yup.string().required(t("error_messages.USERNAME_REQUIRED")),
-      password: yup.string().required(t("error_messages.PASSWORD_REQUIRED")).min(8, "Password must be at least 8 characters"),
+      email: yup.string().required(t("error_messages.EMAIL_REQUIRED")).email(t("error_messages.EMAIL")),
+      password: yup.string().required(t("error_messages.PASSWORD_REQUIRED")).min(8, t("error_messages.PASS_MUST")),
     });
 
 
     const { handleSubmit, errors, setFieldTouched, setFieldValue } = useForm({
       validationSchema,
       initialValues: {
-        username: "",
+        email: "",
         password: "",
       },
     });
 
-    const { value: username } = useField("username");
+    const { value: email } = useField("email");
     const { value: password } = useField("password");
 
     const submit = handleSubmit(async () => {
       const userLoginDTO = {
-        emailOrUserName: username.value,
+        emailOrUserName: email.value,
         password: password.value,
       };
 
@@ -103,7 +105,7 @@ export default {
             }
           })
           .catch((error) => {
-            submitMessage.value = "register_error";
+            submitMessage.value = t("login_register_text.LOGIN_ERR");
             setTimeout(() => {
               submitMessage.value = "";
             }, 2000);
@@ -117,11 +119,12 @@ export default {
     };
 
     return {
-      username,
+      email,
       t,
       password,
       errors,
       submit,
+      submitMessage,
       validationSchema,
       has_err,
       setFieldTouched,

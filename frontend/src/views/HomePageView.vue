@@ -14,6 +14,7 @@
           v-for="(quiz, index) in displayedQuizzes"
           :key="index"
           :quiz="quiz"
+          @setCurrentQuiz="setCurrentQuiz"
       />
     </div>
     <div id="inf_scroll"/>
@@ -49,6 +50,10 @@ async function handleDifficulty(difficulty) {
   difficulty_selected.value = difficulty;
   page.value = 0;
   await loadQuizzes();
+}
+
+async function setCurrentQuiz(quiz) {
+  await quizStore.setCurrentQuizById(quiz);
 }
 
 async function handleCategory(category) {
