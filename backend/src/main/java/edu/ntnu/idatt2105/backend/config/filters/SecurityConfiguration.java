@@ -1,8 +1,8 @@
 package edu.ntnu.idatt2105.backend.config.filters;
 
-import edu.ntnu.idatt2105.backend.service.JWTTokenService;
+import edu.ntnu.idatt2105.backend.service.security.JWTTokenService;
 import edu.ntnu.idatt2105.backend.dto.security.RSAKeyPairDTO;
-import edu.ntnu.idatt2105.backend.service.LogoutHandlerService;
+import edu.ntnu.idatt2105.backend.service.security.LogoutHandlerService;
 import edu.ntnu.idatt2105.backend.service.users.UserService;
 import lombok.RequiredArgsConstructor;
 import com.nimbusds.jose.jwk.JWK;
@@ -27,7 +27,6 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;

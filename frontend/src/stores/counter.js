@@ -366,7 +366,7 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
           });
 
       const quizUpdateDTO = {
-        "quizId": createdQuiz.quizId,
+        "quizId": this.templateQuiz.quizId,
         "newName": createdQuiz.quizName,
         "newDescription": this.templateQuiz.quizDescription,
         "difficulty": this.templateQuiz.quizDifficulty.toUpperCase(),
@@ -378,7 +378,7 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
       console.log(this.templateQuiz.questions);
       this.templateQuiz.questions.forEach(question => {
         const questionCreateDTO = {
-          "quizId": createdQuiz.quizId,
+          "quizId": this.templateQuiz.quizId,
           "question": question.question,
           "answer": question.answer,
           "type": question.type.toUpperCase(),
@@ -398,7 +398,7 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
       this.templateQuiz.keywords.forEach(keyword => {
         console.log(keyword)
         const keywordDTO = {
-          "quizId": createdQuiz.quizId,
+          "quizId": this.templateQuiz.quizId,
           "keywordName": keyword
         };
         //TODO: her lages det keywords. Dette funker ikke trym
@@ -417,7 +417,7 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
       this.templateQuiz.categories.forEach(category => {
         console.log(category)
         const QuizCategoryCreateDTO = {
-          "quizId": createdQuiz.quizId,
+          "quizId": this.templateQuiz.quizId,
           "categoryId": category.categoryId
         };
       });

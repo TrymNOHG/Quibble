@@ -2,7 +2,7 @@ package edu.ntnu.idatt2105.backend.controller.pub.authentication;
 
 import edu.ntnu.idatt2105.backend.dto.users.UserRegisterDTO;
 import edu.ntnu.idatt2105.backend.dto.security.AuthenticationResponseDTO;
-import edu.ntnu.idatt2105.backend.service.AuthenticationService;
+import edu.ntnu.idatt2105.backend.service.security.AuthenticationService;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import jakarta.servlet.http.HttpServletResponse;

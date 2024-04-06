@@ -48,6 +48,18 @@ public interface IUserController {
     )
     ResponseEntity<UserLoadDTO> updateUser(@ModelAttribute @NonNull UserUpdateDTO userUpdateDTO, @NonNull Authentication authentication) throws IOException;
 
+    @DeleteMapping
+    @Operation(summary = "This method removes the user's profile picture.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful removal of user's profile picture.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = User.class)) }),
+            @ApiResponse(responseCode = "403", description = "Unauthorized removal of user's profile picture.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = User.class)) })
+    }
+    )
+    ResponseEntity<String> deleteProfilePicture(@NonNull Authentication authentication) throws IOException;
 
     /**
      * This method deletes the user's information.

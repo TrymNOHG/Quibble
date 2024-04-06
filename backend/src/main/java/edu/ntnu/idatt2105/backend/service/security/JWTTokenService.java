@@ -1,4 +1,4 @@
-package edu.ntnu.idatt2105.backend.service;
+package edu.ntnu.idatt2105.backend.service.security;
 
 import edu.ntnu.idatt2105.backend.config.UserConfig;
 import edu.ntnu.idatt2105.backend.dto.security.RSAKeyPairDTO;

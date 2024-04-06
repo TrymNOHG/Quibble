@@ -30,8 +30,8 @@ import java.util.logging.Logger;
  * This class is responsible for inserting dummy data into the database on startup. If the data is already there, don't
  * insert it.
  *
- * @author Brage Halvorsen Kvamme
- * @version 1.1 29.03.2024
+ * @author Brage Halvorsen Kvamme, Trym Hamer Gudvangen
+ * @version 1.1 07.04.2024
  */
 @RequiredArgsConstructor
 @Component
@@ -56,11 +56,7 @@ public class DummyData implements CommandLineRunner {
     @Transactional
     @Override
     public void run(String... args) {
-        User user = User.builder()
-                .username("TestUser")
-                .email("test@test.test")
-                .password(passwordEncoder.encode("password"))
-                .build();
+        User user = User.builder().username("TestUser").email("test@test.test").password(passwordEncoder.encode("password")).build();
 
         if (userRepository.findByUsername(user.getUsername()).isEmpty()) {
             logger.info("TestUser: not found in database, adding TestUser to database");
@@ -70,11 +66,7 @@ public class DummyData implements CommandLineRunner {
             return;
         }
 
-        User user2 = User.builder()
-                .username("test User2")
-                .email("test2@test.test")
-                .password(passwordEncoder.encode("password"))
-                .build();
+        User user2 = User.builder().username("test User2").email("test2@test.test").password(passwordEncoder.encode("password")).build();
 
         if (userRepository.findByUsername(user2.getUsername()).isEmpty()) {
             logger.info("TestUser: not found in database, adding TestUser to database");
@@ -85,12 +77,7 @@ public class DummyData implements CommandLineRunner {
         }
 
         User quizAdmin = userRepository.findByUsername("TestUser").orElseThrow();
-        Quiz quiz = Quiz.builder()
-                .quizName("Capitals of Scandinavia")
-                .quizDescription("A quiz about the capitals of Scandinavia")
-                .admin(quizAdmin)
-                .difficulty(Difficulty.EASY)
-                .build();
+        Quiz quiz = Quiz.builder().quizName("Capitals of Scandinavia").quizDescription("A quiz about the capitals of Scandinavia").admin(quizAdmin).difficulty(Difficulty.EASY).build();
 
         if (quizRepository.findByQuizName(quiz.getQuizName()).isEmpty()) {// QuizName is not unique, but this is for testing purposes.
             logger.info("TestQuiz: Capitals of Scandinavia Quiz not found in database, adding quiz to database");
@@ -100,12 +87,7 @@ public class DummyData implements CommandLineRunner {
             logger.info("TestQuiz: already in database");
         }
 
-        Question question1 = Question.builder()
-                .question("What is the capital of Norway?")
-                .questionType(QuestionType.MULTIPLE_CHOICE)
-                .answer("Oslo")
-                .quiz(quiz)
-                .build();
+        Question question1 = Question.builder().question("What is the capital of Norway?").questionType(QuestionType.MULTIPLE_CHOICE).answer("Oslo").quiz(quiz).build();
 
         questionRepository.save(question1);
         Set<MultipleChoice> choices = Set.of(
@@ -116,28 +98,14 @@ public class DummyData implements CommandLineRunner {
         );
         multipleChoiceRepository.saveAll(choices);
 
-        Question question2 = Question.builder()
-                .question("What is the capital of Sweden?")
-                .answer("Stockholm")
-                .questionType(QuestionType.SHORT_ANSWER)
-                .quiz(quiz)
-                .build();
+        Question question2 = Question.builder().question("What is the capital of Sweden?").answer("Stockholm").questionType(QuestionType.SHORT_ANSWER).quiz(quiz).build();
 
-        Question question3 = Question.builder()
-                .question("What is the capital of Denmark?")
-                .answer("Copenhagen")
-                .questionType(QuestionType.SHORT_ANSWER)
-                .quiz(quiz)
-                .build();
+        Question question3 = Question.builder().question("What is the capital of Denmark?").answer("Copenhagen").questionType(QuestionType.SHORT_ANSWER).quiz(quiz).build();
 
         questionRepository.save(question2);
         questionRepository.save(question3);
 
-        QuizAuthor quizAuthor = QuizAuthor
-                .builder()
-                .user(user2)
-                .quiz(quiz)
-                .build();
+        QuizAuthor quizAuthor = QuizAuthor.builder().user(user2).quiz(quiz).build();
 
         quizAuthorRepository.save(quizAuthor);
         logger.info("Successfully added quiz author");
@@ -151,12 +119,7 @@ public class DummyData implements CommandLineRunner {
 
         // Add more quizzes
 
-        quiz = Quiz.builder()
-                .quizName("Time trivia")
-                .quizDescription("A quiz about temporal questions")
-                .admin(quizAdmin)
-                .difficulty(Difficulty.MEDIUM)
-                .build();
+        quiz = Quiz.builder().quizName("Time trivia").quizDescription("A quiz about temporal questions").admin(quizAdmin).difficulty(Difficulty.MEDIUM).build();
 
         if (quizRepository.findByQuizName(quiz.getQuizName()).isEmpty()) {// QuizName is not unique, but this is for testing purposes.
             logger.info("TestQuiz: Capitals of Scandinavia Quiz not found in database, adding quiz to database");
@@ -166,12 +129,7 @@ public class DummyData implements CommandLineRunner {
             logger.info("TestQuiz: already in database");
         }
 
-        question1 = Question.builder()
-                .question("How many hours are in a day?")
-                .questionType(QuestionType.MULTIPLE_CHOICE)
-                .answer("24")
-                .quiz(quiz)
-                .build();
+        question1 = Question.builder().question("How many hours are in a day?").questionType(QuestionType.MULTIPLE_CHOICE).answer("24").quiz(quiz).build();
 
         questionRepository.save(question1);
         choices = Set.of(
@@ -182,23 +140,14 @@ public class DummyData implements CommandLineRunner {
         );
         multipleChoiceRepository.saveAll(choices);
 
-        question2 = Question.builder()
-                .question("How many seconds are in an hour?")
-                .answer("3600")
-                .questionType(QuestionType.SHORT_ANSWER)
-                .quiz(quiz)
-                .build();
+        question2 = Question.builder().question("How many seconds are in an hour?").answer("3600").questionType(QuestionType.SHORT_ANSWER).quiz(quiz).build();
 
         questionRepository.save(question2);
         questionRepository.save(question3);
 
         Category category = categoryRepository.findById(1L).orElseThrow();
 
-        QuizCategory quizCategory = QuizCategory
-                .builder()
-                .quiz(quiz)
-                .category(category)
-                .build();
+        QuizCategory quizCategory = QuizCategory.builder().quiz(quiz).category(category).build();
 
         quizCategoryRepository.save(quizCategory);
 
@@ -207,12 +156,7 @@ public class DummyData implements CommandLineRunner {
     private Set<Category> createListOfCategories(String[] categoryNames) {
         Set<Category> categories = new HashSet<>();
         for(String name : categoryNames) {
-            categories.add(
-                    Category
-                    .builder()
-                    .categoryName(name)
-                    .build()
-            );
+            categories.add(Category.builder().categoryName(name).build());
         }
         return categories;
     }

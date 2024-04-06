@@ -1,6 +1,7 @@
 package edu.ntnu.idatt2105.backend.mapper.quiz;
 
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.feedback.QuizFeedbackDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.feedback.QuizFeedbackLoadAllDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.feedback.QuizFeedbackLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.users.UserLoadDTO;
@@ -33,11 +34,19 @@ public interface QuizFeedbackMapper {
         return QuizFeedbackLoadAllDTO.builder().feedbacks(feedbackLoadDTOS).build();
     }
 
+    default QuizFeedback quizFeedbackDTOToQuizFeedback(QuizFeedbackDTO quizFeedbackDTO) {
+        return QuizFeedback.builder()
+                .quiz(Quiz.builder().quizId(quizFeedbackDTO.quizId()).build())
+                .user(User.builder().userId(quizFeedbackDTO.userId()).build())
+                .stars(quizFeedbackDTO.stars())
+                .feedback(quizFeedbackDTO.feedback())
+                .build();
+    }
+
 
     @Mapping(target = "userId", source = "quizFeedback.user.userId")
     @Mapping(target = "quizId", source = "quizFeedback.quiz.quizId")
     @Mapping(target = "feedbackId", source = "quizFeedback.quizFeedbackId")
     QuizFeedbackLoadDTO quizFeedbackToQuizFeedbackLoadDTO(QuizFeedback quizFeedback);
-
 
 }

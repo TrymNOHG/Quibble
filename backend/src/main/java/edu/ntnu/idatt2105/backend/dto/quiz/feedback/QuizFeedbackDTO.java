@@ -16,5 +16,5 @@ import org.springframework.lang.Nullable;
  * @version 1.0 24.03.2024
  */
 @Builder
-public record QuizFeedbackDTO(@NonNull Long quizId, @NonNull Long userId, int stars, @Nullable String feedback) {
+public record QuizFeedbackDTO(@NonNull Long quizId, @NonNull Long userId, @NonNull Integer stars, @Nullable String feedback) {
 }

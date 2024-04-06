@@ -1,12 +1,21 @@
 package edu.ntnu.idatt2105.backend.unit.service;
 
 import edu.ntnu.idatt2105.backend.dto.websocket.SendAlternativesDTO;
+import edu.ntnu.idatt2105.backend.model.quiz.Difficulty;
+import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
+import edu.ntnu.idatt2105.backend.model.quiz.question.MultipleChoice;
+import edu.ntnu.idatt2105.backend.model.quiz.question.Question;
+import edu.ntnu.idatt2105.backend.model.quiz.question.QuestionType;
 import edu.ntnu.idatt2105.backend.model.users.User;
+import edu.ntnu.idatt2105.backend.repo.quiz.QuizRepository;
+import edu.ntnu.idatt2105.backend.repo.quiz.question.MultipleChoiceRepository;
+import edu.ntnu.idatt2105.backend.repo.quiz.question.QuestionRepository;
 import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
-import edu.ntnu.idatt2105.backend.service.JWTTokenGenerationService;
-import edu.ntnu.idatt2105.backend.service.JWTTokenService;
+import edu.ntnu.idatt2105.backend.service.security.JWTTokenGenerationService;
 import edu.ntnu.idatt2105.backend.service.websocket.GameService;
 import edu.ntnu.idatt2105.backend.util.Game;
+import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +25,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @ActiveProfiles("test")
+@Slf4j
 public class GameServiceTest {
 
     @Autowired
@@ -35,8 +46,16 @@ public class GameServiceTest {
 
     @Autowired
     private JWTTokenGenerationService jwtTokenGenerationService;
+    @Autowired
+    private QuizRepository quizRepository;
+    @Autowired
+    private QuestionRepository questionRepository;
+    @Autowired
+    private MultipleChoiceRepository multipleChoiceRepository;
+
 
     private User user;
+    private Quiz quiz;
 
     private void addUserToDatabase() {
         // Setup logic here
@@ -48,15 +67,49 @@ public class GameServiceTest {
         userRepository.save(user);
     }
 
+    @Transactional
+    void addQuizToDatabase(User user) {
+        Set<MultipleChoice> choices = Set.of(
+                MultipleChoice.builder().alternative("Oslo").isCorrect(true).build(),
+                MultipleChoice.builder().alternative("Bergen").isCorrect(false).build(),
+                MultipleChoice.builder().alternative("Trondheim").isCorrect(false).build(),
+                MultipleChoice.builder().alternative("Stavanger").isCorrect(false).build()
+        );
+        Question question1 = Question.builder()
+                .question("What is the capital of Norway?")
+                .questionType(QuestionType.MULTIPLE_CHOICE)
+                .answer("Oslo")
+                .quiz(quiz)
+                .choices(choices)
+                .build();
+        Quiz newQuiz = Quiz.builder()
+                .quizName("Capitals of Scandinavia")
+                .quizDescription("A quiz about the capitals of Scandinavia")
+                .admin(user)
+                .difficulty(Difficulty.EASY)
+                .questions(Set.of(question1))
+                .build();
+        Quiz quiz = quizRepository.save(newQuiz);
+
+        questionRepository.save(question1);
+
+        multipleChoiceRepository.saveAll(choices);
+        this.quiz = quizRepository.findById(quiz.getQuizId()).get();
+    }
+
+    @Transactional
     String generateGame() {
         addUserToDatabase();
         UUID uuid = UUID.randomUUID();
-        return gameService.createGame(user.getEmail(), 1, uuid);
+        addQuizToDatabase(user);
+        return gameService.createGame(user.getEmail(), quiz.getQuizId(), uuid);
     }
 
+    @Transactional
     String generateGame(UUID uuid) {
         addUserToDatabase();
-        return gameService.createGame(user.getEmail(), 1, uuid);
+        addQuizToDatabase(user);
+        return gameService.createGame(user.getEmail(), quiz.getQuizId(), uuid);
     }
 
     String generateAccessToken(User user) {
@@ -66,9 +119,10 @@ public class GameServiceTest {
     @Test
     void Generate_random_code_and_create_game_test() {
         addUserToDatabase();
+        addQuizToDatabase(user);
         UUID uuid = UUID.randomUUID();
 
-        String code = gameService.createGame(user.getEmail(), 1, uuid);
+        String code = gameService.createGame(user.getEmail(), quiz.getQuizId(), uuid);
         assertNotNull(code);
         assertEquals(4, code.length());
 
@@ -115,13 +169,15 @@ public class GameServiceTest {
     }
 
     @Test
+    @Transactional
     void Get_alternatives_test() {
         String code = generateGame();
         gameService.getGame(code).startGame();
-//        SendAlternativesDTO alternatives = gameService.getAlternatives(code);
-//        assertNotNull(alternatives);
-//        assertNotNull(alternatives.questionType());
-//        assertNotNull(alternatives.alternatives());
+        SendAlternativesDTO alternatives = gameService.getAlternatives(code);
+        assertNotNull(alternatives);
+        assertNotNull(alternatives.questionType());
+        assertNotNull(alternatives.alternatives());
+        assertEquals(4, alternatives.alternatives().length);
     }
 
     @Test

@@ -5,7 +5,7 @@ import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
 import edu.ntnu.idatt2105.backend.dto.websocket.*;
 import edu.ntnu.idatt2105.backend.model.users.User;
-import edu.ntnu.idatt2105.backend.service.JWTTokenService;
+import edu.ntnu.idatt2105.backend.service.security.JWTTokenService;
 import edu.ntnu.idatt2105.backend.service.images.ImageService;
 import edu.ntnu.idatt2105.backend.service.quiz.QuestionService;
 import edu.ntnu.idatt2105.backend.service.users.UserService;
@@ -123,7 +123,7 @@ public class SocketService {
      *
      * @param client The client that disconnected
      */
-    private void onDisconnect(SocketIOClient client) {
+    public void onDisconnect(SocketIOClient client) {
         logger.info("a user disconnected: " + client.getSessionId());
         Pair<String, String> codeUsername = gameService.deleteAnonUserFromGame(client.getSessionId());
         if (codeUsername != null) {

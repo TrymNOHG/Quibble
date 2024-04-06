@@ -1,4 +1,4 @@
-package edu.ntnu.idatt2105.backend.service;
+package edu.ntnu.idatt2105.backend.service.security;
 
 import edu.ntnu.idatt2105.backend.dto.security.AuthenticationResponseDTO;
 import edu.ntnu.idatt2105.backend.dto.security.TokenType;
@@ -10,11 +10,13 @@ import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
 import edu.ntnu.idatt2105.backend.service.images.ImageService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -82,6 +84,7 @@ public class AuthenticationService {
      * @param httpServletResponse The http response object.
      * @return AuthenticationResponseDTO containing the access token.
      */
+    @Transactional
     public AuthenticationResponseDTO registerUser(UserRegisterDTO userRegistrationDto,
                                                   HttpServletResponse httpServletResponse, MultipartFile imageFile
     ) {
@@ -120,7 +123,7 @@ public class AuthenticationService {
         } catch (Exception e) {
             log.info("Error while creating user: " + e.getMessage());
             throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong while creating user"
+                    HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong while creating user: " + e
             );
         }
         try {
@@ -234,5 +237,70 @@ public class AuthenticationService {
                 .build();
         refreshTokenRepository.save(refreshTokenEntity);
         setRefreshTokenCookie(httpServletResponse, refreshToken);
+    }
+
+    /**
+     * Gets the email of the logged-in user from the security context.
+     *
+     * @return The email of the logged-in user.
+     */
+    public String getLoggedInUserEmail() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
+    }
+
+    /**
+     * Gets the user id of the logged-in user from the security context.
+     *
+     * @return The user id of the logged-in user.
+     */
+    public long getLoggedInUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        return userRepository.findByEmail(email).orElseThrow(
+                ()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
+        ).getUserId();
+    }
+
+    /**
+     * Verifies that the user id is the same as the user who sent the request.
+     *
+     * @param userId The user id to verify.
+     */
+    public void verifyUserId(long userId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        long loggedInUserId = userRepository.findByEmail(email).orElseThrow(
+                ()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
+        ).getUserId();
+        if (userId != loggedInUserId) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User id does not match logged in user");
+        }
+    }
+
+    /**
+     * Verifies that the user email is the same as the user who sent the request.
+     *
+     * @param email The user email to verify.
+     */
+    public void verifyUserEmail(String email) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String loggedInEmail = authentication.getName();
+        if (!email.equals(loggedInEmail)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User email does not match logged in user");
+        }
+    }
+
+    /**
+     * Gets the logged-in user from the security context.
+     *
+     * @return The logged-in user.
+     */
+    public User getLoggedInUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        return userRepository.findByEmail(email).orElseThrow(
+                ()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
+        );
     }
 }
