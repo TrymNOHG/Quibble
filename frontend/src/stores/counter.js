@@ -118,14 +118,25 @@ export const useQuizStore = defineStore('storeQuiz', {
     //searchword, difficulty, pageIndex,
     //TODO: search, diff, page
 
-    async loadQuizzes(page, size) {
+    async loadQuizzes(quizFilterDTO) {
       try {
-        const response = await fetchQuizzes(page, size);
+        const response = await fetchQuizzes(0, 10);
         console.log(response)
         this.allQuizzes = [ ...response ];
         return this.allQuizzes;
       } catch (error) {
           console.error("Failed to load previous page:", error);
+      }
+    },
+
+    async loadMyQuizzes(quizFilterDTO) {
+      try {
+        const response = await fetchQuizzes(quizFilterDTO);
+        console.log(response)
+        this.allQuizzes = [ ...response ];
+        return this.allQuizzes;
+      } catch (error) {
+        console.error("Failed to load previous page:", error);
       }
     },
 

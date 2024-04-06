@@ -3,7 +3,7 @@ import sessionToken from "@/features/SessionToken.js";
 
 const BASE_URL_PRIV = "http://localhost:8080/api/v1/private/quiz"
 const BASE_URL_PUB = "http://localhost:8080/api/v1/public/quiz"
-const BASE_URL_PUB_CAT = "http://localhost:8080/api/v1/public"
+const BASE_URL_PUB_CAT = "http://localhost:8080/api/v1/public/category"
 
 
 export const fetchQuizzes = async (page, size) => {
@@ -18,6 +18,20 @@ export const fetchQuizzes = async (page, size) => {
         throw error.response ? error.response.data : error.message;
     }
 };
+
+export const fetchMyQuizzes = async (page, size) => {
+    try {
+        const response = await axios.get(`${BASE_URL_PRIV}/get?page=${page}&size=${size}`, {
+            headers: {
+                Authorization: `Bearer ${await sessionToken()}`,
+            }
+        });
+        return response.data.content;
+    } catch (error) {
+        throw error.response ? error.response.data : error.message;
+    }
+};
+
 
 export const createQuiz = async (quizName) => {
     try {
@@ -196,7 +210,7 @@ export const addKeyword = async (keywordDTO) => {
 
 export const fetchCategories = async () => {
     try {
-        const response = await axios.get(`${BASE_URL_PUB_CAT}/category/getAll`,
+        const response = await axios.get(`${BASE_URL_PUB_CAT}/getAll`,
             {
                 headers: {
                     Authorization: `Bearer ${await sessionToken()}`,

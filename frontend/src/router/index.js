@@ -8,6 +8,7 @@ import CurrentQuizView from "@/views/CurrentQuizView.vue";
 import {useUserStore} from "@/stores/counter.js";
 import ProfileView from "@/views/PrivateProfileView.vue";
 import CreateQuizView from "@/views/CreateQuizView.vue";
+import MyQuizView from "@/views/MyQuizView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -29,6 +30,12 @@ const router = createRouter({
           name: 'homepage',
           component: HomePageView,
           meta: { requiresAuth: false }
+      },
+      {
+          path: '/myquiz',
+          name: 'myquiz',
+          component: MyQuizView,
+          meta: { requiresAuth: true }
       },
       {
           path: '/quiz/current',

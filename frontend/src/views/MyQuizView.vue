@@ -22,11 +22,11 @@
 
 <script setup>
 import SearchInput from "@/components/BasicComponents/searchbar.vue";
-import { onMounted, ref } from 'vue';
+import {onMounted, ref} from 'vue';
 import One_quiz_rectangle from "@/components/BasicComponents/one_quiz_rectangle.vue";
-import { useQuizStore } from "@/stores/counter.js";
+import {useQuizStore} from "@/stores/counter.js";
 
-const searchInput =  ref('');
+const searchInput = ref('');
 let displayedQuizzes = ref([]);
 let difficulty_selected = ref([]);
 let category_selected = ref([]);
@@ -41,7 +41,7 @@ onMounted(async () => {
   await loadQuizzes();
 });
 
-onMounted( () => {
+onMounted(() => {
   getNextQuiz();
 });
 

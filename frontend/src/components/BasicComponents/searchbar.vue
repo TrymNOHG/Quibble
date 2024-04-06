@@ -50,44 +50,62 @@
   </div>
 </template>
 
-<script setup>
-import { getCurrentInstance, onMounted, ref, watchEffect } from "vue";
+<script>
+import { getCurrentInstance, onMounted, ref } from "vue";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import {useQuizStore} from "@/stores/counter.js";
 
-const showSearchBar = ref(true);
-const quizStore = useQuizStore();
-const selectedDifficulties = ref([]);
-const selectedCategories = ref([]);
-const dropdownOpen = ref(false);
-const difficulties = ref(["Easy", "Medium", "Hard"]);
-const categories = quizStore.category_list;
+export default {
+  props: {
+    categories: Array
+  },
 
-const { emit } = getCurrentInstance();
+  setup(props) {
 
-function toggleDropdown() {
-  dropdownOpen.value = !dropdownOpen.value;
+    const showSearchBar = ref(true);
+    const selectedDifficulties = ref([]);
+    const selectedCategories = ref([]);
+    const dropdownOpen = ref(false);
+    const difficulties = ref(["Easy", "Medium", "Hard"]);
+    const { emit } = getCurrentInstance();
+
+    const rows = ref([]);
+    rows.value.push({ difficulties: difficulties.value });
+    rows.value.push({ categories: props.categories });
+
+    const toggleDropdown = () => {
+      dropdownOpen.value = !dropdownOpen.value;
+    }
+
+    const toggleSearchBar = () => {
+      showSearchBar.value = !showSearchBar.value;
+    }
+
+    const  emitCategories = () => {
+      emit("categorySelected", selectedCategories.value);
+    }
+
+    const emitDifficulties = () => {
+      emit("difficultySelected", selectedDifficulties.value);
+    }
+
+    onMounted(() => {
+      showSearchBar.value = !(window.innerWidth <= 428);
+    });
+
+    return {
+      toggleDropdown,
+      toggleSearchBar,
+      emitCategories,
+      emitDifficulties,
+      showSearchBar,
+      selectedDifficulties,
+      selectedCategories,
+      dropdownOpen,
+      difficulties,
+      rows
+    }
+  }
 }
-
-function toggleSearchBar() {
-  showSearchBar.value = !showSearchBar.value;
-}
-
-function emitCategories() {
-  emit("categorySelected", selectedCategories.value);
-}
-
-function emitDifficulties() {
-  emit("difficultySelected", selectedDifficulties.value);
-}
-
-onMounted(() => {
-  showSearchBar.value = !(window.innerWidth <= 428);
-});
-
-const rows = ref([]);
-rows.value.push({ difficulties: difficulties.value });
-rows.value.push({ categories: categories });
 
 </script>
 
