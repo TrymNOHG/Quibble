@@ -184,7 +184,6 @@ public class AuthenticationService {
         User user = refreshTokenDatabaseEntry.getUser();
         Authentication authentication =  createAuthenticationObject(user);
         log.info("Getting access token from refresh token");
-        log.info(getAccessTokenAuthDTO(user.getEmail()).toString());
         return  getAccessTokenAuthDTO(user.getEmail());
     }
 

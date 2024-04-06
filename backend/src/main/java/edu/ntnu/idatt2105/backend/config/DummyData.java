@@ -19,6 +19,8 @@ import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -43,6 +45,7 @@ public class DummyData implements CommandLineRunner {
     private final QuizAuthorRepository quizAuthorRepository;
     private final QuestionRepository questionRepository;
     private final MultipleChoiceRepository multipleChoiceRepository;
+    private final Environment env;
     private final Logger logger = Logger.getLogger(DummyData.class.getName());
     private final CategoryRepository categoryRepository;
     private final QuizCategoryRepository quizCategoryRepository;
@@ -55,8 +58,13 @@ public class DummyData implements CommandLineRunner {
      */
     @Transactional
     @Override
+    @Profile("!test")
     public void run(String... args) {
-        User user = User.builder().username("TestUser").email("test@test.test").password(passwordEncoder.encode("password")).build();
+        for (String profile : env.getActiveProfiles()) {
+            if (profile.equals("test"))
+                return;
+        }
+        User user = User.builder().username("TestUser").email("test1@test.test").password(passwordEncoder.encode("password")).build();
 
         if (userRepository.findByUsername(user.getUsername()).isEmpty()) {
             logger.info("TestUser: not found in database, adding TestUser to database");
