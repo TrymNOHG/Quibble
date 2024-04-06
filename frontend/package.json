@@ -20,6 +20,7 @@
     "fileupload": "^0.2.2",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.1",
+    "socket.io-client": "^4.7.5",
     "primevue": "^3.50.0",
     "vee-validate": "^4.12.6",
     "vue": "^3.4.21",

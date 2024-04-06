@@ -129,6 +129,7 @@ export default {
         .then(async (response) => {
           if (response !== undefined) {
             store.setToken(response.data.token);
+            store.setTokenExpires(response.data.token_expiration);
             await store.fetchUserData();
             await router.push("/");
           }

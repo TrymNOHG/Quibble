@@ -6,11 +6,12 @@
       <div class="player-details">
         <span class="player-name">{{ player.name }}</span>
         <span class="player-score">{{ player.score }}</span>
+        <!-- Display Countdown Timer -->
+        <div class="countdown-timer">{{ countdown }}</div>
       </div>
     </div>
   </div>
 </template>
-
 
 <script>
 export default {
@@ -19,12 +20,39 @@ export default {
       type: Object,
       required: true
     }
+  },
+  data() {
+    return {
+      countdown: 5, // Initialize countdown duration
+    };
+  },
+  methods: {
+    startCountdown() {
+      let intervalId = setInterval(() => {
+        if (this.countdown > 0) {
+          this.countdown -= 1;
+        } else {
+          clearInterval(intervalId);
+          // Optional: Emit an event when countdown ends
+          this.$emit('countdownEnded');
+        }
+      }, 1000);
+    }
+  },
+  mounted() {
+    this.startCountdown(); // Start countdown when component is mounted
   }
 }
 </script>
 
-
 <style scoped>
+/* Existing styles */
+.countdown-timer {
+  margin-top: 20px;
+  font-size: 1.5em;
+  color: #CC00FF; /* Styling to match the theme */
+}
+
 .score-container {
   background: #fff;
   padding: 40px;

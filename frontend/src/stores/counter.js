@@ -3,7 +3,7 @@ import {
   fetchUserByUsername,
   getUser
 } from "@/services/UserService.js";
-import {getPictureFromUser} from "@/services/ImageService.js";
+import {getPictureFromID} from "@/services/ImageService.js";
 
 import {
   addCollaborator,
@@ -22,6 +22,8 @@ export const useUserStore = defineStore('storeUser', {
   state: () => {
     return{
       sessionToken: null,
+      sessionTokenExpires: null,
+
       user: {
         userId: "",
         username: "",
@@ -37,6 +39,9 @@ export const useUserStore = defineStore('storeUser', {
     setToken(value) {
       this.sessionToken = value
     },
+    setTokenExpires(value) {
+        this.sessionTokenExpires = value
+    },
     setShowActivity(value) {
       this.user.showActivity = value
     },
@@ -48,11 +53,8 @@ export const useUserStore = defineStore('storeUser', {
       await getUser()
           .then(response => {
             this.user = response.data
-            getPictureFromUser('2', response.data.profilePicture).then(response =>{
-              this.user.profilePicture = `data:${response.data.contentType};base64,${response.data.image}`;
-            }).catch(e => {
-              console.log(e)
-            });
+            this.user.profilePicture = getPictureFromID(this.user.userId);
+
           }).catch(error  => {
             console.warn("error", error)
           })
@@ -62,6 +64,7 @@ export const useUserStore = defineStore('storeUser', {
       localStorage.removeItem("sessionToken")
       localStorage.removeItem("user")
       this.setToken(null)
+      this.setTokenExpires(null)
       useQuizStore().resetCurrentQuiz()
       //TODO: invalidate token in backend.
     }
@@ -70,7 +73,12 @@ export const useUserStore = defineStore('storeUser', {
   getters: {
     getUserData() {return this.user},
     isAuth() {return this.sessionToken !== null}, //TODO: should check if token is valid...
-    getToken() {return this.sessionToken}
+    getToken() {return this.sessionToken},
+    tokenExpired() {
+      const expiryDate = new Date(this.sessionTokenExpires);
+      // Compare with the current time
+      return expiryDate.getTime() < Date.now();
+    }
   },
 
   persist: {
