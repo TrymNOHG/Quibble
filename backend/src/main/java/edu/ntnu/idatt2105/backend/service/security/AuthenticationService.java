@@ -10,6 +10,7 @@ import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
 import edu.ntnu.idatt2105.backend.service.images.ImageService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -83,6 +84,7 @@ public class AuthenticationService {
      * @param httpServletResponse The http response object.
      * @return AuthenticationResponseDTO containing the access token.
      */
+    @Transactional
     public AuthenticationResponseDTO registerUser(UserRegisterDTO userRegistrationDto,
                                                   HttpServletResponse httpServletResponse, MultipartFile imageFile
     ) {
@@ -121,7 +123,7 @@ public class AuthenticationService {
         } catch (Exception e) {
             log.info("Error while creating user: " + e.getMessage());
             throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong while creating user"
+                    HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong while creating user: " + e
             );
         }
         try {

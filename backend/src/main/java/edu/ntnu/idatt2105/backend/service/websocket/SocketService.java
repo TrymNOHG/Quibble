@@ -123,7 +123,7 @@ public class SocketService {
      *
      * @param client The client that disconnected
      */
-    private void onDisconnect(SocketIOClient client) {
+    public void onDisconnect(SocketIOClient client) {
         logger.info("a user disconnected: " + client.getSessionId());
         Pair<String, String> codeUsername = gameService.deleteAnonUserFromGame(client.getSessionId());
         if (codeUsername != null) {

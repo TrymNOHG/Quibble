@@ -58,9 +58,11 @@ public interface IAuthenticationController {
      * Endpoint for signing up. This endpoint registers a new user and returns the access and refresh token.
      * The access token is returned in the response body and the refresh token is returned as a cookie.
      *
-     * @param userRegisterDTO The user register dto
+     * @param username The username
+     * @param password The password
+     * @param email The email
+     * @param imageFile The image file
      * @param httpServletResponse The http response
-     * @param bindingResult The binding result
      * @return The access token
      */
     @ApiResponses(value = {

@@ -24,7 +24,7 @@ public class QuizSpecification {
             Predicate predicate = criteriaBuilder.conjunction();
 
             if (quizFilterDTO.name() != null) {
-                predicate = criteriaBuilder.and(predicate, criteriaBuilder.like(root.get("name"), "%" + quizFilterDTO.name() + "%"));
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.like(root.get("quizName"), "%" + quizFilterDTO.name() + "%"));
             }
 
             if (quizFilterDTO.difficulties() != null && !quizFilterDTO.difficulties().isEmpty()) {

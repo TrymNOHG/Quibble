@@ -184,12 +184,14 @@ public class QuizService {
         LOGGER.info("Quiz found. Creating quiz author object.");
         QuizAuthor quizAuthor = QuizAuthor
                 .builder()
-                .quiz(quiz)
                 .user(user)
                 .build();
 
+        quiz.addAuthor(quizAuthor);
+
         LOGGER.info("Saving quiz author object.");
         quizAuthorRepository.save(quizAuthor);
+        quizRepository.save(quiz);
         LOGGER.info("Quiz author saved.");
 
         return QuizAuthorMapper.INSTANCE.quizAuthorToQuizAuthorLoadDTO(quizAuthor);

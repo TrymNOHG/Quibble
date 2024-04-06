@@ -1,5 +1,7 @@
 package edu.ntnu.idatt2105.backend.dto.quiz;
 
+import edu.ntnu.idatt2105.backend.dto.quiz.question.MultipleChoiceCreateDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.question.MultipleChoiceDTO;
 import lombok.Builder;
 import lombok.NonNull;
 
@@ -11,5 +13,5 @@ public record QuestionDTO(
       @NonNull  String question,
       @NonNull  String answer,
       @NonNull  String questionType,
-      @NonNull  List<String> options
+      @NonNull  List<MultipleChoiceDTO> options
 ) {}

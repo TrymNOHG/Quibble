@@ -69,7 +69,9 @@ public class GameService {
         User host = userRepository.findByEmail(hostEmail).orElseThrow();
         String code = generateRandomCode();
         logger.info("Creating game with code: " + code);
-        Quiz quiz = quizRepository.findById(quizId).orElseThrow();
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(
+                () -> new IllegalArgumentException("Quiz with id " + quizId + " not found")
+        );
         for (Question q : quiz.getQuestions()) {
             logger.info(q.getQuestion());
         }
