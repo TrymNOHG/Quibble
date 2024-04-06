@@ -130,7 +130,6 @@ export default {
             if (existingCategoryIndex === -1) {
               store.templateQuiz.categories.push(category)
               template_tags.value.push({ type: 'Category', name: category.categoryName, categoryId: category.categoryId });
-              template_tags.value.push({ type: 'Category', name: category.categoryName });
             }
           } else {
             const existingCategoryIndex = template_tags.value.findIndex(tag => tag.type === 'Category' && tag.name === category.categoryName);

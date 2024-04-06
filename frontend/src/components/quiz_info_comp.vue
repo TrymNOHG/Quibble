@@ -15,14 +15,14 @@
           />
         </div>
         <div>
-          <input v-if="isEditing" class="input-area" type="text" id="quizName" v-model="quizUpdate.newName">
+          <input v-if="isEditing" class="input-area" type="text" id="quizName" v-model="quizUpdateDTO.newName">
         </div>
         <div>
           <p>
             <strong>{{ $t('dropdown_options.DIFFICULTY') }}:</strong>
             {{ $t('dropdown_options.' + quiz.difficulty) }}
           </p>
-          <select v-if="isEditing" class="input-area" id="difficulty" v-model="quizUpdate.difficulty">
+          <select v-if="isEditing" class="input-area" id="difficulty" v-model="quizUpdateDTO.difficulty">
             <option value="Easy">{{ $t('dropdown_options.EASY') }}</option>
             <option value="Medium">{{ $t('dropdown_options.MEDIUM') }}</option>
             <option value="Hard">{{ $t('dropdown_options.HARD') }}</option>
@@ -33,7 +33,7 @@
         </div>
         <div>
           <p>{{ $t('quiz_card.DESCRIPTION') }}: {{ quiz.quizDescription }}</p>
-          <textarea v-if="isEditing" class="input-area" id="description" v-model="quizUpdate.newDescription"></textarea>
+          <textarea v-if="isEditing" class="input-area" id="description" v-model="quizUpdateDTO.newDescription"></textarea>
         </div>
         <button v-if="isEditing" class="input-area" @click="saveEdit()">Save edit</button>
       </div>
@@ -119,13 +119,11 @@ export default {
     let collaboratorList = ref([]);
     const searchQuery = ref('');
 
-    console.log(store.currentQuiz.quizDifficulty)
-
-    let quizUpdate = {
-      quizId: store.currentQuiz.quizId,
-      newName:  store.currentQuiz.quizName,
-      newDescription: store.currentQuiz.quizDescription,
-      difficulty: store.currentQuiz.quizDifficulty
+    let quizUpdateDTO = {
+      "quizId": store.currentQuiz.quizId,
+      "newName":  store.currentQuiz.quizName,
+      "newDescription": store.currentQuiz.quizDescription,
+      "difficulty": store.currentQuiz.difficulty
     }
 
     const editQuizInfo = () => {
@@ -135,7 +133,7 @@ export default {
     const saveEdit = async () => {
       try {
         console.log(searchQuery.value)
-        return await store.updateQuiz(quizUpdate);
+        return await store.updateCurrentQuiz(quizUpdateDTO);
       } catch (error) {
         console.error('Error editing quiz:', error);
       }
@@ -194,7 +192,7 @@ export default {
 
     return {
       quizAuthors,
-      quizUpdate,
+      quizUpdateDTO,
       editQuizInfo,
       isEditing,
       deleteAuthor,

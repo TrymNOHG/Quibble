@@ -35,6 +35,7 @@ export const createQuiz = async (quizName) => {
 };
 
 export const updateQuiz = async (quizUpdateDTO) => {
+    console.log(quizUpdateDTO)
     try {
         const response = await axios.patch(`${BASE_URL_PRIV}/update`,
             quizUpdateDTO, {

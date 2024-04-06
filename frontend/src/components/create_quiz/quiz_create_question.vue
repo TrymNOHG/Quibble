@@ -341,6 +341,7 @@ export default {
   transition: background-color 0.3s;
   text-decoration: none;
   border: 2px solid black;
+  margin-bottom: 0;
 }
 
 .btn:hover {

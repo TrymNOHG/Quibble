@@ -62,7 +62,6 @@ const selectedCategories = ref([]);
 const dropdownOpen = ref(false);
 const difficulties = ref(["Easy", "Medium", "Hard"]);
 const categories = quizStore.category_list;
-console.log("asdasdasd", categories[0].categoryName)
 
 const { emit } = getCurrentInstance();
 
