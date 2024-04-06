@@ -2,7 +2,7 @@ package edu.ntnu.idatt2105.backend.controller.priv.users;
 
 import edu.ntnu.idatt2105.backend.dto.users.UserLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.users.UserUpdateDTO;
-import edu.ntnu.idatt2105.backend.service.AuthenticationService;
+import edu.ntnu.idatt2105.backend.service.security.AuthenticationService;
 import edu.ntnu.idatt2105.backend.service.images.ImageService;
 import edu.ntnu.idatt2105.backend.service.users.UserService;
 import lombok.NonNull;

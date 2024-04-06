@@ -1,9 +1,10 @@
-package edu.ntnu.idatt2105.backend.service;
+package edu.ntnu.idatt2105.backend.service.security;
 
 import edu.ntnu.idatt2105.backend.model.users.RefreshToken;
 import edu.ntnu.idatt2105.backend.model.users.User;
 import edu.ntnu.idatt2105.backend.repo.users.RefreshTokenRepository;
 import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -37,11 +38,13 @@ public class LogoutHandlerService implements LogoutHandler {
      */
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-
-        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-
-        if(!authHeader.startsWith("Bearer ")) // TODO: uses cookie instead of header
-            return;
+        Cookie[] cookies = request.getCookies();
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("refresh_token")) {
+                cookie.setMaxAge(0);
+                response.addCookie(cookie);
+            }
+        }
 
         Optional<User> user = userRepository.findByEmail(authentication.getName());
         if(user.isEmpty())

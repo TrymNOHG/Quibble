@@ -1,4 +1,4 @@
-package edu.ntnu.idatt2105.backend.service;
+package edu.ntnu.idatt2105.backend.service.security;
 
 import edu.ntnu.idatt2105.backend.dto.security.AuthenticationResponseDTO;
 import edu.ntnu.idatt2105.backend.dto.security.TokenType;
@@ -9,7 +9,6 @@ import edu.ntnu.idatt2105.backend.repo.users.RefreshTokenRepository;
 import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
 import edu.ntnu.idatt2105.backend.service.images.ImageService;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -287,5 +286,18 @@ public class AuthenticationService {
         if (!email.equals(loggedInEmail)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User email does not match logged in user");
         }
+    }
+
+    /**
+     * Gets the logged-in user from the security context.
+     *
+     * @return The logged-in user.
+     */
+    public User getLoggedInUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        return userRepository.findByEmail(email).orElseThrow(
+                ()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
+        );
     }
 }

@@ -2,6 +2,8 @@ package edu.ntnu.idatt2105.backend.controller.priv.feedback;
 
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.feedback.QuizFeedbackDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.feedback.QuizFeedbackLoadAllDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.feedback.QuizFeedbackLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.feedback.QuizFeedbackUpdateDTO;
 import edu.ntnu.idatt2105.backend.model.quiz.QuizFeedback;
 import io.swagger.v3.oas.annotations.Operation;
@@ -66,8 +68,8 @@ public interface IFeedbackController {
                             schema = @Schema(implementation = QuizFeedback.class)) })
     }
     )
-    ResponseEntity<QuizLoadDTO> updateFeedback(@RequestBody @NonNull QuizFeedbackUpdateDTO updatedFeedback,
-                                            @NonNull Authentication authentication);
+    ResponseEntity<QuizFeedbackLoadDTO> updateFeedback(@RequestBody @NonNull QuizFeedbackUpdateDTO updatedFeedback,
+                                                       @NonNull Authentication authentication);
 
     /**
      * This method deletes the feedback for a quiz.
@@ -89,8 +91,31 @@ public interface IFeedbackController {
                             schema = @Schema(implementation = QuizFeedback.class)) })
     }
     )
-    ResponseEntity<QuizLoadDTO> deleteFeedback(@PathVariable @NonNull Long quizId,
+    ResponseEntity<String> deleteFeedback(@PathVariable @NonNull Long quizId,
                                                @NonNull Authentication authentication);
 
-
+    /**
+     * This method gets the feedback for a quiz.
+     *
+     * @param quizId The id of the quiz.
+     * @param authentication The authentication object.
+     * @return ResponseEntity showing whether the operation was successful.
+     */
+    @GetMapping(
+            value="/get/{quizId}",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @Operation(summary = "This method gets the feedback for a quiz.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful retrieval of feedback.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = QuizFeedback.class)) }),
+            @ApiResponse(responseCode = "403", description = "Unauthorized retrieval of feedback.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = QuizFeedback.class)) })
+    }
+    )
+    ResponseEntity<QuizFeedbackLoadAllDTO> getFeedbacks(@PathVariable @NonNull Long quizId,
+                                                        @NonNull Authentication authentication);
 }

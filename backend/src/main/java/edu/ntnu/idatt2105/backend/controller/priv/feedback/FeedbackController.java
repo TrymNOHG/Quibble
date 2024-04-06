@@ -1,7 +1,8 @@
 package edu.ntnu.idatt2105.backend.controller.priv.feedback;
 
-import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.feedback.QuizFeedbackDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.feedback.QuizFeedbackLoadAllDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.feedback.QuizFeedbackLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.feedback.QuizFeedbackUpdateDTO;
 import edu.ntnu.idatt2105.backend.service.FeedbackService;
 import lombok.NonNull;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,12 +38,17 @@ public class FeedbackController implements IFeedbackController {
     }
 
     @Override
-    public ResponseEntity<QuizLoadDTO> updateFeedback(@NonNull QuizFeedbackUpdateDTO updatedFeedback, @NonNull Authentication authentication) {
-        return null;
+    public ResponseEntity<QuizFeedbackLoadDTO> updateFeedback(@NonNull QuizFeedbackUpdateDTO updatedFeedback, @NonNull Authentication authentication) {
+        return new ResponseEntity<>(feedbackService.updateFeedback(updatedFeedback), HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<QuizLoadDTO> deleteFeedback(@NonNull Long quizId, @NonNull Authentication authentication) {
-        return null;
+    public ResponseEntity<String> deleteFeedback(@NonNull Long quizId, @NonNull Authentication authentication) {
+        return new ResponseEntity<>(feedbackService.removeFeedback(quizId), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<QuizFeedbackLoadAllDTO> getFeedbacks(@PathVariable @NonNull Long quizId, @NonNull Authentication authentication) {
+        return new ResponseEntity<>(feedbackService.getFeedbacks(quizId), HttpStatus.OK);
     }
 }

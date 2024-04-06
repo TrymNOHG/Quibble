@@ -3,11 +3,10 @@ package edu.ntnu.idatt2105.backend.unit.service;
 
 import com.corundumstudio.socketio.*;
 import edu.ntnu.idatt2105.backend.dto.websocket.CreateGameDTO;
-import edu.ntnu.idatt2105.backend.dto.websocket.JoinGameDTO;
 import edu.ntnu.idatt2105.backend.model.users.User;
 import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
-import edu.ntnu.idatt2105.backend.service.JWTTokenGenerationService;
-import edu.ntnu.idatt2105.backend.service.JWTTokenService;
+import edu.ntnu.idatt2105.backend.service.security.JWTTokenGenerationService;
+import edu.ntnu.idatt2105.backend.service.security.JWTTokenService;
 import edu.ntnu.idatt2105.backend.service.images.ImageService;
 import edu.ntnu.idatt2105.backend.service.quiz.QuestionService;
 import edu.ntnu.idatt2105.backend.service.users.UserService;

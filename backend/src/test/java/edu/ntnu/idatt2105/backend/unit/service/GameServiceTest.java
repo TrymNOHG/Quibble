@@ -1,10 +1,8 @@
 package edu.ntnu.idatt2105.backend.unit.service;
 
-import edu.ntnu.idatt2105.backend.dto.websocket.SendAlternativesDTO;
 import edu.ntnu.idatt2105.backend.model.users.User;
 import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
-import edu.ntnu.idatt2105.backend.service.JWTTokenGenerationService;
-import edu.ntnu.idatt2105.backend.service.JWTTokenService;
+import edu.ntnu.idatt2105.backend.service.security.JWTTokenGenerationService;
 import edu.ntnu.idatt2105.backend.service.websocket.GameService;
 import edu.ntnu.idatt2105.backend.util.Game;
 import org.junit.jupiter.api.Test;

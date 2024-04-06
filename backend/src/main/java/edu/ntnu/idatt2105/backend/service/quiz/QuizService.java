@@ -17,9 +17,11 @@ import edu.ntnu.idatt2105.backend.repo.quiz.QuizRepository;
 import edu.ntnu.idatt2105.backend.repo.quiz.question.MultipleChoiceRepository;
 import edu.ntnu.idatt2105.backend.repo.quiz.question.QuestionRepository;
 import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
+import edu.ntnu.idatt2105.backend.service.security.AuthenticationService;
 import edu.ntnu.idatt2105.backend.specification.quiz.QuizSpecification;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -29,6 +31,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -39,6 +42,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class QuizService {
 
     private final Logger LOGGER = LoggerFactory.getLogger(QuizService.class);
@@ -49,6 +53,7 @@ public class QuizService {
     private final QuizMapper quizMapper;
     private final MultipleChoiceRepository multipleChoiceRepository;
     private final QuizAuthorRepository quizAuthorRepository;
+    private final AuthenticationService authenticationService;
 
     public Quiz getQuizById(long quizId) {
         return quizRepository.findById(quizId)
@@ -59,6 +64,7 @@ public class QuizService {
     public QuizLoadDTO createQuiz(String quizName, String adminEmail) {
         User admin = userRepository.findByEmail(adminEmail)
                 .orElseThrow(() -> new IllegalArgumentException("User with email " + adminEmail + " not found"));
+        authenticationService.verifyUserId(admin.getUserId());
         Quiz quiz = Quiz.builder()
                 .quizName(quizName)
                 .admin(admin)
@@ -106,12 +112,25 @@ public class QuizService {
         return quizMapper.quizPageToQuizLoadDTOPage(quizPage);
     }
 
+    /**
+     * Updates a quiz based on the quiz update DTO. Only the admin of the quiz or collaborators can update the quiz.
+     *
+     * @param quizUpdateDTO The quiz update DTO.
+     * @return The updated quiz.
+     */
     @Transactional
     public QuizLoadDTO updateQuiz(QuizUpdateDTO quizUpdateDTO) {
-        //TODO: check that user trying to change is owner or collaborator
         LOGGER.info("Attempting to retrieve quiz with id: " + quizUpdateDTO.quizId());
         Quiz quiz = quizRepository.findById(quizUpdateDTO.quizId())
                 .orElseThrow(() -> new QuizNotFoundException("Id: " + quizUpdateDTO.quizId()));
+
+        log.info("Checking if user is admin or collaborator.");
+        if(getAllCollaborators(quiz.getQuizId()).stream().noneMatch(
+                quizAuthor -> quizAuthor.getUser().getUserId().equals(authenticationService.getLoggedInUserId())
+        )){
+            authenticationService.verifyUserId(quiz.getAdmin().getUserId());
+        }
+        log.info("User is admin or collaborator.");
 
         if (quizUpdateDTO.newName() != null) {
             LOGGER.info("Updating quiz name");
@@ -134,32 +153,34 @@ public class QuizService {
     }
 
     /**
-     * This method deletes a quiz based on its id.
+     * This method deletes a quiz based on its id. Only the admin of the quiz can delete it.
      * @param quizId    The id of the quiz.
      */
     public void deleteQuiz(Long quizId) {
-        //TODO: check if owner
         LOGGER.info("Attempting to find quiz to delete.");
         Quiz quiz = quizRepository.findById(quizId)
                 .orElseThrow(() -> new QuizNotFoundException("Quiz with id: " + quizId));
+        authenticationService.verifyUserId(quiz.getAdmin().getUserId());
         LOGGER.info("Attempting to delete quiz.");
         quizRepository.delete(quiz);
         LOGGER.info("Quiz successfully deleted.");
     }
 
     /**
-     * This method adds a new collaborator to a quiz.
+     * This method adds a new collaborator to a quiz. Only admins can add collaborators.
      * @param newCollaborator   The new collaborator.
      */
     public QuizAuthorLoadDTO addCollaborator(QuizAuthorDTO newCollaborator) {
-        //TODO: check if person adding collaborator can do so.
-        //TODO: check that newCollaborator is not owner.
         LOGGER.info("Finding User");
         User user = userRepository.findById(newCollaborator.userId())
                 .orElseThrow(() -> new UsernameNotFoundException("Id " + newCollaborator.userId()));
         LOGGER.info("User found. Looking for Quiz.");
         Quiz quiz = quizRepository.findById(newCollaborator.quizId())
                 .orElseThrow(() -> new QuizNotFoundException(newCollaborator.quizId().toString()));
+        authenticationService.verifyUserId(quiz.getAdmin().getUserId());
+        if(quiz.getAdmin().getUserId().equals(user.getUserId())){
+            throw new IllegalArgumentException("User is already the owner of the quiz.");
+        }
         LOGGER.info("Quiz found. Creating quiz author object.");
         QuizAuthor quizAuthor = QuizAuthor
                 .builder()
@@ -175,16 +196,16 @@ public class QuizService {
     }
 
     /**
-     * This method removes a collaborator from a quiz.
+     * This method removes a collaborator from a quiz. Only admins can remove collaborators.
      * @param newCollaborator   The collaborator to remove and the quiz.
      */
     public void removeCollaborator(QuizAuthorDTO newCollaborator) {
-        //TODO: check that the user trying to remove the collaborator can.
         LOGGER.info("Looking for collaborator.");
         QuizAuthor quizAuthor = quizAuthorRepository
                 .findQuizAuthorByQuizQuizIdAndUserUserId(newCollaborator.quizId(), newCollaborator.userId())
                 .orElseThrow(() -> new UsernameNotFoundException("Quiz Id: " + newCollaborator.quizId()
                         + ". User Id: " + newCollaborator.userId()));
+        authenticationService.verifyUserId(quizAuthor.getQuiz().getAdmin().getUserId());
         LOGGER.info("Collaborator found.");
         quizAuthorRepository.delete(quizAuthor);
         LOGGER.info("Collaborator removed.");
@@ -192,18 +213,31 @@ public class QuizService {
 
 
     /**
-     * This method removes a collaborator from a quiz.
+     * This method removes a collaborator from a quiz. Only admins can remove collaborators.
      * @param collaboratorId   The id of the collaborator
      */
     public void removeCollaborator(Long collaboratorId) {
-        //TODO: check that the user trying to remove the collaborator can.
         LOGGER.info("Looking for collaborator.");
         QuizAuthor quizAuthor = quizAuthorRepository
                 .findById(collaboratorId)
                 .orElseThrow(() -> new UsernameNotFoundException("Author Id: " + collaboratorId));
         LOGGER.info("Collaborator found.");
+        authenticationService.verifyUserId(quizAuthor.getQuiz().getAdmin().getUserId());
         quizAuthorRepository.delete(quizAuthor);
         LOGGER.info("Collaborator removed.");
     }
 
+    /**
+     * This method retrieves all collaborators for a quiz.
+     *
+     * @param quizId   The id of the quiz.
+     * @return        A set of quiz authors.
+     */
+    public Set<QuizAuthor> getAllCollaborators(Long quizId) {
+        LOGGER.info("Looking for quiz.");
+        Quiz quiz = quizRepository.findById(quizId)
+                .orElseThrow(() -> new QuizNotFoundException("Quiz with id: " + quizId));
+        LOGGER.info("Quiz found. Looking for collaborators.");
+        return quiz.getCollaborators();
+    }
 }

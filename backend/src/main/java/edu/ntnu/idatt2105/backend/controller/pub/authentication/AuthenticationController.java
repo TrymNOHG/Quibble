@@ -2,22 +2,16 @@ package edu.ntnu.idatt2105.backend.controller.pub.authentication;
 
 import edu.ntnu.idatt2105.backend.dto.users.UserRegisterDTO;
 import edu.ntnu.idatt2105.backend.dto.security.AuthenticationResponseDTO;
-import edu.ntnu.idatt2105.backend.service.AuthenticationService;
+import edu.ntnu.idatt2105.backend.service.security.AuthenticationService;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 /**

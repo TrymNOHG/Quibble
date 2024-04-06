@@ -1,6 +1,6 @@
 package edu.ntnu.idatt2105.backend.config.filters;
 
-import edu.ntnu.idatt2105.backend.service.JWTTokenService;
+import edu.ntnu.idatt2105.backend.service.security.JWTTokenService;
 import edu.ntnu.idatt2105.backend.dto.security.RSAKeyPairDTO;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
