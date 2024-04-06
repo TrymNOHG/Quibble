@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -234,5 +235,57 @@ public class AuthenticationService {
                 .build();
         refreshTokenRepository.save(refreshTokenEntity);
         setRefreshTokenCookie(httpServletResponse, refreshToken);
+    }
+
+    /**
+     * Gets the email of the logged-in user from the security context.
+     *
+     * @return The email of the logged-in user.
+     */
+    public String getLoggedInUserEmail() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
+    }
+
+    /**
+     * Gets the user id of the logged-in user from the security context.
+     *
+     * @return The user id of the logged-in user.
+     */
+    public long getLoggedInUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        return userRepository.findByEmail(email).orElseThrow(
+                ()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
+        ).getUserId();
+    }
+
+    /**
+     * Verifies that the user id is the same as the user who sent the request.
+     *
+     * @param userId The user id to verify.
+     */
+    public void verifyUserId(long userId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        long loggedInUserId = userRepository.findByEmail(email).orElseThrow(
+                ()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
+        ).getUserId();
+        if (userId != loggedInUserId) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User id does not match logged in user");
+        }
+    }
+
+    /**
+     * Verifies that the user email is the same as the user who sent the request.
+     *
+     * @param email The user email to verify.
+     */
+    public void verifyUserEmail(String email) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String loggedInEmail = authentication.getName();
+        if (!email.equals(loggedInEmail)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User email does not match logged in user");
+        }
     }
 }

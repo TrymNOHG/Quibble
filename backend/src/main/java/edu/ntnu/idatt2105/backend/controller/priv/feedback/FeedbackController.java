@@ -3,10 +3,12 @@ package edu.ntnu.idatt2105.backend.controller.priv.feedback;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.feedback.QuizFeedbackDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.feedback.QuizFeedbackUpdateDTO;
+import edu.ntnu.idatt2105.backend.service.FeedbackService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -26,9 +28,11 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequestMapping(value = "/api/v1/private/feedback")
 public class FeedbackController implements IFeedbackController {
+    private final FeedbackService feedbackService;
+
     @Override
-    public ResponseEntity<QuizLoadDTO> addFeedback(@NonNull QuizFeedbackDTO newFeedback, @NonNull Authentication authentication) {
-        return null;
+    public ResponseEntity<String> addFeedback(@NonNull QuizFeedbackDTO newFeedback, @NonNull Authentication authentication) {
+        return new ResponseEntity<>(feedbackService.addFeedback(newFeedback), HttpStatus.CREATED);
     }
 
     @Override

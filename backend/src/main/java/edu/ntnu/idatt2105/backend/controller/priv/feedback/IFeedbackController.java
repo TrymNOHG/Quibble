@@ -43,7 +43,7 @@ public interface IFeedbackController {
                             schema = @Schema(implementation = QuizFeedback.class)) })
     }
     )
-    ResponseEntity<QuizLoadDTO> addFeedback(@RequestBody @NonNull QuizFeedbackDTO newFeedback,
+    ResponseEntity<String> addFeedback(@RequestBody @NonNull QuizFeedbackDTO newFeedback,
                                                 @NonNull Authentication authentication);
 
     /**
