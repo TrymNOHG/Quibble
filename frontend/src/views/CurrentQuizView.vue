@@ -35,7 +35,6 @@ let isAuthor = ref(true);
 let isEditor = ref(true);
 let quizAuthors = ref(store.currentQuiz.collaborators === null ? [] : store.currentQuiz.collaborators);
 
-
 onMounted( () => {
   isAuthor.value = store.isAdmin(store.currentQuiz.adminId)
   checkEditor();

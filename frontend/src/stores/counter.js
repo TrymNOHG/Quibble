@@ -3,6 +3,7 @@ import {
   fetchUserByUsername,
   getUser
 } from "@/services/UserService.js";
+import {createQuizImage} from "@/services/ImageService.js";
 import {getPictureFromID} from "@/services/ImageService.js";
 
 import {
@@ -94,7 +95,6 @@ export const useQuizStore = defineStore('storeQuiz', {
   state: () => {
     return {
       allQuiz: [],
-
       currentQuiz: {
         quizId: null,
         quizName: "",
@@ -115,7 +115,6 @@ export const useQuizStore = defineStore('storeQuiz', {
           },
         ],
         keywords: [],
-        Image: "",
       },
 
       category_list: getAllCategories()
@@ -250,13 +249,11 @@ export const useQuizStore = defineStore('storeQuiz', {
 
 
     async setCurrentQuizById(quiz) {
-      console.log(quiz)
       this.currentQuiz = quiz;
-      if (useUserStore().user.userId === this.currentQuiz.QuizId){
+      if (useUserStore().user.userId === this.currentQuiz.adminId){
         this.isAuth = true;
         this.isEditor = true;
       }
-
       return this.currentQuiz;
     },
 
@@ -371,11 +368,19 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
         "newDescription": this.templateQuiz.quizDescription,
         "difficulty": this.templateQuiz.quizDifficulty.toUpperCase(),
       };
-      console.log(quizUpdateDTO)
+
+      const imgDTO = {
+        "quizId" : createdQuiz.quizId,
+        "quizImage": this.templateQuiz.Image
+      }
+      await createQuizImage(imgDTO)
+          .then(response => {
+            console.log(response)
+          }).catch(error => {
+            console.warn("Error creating quiz:", error);
+          });
 
       const addQuestionPromises = [];
-
-      console.log(this.templateQuiz.questions);
       this.templateQuiz.questions.forEach(question => {
         const questionCreateDTO = {
           "quizId": this.templateQuiz.quizId,

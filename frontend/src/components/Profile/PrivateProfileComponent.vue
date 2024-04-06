@@ -105,8 +105,6 @@ export default {
       type: Object,
       required: true,
       default: () => ({
-        // firstName: 'john',
-        // lastName: 'doe',
         username: 'johndoe',
         email: 'john@doe.org',
         profilePicture: 'https://placehold.co/600x400',
@@ -141,16 +139,11 @@ export default {
     const { handleSubmit, errors } = useForm({
       validationSchema,
       initialValues: {
-        // firstName: profileData.value.firstName,
-        // lastName: profileData.value.lastName,
         username: profileData.value.username,
         email: profileData.value.email,
       }
     });
 
-    // Using `useField` with initialValues from `profileData`
-    // const { value: firstName } = useField('firstName', yup.string().required("First name is required"), { initialValue: profileData.value.firstName });
-    // const { value: lastName } = useField('lastName', yup.string().required("Last name is required"), { initialValue: profileData.value.lastName });
     const { value: username } = useField('username', yup.string().required("Username is required"), { initialValue: profileData.value.username });
     const { value: email } = useField('email', yup.string().required("Email is required").email("Must be a valid email"), { initialValue: profileData.value.email });
 
@@ -162,8 +155,8 @@ export default {
 
     // Form submission handling
     const submitForm = handleSubmit(values => {
-      console.log("Form submitted with values:", values);
       emit('updateUserProfile', values);
+      toggleEdit();
     });
 
     // Watchers for reactive properties
@@ -227,8 +220,6 @@ export default {
       toggleChangePassword,
       onProfilePictureChange,
       onDeleteProfilePicture,
-      // firstName,
-      // lastName,
       username,
       email,
       errors,

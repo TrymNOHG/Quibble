@@ -58,6 +58,7 @@
             aria-labelledby="conf_passwordLabel"
             :class="{ 'error': errors && errors['conf_password'] }"
             :placeholder="$t('placeholders.CONFIRM_PASSWORD')"
+            @keypress.enter="submit"
         />
         <div v-if="errors && errors['conf_password']" class="error-message">
           {{ errors["conf_password"] }}

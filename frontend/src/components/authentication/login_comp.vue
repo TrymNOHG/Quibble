@@ -28,6 +28,7 @@
             aria-labelledby="passwordLabel"
             :class="{ 'error': errors && errors['password'] }"
             :placeholder="$t('placeholders.PASSWORD')"
+            @keypress.enter="submit"
         />
         <div v-if="errors && errors['password']" class="error-message">
           {{ errors["password"] }}

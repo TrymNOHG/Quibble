@@ -90,12 +90,15 @@ export const getUser = async () => {
 //      'showFeedback' : null
 // }
 export const updateUser = async (userUpdateDTO) => {
-    return axios.patch(`${BASE_URL}/private/users/update`, userUpdateDTO, {
-        headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${await sessionToken()}`,
-        },
-    });
+    console.log(userUpdateDTO)
+    return axios.patch(`${BASE_URL}/private/users/update`,
+        userUpdateDTO,
+        {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                Authorization: `Bearer ${await sessionToken()}`,
+            },
+        });
 }
 
 

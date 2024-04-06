@@ -2,7 +2,7 @@
   <div class="quiz">
     <div class="quiz-info">
       <div class="img">
-        <img class="quiz-img" :src="quiz.Image" alt="Quiz Image"/>
+        <img class="quiz-img" :src="img" alt="Quiz Image"/>
       </div>
       <div class="quiz-details">
         <div class="quiz-detail-header">
@@ -103,12 +103,12 @@ export default {
         categories: Set,
         questions: Set,
         keywords: Set,
-        Image: String,
       })
     },
     isAuthor: null,
     isEditor: null,
-    quizAuthors: Array
+    quizAuthors: Array,
+    img: null,
   },
 
   setup(props) {
