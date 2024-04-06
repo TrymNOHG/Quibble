@@ -37,7 +37,7 @@ public class ImageController implements IImageController {
 
     private final ImageService imageService;
 
-    @GetMapping("/{image}")
+    @Override
     public ResponseEntity<Resource> getFile(@PathVariable String image) {
         try {
             log.info("Getting image");

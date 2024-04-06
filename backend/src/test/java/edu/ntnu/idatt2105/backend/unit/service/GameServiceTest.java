@@ -176,8 +176,8 @@ public class GameServiceTest {
         SendAlternativesDTO alternatives = gameService.getAlternatives(code);
         assertNotNull(alternatives);
         assertNotNull(alternatives.questionType());
-        assertNotNull(alternatives.alternatives());
-        assertEquals(4, alternatives.alternatives().length);
+        assertNotNull(alternatives.options());
+        assertEquals(4, alternatives.options().size());
     }
 
     @Test
