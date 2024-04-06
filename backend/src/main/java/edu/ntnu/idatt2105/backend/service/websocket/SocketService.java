@@ -281,7 +281,7 @@ public class SocketService {
         if (game == null)
             return;
         game.startGame();
-        client.sendEvent("getQuestion", questionService.getQuestionDTO(game.getCurrentQuestion().getQuestionId()));
+        client.sendEvent("getQuestion", questionService.getQuestionDTO(game.getCurrentQuestion().getQuestionId(), game.getHostUUID()));
         server.getRoomOperations(game.getCode()).sendEvent("waitForQuestion", "The game is starting");
     }
 
@@ -305,13 +305,14 @@ public class SocketService {
             // Send the question and alternatives to everyone in the room. The host can show the question on a screen.
             // The players can answer the question.
             client.sendEvent(
-                    "getQuestion", questionService.getQuestionDTO(game.getCurrentQuestion().getQuestionId())
+                    "getQuestion", questionService.getQuestionDTO(game.getCurrentQuestion().getQuestionId(), game.getHostUUID())
             );
             server.getRoomOperations(game.getCode()).sendEvent(
                     "waitForQuestion", "The question has started. Look at the screen!"
             );
         } else {
             server.getRoomOperations(game.getCode()).sendEvent("gameEnded", "The game has ended");
+            server.getRoomOperations(game.getCode()).sendEvent("quizId", game.getQuiz().getQuizId());
             quizHistoryService.addHistory(game.getPlayers(), game.getQuiz());
         }
     }

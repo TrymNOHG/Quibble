@@ -8,6 +8,7 @@ import edu.ntnu.idatt2105.backend.repo.quiz.QuizHistoryRepository;
 import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
 import edu.ntnu.idatt2105.backend.service.security.AuthenticationService;
 import edu.ntnu.idatt2105.backend.util.Player;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,7 @@ public class QuizHistoryService {
 
     private final QuizHistoryRepository quizHistoryRepository;
     private final AuthenticationService authenticationService;
+    private final EntityManager entityManager;
     /**
      * Adds a quiz history to the database from players of a game.
      *
@@ -33,8 +35,15 @@ public class QuizHistoryService {
      */
     @Transactional
     public void addHistory(List<Player> players, Quiz quiz) {
+        Quiz managedQuiz = entityManager.merge(quiz);
         for (Player player : players) {
-            quizHistoryRepository.save(QuizHistory.builder().quiz(quiz).score(player.getScore()).timestamp(LocalDateTime.now()).user(player.getUser()).build());
+            quizHistoryRepository.save(
+                    QuizHistory.builder()
+                            .quiz(managedQuiz)
+                            .score(player.getScore())
+                            .timestamp(LocalDateTime.now())
+                            .user(entityManager.merge(player.getUser()))
+                            .build());
         }
     }
 

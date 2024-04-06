@@ -129,7 +129,6 @@ public class SecurityConfiguration {
         return commonHttpSecurity(httpSecurity, PUBLIC+"/auth/refresh-token/**")
                 .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()))
-                .httpBasic(withDefaults()) // Correct?
                 .build();
     }
 

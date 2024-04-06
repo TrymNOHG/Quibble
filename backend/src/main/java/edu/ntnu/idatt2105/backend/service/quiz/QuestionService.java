@@ -24,7 +24,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
 import java.util.logging.Logger;
+
+import static edu.ntnu.idatt2105.backend.util.SortingUtil.sortListWithUuidSeed;
 
 /**
  * Service class for handling questions.
@@ -44,38 +47,38 @@ public class QuestionService {
     Logger LOGGER = Logger.getLogger(QuestionService.class.getName());
 
     @Transactional
-    public QuestionDTO getQuestionDTO(long questionId) {
+    public QuestionDTO getQuestionDTO(long questionId, UUID hostUUID) {
         Question question = questionRepository.findById(questionId).orElseThrow();
         return QuestionDTO.builder()
                 .id(question.getQuestionId())
                 .question(question.getQuestion())
                 .answer(getCorrectAnswer(questionId))
                 .questionType(question.getQuestionType().name())
-                .options(
-                        question.getChoices().stream()
-                                .map(
-                                        MultipleChoiceMapper.INSTANCE::multipleChoiceToMultipleChoiceDTO
-                                ).toList())
+                .options(sortListWithUuidSeed(
+                        question.getChoices()
+                                .stream()
+                                .map(MultipleChoiceMapper.INSTANCE::multipleChoiceToMultipleChoiceDTO)
+                                .toList(),
+                        hostUUID,
+                        MultipleChoiceDTO::alternative // Assuming MultipleChoiceDTO has a getAlternative method
+                ))
                 .build();
     }
 
+    // Adjust the getAlternatives method similarly
     @Transactional
-    public SendAlternativesDTO getAlternatives(long questionId) {
+    public SendAlternativesDTO getAlternatives(long questionId, UUID hostUUID) {
         Question question = questionRepository.findById(questionId).orElseThrow();
-
         return SendAlternativesDTO.builder()
                 .questionType(question.getQuestionType().name())
-                .options(
-                        question
-                                .getChoices()
-                        .stream()
-                        .map(
-                        choice -> AlternativeDTO.builder()
-                                .alternative(choice.getAlternative())
-                                .build()
-                )
-                                .toList()
-                )
+                .options(sortListWithUuidSeed(
+                        question.getChoices()
+                                .stream()
+                                .map(choice -> AlternativeDTO.builder().alternative(choice.getAlternative()).build())
+                                .toList(),
+                        hostUUID,
+                        AlternativeDTO::alternative
+                ))
                 .build();
     }
 

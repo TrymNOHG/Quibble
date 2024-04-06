@@ -27,7 +27,7 @@ import java.util.List;
  * @author Trym Hamer Gudvangen
  * @version 1.0 24.03.2024
  */
-@RestController()
+@RestController(value = "publicImageController")
 @EnableAutoConfiguration
 @RequiredArgsConstructor
 @CrossOrigin("*")

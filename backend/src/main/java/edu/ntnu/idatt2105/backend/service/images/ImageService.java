@@ -1,5 +1,11 @@
 package edu.ntnu.idatt2105.backend.service.images;
 
+import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
+import edu.ntnu.idatt2105.backend.model.users.User;
+import edu.ntnu.idatt2105.backend.service.quiz.QuizService;
+import edu.ntnu.idatt2105.backend.service.security.AuthenticationService;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +29,7 @@ import java.util.*;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ImageService {
 
     private final Logger LOGGER = LoggerFactory.getLogger(ImageService.class);
@@ -58,6 +65,18 @@ public class ImageService {
     }
 
     /**
+     * Saves an image to the server. The image has the same name as the quiz id with a prefix "q".
+     *
+     * @param file The image to be saved.
+     * @param quizId The id of the quiz.
+     * @throws IOException If the image could not be saved.
+     */
+    @Transactional
+    public void saveQuizImage(MultipartFile file, long quizId) throws IOException {
+        createFile(file, "q"+quizId);
+    }
+
+    /**
      * Saves an image to the server. The image has the same name as the user id.
      *
      * @param file     The image to be saved.
@@ -65,6 +84,17 @@ public class ImageService {
      * @throws IOException If the image could not be saved.
      */
     public void saveImage(MultipartFile file, long filename) throws IOException {
+        createFile(file, String.valueOf(filename));
+    }
+
+    /**
+     * Saves a file to the server. The file has the same name as the user id.
+     *
+     * @param file The file to be saved.
+     * @param filename The name of the file.
+     * @throws IOException If the file could not be saved.
+     */
+    private void createFile(MultipartFile file, String filename) throws IOException {
         if (!VALID_FILES.contains(file.getContentType())) {
             throw new InvalidPathException(Objects.requireNonNull(file.getContentType()),"Invalid Path Extension.");
         }
