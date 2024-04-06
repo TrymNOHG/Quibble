@@ -107,4 +107,10 @@ public class Quiz {
         author.setQuiz(this);
     }
 
+    public boolean isCollaboratorOrAdmin(User user) {
+
+        return collaborators.stream().anyMatch(author -> author.getUser().equals(user))
+                || admin.equals(user);
+    }
+
 }

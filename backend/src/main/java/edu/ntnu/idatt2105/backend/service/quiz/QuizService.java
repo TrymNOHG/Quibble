@@ -55,6 +55,7 @@ public class QuizService {
     private final QuizAuthorRepository quizAuthorRepository;
     private final AuthenticationService authenticationService;
 
+    @Transactional
     public Quiz getQuizById(long quizId) {
         return quizRepository.findById(quizId)
                 .orElseThrow(() -> new IllegalArgumentException("Quiz with id " + quizId + " not found"));

@@ -32,6 +32,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Collections;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -91,9 +92,9 @@ class QuestionServiceTest {
                 .type(QuestionType.SHORT_ANSWER)
                 .quizId(1L)
                 .build());
-        assertEquals("test question", questionService.getQuestionDTO(1L).question());
-        assertEquals("test answer", questionService.getQuestionDTO(1L).answer());
-        assertEquals(QuestionType.SHORT_ANSWER.name(), questionService.getQuestionDTO(1L).questionType());
+        assertEquals("test question", questionService.getQuestionDTO(1L, UUID.randomUUID()).question());
+        assertEquals("test answer", questionService.getQuestionDTO(1L, UUID.randomUUID()).answer());
+        assertEquals(QuestionType.SHORT_ANSWER.name(), questionService.getQuestionDTO(1L, UUID.randomUUID()).questionType());
     }
 
     @Test
@@ -112,7 +113,7 @@ class QuestionServiceTest {
                 .questionId(1L)
                 .quizId(1L)
                 .build());
-        QuestionDTO dto = questionService.getQuestionDTO(1L);
+        QuestionDTO dto = questionService.getQuestionDTO(1L, UUID.randomUUID());
         assertEquals("edited question", dto.question());
         assertEquals("edited answer", dto.answer());
         assertEquals(QuestionType.MULTIPLE_CHOICE.name(), dto.questionType());
@@ -128,7 +129,7 @@ class QuestionServiceTest {
                 .quizId(1L)
                 .build());
         questionService.deleteQuestion(1L);
-        assertThrows(NoSuchElementException.class, () -> questionService.getQuestionDTO(1L));
+        assertThrows(NoSuchElementException.class, () -> questionService.getQuestionDTO(1L, UUID.randomUUID()));
     }
 
     @Test

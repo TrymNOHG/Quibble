@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 @RequestMapping("/api/v1/public/auth")
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin("*")
+@CrossOrigin("http://localhost:5173/login")
 @SecurityScheme(
         name = "basicAuth",
         type = SecuritySchemeType.HTTP,
