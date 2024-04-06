@@ -9,6 +9,5 @@ package edu.ntnu.idatt2105.backend.model.quiz;
 public enum Difficulty {
     EASY,
     MEDIUM,
-    DIFFICULT,
-    INSANE
+    HARD
 }

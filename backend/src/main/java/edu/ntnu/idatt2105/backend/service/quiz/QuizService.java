@@ -117,8 +117,11 @@ public class QuizService {
      * @return                  Page of quiz load DTOs.
      */
     public Page<QuizLoadDTO> getFilteredQuizzes(QuizFilterDTO quizFilterDTO) {
+        LOGGER.info("Starting filtering of quizzes.");
         Pageable pageable = PageRequest.of(quizFilterDTO.pageNumber(),quizFilterDTO.pageSize());
+        LOGGER.info("Finding page based on specification.");
         Page<Quiz> quizPage = quizRepository.findAll(QuizSpecification.filterQuizzes(quizFilterDTO), pageable);
+        LOGGER.info("Page found. Creating QuizLoadDTOPage and responding.");
         return quizMapper.quizPageToQuizLoadDTOPage(quizPage);
     }
 

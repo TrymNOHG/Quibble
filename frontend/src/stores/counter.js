@@ -10,7 +10,7 @@ import {
   addQuestion,
   createQuiz,
   deleteQuestionById,
-  deleteQuizById, fetchCategories,
+  deleteQuizById, fetchCategories, fetchFilteredQuizzes,
   fetchQuizzes,
   patchQuestion,
   removeCollaborator,
@@ -126,7 +126,7 @@ export const useQuizStore = defineStore('storeQuiz', {
 
     async loadQuizzes(quizFilterDTO) {
       try {
-        const response = await fetchQuizzes(0, 10);
+        const response = await fetchFilteredQuizzes(quizFilterDTO);
         console.log(response)
         this.allQuizzes = [ ...response ];
         return this.allQuizzes;

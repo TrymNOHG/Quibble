@@ -1,6 +1,7 @@
 package edu.ntnu.idatt2105.backend.config;
 
 import edu.ntnu.idatt2105.backend.model.category.Category;
+import edu.ntnu.idatt2105.backend.model.category.QuizCategory;
 import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
 import edu.ntnu.idatt2105.backend.model.quiz.Difficulty;
 import edu.ntnu.idatt2105.backend.model.quiz.QuizAuthor;
@@ -9,6 +10,7 @@ import edu.ntnu.idatt2105.backend.model.quiz.question.Question;
 import edu.ntnu.idatt2105.backend.model.quiz.question.QuestionType;
 import edu.ntnu.idatt2105.backend.model.users.User;
 import edu.ntnu.idatt2105.backend.repo.category.CategoryRepository;
+import edu.ntnu.idatt2105.backend.repo.category.QuizCategoryRepository;
 import edu.ntnu.idatt2105.backend.repo.quiz.QuizAuthorRepository;
 import edu.ntnu.idatt2105.backend.repo.quiz.QuizRepository;
 import edu.ntnu.idatt2105.backend.repo.quiz.question.MultipleChoiceRepository;
@@ -43,6 +45,7 @@ public class DummyData implements CommandLineRunner {
     private final MultipleChoiceRepository multipleChoiceRepository;
     private final Logger logger = Logger.getLogger(DummyData.class.getName());
     private final CategoryRepository categoryRepository;
+    private final QuizCategoryRepository quizCategoryRepository;
 
     /**
      * This method is responsible for inserting dummy data into the database on startup. If the data is already there,
@@ -145,6 +148,60 @@ public class DummyData implements CommandLineRunner {
         );
 
         categoryRepository.saveAll(categories);
+
+        // Add more quizzes
+
+        quiz = Quiz.builder()
+                .quizName("Time trivia")
+                .quizDescription("A quiz about temporal questions")
+                .admin(quizAdmin)
+                .difficulty(Difficulty.MEDIUM)
+                .build();
+
+        if (quizRepository.findByQuizName(quiz.getQuizName()).isEmpty()) {// QuizName is not unique, but this is for testing purposes.
+            logger.info("TestQuiz: Capitals of Scandinavia Quiz not found in database, adding quiz to database");
+            quiz = quizRepository.save(quiz);
+            logger.info("TestQuiz: Capitals of Scandinavia Quiz added to database");
+        } else {
+            logger.info("TestQuiz: already in database");
+        }
+
+        question1 = Question.builder()
+                .question("How many hours are in a day?")
+                .questionType(QuestionType.MULTIPLE_CHOICE)
+                .answer("24")
+                .quiz(quiz)
+                .build();
+
+        questionRepository.save(question1);
+        choices = Set.of(
+                MultipleChoice.builder().alternative("60").isCorrect(false).question(question1).build(),
+                MultipleChoice.builder().alternative("3600").isCorrect(false).question(question1).build(),
+                MultipleChoice.builder().alternative("24").isCorrect(true).question(question1).build(),
+                MultipleChoice.builder().alternative("365").isCorrect(false).question(question1).build()
+        );
+        multipleChoiceRepository.saveAll(choices);
+
+        question2 = Question.builder()
+                .question("How many seconds are in an hour?")
+                .answer("3600")
+                .questionType(QuestionType.SHORT_ANSWER)
+                .quiz(quiz)
+                .build();
+
+        questionRepository.save(question2);
+        questionRepository.save(question3);
+
+        Category category = categoryRepository.findById(1L).orElseThrow();
+
+        QuizCategory quizCategory = QuizCategory
+                .builder()
+                .quiz(quiz)
+                .category(category)
+                .build();
+
+        quizCategoryRepository.save(quizCategory);
+
     }
 
     private Set<Category> createListOfCategories(String[] categoryNames) {

@@ -8,11 +8,7 @@ const BASE_URL_PUB_CAT = "http://localhost:8080/api/v1/public/category"
 
 export const fetchQuizzes = async (page, size) => {
     try {
-        const response = await axios.get(`${BASE_URL_PUB}/get?page=${page}&size=${size}`, {
-            headers: {
-                Authorization: `Bearer ${await sessionToken()}`,
-            }
-        });
+        const response = await axios.get(`${BASE_URL_PUB}/get?page=${page}&size=${size}`);
         return response.data.content;
     } catch (error) {
         throw error.response ? error.response.data : error.message;
@@ -21,11 +17,8 @@ export const fetchQuizzes = async (page, size) => {
 
 export const fetchFilteredQuizzes = async (quizFilterDTO) => {
     try {
-        const response = await axios.get(`${BASE_URL_PUB}/getFilter`, {
-            headers: {
-                Authorization: `Bearer ${await sessionToken()}`,
-            }
-        });
+        const response = await axios.post(`${BASE_URL_PUB}/getFiltered`, quizFilterDTO);
+        console.log(response)
         return response.data.content;
     } catch (error) {
         throw error.response ? error.response.data : error.message;

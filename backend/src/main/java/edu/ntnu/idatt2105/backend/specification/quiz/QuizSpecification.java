@@ -24,7 +24,8 @@ public class QuizSpecification {
             Predicate predicate = criteriaBuilder.conjunction();
 
             if (quizFilterDTO.name() != null) {
-                predicate = criteriaBuilder.and(predicate, criteriaBuilder.like(root.get("name"), "%" + quizFilterDTO.name() + "%"));
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.like(
+                        criteriaBuilder.lower(root.get("quizName")), "%" + quizFilterDTO.name().toLowerCase() + "%"));
             }
 
             if (quizFilterDTO.difficulties() != null && !quizFilterDTO.difficulties().isEmpty()) {
@@ -32,7 +33,7 @@ public class QuizSpecification {
             }
 
             if (quizFilterDTO.categories() != null && !quizFilterDTO.categories().isEmpty()) {
-                predicate = criteriaBuilder.and(predicate, root.get("quizCategories").get("category").get("categoryName").in(quizFilterDTO.categories()));
+                predicate = criteriaBuilder.and(predicate, root.get("categories").get("category").get("categoryName").in(quizFilterDTO.categories()));
             }
 
             //TODO: make filtering based on keywords better. Maybe use fuzzy or just to order the quizzes retrieved from the rest.

@@ -48,6 +48,6 @@ public class QuizController implements IQuizController{
     @Override
     public ResponseEntity<Page<QuizLoadDTO>> getQuizzes(@NonNull QuizFilterDTO quizFilterDTO) {
         Page<QuizLoadDTO> quizLoadPage = quizService.getFilteredQuizzes(quizFilterDTO);
-        return null;
+        return ResponseEntity.ok(quizLoadPage);
     }
 }
