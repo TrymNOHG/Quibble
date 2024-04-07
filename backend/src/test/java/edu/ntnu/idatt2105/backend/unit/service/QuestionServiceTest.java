@@ -1,10 +1,7 @@
 package edu.ntnu.idatt2105.backend.unit.service;
 
 import edu.ntnu.idatt2105.backend.dto.quiz.QuestionDTO;
-import edu.ntnu.idatt2105.backend.dto.quiz.QuizFilterDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
-import edu.ntnu.idatt2105.backend.dto.quiz.QuizUpdateDTO;
-import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.MultipleChoiceCreateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionCreateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionEditDTO;
@@ -75,7 +72,7 @@ class QuestionServiceTest {
                 .type(QuestionType.SHORT_ANSWER)
                 .choices(null)
                 .quizId(quizLoadDTO.quizId())
-                .build());
+                .build(), "test@test.test");
         assertEquals(1, quizService.getQuizById(quizLoadDTO.quizId()).getQuestions().size());
     }
 
@@ -87,7 +84,7 @@ class QuestionServiceTest {
                 .answer("test answer")
                 .type(QuestionType.SHORT_ANSWER)
                 .quizId(quizLoadDTO.quizId())
-                .build());
+                .build(), "test@test.test");
         long firstQuestionId = quizLoadDTO.questions().stream().findFirst().get().questionId();
         assertEquals("test question", questionService.getQuestionDTO(firstQuestionId, UUID.randomUUID()).question());
         assertEquals("test answer", questionService.getQuestionDTO(firstQuestionId, UUID.randomUUID()).answer());
@@ -102,14 +99,14 @@ class QuestionServiceTest {
                 .answer("test answer")
                 .type(QuestionType.SHORT_ANSWER)
                 .quizId(quizLoadDTO.quizId())
-                .build());
+                .build(), "test@test.test");
         questionService.editQuestion(QuestionEditDTO.builder()
                 .question("edited question")
                 .answer("edited answer")
                 .type(QuestionType.MULTIPLE_CHOICE)
                 .questionId(1L)
                 .quizId(quizLoadDTO.quizId())
-                .build());
+                .build(), "test@test.test");
 
         QuestionDTO dto = questionService.getQuestionDTO(quizLoadDTO.quizId(), UUID.randomUUID());
         assertEquals("edited question", dto.question());
@@ -125,8 +122,8 @@ class QuestionServiceTest {
                 .answer("test answer")
                 .type(QuestionType.SHORT_ANSWER)
                 .quizId(1L)
-                .build());
-        questionService.deleteQuestion(1L);
+                .build(), "test@test.test");
+        questionService.deleteQuestion(1L, "test@test.test");
         assertThrows(NoSuchElementException.class, () -> questionService.getQuestionDTO(1L, UUID.randomUUID()));
     }
 
@@ -138,7 +135,7 @@ class QuestionServiceTest {
                 .answer("test answer")
                 .type(QuestionType.MULTIPLE_CHOICE)
                 .quizId(1L)
-                .build());
+                .build(), "test@test.test");
         questionService.addQuestion(QuestionCreateDTO.builder()
                 .question("test question")
                 .answer("test answer")
@@ -148,6 +145,6 @@ class QuestionServiceTest {
                         .alternative("choice")
                         .isCorrect(true)
                         .build()))
-                .build());
+                .build(), "test@test.test");
     }
 }

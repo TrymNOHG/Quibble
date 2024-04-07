@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -44,7 +43,7 @@ public class QuizController implements IQuizController{
 
     @Override
     public ResponseEntity<QuizLoadDTO> createQuiz(@NonNull String quizName, @NonNull Authentication authentication) {
-        logger.info("Authenicating user: " + authentication.getName());
+        logger.info("Authenticating user: " + authentication.getName());
         return ResponseEntity.ok(quizService.createQuiz(quizName, authentication.getName()));
     }
 
@@ -92,37 +91,37 @@ public class QuizController implements IQuizController{
     public ResponseEntity<QuizLoadDTO> addQuestion(@NonNull QuestionCreateDTO questionCreateDTO, @NonNull Authentication authentication) {
         //TODO: check that user is owner or collaborator
         //TODO: make method that checks if user is owner or collaborator of quiz.
-        QuizLoadDTO quizLoadDTO = questionService.addQuestion(questionCreateDTO);
+        QuizLoadDTO quizLoadDTO = questionService.addQuestion(questionCreateDTO, authentication.getName());
         return ResponseEntity.ok(quizLoadDTO);
     }
 
     @Override
     public ResponseEntity<QuizLoadDTO> editQuestion(@NonNull QuestionEditDTO questionEditDTO, @NonNull Authentication authentication) {
-        QuizLoadDTO quizLoadDTO = questionService.editQuestion(questionEditDTO);
+        QuizLoadDTO quizLoadDTO = questionService.editQuestion(questionEditDTO, authentication.getName());
         return ResponseEntity.ok(quizLoadDTO);
     }
 
     @Override
     public ResponseEntity<Object> deleteQuestion(@NonNull Long questionId, @NonNull Authentication authentication) {
-        questionService.deleteQuestion(questionId);
+        questionService.deleteQuestion(questionId, authentication.getName());
         return ResponseEntity.ok("Successful Deletion");
     }
 
     @Override
     public ResponseEntity<QuizCategoryLoadDTO> addCategory(@NonNull QuizCategoryCreateDTO quizCategoryCreateDTO, @NonNull Authentication authentication) {
-        QuizCategoryLoadDTO quizCategoryLoadDTO = quizService.addQuizCategory(quizCategoryCreateDTO);
+        QuizCategoryLoadDTO quizCategoryLoadDTO = quizService.addQuizCategory(quizCategoryCreateDTO, authentication.getName());
         return ResponseEntity.ok(quizCategoryLoadDTO);
     }
 
     @Override
     public ResponseEntity<QuizCategoryLoadMultDTO> addCategories(@NonNull QuizCategoryCreateMultDTO quizCategoryCreateMultDTO, @NonNull Authentication authentication) {
-        QuizCategoryLoadMultDTO quizCategoryLoadMultDTO = quizService.addQuizCategories(quizCategoryCreateMultDTO);
+        QuizCategoryLoadMultDTO quizCategoryLoadMultDTO = quizService.addQuizCategories(quizCategoryCreateMultDTO, authentication.getName());
         return ResponseEntity.ok(quizCategoryLoadMultDTO);
     }
 
     @Override
     public ResponseEntity<Object> deleteQuizCategory(@NonNull Long quizCategoryId, @NonNull Authentication authentication) {
-        quizService.removeQuizCategory(quizCategoryId);
+        quizService.removeQuizCategory(quizCategoryId, authentication.getName());
         return ResponseEntity.ok("Successful Deletion");
     }
 }
