@@ -45,7 +45,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
  * endpoints. The filters are configured in a chain of filters.
  *
  * @author Brage Halvorsen Kvamme
- * @version 1.1 26.03.2024
+ * @version 1.2 07.04.2024
  */
 @Configuration
 @EnableMethodSecurity
@@ -81,6 +81,11 @@ public class SecurityConfiguration {
                 });
     }
 
+    /**
+     * Cross origin configuration for the application.
+     *
+     * @return The cors configuration source.
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();

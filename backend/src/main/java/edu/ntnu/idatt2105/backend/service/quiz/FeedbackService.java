@@ -1,10 +1,10 @@
-package edu.ntnu.idatt2105.backend.service;
+package edu.ntnu.idatt2105.backend.service.quiz;
 
 import edu.ntnu.idatt2105.backend.dto.quiz.feedback.QuizFeedbackDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.feedback.QuizFeedbackLoadAllDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.feedback.QuizFeedbackLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.feedback.QuizFeedbackUpdateDTO;
-import edu.ntnu.idatt2105.backend.mapper.quiz.QuizFeedbackMapperImpl;
+import edu.ntnu.idatt2105.backend.mapper.quiz.QuizFeedbackMapper;
 import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
 import edu.ntnu.idatt2105.backend.model.quiz.QuizFeedback;
 import edu.ntnu.idatt2105.backend.model.users.User;
@@ -16,6 +16,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -29,7 +30,6 @@ public class FeedbackService {
 
     private final QuizFeedbackRepository quizFeedbackRepository;
     private final AuthenticationService authenticationService;
-    private final UserService userService;
     private final QuizService quizService;
 
     @Transactional
@@ -86,7 +86,7 @@ public class FeedbackService {
         feedback.setStars(updatedFeedback.stars());
         QuizFeedback newFeedback = quizFeedbackRepository.save(feedback);
         log.info("Successfully updated feedback.");
-        return QuizFeedbackMapperImpl.INSTANCE.quizFeedbackToQuizFeedbackLoadDTO(newFeedback);
+        return QuizFeedbackMapper.INSTANCE.quizFeedbackToQuizFeedbackLoadDTO(newFeedback);
     }
 
     /**
@@ -106,7 +106,7 @@ public class FeedbackService {
             log.info("User is owner or collaborator, returning all feedbacks for the quiz");
             return QuizFeedbackLoadAllDTO.builder()
                     .feedbacks(quiz.getFeedbacks().stream()
-                            .map(QuizFeedbackMapperImpl.INSTANCE::quizFeedbackToQuizFeedbackLoadDTO)
+                            .map(QuizFeedbackMapper.INSTANCE::quizFeedbackToQuizFeedbackLoadDTO)
                             .collect(Collectors.toSet()))
                     .build();
         }
@@ -116,8 +116,16 @@ public class FeedbackService {
         return QuizFeedbackLoadAllDTO.builder()
                 .feedbacks(feedbacks.stream()
                         .filter(feedback -> feedback.getUser().getUserId() == userId || feedback.getUser().isShowFeedback())
-                        .map(QuizFeedbackMapperImpl.INSTANCE::quizFeedbackToQuizFeedbackLoadDTO)
+                        .map(QuizFeedbackMapper.INSTANCE::quizFeedbackToQuizFeedbackLoadDTO)
                         .collect(Collectors.toSet()))
                 .build();
+    }
+
+    @Transactional
+    public QuizFeedbackLoadAllDTO getOwnFeedback(Authentication authentication) {
+        User user = authenticationService.getLoggedInUser();
+        Set<QuizFeedback> feedbacks = user.getFeedbacks();
+        return QuizFeedbackMapper.INSTANCE.multipleQuizFeedbackToDTO(feedbacks);
+
     }
 }
