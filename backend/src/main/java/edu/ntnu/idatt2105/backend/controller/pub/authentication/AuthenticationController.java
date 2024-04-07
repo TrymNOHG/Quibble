@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
@@ -50,7 +51,7 @@ public class AuthenticationController implements IAuthenticationController {
             @RequestParam("email") String email,
             @RequestParam(name = "image", required = false) MultipartFile imageFile,
             HttpServletResponse httpServletResponse
-    ) {
+    ) throws IOException {
         logger.info("Calling signup endpoint");
         UserRegisterDTO userRegisterDTO = new UserRegisterDTO(username, password, email);
 
@@ -58,14 +59,20 @@ public class AuthenticationController implements IAuthenticationController {
                 userRegisterDTO, httpServletResponse, imageFile
         );
         logger.info("Sign-up Process Completed.");
-        return ResponseEntity.ok(authenticationResponseDTO);
+        return ResponseEntity.ok().header("Access-Control-Allow-Credentials", "true")
+                .header("Access-Control-Allow-Origin", "http://localhost:5173")
+                .body(authenticationResponseDTO);
+    }
+
+    @Override
+    public ResponseEntity<AuthenticationResponseDTO> signup(Long userId, HttpServletResponse httpServletResponse) {
+        return ResponseEntity.ok(null);
     }
 
     @Override
     public ResponseEntity<AuthenticationResponseDTO> getAccessTokenFromRefreshToken(
             @CookieValue(value = "refresh_token", defaultValue = "") String refreshToken
     ){
-        logger.info("Qwerqwer");
         return ResponseEntity.ok()
 //                .header(HttpHeaders.SET_COOKIE)
                 .body(authenticationService.getAccessTokenFromRefreshToken(refreshToken));

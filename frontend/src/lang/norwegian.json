@@ -1,8 +1,8 @@
 {
   "titles": {
     "REGISTER": "Registrer",
-    "AUTHORS": "Forfattere",
-    "ADD_NEW_AUTHOR": "Legg til ny forfatter",
+    "AUTHORS": "Samarbeidspartnere",
+    "ADD_NEW_AUTHOR": "Legg til ny samarbeidspartnere",
     "QUESTION_LIST": "Spørsmålsliste",
     "LOGIN": "Login"
   },
@@ -23,7 +23,7 @@
     "NEW_QUESTION": "Nytt Spørsmål",
     "IMPORT_QUESTION": "Importer Spørsmål",
     "ALL_DIFFICULTIES": "Vanskelighetsgrader",
-    "ADD_AUTHOR": "Legg til forfatter",
+    "ADD_AUTHOR": "Legg til samarbeidspartnere",
     "CANCEL": "Avbryt",
     "REGISTER": "Registrer",
     "LOGIN": "Login",

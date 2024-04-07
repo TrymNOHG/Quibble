@@ -18,21 +18,22 @@ export const fetchQuizzes = async (page, size) => {
 export const fetchFilteredQuizzes = async (quizFilterDTO) => {
     try {
         const response = await axios.post(`${BASE_URL_PUB}/getFiltered`, quizFilterDTO);
-        console.log(response)
         return response.data.content;
     } catch (error) {
         throw error.response ? error.response.data : error.message;
     }
 };
 
-export const fetchMyQuizzes = async (page, size) => {
+export const fetchAllQuizzesByUser = async (userId) => {
     try {
-        const response = await axios.get(`${BASE_URL_PRIV}/get?page=${page}&size=${size}`, {
+        console.log("hello")
+        const response = await axios.get(`${BASE_URL_PUB}/getUserQuiz?userId=${userId}`, {
             headers: {
                 Authorization: `Bearer ${await sessionToken()}`,
-            }
+            },
         });
-        return response.data.content;
+        console.log(response.data.quizzes)
+        return response.data.quizzes;
     } catch (error) {
         throw error.response ? error.response.data : error.message;
     }
@@ -55,7 +56,6 @@ export const createQuiz = async (quizName) => {
 };
 
 export const updateQuiz = async (quizUpdateDTO) => {
-    console.log(quizUpdateDTO)
     try {
         const response = await axios.patch(`${BASE_URL_PRIV}/update`,
             quizUpdateDTO, {
@@ -110,6 +110,7 @@ export const deleteQuestionById = async (questionId) => {
 };
 
 export const patchQuestion = async (questionEditDTO) => {
+    console.log("right before axios", questionEditDTO)
     try {
         const response = await axios.patch(`${BASE_URL_PRIV}/edit/question`,
             questionEditDTO, {
@@ -117,6 +118,7 @@ export const patchQuestion = async (questionEditDTO) => {
                     Authorization: `Bearer ${await sessionToken()}`,
                 }
             });
+        console.log("axios repsonse", response.data);
         return response.data;
     } catch (error) {
         throw error.response ? error.response.data : error.message;
@@ -201,13 +203,27 @@ export const deleteCategory = async (quizCategoryId, quizId) => {
 
 export const addKeyword = async (keywordDTO) => {
     try {
-        const response = await axios.post(`${BASE_URL_PRIV}/create/keyword`,
+        const response = await axios.post(`${BASE_URL_PRIV}/create/keywords`,
             keywordDTO, {
                 headers: {
                     Authorization: `Bearer ${await sessionToken()}`,
                 }
             });
         console.log("key  ", response.data)
+        return response.data;
+    } catch (error) {
+        throw error.response ? error.response.data : error.message;
+    }
+};
+
+export const removeKeyword = async (quizKeywordId) => {
+    try {
+        const response = await axios.delete(`${BASE_URL_PRIV}/delete/keyword/${quizKeywordId}`, {
+                headers: {
+                    Authorization: `Bearer ${await sessionToken()}`,
+                }
+            });
+        console.log(response.data)
         return response.data;
     } catch (error) {
         throw error.response ? error.response.data : error.message;

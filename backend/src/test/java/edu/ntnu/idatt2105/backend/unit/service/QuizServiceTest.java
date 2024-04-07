@@ -9,6 +9,7 @@ import edu.ntnu.idatt2105.backend.model.quiz.QuizAuthor;
 import edu.ntnu.idatt2105.backend.model.users.User;
 import edu.ntnu.idatt2105.backend.repo.quiz.QuizRepository;
 import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
+import edu.ntnu.idatt2105.backend.service.images.ImageService;
 import edu.ntnu.idatt2105.backend.service.quiz.QuizService;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +31,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -47,9 +49,10 @@ class QuizServiceTest {
     private QuizRepository quizRepository;
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private QuizService quizService;
+    @MockBean
+    private ImageService imageService;
 
 
     @BeforeEach
@@ -72,7 +75,7 @@ class QuizServiceTest {
 
     @Test
     @Transactional
-    void Create_quiz_test() {
+    void Create_quiz_test() throws IOException {
         quizService.createQuiz("Test quiz", "test@test.test");
         quizRepository.findByQuizName("Test quiz").ifPresentOrElse(
                 quiz -> {
@@ -84,7 +87,7 @@ class QuizServiceTest {
     }
 
     @Test
-    void Get_quiz_by_id_test() {
+    void Get_quiz_by_id_test() throws IOException {
         quizService.createQuiz("Test quiz", "test@test.test");
         Quiz quiz = quizService.getQuizById(1L);
         assertEquals("Test quiz", quiz.getQuizName());
@@ -92,7 +95,7 @@ class QuizServiceTest {
     }
 
     @Test
-    void Delete_quiz_test() {
+    void Delete_quiz_test() throws IOException {
         quizService.createQuiz("Test quiz", "test@test.test");
         quizService.deleteQuiz(1L);
         assertTrue(quizRepository.findByQuizName("Test quiz").isEmpty());
@@ -100,7 +103,7 @@ class QuizServiceTest {
 
     @Test
     @Transactional
-    void Load_all_quizzes_test() {
+    void Load_all_quizzes_test() throws IOException {
         quizService.createQuiz("Test quiz", "test@test.test");
         assertEquals(1, quizService.loadAllQuiz().quizzes().size());
         quizService.createQuiz("Test quiz2", "test@test.test");
@@ -109,7 +112,7 @@ class QuizServiceTest {
 
     @Test
     @Transactional
-    void Get_filtered_quizzes() {
+    void Get_filtered_quizzes() throws IOException {
         quizService.createQuiz("Test quiz1", "test@test.test");
         quizService.createQuiz("Test quiz3", "test@test.test");
         quizService.createQuiz("Test quiz13", "test@test.test");
@@ -151,7 +154,7 @@ class QuizServiceTest {
     }
 
     @Test
-    void Update_quiz_test() {
+    void Update_quiz_test() throws IOException {
         quizService.createQuiz("Test quiz", "test@test.test");
         quizService.updateQuiz(QuizUpdateDTO.builder()
                 .newName("New name")
@@ -166,7 +169,7 @@ class QuizServiceTest {
     }
 
     @Test
-    void Add_collaborator_test() {
+    void Add_collaborator_test() throws IOException {
         quizService.createQuiz("Test quiz", "test@test.test");
         assertThrows(Exception.class, () -> quizService.addCollaborator(QuizAuthorDTO.builder()
                 .quizId(1L)
@@ -176,7 +179,7 @@ class QuizServiceTest {
 
     @Test
     @Transactional
-    void Add_collaborator_test2() {
+    void Add_collaborator_test2() throws IOException {
         quizService.createQuiz("Test quiz", "test@test.test");
         userRepository.save(
                 User.builder()

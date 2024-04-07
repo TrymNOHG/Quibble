@@ -112,6 +112,7 @@ export default {
     const store = useQuizCreateStore();
     const addNewQuestion = ref(false);
     const editQuestion = ref(false);
+    store.resetTemplate()
     const question_list = ref(store.templateQuiz.questions);
     const selectedQuestions = ref([]);
 
@@ -153,10 +154,6 @@ export default {
       newQuestion.value.question = '';
       newQuestion.value.type = 'true_false';
       newQuestion.value.answer = '';
-      newQuestion.value.choices.forEach(choice => {
-        choice.alternative = '';
-        choice.isCorrect = false;
-      });
       addNewQuestion.value = false;
       editQuestion.value = false;
     };

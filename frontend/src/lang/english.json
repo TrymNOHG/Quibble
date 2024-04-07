@@ -1,8 +1,8 @@
 {
   "titles": {
     "REGISTER": "Register",
-    "AUTHORS": "Authors",
-    "ADD_NEW_AUTHOR": "Add New Author",
+    "AUTHORS": "Collaborators",
+    "ADD_NEW_AUTHOR": "Add New Collaborator",
     "QUESTION_LIST": "Question List",
     "LOGIN": "Login"
   },
@@ -23,7 +23,7 @@
     "NEW_QUESTION": "New Question",
     "IMPORT_QUESTION": "Import Question",
     "ALL_DIFFICULTIES": "All difficulties",
-    "ADD_AUTHOR": "Add Author",
+    "ADD_AUTHOR": "Add Collaborator",
     "CANCEL": "Cancel",
     "REGISTER": "Register",
     "LOGIN": "Login",

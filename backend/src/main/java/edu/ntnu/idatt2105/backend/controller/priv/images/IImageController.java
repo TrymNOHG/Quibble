@@ -18,16 +18,17 @@ import java.io.IOException;
 public interface IImageController {
 
         @PostMapping("/quiz/save")
-        @Operation(summary = "This method saves an image.")
+        @Operation(summary = "This method saves a quiz image.")
         @ApiResponses(value = {
                 @ApiResponse(responseCode = "200", description = "Successfully saved image.",
                         content = @Content(mediaType = "image/jpeg", schema = @Schema(implementation = Resource.class))),
                 @ApiResponse(responseCode = "403", description = "Not the owner of the quiz.")
         }
         )
-        ResponseEntity<String> saveFile(
+        ResponseEntity<String> saveQuizImage(
                 @RequestParam("quizId") Long quizId,
-                @RequestParam(name = "image", required = false) MultipartFile imageFile,
+                @RequestParam(name = "image", required = false)
+                MultipartFile imageFile,
                 @NonNull Authentication authentication
         ) throws IOException;
 

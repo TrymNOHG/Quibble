@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -68,9 +69,7 @@ public class AuthenticationService {
 
         } catch (Exception e) {
             log.warning(e.getMessage());
-            throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong while getting token"
-            );
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong while getting token");
         }
     }
 
@@ -87,7 +86,7 @@ public class AuthenticationService {
     @Transactional
     public AuthenticationResponseDTO registerUser(UserRegisterDTO userRegistrationDto,
                                                   HttpServletResponse httpServletResponse, MultipartFile imageFile
-    ) {
+    ) throws IOException {
         if (userRegistrationDto.username().length() < 3 || userRegistrationDto.username().length() > 64
                 || userRegistrationDto.password().length() < 8 || userRegistrationDto.password().length() > 64) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -126,19 +125,7 @@ public class AuthenticationService {
                     HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong while creating user: " + e
             );
         }
-        try {
-            if (imageFile == null) {
-                imageService.setDefaultProfilePic(savedUser.getUserId());
-            } else {
-                imageService.saveImage(imageFile, savedUser.getUserId());
-            }
-        } catch (Exception e) {
-            log.info("Error while saving image: " + e.getMessage());
-            imageService.setDefaultProfilePic(savedUser.getUserId());
-            throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong while saving image"
-            );
-        }
+        imageService.setDefaultProfilePic(savedUser.getUserId());
         return getAccessTokenAuthDTO(savedUser.getEmail());
     }
 

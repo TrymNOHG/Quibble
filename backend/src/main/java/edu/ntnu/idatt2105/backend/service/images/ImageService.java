@@ -1,9 +1,5 @@
 package edu.ntnu.idatt2105.backend.service.images;
 
-import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
-import edu.ntnu.idatt2105.backend.model.users.User;
-import edu.ntnu.idatt2105.backend.service.quiz.QuizService;
-import edu.ntnu.idatt2105.backend.service.security.AuthenticationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,11 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 
 /**
@@ -65,15 +60,90 @@ public class ImageService {
     }
 
     /**
-     * Saves an image to the server. The image has the same name as the quiz id with a prefix "q".
-     *
-     * @param file The image to be saved.
-     * @param quizId The id of the quiz.
-     * @throws IOException If the image could not be saved.
+     * This method creates a subdirectory in the main storage directory for the given user.
+     * @param userId        The id of the user.
+     * @throws IOException  Potential exceptions with creating directory.
      */
+    public void initializeUserDir(Long userId) throws IOException {
+        LOGGER.info("Initializing user's image directory.");
+        Path filePath = Paths.get(STORAGE_DIRECTORY.toString(), String.valueOf(userId));
+        Files.createDirectories(filePath);
+    }
+
+    /**
+     * This method saves a given image to the user's image directory.
+     * @param file                  The image to be saved.
+     * @param userId                The user saving the image.
+     * @return                      The file path of the saved image.
+     * @throws FileSystemException  An error with saving the image.
+     */
+    public String saveUserImage(MultipartFile file, Long userId) throws FileSystemException {
+        String fileName = file.getOriginalFilename();
+
+        if (!VALID_FILES.contains(file.getContentType())) {
+            throw new InvalidPathException(Objects.requireNonNull(file.getContentType()),"Invalid Path Extension.");
+        }
+
+        Path newFilePath = Paths.get(STORAGE_DIRECTORY.toString(), String.valueOf(userId), fileName);
+
+        try {
+            file.transferTo(newFilePath);
+        } catch (Exception e) {
+            throw new FileSystemException("File could not be saved");
+        }
+        return newFilePath.getFileName().toString();
+    }
+
+    /**
+     * This method recursively deletes all the images associated with a user
+     * @param userId            The id of the user.
+     * @throws IOException      An IO exception.
+     */
+    public void removeUserDir(Long userId) throws IOException {
+        LOGGER.info("Starting removal of  user's image directory.");
+
+        Path filePath = Paths.get(STORAGE_DIRECTORY.toString(), String.valueOf(userId));
+        Files.walkFileTree(filePath, new SimpleFileVisitor<>() {
+            @Override
+            public FileVisitResult visitFile(Path childFile, BasicFileAttributes attributes) throws IOException {
+                try{
+                    Files.delete(childFile);
+                } catch (Exception e) {
+                    throw new FileSystemException("Something went wrong while deleting images in directory");
+                }
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult postVisitDirectory(Path childDirectory, IOException ioException) throws IOException {
+                try {
+                    Files.delete(childDirectory);
+                } catch (Exception e){
+                    throw new DirectoryNotEmptyException("Something went wrong while sub-directories");
+
+                }
+                return FileVisitResult.CONTINUE;
+            }
+        });
+
+        try {
+            Files.delete(filePath);
+        } catch (Exception e) {
+            throw new DirectoryNotEmptyException("The image directory is not empty and could not be deleted.");
+        }
+    }
+
+
+        /**
+         * Saves an image to the server. The image has the same name as the quiz id with a prefix "q".
+         *
+         * @param file The image to be saved.
+         * @param quizId The id of the quiz.
+         * @throws IOException If the image could not be saved.
+         */
     @Transactional
     public void saveQuizImage(MultipartFile file, long quizId) throws IOException {
-        createFile(file, "q"+quizId);
+        createFile(file, "Q"+quizId);
     }
 
     /**
@@ -96,12 +166,16 @@ public class ImageService {
      */
     private void createFile(MultipartFile file, String filename) throws IOException {
         if (!VALID_FILES.contains(file.getContentType())) {
+            log.info("Invalid Path Extension.");
             throw new InvalidPathException(Objects.requireNonNull(file.getContentType()),"Invalid Path Extension.");
         }
         Path newFilePath = Paths.get(STORAGE_DIRECTORY+"/"+filename);
+        log.info("qwerqwer" + newFilePath);
         try {
+            log.info("Saving file");
             Files.copy(file.getInputStream(), newFilePath, StandardCopyOption.REPLACE_EXISTING);
         } catch (Exception e) {
+            log.warn(e.getMessage());
             throw new FileSystemException("File could not be saved");
         }
     }
@@ -112,6 +186,7 @@ public class ImageService {
      * @param userId The id of the user with an image to be deleted.
      */
     public void removeImage(Long userId) {
+        LOGGER.info("Deleting image at " + userId);
         try {
             Files.deleteIfExists(Paths.get(STORAGE_DIRECTORY+"/"+userId));
         } catch (IOException e) {
@@ -120,19 +195,29 @@ public class ImageService {
     }
 
     /**
+     * Sets the default quiz picture for a quiz.
+     *
+     * @param quizId The id of the quiz with an image to be loaded.
+     * @throws IOException If the image could not be loaded.
+     */
+    public void setDefaultQuizPic(Long quizId) throws IOException {
+        log.info("Setting default quiz picture for quiz " + quizId);
+        Files.copy(Paths.get(STORAGE_DIRECTORY+"/default-q"),
+                Paths.get(STORAGE_DIRECTORY+"/Q"+quizId),
+                StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    /**
      * Sets the default profile picture for a user.
      *
      * @param userId The id of the user with an image to be loaded.
      */
-    public void setDefaultProfilePic(Long userId) {
-        try {
+    public void setDefaultProfilePic(Long userId) throws IOException {
+        log.info("Setting default profile picture for user " + userId);
             Random random = new Random();
-            Files.copy(Paths.get(STORAGE_DIRECTORY+"/default-"+random.nextInt(1, 6)),
+            Files.copy(Paths.get(STORAGE_DIRECTORY+"/default-"+random.nextInt(1, 10)),
                     Paths.get(STORAGE_DIRECTORY+"/"+userId),
                     StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     /**

@@ -4,7 +4,7 @@ import edu.ntnu.idatt2105.backend.dto.quiz.feedback.QuizFeedbackDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.feedback.QuizFeedbackLoadAllDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.feedback.QuizFeedbackLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.feedback.QuizFeedbackUpdateDTO;
-import edu.ntnu.idatt2105.backend.service.FeedbackService;
+import edu.ntnu.idatt2105.backend.service.quiz.FeedbackService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +48,14 @@ public class FeedbackController implements IFeedbackController {
     }
 
     @Override
-    public ResponseEntity<QuizFeedbackLoadAllDTO> getFeedbacks(@PathVariable @NonNull Long quizId, @NonNull Authentication authentication) {
+    public ResponseEntity<QuizFeedbackLoadAllDTO> getFeedbacks(@PathVariable @NonNull Long quizId,
+                                                               @NonNull Authentication authentication) {
         return new ResponseEntity<>(feedbackService.getFeedbacks(quizId), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<QuizFeedbackLoadAllDTO> getOwnFeedback(@NonNull Authentication authentication) {
+        log.info("Getting own feedback.");
+        return new ResponseEntity<>(feedbackService.getOwnFeedback(authentication), HttpStatus.OK);
     }
 }

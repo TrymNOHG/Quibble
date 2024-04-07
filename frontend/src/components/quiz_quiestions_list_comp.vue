@@ -53,12 +53,6 @@
           @click="deleteQuiz()">
         {{ $t('buttons.DELETE_QUIZ') }}
       </button>
-      <button
-          class="btn"
-          v-if="!isAuthor & !isEditor"
-          @click="addToMyquiz()">
-        Add to MyQuiz
-      </button>
       <div id="download_div">
         <font-awesome-icon
             id="download"
@@ -91,7 +85,7 @@
 
 <script>
 import QuestionList from "@/components/BasicComponents/questionList.vue";
-import { ref } from "vue";
+import {ref, watch} from "vue";
 import { useQuizStore } from "@/stores/counter.js";
 import QuestionCreateList from "@/components/create_quiz/question-create-list.vue";
 import {downloadQuizCSV, uploadQuestionsFromCSV} from "@/features/QuizCSV"
@@ -112,6 +106,7 @@ export default {
     const addNewQuestion = ref(false);
     const edit = ref(false);
     let question_list = ref(store.currentQuiz.questions);
+    console.log("questionList", question_list)
 
     const editQuestion = ref({
       quizId: null,
@@ -127,7 +122,28 @@ export default {
       ]
     });
 
+    watch(
+        () => editQuestion.value.type,
+        (newValue, oldValue) => {
+          console.log(oldValue)
+          if(String(newValue).toUpperCase() === "MULTIPLE_CHOICE") {
+            if (editQuestion.value.choices && editQuestion.value.choices.length !== 0) {
+              return;
+            }
+            editQuestion.value.choices = [
+              {multipleChoiceId: null, alternative: 'Option 1', isCorrect: false, questionId:  editQuestion.value.questionId},
+              {multipleChoiceId: null, alternative: 'Option 2', isCorrect: false, questionId:  editQuestion.value.questionId},
+              {multipleChoiceId: null, alternative: 'Option 3', isCorrect: false, questionId:  editQuestion.value.questionId },
+              {multipleChoiceId: null, alternative: 'Option 4', isCorrect: false, questionId:  editQuestion.value.questionId }
+            ]
+          } else {
+            editQuestion.value.choices = [];
+          }
+        }
+    );
+
     const deleteQuestion = async (question) => {
+      console.log("Question : ", question)
       const index = question_list.value.indexOf(question);
       if (index !== -1) {
         question_list.value.splice(index, 1);
@@ -166,17 +182,32 @@ export default {
           editQuestion.value.answer = '';
         }
       }
-      console.log("qwerqwer", editQuestion.value)
-      store.addQuestion(editQuestion.value);
-      question_list.value.push(editQuestion.value);
+      store.addQuestion(editQuestion.value).then(question => {
+        console.log("adding question: ", question)
+        let lastQuestion = null;
+
+        if (question.questions.length > 0) {
+          const sortedQuestions = question.questions.slice().sort((a, b) => b.questionId - a.questionId);
+          lastQuestion = sortedQuestions[0];
+        }
+        question_list.value.push(lastQuestion);
+      }).catch(error => {
+        console.log("error: ", error)
+      });
+
       console.log(question_list.value)
       addNewQuestion.value = false;
       edit.value = false;
     };
 
     const showEdit = (question) => {
-      console.log(question)
-      editQuestion.value = { ...question };
+      // Make a deep copy of the question object
+      const newQuestion = JSON.parse(JSON.stringify(question));
+
+      // Update editQuestion value
+      editQuestion.value = newQuestion;
+
+      // Set edit to true to open the edit modal
       edit.value = true;
     };
 
@@ -185,13 +216,12 @@ export default {
     };
 
     const addEdit = async () => {
-      const index = question_list.value.indexOf(editQuestion.value);
-      if (index !== -1) {
-        question_list.value.splice(index, 1);
-      }
-
       try {
-        await store.editQuestion(editQuestion.value);
+        const editedQuestionDTO = await store.editQuestion(editQuestion.value);
+        const index = question_list.value.findIndex(q => q.questionId === editQuestion.value.questionId);
+        if (index !== -1) {
+          question_list.value.splice(index, 1, editedQuestionDTO);
+        }
         edit.value = false;
       } catch (error) {
         console.error('Error editing question:', error);
@@ -239,11 +269,11 @@ export default {
     }
 
     const routeSinglePlayer = () => {
-      router.push('/quiz/singleplayer'); // replace with your actual path
+      router.push('/quiz/singleplayer');
     };
 
     const routeMultiPlayer = () => {
-      router.push('/quiz/multiplayer'); // replace with your actual path
+      router.push('/quiz/multiplayer');
     };
 
     return {
@@ -271,6 +301,10 @@ export default {
 
 
 <style scoped>
+#csvFileInput {
+  width: 100px
+}
+
 #download_div{
   width: 35px;
   display: flex;
