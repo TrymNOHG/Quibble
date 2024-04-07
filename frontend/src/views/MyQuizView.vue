@@ -26,7 +26,7 @@ const categories = quizStore.category_list;
 
 
 onMounted(async () => {
-  await store.loadMyQuizzes();
+  displayedQuizzes.value = await store.loadMyQuizzes();
 });
 
 </script>
