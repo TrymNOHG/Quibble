@@ -2,10 +2,10 @@
   <div class="score-container single-player">
     <h2>Your Score</h2>
     <div class="score-item">
-      <img :src="player.image" class="player-image" alt="Player Profile" />
+      <img :src="getPictureURL(player.userId)" class="player-image" alt="Player Profile" />
       <div class="player-details">
-        <span class="player-name">{{ player.name }}</span>
-        <span class="player-score">{{ player.score }}</span>
+        <span class="player-name">{{ player.username }}</span>
+        <span class="player-score">{{ score }}</span>
         <!-- Display Countdown Timer -->
         <div class="countdown-timer">{{ countdown }}</div>
       </div>
@@ -14,10 +14,17 @@
 </template>
 
 <script>
+
+import {getPictureFromID} from "@/services/ImageService.js";
+
 export default {
   props: {
     player: {
       type: Object,
+      required: true
+    },
+    score: {
+      type: Number,
       required: true
     }
   },
@@ -37,7 +44,10 @@ export default {
           this.$emit('countdownEnded');
         }
       }, 1000);
-    }
+    },
+    getPictureURL(id) {
+      return getPictureFromID(id);
+    },
   },
   mounted() {
     this.startCountdown(); // Start countdown when component is mounted

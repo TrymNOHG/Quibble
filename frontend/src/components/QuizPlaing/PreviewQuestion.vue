@@ -1,7 +1,11 @@
 <template>
   <div v-if="showPreview" class="preview-container">
     <div class="question-preview">
+      <h3 class="preview-heading">Question Preview</h3>
       <div class="card-content">{{ question.question }}</div>
+      <div class="answer-instruction">
+        seconds left to preview the question.
+      </div>
       <div class="countdown-circle">{{ countdown }}</div>
     </div>
     <div class="progress-bar-container">
@@ -9,6 +13,7 @@
     </div>
   </div>
 </template>
+
 
 <script>
 export default {
@@ -98,6 +103,23 @@ export default {
   background-color: #e0e0e0;
   border-radius: 5px;
   margin-top: 20px;
+}
+
+.preview-heading {
+  font-size: 1.4em;
+  margin-bottom: 10px; /* Spacing for the heading */
+  color: #673AB7; /* Stylish color for the heading */
+}
+
+.answer-instruction {
+  font-size: 1em;
+  margin-top: 20px; /* Space above the instruction */
+  color: #757575; /* Subtle color for the instruction text */
+}
+
+.countdown-number {
+  font-weight: bold;
+  color: #673AB7; /* Highlight the countdown number */
 }
 
 .progress-bar {

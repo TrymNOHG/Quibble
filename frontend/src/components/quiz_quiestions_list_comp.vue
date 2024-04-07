@@ -44,8 +44,8 @@
   </div>
   <div class="comp">
     <div class="buttons">
-      <button>{{ $t('buttons.ONE_PLAYER') }}</button>
-      <button>{{ $t('buttons.MULTI_PLAYER') }}</button>
+      <button @click="routeSinglePlayer">{{ $t('buttons.ONE_PLAYER') }}</button>
+      <button @click="routeMultiPlayer">{{ $t('buttons.MULTI_PLAYER') }}</button>
       <button
           class="btn"
           to="/home"
@@ -97,6 +97,7 @@ import QuestionCreateList from "@/components/create_quiz/question-create-list.vu
 import {downloadQuizCSV, uploadQuestionsFromCSV} from "@/features/QuizCSV"
 import router from "@/router/index.js";
 import Quiz_info_comp from "@/components/quiz_info_comp.vue";
+
 
 export default {
   components: {Quiz_info_comp, QuestionCreateList, QuestionList },
@@ -237,6 +238,14 @@ export default {
       //TODO: add questions
     }
 
+    const routeSinglePlayer = () => {
+      router.push('/quiz/singleplayer'); // replace with your actual path
+    };
+
+    const routeMultiPlayer = () => {
+      router.push('/quiz/multiplayer'); // replace with your actual path
+    };
+
     return {
       addNew,
       cancelCreate,
@@ -251,7 +260,9 @@ export default {
       editQuestion,
       addNewQuestion,
       downloadQuiz,
-      importQuestions
+      importQuestions,
+      routeSinglePlayer,
+      routeMultiPlayer
     }
   }
 }
