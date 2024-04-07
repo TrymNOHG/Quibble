@@ -1,5 +1,5 @@
 <template>
-  <header v-if="!isOnRoot">
+  <header>
     <router-link to="/home" aria-label="Go to Home page">
       <img
           id="logo"
