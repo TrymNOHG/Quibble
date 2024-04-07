@@ -69,9 +69,7 @@ public class AuthenticationService {
 
         } catch (Exception e) {
             log.warning(e.getMessage());
-            throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong while getting token"
-            );
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong while getting token");
         }
     }
 
