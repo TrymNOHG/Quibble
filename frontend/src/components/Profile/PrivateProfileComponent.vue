@@ -18,7 +18,7 @@
       </div>
     </div>
 
-    <div v-if="!isEditing && !isChangingPassword" class="info-section">
+    <div v-if="!isEditing" class="info-section">
 <!--      <p id="fullName"><strong>{{ $t("name") }}:</strong> {{ profileData.firstName + " " + profileData.lastName }}</p>-->
       <p id="username"><strong>{{ $t("Username") }}:</strong> {{ profileData.username }}</p>
       <p id="email"><strong>{{ $t("Email") }}:</strong> {{ profileData.email }}</p>
@@ -31,9 +31,7 @@
         <input id="toggle-feedback" type="checkbox" v-model="showFeedbackOnProfile" class="toggle-input" />
       </div>
       <BasicButton class="basic-button edit-btn" @click="toggleEdit(true)" :button_text="$t('edit')"/>
-      <BasicButton class="basic-button change-password-btn" @click="toggleChangePassword(true)" :button_text="$t('changePassword')"/>
       <BasicButton class="basic-button logout-btn" @click="logout" :button_text="$t('Logout')"/>
-      <BasicButton class="basic-button delete-btn" @click="deleteUser" :button_text="$t('Delete User')"/>
 
     </div>
 
@@ -64,28 +62,6 @@
         <BasicButton class="basic-button" type="button" @click="toggleEdit(false)" :button_text="'Cancel'"/>
       </div>
     </form>
-
-
-    <form v-else-if="isChangingPassword" @submit.prevent="updatePassword" :class="{ 'has-errors': hasErrors }">
-      <!-- Password Changing Form -->
-      <div class="input-box">
-        <label for="currentPassword">{{ $t("current_password") }}</label>
-        <input id="currentPassword" v-model="passwordData.oldPassword" type="password" required />
-      </div>
-      <div class="input-box">
-        <label for="newPassword">{{ $t("new_password") }}</label>
-        <input id="newPassword" v-model="passwordData.newPassword" type="password" required />
-      </div>
-      <div class="input-box">
-        <label for="confirmPassword">{{ $t("confirm_password") }}</label>
-        <input id="confirmPassword" v-model="passwordData.confirmPassword" type="password" required />
-      </div>
-      <div class="button-container">
-        <BasicButton class="basic-button" type="submit" @click="emitUpdatePassword" :button_text="$t('save_changes')"/>
-        <BasicButton class="basic-button" type="button" @click="toggleChangePassword(false)" :button_text="$t('cancel')"/>
-      </div>
-    </form>
-
   </div>
 </template>
 
@@ -117,7 +93,6 @@ export default {
     // State variables
     const { profileData } = toRefs(props);
     const isEditing = ref(false);
-    const isChangingPassword = ref(false);
     const showActivity = ref(profileData.value.showActivity);
     const showFeedbackOnProfile = ref(profileData.value.showFeedback);
     const hasErrors = ref(false);
@@ -147,12 +122,6 @@ export default {
     const { value: username } = useField('username', yup.string().required("Username is required"), { initialValue: profileData.value.username });
     const { value: email } = useField('email', yup.string().required("Email is required").email("Must be a valid email"), { initialValue: profileData.value.email });
 
-    // Password change form validation schema
-    const passwordValidationSchema = yup.object({
-      newPassword: yup.string().required("New Password is required").min(8, "Password must be at least 8 characters"),
-      confirmPassword: yup.string().required("Confirm New Password is required").oneOf([yup.ref('newPassword'), null], 'Passwords must match'),
-    });
-
     // Form submission handling
     const submitForm = handleSubmit(values => {
       emit('updateUserProfile', values);
@@ -169,30 +138,9 @@ export default {
       emit('toggleEdit', editState);
     }
 
-    function toggleChangePassword(changePasswordState) {
-      isChangingPassword.value = changePasswordState;
-      emit('toggleChangePassword', changePasswordState);
-    }
-
     function logout() {
       emit('logout');
 
-    }
-
-    const deleteUser = () => {
-      emit('deleteUser');
-    }
-
-    async function emitUpdatePassword() {
-      try {
-        await passwordValidationSchema.validate({
-          newPassword: passwordData.value.newPassword,
-          confirmPassword: passwordData.value.confirmPassword,
-        });
-        emit('updatePassword', passwordData.value);
-      } catch (validationError) {
-        console.error("Validation Error:", validationError);
-      }
     }
 
     function onProfilePictureChange(event) {
@@ -208,16 +156,12 @@ export default {
       hasErrors,
       defaultProfilePicture,
       isEditing,
-      isChangingPassword,
       passwordData,
       showActivity,
       showFeedbackOnProfile,
       submitForm,
-      emitUpdatePassword,
       logout,
-      deleteUser,
       toggleEdit,
-      toggleChangePassword,
       onProfilePictureChange,
       onDeleteProfilePicture,
       username,

@@ -2,15 +2,12 @@
   <div>
     <private-profile-component
         @updateUserProfile="handleUpdateUserProfile"
-        @updatePassword="handleUpdatePassword"
         @logout="handleLogout"
         @changeProfilePicture="handleChangePicture"
         @deleteProfilePicture="handleDeletePicture"
         @toggleEdit="handleToggleEdit"
-        @toggleChangePassword="handleToggleChangePassword"
         @updateShowActivity="handleUpdateShowActivity"
         @updateShowFeedbackOnProfile="handleUpdateShowFeedbackOnProfile"
-        @deleteUser="handleDeleteUser"
         :profile-data="loadUserData()"
     />
   </div>
@@ -22,9 +19,8 @@
 <script>
 import PrivateProfileComponent from "@/components/Profile/PrivateProfileComponent.vue";
 import {useUserStore} from "@/stores/counter.js"; // Ensure this matches your imported component file name
-import {updateUser, updateUserShowActivity, updateUserShowFeedback} from "@/services/UserService.js";
+import {updateUser} from "@/services/UserService.js";
 import router from "@/router/index.js";
-import {deleteQuizById} from "@/services/QuizService.js";
 import {getPictureFromID} from "@/services/ImageService.js";
 
 export default {
@@ -56,11 +52,6 @@ export default {
           })
       await store.fetchUserData();
       await router.push("/profile");
-    },
-
-    handleUpdatePassword(passwordData) {
-      console.log("Updating password with:", passwordData);
-      // Implement logic here to update the password
     },
 
     handleLogout() {
@@ -95,11 +86,6 @@ export default {
       this.isEditing = editState; // Ensure this line is correctly updating the isEditing state
     },
 
-    handleToggleChangePassword(changePasswordState) {
-      console.log("Toggling change password state to:", changePasswordState);
-      // Additional logic can be implemented if needed
-    },
-
     handleUpdateShowActivity(showActivity) {
       console.log("Updating show activity to:", showActivity);
       let userUpdateDTO = {
@@ -125,13 +111,6 @@ export default {
         //TODO: handle error.
       });
     },
-
-    handleDeleteUser() {
-      router.push("/");
-      console.log("Deleting user account");
-      // Implement your logic here to delete the user account
-    },
-
   },
 };
 </script>

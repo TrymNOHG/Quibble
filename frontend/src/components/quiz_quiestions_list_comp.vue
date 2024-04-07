@@ -201,13 +201,7 @@ export default {
     };
 
     const showEdit = (question) => {
-      // Make a deep copy of the question object
-      const newQuestion = JSON.parse(JSON.stringify(question));
-
-      // Update editQuestion value
-      editQuestion.value = newQuestion;
-
-      // Set edit to true to open the edit modal
+      editQuestion.value = { ...question };
       edit.value = true;
     };
 
