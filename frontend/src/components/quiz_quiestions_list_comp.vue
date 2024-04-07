@@ -260,6 +260,10 @@ export default {
 
 
 <style scoped>
+#csvFileInput {
+  width: 100px
+}
+
 #download_div{
   width: 35px;
   display: flex;

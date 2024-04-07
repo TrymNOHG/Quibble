@@ -11,7 +11,7 @@ import {
   addQuestion,
   createQuiz,
   deleteQuestionById,
-  deleteQuizById, fetchCategories, fetchFilteredQuizzes,
+  deleteQuizById, fetchCategories, fetchFilteredQuizzes, fetchMyQuizzes,
   fetchQuizzes,
   patchQuestion,
   removeCollaborator,
@@ -134,9 +134,9 @@ export const useQuizStore = defineStore('storeQuiz', {
       }
     },
 
-    async loadMyQuizzes(quizFilterDTO) {
+    async loadMyQuizzes() {
       try {
-        const response = await fetchQuizzes(quizFilterDTO);
+        const response = await fetchMyQuizzes();
         console.log(response)
         this.allQuizzes = [ ...response ];
         return this.allQuizzes;
