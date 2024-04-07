@@ -8,8 +8,10 @@ import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryLoadMultDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorLoadDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.keyword.QuizKeywordsCreateDTO;
 import edu.ntnu.idatt2105.backend.exception.UnauthorizedException;
 import edu.ntnu.idatt2105.backend.exception.notfound.CategoryNotFoundException;
+import edu.ntnu.idatt2105.backend.exception.notfound.NotFoundException;
 import edu.ntnu.idatt2105.backend.mapper.category.CategoryMapper;
 import edu.ntnu.idatt2105.backend.mapper.quiz.QuizAuthorMapper;
 import edu.ntnu.idatt2105.backend.mapper.quiz.QuizCategoryMapper;
@@ -22,10 +24,12 @@ import edu.ntnu.idatt2105.backend.exception.notfound.QuizNotFoundException;
 import edu.ntnu.idatt2105.backend.mapper.quiz.QuizMapper;
 import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
 import edu.ntnu.idatt2105.backend.model.quiz.QuizAuthor;
+import edu.ntnu.idatt2105.backend.model.quiz.QuizKeyword;
 import edu.ntnu.idatt2105.backend.model.users.User;
 import edu.ntnu.idatt2105.backend.repo.category.CategoryRepository;
 import edu.ntnu.idatt2105.backend.repo.category.QuizCategoryRepository;
 import edu.ntnu.idatt2105.backend.repo.quiz.QuizAuthorRepository;
+import edu.ntnu.idatt2105.backend.repo.quiz.QuizKeywordRepository;
 import edu.ntnu.idatt2105.backend.repo.quiz.QuizRepository;
 import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
 import edu.ntnu.idatt2105.backend.service.images.ImageService;
@@ -58,6 +62,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class QuizService {
+    private final QuizKeywordRepository quizKeywordRepository;
 
     private final Logger LOGGER = LoggerFactory.getLogger(QuizService.class);
 
@@ -345,6 +350,48 @@ public class QuizService {
         quizCategoryRepository.delete(quizCategory);
         LOGGER.info("Quiz category removed.");
     }
+
+    /**
+     * This method adds multiple quiz keywords to a quiz.
+     * @param quizKeywordsCreateDTO     The data transfer object of keywords.
+     * @param email                     The user's email.
+     */
+    public void addQuizKeywords(QuizKeywordsCreateDTO quizKeywordsCreateDTO, String email){
+        LOGGER.info("Finding quiz.");
+        Quiz quiz = quizRepository.findById(quizKeywordsCreateDTO.quizId())
+                        .orElseThrow(() -> new QuizNotFoundException(quizKeywordsCreateDTO.quizId().toString()));
+        authorizeOwnerOrCollaborator(quizKeywordsCreateDTO.quizId(), email);
+        LOGGER.info("Adding all the quiz keywords.");
+        for(String keyword : quizKeywordsCreateDTO.keywords()) {
+            QuizKeyword quizKeyword = QuizKeyword
+                    .builder()
+                    .keyword(keyword)
+                    .quiz(quiz)
+                    .build();
+
+            quizKeywordRepository.save(quizKeyword);
+        }
+        LOGGER.info("All quiz keywords are saved.");
+    }
+
+    /**
+     * This method removes a keyword from a quiz.
+     * @param quizKeywordId   The id of the quiz keyword.
+     */
+    public void removeQuizKeyword(Long quizKeywordId, String email) {
+        LOGGER.info("Looking for quiz keyword.");
+        QuizKeyword quizKeyword = quizKeywordRepository
+                .findById(quizKeywordId)
+                .orElseThrow(() -> new NotFoundException("QuizCategory Id: " + quizKeywordId));
+        LOGGER.info("Quiz keyword found.");
+
+        authorizeOwnerOrCollaborator(quizKeyword.getQuiz().getQuizId(), email);
+
+        quizKeywordRepository.delete(quizKeyword);
+        LOGGER.info("Quiz keyword removed.");
+    }
+
+
 
     /**
      * This method retrieves all collaborators for a quiz.

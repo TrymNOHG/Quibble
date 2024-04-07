@@ -112,6 +112,7 @@ export default {
     const store = useQuizCreateStore();
     const addNewQuestion = ref(false);
     const editQuestion = ref(false);
+    store.resetTemplate()
     const question_list = ref(store.templateQuiz.questions);
     const selectedQuestions = ref([]);
 

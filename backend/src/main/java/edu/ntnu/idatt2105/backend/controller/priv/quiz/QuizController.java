@@ -8,6 +8,7 @@ import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryLoadMultDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorLoadDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.keyword.QuizKeywordsCreateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionCreateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionEditDTO;
 import edu.ntnu.idatt2105.backend.service.quiz.QuestionService;
@@ -123,6 +124,18 @@ public class QuizController implements IQuizController{
     @Override
     public ResponseEntity<Object> deleteQuizCategory(@NonNull Long quizCategoryId, @NonNull Authentication authentication) {
         quizService.removeQuizCategory(quizCategoryId, authentication.getName());
+        return ResponseEntity.ok("Successful Deletion");
+    }
+
+    @Override
+    public ResponseEntity<Object> addKeywords(@NonNull QuizKeywordsCreateDTO quizKeywordsCreateDTO, @NonNull Authentication authentication) {
+        quizService.addQuizKeywords(quizKeywordsCreateDTO, authentication.getName());
+        return ResponseEntity.ok("Successful Addition");
+    }
+
+    @Override
+    public ResponseEntity<Object> deleteQuizKeyword(@NonNull Long quizKeywordId, @NonNull Authentication authentication) {
+        quizService.removeQuizKeyword(quizKeywordId, authentication.getName());
         return ResponseEntity.ok("Successful Deletion");
     }
 }
