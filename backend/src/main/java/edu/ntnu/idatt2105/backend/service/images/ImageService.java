@@ -227,7 +227,7 @@ public class ImageService {
      */
     public List<String> getDefaultProfilePicIds() {
         List<String> defaultPics = new ArrayList<>();
-        for (int i = 1; i < 6; i++) {
+        for (int i = 1; i < 10; i++) {
             defaultPics.add("default-"+i);
         }
         return defaultPics;
