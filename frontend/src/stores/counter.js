@@ -1,23 +1,23 @@
-import { defineStore } from 'pinia'
-import {
-  fetchUserByUsername,
-  getUser
-} from "@/services/UserService.js";
-import {saveFile} from "@/services/ImageService.js";
-import {getPictureFromID} from "@/services/ImageService.js";
+import {defineStore} from 'pinia'
+import {fetchUserByUsername, getUser} from "@/services/UserService.js";
+import {getPictureFromID, saveFile} from "@/services/ImageService.js";
 
 import {
-  addCollaborator, addKeyword,
+  addCollaborator,
+  addKeyword,
   addQuestion,
   createQuiz,
   deleteQuestionById,
-  deleteQuizById, fetchAllQuizzesByUser, fetchCategories, fetchFilteredQuizzes,
+  deleteQuizById,
+  fetchAllQuizzesByUser,
+  fetchCategories,
+  fetchFilteredQuizzes,
   patchQuestion,
   removeCollaborator,
   updateQuiz
 } from "@/services/QuizService.js"
 
-import { getAllCategories } from "@/services/CategoryService";
+import {getAllCategories} from "@/services/CategoryService";
 
 export const useUserStore = defineStore('storeUser', {
 
@@ -137,8 +137,7 @@ export const useQuizStore = defineStore('storeQuiz', {
       try {
         const userId = useUserStore().user.userId;
         console.log(userId)
-        const response = await fetchAllQuizzesByUser(userId);
-        return response;
+        return await fetchAllQuizzesByUser(userId);
       } catch (error) {
         console.error("Failed to load previous page:", error);
       }

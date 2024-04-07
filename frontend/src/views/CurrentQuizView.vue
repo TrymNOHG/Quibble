@@ -34,6 +34,10 @@ const userStore = useUserStore();
 let isAuthor = ref(true);
 let isEditor = ref(true);
 let quizAuthors = ref(store.currentQuiz.collaborators === null ? [] : store.currentQuiz.collaborators);
+quizAuthors.value = quizAuthors.value.filter((author, index, self) =>
+    index === self.findIndex(a => a.username === author.username)
+);
+quiz.collaborators = quizAuthors.value
 
 onMounted( () => {
   isAuthor.value = store.isAdmin(store.currentQuiz.adminId)
@@ -50,7 +54,11 @@ const deleteAuthor = (author) => {
 
 const addAuthor = async (author) => {
   await store.addAuthor(author);
-  quizAuthors = await store.currentQuiz.collaborators;
+  quizAuthors.value = await store.currentQuiz.collaborators;
+  quizAuthors.value = quizAuthors.value.filter((author, index, self) =>
+      index === self.findIndex(a => a.username === author.username)
+  );
+  quiz.collaborators = quizAuthors.value
 };
 
 const saveEdit = async (quizUpdateDTO) => {
