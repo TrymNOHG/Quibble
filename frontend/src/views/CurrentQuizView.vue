@@ -9,7 +9,6 @@
         @deleteAuthor="deleteAuthor"
         @saveEdit="saveEdit"
         @addAuthor="addAuthor"
-        :img="getPictureURL"
     />
 
     <quiz_quiestions_list_comp
@@ -41,11 +40,6 @@ onMounted( () => {
   isAuthor.value = store.isAdmin(store.currentQuiz.adminId)
   checkEditor();
 });
-
-const getPictureURL = () => {
-  const id = `Q${quiz.quizId}`
-  return getPictureFromID(id);
-};
 
 const checkEditor = () => {
   isEditor.value = quizAuthors.value.some(author => author.userId === userStore.user.userId);

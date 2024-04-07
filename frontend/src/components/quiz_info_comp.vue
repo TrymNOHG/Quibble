@@ -2,7 +2,7 @@
   <div class="quiz">
     <div class="quiz-info">
       <div class="img">
-        <img class="quiz-img" :src="img" alt="Quiz Image"/>
+        <img class="quiz-img" :src="getPictureURL()" alt="Quiz Image"/>
       </div>
       <div class="quiz-details">
         <div class="quiz-detail-header">
@@ -84,6 +84,7 @@ import {getCurrentInstance, onMounted, ref, watch} from "vue";
 import {useQuizStore, useUserStore} from "@/stores/counter.js";
 import Listing_comp from "@/components/BasicComponents/authorList.vue";
 import user_list from "@/components/user_list.vue"
+import {getPictureFromID} from "@/services/ImageService.js";
 
 
 export default {
@@ -124,6 +125,11 @@ export default {
       "newName":  store.currentQuiz.quizName,
       "newDescription": store.currentQuiz.quizDescription,
       "difficulty": store.currentQuiz.difficulty
+    }
+
+    const getPictureURL = () => {
+      const id =`Q${props.quiz.quizId}`
+      return getPictureFromID(id);
     }
 
     const editQuizInfo = () => {
@@ -200,7 +206,8 @@ export default {
       searchQuery,
       filteredUsers,
       collaboratorList,
-      saveEdit
+      saveEdit,
+      getPictureURL
     };
   }
 }
