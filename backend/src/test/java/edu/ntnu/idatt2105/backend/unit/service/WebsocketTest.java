@@ -220,5 +220,4 @@ public class WebsocketTest {
         websocketService.onStartGame(client, data2, ackRequest);
         assertEquals(1, reachedGetQuestion.get());
     }
-
 }

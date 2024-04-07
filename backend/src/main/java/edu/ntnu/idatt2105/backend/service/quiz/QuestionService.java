@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -92,9 +93,8 @@ public class QuestionService {
     public String getCorrectAnswer(Long questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow();
         if (question.getAnswer() == null || question.getAnswer().isBlank()) {
-            return question.getChoices().stream().filter(MultipleChoice::isCorrect).findFirst().orElseThrow(
-                    () -> new IllegalStateException("No correct answer found for question " + question.getQuestionId())
-            ).getAlternative();
+            return Objects.requireNonNull(question.getChoices().stream().filter(MultipleChoice::isCorrect).findFirst().orElse(null))
+            .getAlternative();
         }
         LOGGER.info("Question: " + question.getQuestion() + " Answer: " + question.getAnswer());
         return question.getAnswer();
