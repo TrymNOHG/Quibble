@@ -54,7 +54,7 @@ const router = createRouter({
       {
           path: '/quiz',
           name: 'quiz',
-          component: CurrentQuizView,
+          component: TheWelcomeComponent,
           meta: { requiresAuth: false }
       },
       {
