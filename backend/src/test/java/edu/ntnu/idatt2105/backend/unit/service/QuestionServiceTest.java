@@ -53,8 +53,11 @@ class QuestionServiceTest {
 
     @BeforeEach
     public void setUp() {
-
-
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken("test@test.test", null, Collections.emptyList());
+        SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+        securityContext.setAuthentication(authentication);
+        SecurityContextHolder.setContext(securityContext);
         userRepository.save(
                 User.builder()
                         .email("test@test.test")

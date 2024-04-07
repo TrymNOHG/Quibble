@@ -99,8 +99,9 @@ public class DummyData implements CommandLineRunner {
             questionService.addQuestion(QuestionCreateDTO.builder().question("What is the capital of Sweden?").answer("Stockholm").type(QuestionType.MULTIPLE_CHOICE).choices(Set.of(MultipleChoiceCreateDTO.builder().alternative("Stockholm").isCorrect(true).build(), MultipleChoiceCreateDTO.builder().alternative("Malmö").isCorrect(false).build(), MultipleChoiceCreateDTO.builder().alternative("Åre").isCorrect(false).build(), MultipleChoiceCreateDTO.builder().alternative("Fish").isCorrect(false).build())).quizId(quizDTO.quizId()).build(), "test1@test.test");
             SecurityContextHolder.setContext(SecurityContextHolder.createEmptyContext());
         }
-        // Create categories
-        categoryRepository.saveAll(createListOfCategories(new String[]{"School", "Movies", "Hobbies", "Sports"}));
+
+        Set<Category> categories = createListOfCategories(new String[]{"School", "Movies", "Hobbies", "Sports"});
+        if (categoryRepository.findAll().isEmpty()) categoryRepository.saveAll(categories);
     }
 
     private Set<Category> createListOfCategories(String[] categoryNames) {
