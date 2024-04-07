@@ -12,7 +12,6 @@ import {
   createQuiz,
   deleteQuestionById,
   deleteQuizById, fetchCategories, fetchFilteredQuizzes, fetchMyQuizzes,
-  fetchQuizzes,
   patchQuestion,
   removeCollaborator,
   updateQuiz
@@ -197,7 +196,8 @@ export const useQuizStore = defineStore('storeQuiz', {
           .then(response => {
             console.log("response:", response);
             // this.setCurrentQuizById(editedQuestion.quizId);
-            this.currentQuiz = response
+            this.currentQuiz = response;
+            console.log("axios repsonse", response);
             return response;
           }).catch(error => {
             console.warn("error", error);
@@ -368,16 +368,6 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
         "difficulty": quiz.quizDifficulty.toUpperCase(),
       };
 
-      const imgDTO = {
-        "quizId" : createdQuiz.quizId,
-        "quizImage": quiz.Image
-      }
-      await saveFile(imgDTO)
-          .then(response => {
-            console.log(response)
-          }).catch(error => {
-            console.warn("Error saving img:", error);
-          });
 
       const addQuestionPromises = [];
       this.templateQuiz.questions.forEach(question => {
@@ -396,6 +386,18 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
             createdQuiz = responses[responses.length - 1];
           }).catch(error => {
             console.warn("Error adding questions:", error);
+          });
+
+      const imgDTO = {
+        "quizId" : createdQuiz.quizId,
+        "quizImage": quiz.Image
+      }
+
+      await saveFile(imgDTO)
+          .then(response => {
+            console.log(response)
+          }).catch(error => {
+            console.warn("Error saving img:", error);
           });
 
       const keywordsDTO = {

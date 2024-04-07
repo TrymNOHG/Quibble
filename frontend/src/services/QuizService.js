@@ -55,7 +55,6 @@ export const createQuiz = async (quizName) => {
 };
 
 export const updateQuiz = async (quizUpdateDTO) => {
-    console.log(quizUpdateDTO)
     try {
         const response = await axios.patch(`${BASE_URL_PRIV}/update`,
             quizUpdateDTO, {
@@ -110,6 +109,7 @@ export const deleteQuestionById = async (questionId) => {
 };
 
 export const patchQuestion = async (questionEditDTO) => {
+    console.log("right before axios", questionEditDTO)
     try {
         const response = await axios.patch(`${BASE_URL_PRIV}/edit/question`,
             questionEditDTO, {
@@ -117,6 +117,7 @@ export const patchQuestion = async (questionEditDTO) => {
                     Authorization: `Bearer ${await sessionToken()}`,
                 }
             });
+        console.log("axios repsonse", response.data);
         return response.data;
     } catch (error) {
         throw error.response ? error.response.data : error.message;

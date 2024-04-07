@@ -106,6 +106,7 @@ export default {
     const addNewQuestion = ref(false);
     const edit = ref(false);
     let question_list = ref(store.currentQuiz.questions);
+    console.log("questionList", question_list)
 
     const editQuestion = ref({
       quizId: null,
@@ -120,22 +121,27 @@ export default {
         { alternative: 'Option 4', isCorrect: false }
       ]
     });
-
+/*
     watch(
         () => editQuestion.value.type,
         (newValue, oldValue) => {
-         if(String(newValue).toUpperCase() === "MULTIPLE_CHOICE") {
-           editQuestion.value.choices = [
-             { alternative: 'Option 1', isCorrect: false, questionId:  editQuestion.value.questionId},
-             { alternative: 'Option 2', isCorrect: false, questionId:  editQuestion.value.questionId },
-             { alternative: 'Option 3', isCorrect: false, questionId:  editQuestion.value.questionId },
-             { alternative: 'Option 4', isCorrect: false, questionId:  editQuestion.value.questionId }
-           ]
-         } else {
-           editQuestion.value.choices = null;
-         }
+          console.log(oldValue)
+          if(String(newValue).toUpperCase() === "MULTIPLE_CHOICE") {
+            console.log("hello")
+            editQuestion.value.choices = [
+              {multipleChoiceId: null, alternative: 'Option 1', isCorrect: false, questionId:  editQuestion.value.questionId},
+              {multipleChoiceId: null, alternative: 'Option 2', isCorrect: false, questionId:  editQuestion.value.questionId},
+              {multipleChoiceId: null, alternative: 'Option 3', isCorrect: false, questionId:  editQuestion.value.questionId },
+              {multipleChoiceId: null, alternative: 'Option 4', isCorrect: false, questionId:  editQuestion.value.questionId }
+            ]
+          } else {
+            editQuestion.value.choices = [];
+          }
         }
     );
+
+ */
+
     const deleteQuestion = async (question) => {
       console.log("Question : ", question)
       const index = question_list.value.indexOf(question);
@@ -195,8 +201,13 @@ export default {
     };
 
     const showEdit = (question) => {
-      console.log("editing question: ", question)
-      editQuestion.value = { ...question };
+      // Make a deep copy of the question object
+      const newQuestion = JSON.parse(JSON.stringify(question));
+
+      // Update editQuestion value
+      editQuestion.value = newQuestion;
+
+      // Set edit to true to open the edit modal
       edit.value = true;
     };
 
@@ -205,18 +216,12 @@ export default {
     };
 
     const addEdit = async () => {
-      const index = question_list.value.indexOf(editQuestion.value);
-      if (index !== -1) {
-        question_list.value.splice(index, 1);
-      }
-
       try {
-        console.log("Edit question: ", editQuestion.value)
-        await store.editQuestion(editQuestion.value).then(editedQuestionDTO => {
+        const editedQuestionDTO = await store.editQuestion(editQuestion.value);
+        const index = question_list.value.findIndex(q => q.questionId === editQuestion.value.questionId);
+        if (index !== -1) {
           question_list.value.splice(index, 1, editedQuestionDTO);
-        }).catch(error => {
-          console.log(error)
-        })
+        }
         edit.value = false;
       } catch (error) {
         console.error('Error editing question:', error);
@@ -264,11 +269,11 @@ export default {
     }
 
     const routeSinglePlayer = () => {
-      router.push('/quiz/singleplayer'); // replace with your actual path
+      router.push('/quiz/singleplayer');
     };
 
     const routeMultiPlayer = () => {
-      router.push('/quiz/multiplayer'); // replace with your actual path
+      router.push('/quiz/multiplayer');
     };
 
     return {

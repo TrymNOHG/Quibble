@@ -154,10 +154,6 @@ export default {
       newQuestion.value.question = '';
       newQuestion.value.type = 'true_false';
       newQuestion.value.answer = '';
-      newQuestion.value.choices.forEach(choice => {
-        choice.alternative = '';
-        choice.isCorrect = false;
-      });
       addNewQuestion.value = false;
       editQuestion.value = false;
     };

@@ -26,7 +26,6 @@ export default {
     const categories = ref([])
 
     const saveQuiz = async (question_list) => {
-      console.log("qwerqw", quiz)
       quiz.questions = question_list.question_list
       let categoryIds = store.templateQuiz.categories.map(category => category.categoryId)
 

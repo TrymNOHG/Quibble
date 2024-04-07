@@ -27,7 +27,6 @@ import Quiz_quiestions_list_comp from "@/components/quiz_quiestions_list_comp.vu
 import Quiz_info_comp from "@/components/quiz_info_comp.vue";
 import {getPictureFromID} from "@/services/ImageService.js";
 
-
 const store = useQuizStore();
 const quiz = store.currentQuiz;
 const userStore = useUserStore();
@@ -46,7 +45,6 @@ const checkEditor = () => {
 };
 
 const deleteAuthor = (author) => {
-  console.log("author", author)
   store.deleteAuth(author);
 };
 
@@ -57,7 +55,6 @@ const addAuthor = async (author) => {
 
 const saveEdit = async (quizUpdateDTO) => {
   try {
-    console.log(quizUpdateDTO)
     return await store.updateCurrentQuiz(quizUpdateDTO);
   } catch (error) {
     console.error('Error editing quiz:', error);
