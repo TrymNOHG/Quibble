@@ -56,7 +56,7 @@ export default {
     const store = useQuizStore();
     const showPopupProp = ref(false);
     const {emit} = getCurrentInstance();
-    const isAuth = ref(store.isAdmin(store.currentQuiz.admin_id));
+    const isAuth = ref(store.isAdmin(store.currentQuiz.adminId));
     const isEditor = ref(store.isEditor);
 
     const deleteQuestion = (question) => {

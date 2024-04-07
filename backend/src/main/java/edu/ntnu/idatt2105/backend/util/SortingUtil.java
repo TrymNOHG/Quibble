@@ -11,8 +11,12 @@ public class SortingUtil {
     public static <T> List<T> sortListWithUuidSeed(List<T> list, UUID uuid, Function<T, String> keyExtractor) {
         // Create a comparator that uses a Random object seeded with the UUID and element-specific seed
         Comparator<T> comparator = (o1, o2) -> {
-            Random random1 = new Random(uuid.hashCode() + keyExtractor.apply(o1).hashCode());
-            Random random2 = new Random(uuid.hashCode() + keyExtractor.apply(o2).hashCode());
+            Random random1 = new Random(
+                    uuid.hashCode() + keyExtractor.apply(o1).hashCode()
+            );
+            Random random2 = new Random(
+                    uuid.hashCode() + keyExtractor.apply(o2).hashCode()
+            );
             return Long.compare(random1.nextLong(), random2.nextLong());
         };
 

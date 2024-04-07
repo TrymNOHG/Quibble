@@ -2,22 +2,40 @@
   <div class="quiz">
     <div class="quiz-info">
       <div class="img">
-        <img class="quiz-img" :src="quiz.Image" alt="Quiz Image"/>
+        <img class="quiz-img" :src="getPictureURL()" alt="Quiz Image"/>
       </div>
       <div class="quiz-details">
-        <div class="quiz-details">
+        <div class="quiz-detail-header">
           <h2>{{quiz.quizName}}</h2>
+          <font-awesome-icon
+              id="edit"
+              icon="fa-solid fa-pen-to-square"
+              @click="editQuizInfo()"
+              v-if="(isEditor || isAuthor)"
+          />
+        </div>
+        <div>
+          <input v-if="isEditing" class="input-area" type="text" id="quizName" v-model="quizUpdateDTO.newName">
+        </div>
+        <div>
           <p>
             <strong>{{ $t('dropdown_options.DIFFICULTY') }}:</strong>
             {{ $t('dropdown_options.' + quiz.difficulty) }}
           </p>
-          <p>{{ $t('quiz_card.QUESTIONS_LABEL') }}:
-            {{ quiz.questions.length }}
-          </p>
-          <p>{{ $t('quiz_card.DESCRIPTION') }}:
-            {{ quiz.quizDescription }}
-          </p>
+          <select v-if="isEditing" class="input-area" id="difficulty" v-model="quizUpdateDTO.difficulty">
+            <option value="Easy">{{ $t('dropdown_options.EASY') }}</option>
+            <option value="Medium">{{ $t('dropdown_options.MEDIUM') }}</option>
+            <option value="Hard">{{ $t('dropdown_options.HARD') }}</option>
+          </select>
         </div>
+        <div>
+          <p>{{ $t('quiz_card.QUESTIONS_LABEL') }}: {{ quiz.questions.length }}</p>
+        </div>
+        <div>
+          <p>{{ $t('quiz_card.DESCRIPTION') }}: {{ quiz.quizDescription }}</p>
+          <textarea v-if="isEditing" class="input-area" id="description" v-model="quizUpdateDTO.newDescription"></textarea>
+        </div>
+        <button v-if="isEditing" class="input-area" @click="saveEdit()">Save edit</button>
       </div>
     </div>
     <div class="authors">
@@ -49,7 +67,8 @@
           </div>
           <div class="user-list">
             <user_list
-                v-for="author in collaboratorList.users"
+                v-for="author in collaboratorList"
+                :key="author.userId"
                 :user-data="author"
                 @adduser="addAuthor(author)"
             />
@@ -61,10 +80,11 @@
 </template>
 
 <script>
-import {onMounted, ref, watch} from "vue";
+import {getCurrentInstance, onMounted, ref, watch} from "vue";
 import {useQuizStore, useUserStore} from "@/stores/counter.js";
 import Listing_comp from "@/components/BasicComponents/authorList.vue";
 import user_list from "@/components/user_list.vue"
+import {getPictureFromID} from "@/services/ImageService.js";
 
 
 export default {
@@ -84,33 +104,61 @@ export default {
         categories: Set,
         questions: Set,
         keywords: Set,
-        Image: String,
       })
-    }
+    },
+    isAuthor: null,
+    isEditor: null,
+    quizAuthors: Array,
+    img: null,
   },
 
-  setup() {
+  setup(props) {
     const showPopup = ref(false);
-    const userStore = useUserStore();
     const store = useQuizStore();
-    let isAuthor = ref(true);
-    let isEditor = ref(true);
-    let quizAuthors = ref(store.currentQuiz.collaborators === null ? [] : store.currentQuiz.collaborators);
+    let isEditing = ref(false);
     let collaboratorList = ref([]);
     const searchQuery = ref('');
+    const {emit} = getCurrentInstance()
 
-    onMounted( () => {
-      isAuthor.value = store.isAdmin()
-      checkEditor();
-    });
+    let quizUpdateDTO = {
+      "quizId": store.currentQuiz.quizId,
+      "newName":  store.currentQuiz.quizName,
+      "newDescription": store.currentQuiz.quizDescription,
+      "difficulty": store.currentQuiz.difficulty
+    }
+
+    const getPictureURL = () => {
+      const id =`Q${props.quiz.quizId}`
+      return getPictureFromID(id);
+    }
+
+    const editQuizInfo = () => {
+      isEditing.value = true;
+    };
+
+    const saveEdit = async () => {
+      quizUpdateDTO.difficulty = quizUpdateDTO.difficulty.toUpperCase();
+      emit("saveEdit", quizUpdateDTO);
+      isEditing.value = false;
+      props.quiz.quizName = quizUpdateDTO.newName;
+      props.quiz.difficulty = quizUpdateDTO.difficulty;
+      props.quiz.quizDescription = quizUpdateDTO.newDescription;
+    };
 
     watch(searchQuery, async () => {
       if (searchQuery.value !== "") {
-        collaboratorList.value = await filteredUsers();
+        collaboratorList.value = [];
+        let temp_list = await filteredUsers();
+        temp_list.users.forEach(user => {
+          if (user.userId !== useUserStore().user.userId) {
+            collaboratorList.value.push(user);
+          }
+        });
       } else {
         collaboratorList.value = [];
       }
     });
+
 
     const filteredUsers = async () => {
       try {
@@ -121,21 +169,17 @@ export default {
       }
     };
 
-    const checkEditor = () => {
-      isEditor.value = quizAuthors.value.some(author => author.userId === userStore.user.userId);
-    };
-
     const quizAuthorDTO = {
       quizId: null,
       username: '',
     };
 
     const deleteAuthor = (author) => {
-      store.deleteAuth(author);
+      emit("deleteAuthor", author);
     };
 
-    const addAuthor = (author) => {
-      quizAuthors = store.addAuthor(author);
+    const addAuthor = async (author) => {
+      emit("addAuthor", author);
       quizAuthorDTO.username = '';
       showPopup.value = false;
     };
@@ -150,24 +194,46 @@ export default {
     };
 
     return {
-      quizAuthors,
+      quizUpdateDTO,
+      editQuizInfo,
+      isEditing,
       deleteAuthor,
       showPopUP,
       showPopup,
       addAuthor,
       closePopup,
       quizAuthorDTO,
-      isEditor,
-      isAuthor,
       searchQuery,
       filteredUsers,
-      collaboratorList
+      collaboratorList,
+      saveEdit,
+      getPictureURL
     };
   }
 }
 </script>
 
 <style scoped>
+
+.input-area {
+  width: 80%;
+  height: 40px;
+  font-size: medium;
+}
+
+#edit {
+  scale: 1.5;
+}
+
+.quiz-detail-header {
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .user-list {
   max-height: 200px;
   overflow-y: auto;
@@ -254,6 +320,7 @@ button{
 
 #add {
   scale: 1.5;
+  margin-right: 0;
 }
 
 #add:hover {

@@ -2,16 +2,11 @@ package edu.ntnu.idatt2105.backend.unit.service;
 
 
 import com.corundumstudio.socketio.*;
-import edu.ntnu.idatt2105.backend.dto.quiz.QuestionDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.MultipleChoiceCreateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionCreateDTO;
 import edu.ntnu.idatt2105.backend.dto.websocket.CreateGameDTO;
 import edu.ntnu.idatt2105.backend.dto.websocket.GameValidationDTO;
 import edu.ntnu.idatt2105.backend.dto.websocket.JoinGameDTO;
-import edu.ntnu.idatt2105.backend.model.quiz.Difficulty;
-import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
-import edu.ntnu.idatt2105.backend.model.quiz.question.MultipleChoice;
-import edu.ntnu.idatt2105.backend.model.quiz.question.Question;
 import edu.ntnu.idatt2105.backend.model.quiz.question.QuestionType;
 import edu.ntnu.idatt2105.backend.model.users.User;
 import edu.ntnu.idatt2105.backend.repo.quiz.QuizRepository;
@@ -139,7 +134,7 @@ public class WebsocketTest {
                 .answer("test answer")
                 .type(QuestionType.MULTIPLE_CHOICE)
                 .quizId(1L)
-                .build());
+                .build(), "test@test.test");
         questionService.addQuestion(QuestionCreateDTO.builder()
                 .question("test question")
                 .answer("test answer")
@@ -149,7 +144,7 @@ public class WebsocketTest {
                         .alternative("choice")
                         .isCorrect(true)
                         .build()))
-                .build());
+                .build(), "test@test.test");
 
         doAnswer(invocation -> {
             Object arg0 = invocation.getArgument(0);
@@ -173,7 +168,6 @@ public class WebsocketTest {
             return null;
         }).when(client).sendEvent(anyString(), any());
         when(server.getRoomOperations(anyString())).thenReturn(mock(BroadcastOperations.class));
-
     }
 
     @Test
@@ -226,5 +220,4 @@ public class WebsocketTest {
         websocketService.onStartGame(client, data2, ackRequest);
         assertEquals(1, reachedGetQuestion.get());
     }
-
 }

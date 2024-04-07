@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 @RequestMapping("/api/v1/public/auth")
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin("*")
+//@CrossOrigin("*")
 @SecurityScheme(
         name = "basicAuth",
         type = SecuritySchemeType.HTTP,
@@ -65,6 +65,9 @@ public class AuthenticationController implements IAuthenticationController {
     public ResponseEntity<AuthenticationResponseDTO> getAccessTokenFromRefreshToken(
             @CookieValue(value = "refresh_token", defaultValue = "") String refreshToken
     ){
-        return ResponseEntity.ok(authenticationService.getAccessTokenFromRefreshToken(refreshToken));
+        logger.info("Qwerqwer");
+        return ResponseEntity.ok()
+//                .header(HttpHeaders.SET_COOKIE)
+                .body(authenticationService.getAccessTokenFromRefreshToken(refreshToken));
     }
 }

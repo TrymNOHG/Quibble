@@ -18,7 +18,7 @@ export const loginUser = async (userLoginDTO) => {
 }
 
 export const getNewAccessToken = async () => {
-    return axios.post(`${BASE_URL}/public/auth/get-access-token-from-refresh-token`, {}, {
+    return axios.post(`${BASE_URL}/public/auth/refresh-token/get`, {}, {
         withCredentials: true,
         headers: {
         },
@@ -91,16 +91,18 @@ export const getUser = async () => {
 //      'showFeedback' : null
 // }
 export const updateUser = async (userUpdateDTO) => {
-    return axios.patch(`${BASE_URL}/private/users/update`, userUpdateDTO, {
-        headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${await sessionToken()}`,
-        },
-    });
+    console.log(userUpdateDTO)
+    return axios.patch(`${BASE_URL}/private/users/update`,
+        userUpdateDTO,
+        {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                Authorization: `Bearer ${await sessionToken()}`,
+            },
+        });
 }
 
 
-//TODO: use userUpdateDTO
 export const updateUserShowActivity = async (newShowActivity) => {
     console.log(newShowActivity)
     return axios.patch(`${BASE_URL}/private/users/update/showActivity`, newShowActivity, {

@@ -58,10 +58,14 @@
             aria-labelledby="conf_passwordLabel"
             :class="{ 'error': errors && errors['conf_password'] }"
             :placeholder="$t('placeholders.CONFIRM_PASSWORD')"
+            @keypress.enter="submit"
         />
         <div v-if="errors && errors['conf_password']" class="error-message">
           {{ errors["conf_password"] }}
         </div>
+        <p>
+          {{submitMessage}}
+        </p>
 
         <basic_button
             class="submit_button"
@@ -85,6 +89,7 @@ import { ref } from "vue";
 import router from "@/router/index.js";
 import {useUserStore} from "@/stores/counter.js";
 import {registerUser} from "@/services/UserService.js";
+import {useI18n} from "vue-i18n";
 
 export default {
   components: {Basic_button},
@@ -92,11 +97,12 @@ export default {
   setup() {
     const store = useUserStore();
     const submitMessage = ref("");
+    const { t } = useI18n();
 
     const validationSchema = yup.object({
-      email: yup.string().required("Email is required").email("Must be an valid email"),
-      username: yup.string().required("Username is required"),
-      password: yup.string().required("Password is required").min(8, "Password must be at least 8 characters"),
+      email: yup.string().required("Email is required").email(t("error_messages.EMAIL")),
+      username: yup.string().required("Username is required").min(4, t("error_messages.EMAIL_MUST")),
+      password: yup.string().required("Password is required").min(8, t("error_messages.PASS_MUST")),
       conf_password: yup.string()
           .required("Confirm password")
           .oneOf([yup.ref('password'), null], 'Passwords must match')
@@ -135,7 +141,7 @@ export default {
           }
         })
         .catch((error) => {
-          submitMessage.value = "register_error";
+          submitMessage.value = t("login_register_text.REGISTER_ERR");
           setTimeout(() => {
             submitMessage.value = "";
           }, 2000);
@@ -160,6 +166,7 @@ export default {
       has_err,
       setFieldTouched,
       setFieldValue,
+      submitMessage
     };
   }
 }
