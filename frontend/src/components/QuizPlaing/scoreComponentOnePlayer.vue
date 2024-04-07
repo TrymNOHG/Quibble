@@ -1,6 +1,6 @@
 <template>
   <div class="score-container single-player">
-    <h2>Your Score</h2>
+    <h2>{{ yourScoreTitle }}</h2>
     <div class="score-item">
       <img :src="getPictureURL(player.userId)" class="player-image" alt="Player Profile" />
       <div class="player-details">
@@ -13,9 +13,12 @@
   </div>
 </template>
 
+
 <script>
 
 import {getPictureFromID} from "@/services/ImageService.js";
+import {useI18n} from "vue-i18n";
+import {computed} from "vue";
 
 export default {
   props: {
@@ -51,7 +54,14 @@ export default {
   },
   mounted() {
     this.startCountdown(); // Start countdown when component is mounted
-  }
+  },
+  setup() {
+    const { t } = useI18n();
+    const yourScoreTitle = computed(() => t('quiz_client.your_score'));
+    return { t,
+      yourScoreTitle
+    };
+  },
 }
 </script>
 

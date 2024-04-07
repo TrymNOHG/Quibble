@@ -9,20 +9,20 @@
     <div class="answers-container">
       <!-- Modified to include multiplayer mode checks -->
       <div class="answer-card true-card"
-           :class="{'flip': showAnswers && !isMultiplayerClient, 'correct': isMultiplayerClient ? false : isCorrect(true) && showAnswers, 'incorrect': isMultiplayerClient ? false : !isCorrect(true) && showAnswers}"
+           :class="{'flip': showAnswers && !isMultiplayerClient, 'correct': isMultiplayerClient ? false : isCorrectTrue && showAnswers, 'incorrect': isMultiplayerClient ? false : !isCorrectTrue && showAnswers}"
            @click="selectAnswer(true)">
-        <div class="card-front">True</div>
+        <div class="card-front">{{ trueTranslation }}</div>
         <div class="card-back" v-if="!isMultiplayerClient">
-          <span v-if="isCorrect(true)">✓</span>
+          <span v-if="isCorrectTrue">✓</span>
           <span v-else>✕</span>
         </div>
       </div>
       <div class="answer-card false-card"
-           :class="{'flip': showAnswers && !isMultiplayerClient, 'correct': isMultiplayerClient ? false : isCorrect(false) && showAnswers, 'incorrect': isMultiplayerClient ? false : !isCorrect(false) && showAnswers}"
+           :class="{'flip': showAnswers && !isMultiplayerClient, 'correct': isMultiplayerClient ? false : isCorrectFalse && showAnswers, 'incorrect': isMultiplayerClient ? false : !isCorrectFalse && showAnswers}"
            @click="selectAnswer(false)">
-        <div class="card-front">False</div>
+        <div class="card-front">{{ falseTranslation }}</div>
         <div class="card-back" v-if="!isMultiplayerClient">
-          <span v-if="isCorrect(false)">✓</span>
+          <span v-if="isCorrectFalse">✓</span>
           <span v-else>✕</span>
         </div>
       </div>
@@ -31,7 +31,11 @@
 </template>
 
 <script>
-import { ref, watch, onMounted, onUnmounted } from 'vue';
+import {ref, watch, onMounted, onUnmounted, computed} from 'vue';
+import correctSoundFile from "@/assets/sound/correct.mp3";
+import wrongSoundFile from "@/assets/sound/wrong.mp3";
+import timerSoundFile from "@/assets/sound/timer.mp3";
+import {useI18n} from "vue-i18n";
 
 export default {
   props: {
@@ -64,6 +68,28 @@ export default {
     const progressBarWidth = ref(100);
     const timer = ref(null);
 
+    const correctSound = new Audio(correctSoundFile);
+    const wrongSound = new Audio(wrongSoundFile);
+    const timerSound = new Audio(timerSoundFile);
+
+    const {t} = useI18n();
+
+    const trueTranslation = computed(() => t('true_false.true'));
+    const falseTranslation = computed(() => t('true_false.false'));
+
+    const isCorrectTrue = computed(() => {
+      return correctAnswer.value === true;
+    });
+
+    const isCorrectFalse = computed(() => {
+      return correctAnswer.value === false;
+    });
+
+    const playSound = (sound) => {
+      sound.currentTime = 0; // Reset to start
+      sound.play()
+    };
+
     const isCorrect = (choice) => {
       return (choice === true && correctAnswer.value) || (choice === false && !correctAnswer.value);
     };
@@ -78,8 +104,10 @@ export default {
 
       if (!props.isMultiplayerClient) {
         if (isCorrect(choice)) {
+          playSound(correctSound);
           emit('answerSelected', true, timeLeft.value);
         } else {
+          playSound(wrongSound);
           emit('answerSelected', false, timeLeft.value);
         }
       } else {
@@ -102,11 +130,13 @@ export default {
 
     const stopTimer = () => {
       clearInterval(timer.value);
+      timerSound.pause();
     };
 
     const handleTimeOut = () => {
       stopTimer();
       showAnswers.value = true;
+      playSound(wrongSound);
       emit('timerDone');
     };
 
@@ -118,6 +148,7 @@ export default {
 
     onMounted(() => {
       startTimer();
+      if (!props.isMultiplayerClient) playSound(timerSound);
     });
 
     onUnmounted(() => {
@@ -134,6 +165,11 @@ export default {
       startTimer,
       stopTimer,
       handleTimeOut,
+      t,
+      isCorrectFalse,
+      isCorrectTrue,
+      trueTranslation,
+      falseTranslation,
     };
   }
 };

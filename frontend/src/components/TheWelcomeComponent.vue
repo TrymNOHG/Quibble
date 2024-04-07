@@ -43,9 +43,9 @@ export default {
 
   setup() {
     const { t } = useI18n();
-    const router = useRouter();
     const route = useRoute();
     const gamepin = ref("");
+    const router = useRouter();
 
     const isOnRoot = computed(()=>{
       return route.path === "/";
@@ -68,11 +68,11 @@ export default {
     const startGame = () => {
       // Input validation
       console.log("Starting game with PIN:", gamepin.value);
-      if (gamepin.value.length === 4) {
+      if (gamepin.value.length !== 4) {
         return;
       }
       console.log("Joining game with PIN:", gamepin.value);
-      router.push({ name: 'GameClient', params: { gameId: gamepin.value.toUpperCase() } });
+      router.push({ path: `/quiz/game/${gamepin.value}` });
     };
 
     return {

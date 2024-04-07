@@ -2,23 +2,23 @@
   <div class="game-client">
     <div v-if="!isAuthenticated && !joined && gameExists">
       <div class="default-images-container">
-        <h2>Select Your Avatar</h2>
+        <h2>{{ t('quiz_client.select_avatar') }}</h2>
         <div class="images-grid">
           <div v-for="imageId in defaultImages" :key="imageId" class="image-card" :class="{ 'selected': imageId === defaultImageChoice }" @click="selectImage(imageId)">
             <img :src="getPictureURL(imageId)" alt="Default Avatar" class="default-avatar">
           </div>
         </div>
       </div>
-      <p>Please enter your name to join the game:</p>
-      <input v-model="playerName" placeholder="Enter name">
-      <basic_button class="large-button" :button_text="'Join Game'" @click="joinGameAsGuest"></basic_button>
+      <p>{{ t('quiz_client.enter_name')}}</p>
+      <input v-model="playerName" :placeholder="t('placeholders.NAME')">
+      <basic_button class="large-button" :button_text="t('quiz_client.join_game')" @click="joinGameAsGuest"></basic_button>
     </div>
 
     <div v-if="isAuthenticated && gameEnded && !sentFeedback" class="feedback-section">
-      <h2>Feedback</h2>
+      <h2>{{ t('quiz_client.feedback_title') }}</h2>
       <form @submit.prevent="submitFeedback">
         <div class="form-group">
-          <label for="feedbackRating">Rating:</label>
+          <label for="feedbackRating">{{ t('quiz_client.feedback_rating')}}</label>
           <select v-model="feedback.stars" id="feedbackRating">
             <option value="5">⭐⭐⭐⭐⭐</option>
             <option value="4">⭐⭐⭐⭐</option>
@@ -28,30 +28,30 @@
           </select>
         </div>
         <div class="form-group">
-          <label for="feedbackText">Your Feedback:</label>
+          <label for="feedbackText">{{ t('quiz_client.feedback_text')}}</label>
           <textarea v-model="feedback.text" id="feedbackText"></textarea>
         </div>
-        <button type="submit" class="feedback-submit">Submit Feedback</button>
+        <button type="submit" class="feedback-submit">{{ t('quiz_client.submit_feedback')}}</button>
       </form>
     </div>
 
     <template v-else>
       <div v-if="joined && joinScreenDisplayed" class="game-feedback joined-success">
-        <p>Game has been joined. Get ready!</p>
+        <p>{{ t('quiz_client.game_joined')}}</p>
       </div>
       <div v-if="gameEnded" class="game-feedback game-ended">
-        <p>The game has ended. Your final score is {{ score }}.</p>
+        <p>{{t('quiz_client.game_ended')}}{{ score }}.</p>
       </div>
       <div v-else-if="waitingForQuestion" class="game-feedback waiting-for-question">
-        <p>Waiting for the next question... stay tuned!</p>
+        <p>{{ t('quiz_client.waiting_for_question')}}</p>
       </div>
       <div v-else-if="waitingForAnswer" class="game-feedback waiting-for-answer">
-        <p>Waiting for the answer to be revealed...</p>
+        <p>{{t('quiz_client.waiting_for_answer')}}</p>
       </div>
       <div v-else-if="answerRevealed" class="game-feedback answer-feedback" :class="{'correct-answer': isAnswerCorrect, 'incorrect-answer': !isAnswerCorrect}">
-        <p v-if="isAnswerCorrect">You answered correctly! 🎉</p>
-        <p v-else>You answered incorrectly. 😞</p>
-        <p>Your total score: {{ score }}</p>
+        <p v-if="isAnswerCorrect">{{ t('quiz_client.correct_answer')}}</p>
+        <p v-else>{{ t('quiz_client.incorrect_answer') }}</p>
+        <p>{{ t('quiz_client.your_score')}}{{ score }}</p>
       </div>
 
       <div v-else-if="question">
@@ -101,6 +101,7 @@ import MultipleChoice from "@/components/QuizPlaing/mutlipleChoiceComponent.vue"
 import TruthOrFalseComponent from "@/components/QuizPlaing/TruthOrFalseComponent.vue";
 import router from "@/router/index.js";
 import {addFeedback} from "@/services/feedbackService.js";
+import {useI18n} from "vue-i18n";
 
 
 export default {
@@ -111,6 +112,7 @@ export default {
     multipleChoiceComponent,
   },
   setup() {
+    const { t } = useI18n(); // Access the translator function
     const route = useRoute();
     const gameId = ref(route.params.gameId);
     const store = useUserStore();
@@ -318,6 +320,7 @@ export default {
       feedback,
       submitFeedback,
       quizid,
+      t
     };
   },
 };

@@ -12,7 +12,9 @@
     "USERNAME": "Brukernavn",
     "PASSWORD": "Passord",
     "SEARCH": "Søk ...",
-    "CONFIRM_PASSWORD": "Bekreft passord"
+    "CONFIRM_PASSWORD": "Bekreft passord",
+    "NAME": "Navn",
+    "SUBMIT": "Send inn"
   },
   "buttons": {
     "ONE_PLAYER": "Enkeltspiller",
@@ -92,5 +94,47 @@
     "cancel_button": "Avbryt",
     "create_quiz_button": "Opprett Quiz",
     "edit_button": "Endre"
-  }
+  },
+
+  "quiz_client": {
+    "select_avatar": "Velg din avatar",
+    "enter_name": "Vennligst skriv inn navnet ditt for å bli med i spillet:",
+    "join_game": "Bli Med I Spillet",
+    "feedback_title": "Tilbakemelding",
+    "feedback_rating": "Vurdering",
+    "feedback_text": "Din Tilbakemelding",
+    "submit_feedback": "Send Tilbakemelding",
+    "game_joined": "Du har blitt med i spillet. Gjør deg klar!",
+    "game_ended": "Spillet er avsluttet. Din endelige score er",
+    "waiting_for_question": "Venter på neste spørsmål... hold deg klar!",
+    "waiting_for_answer": "Venter på at svaret skal avsløres...",
+    "correct_answer": "Du svarte riktig! 🎉",
+    "incorrect_answer": "Du svarte feil. 😞",
+    "your_score": "Din totale score: ",
+    "player_preview" : "Players Joined:",
+    "playerScores" : "Player Scores",
+    "timeUp": "Tiden er ute! Det riktige svaret var:",
+    "incorrect_answer2": "Feil! Det riktige svaret er:",
+    "answer" : "Det riktige svaret er ",
+    "questionPreview" : "Spørsmål forhåndsvisning",
+    "answerIn" : "Sekunder igjen for å forhåndsvise spørsmålet.",
+    "timeLeft" : "Tid igjen: "
+  },
+
+  "single_player": {
+    "gameOver" : "Spillet er Over!",
+    "finalScore" : "Din Endelige Poengsum:",
+    "feedbackTitle" : "Din tilbakemelding settes pris på!",
+    "feedback_text": "Din Tilbakemelding:"
+  },
+
+  "true_false": {
+    "true": "Sant",
+    "false": "Usant"
+  },
+
+  "gameCode" : "Spillkode",
+  "startGame" : "Start Spill",
+  "createGame" : "Opprett Spill"
+
 }
