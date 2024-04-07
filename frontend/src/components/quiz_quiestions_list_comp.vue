@@ -85,7 +85,7 @@
 
 <script>
 import QuestionList from "@/components/BasicComponents/questionList.vue";
-import { ref } from "vue";
+import {ref, watch} from "vue";
 import { useQuizStore } from "@/stores/counter.js";
 import QuestionCreateList from "@/components/create_quiz/question-create-list.vue";
 import {downloadQuizCSV, uploadQuestionsFromCSV} from "@/features/QuizCSV"
@@ -120,6 +120,10 @@ export default {
         { alternative: 'Option 4', isCorrect: false }
       ]
     });
+
+    watch(editQuestion => {
+
+    })
 
     const deleteQuestion = async (question) => {
       const index = question_list.value.indexOf(question);

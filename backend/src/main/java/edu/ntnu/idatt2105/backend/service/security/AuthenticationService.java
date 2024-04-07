@@ -127,19 +127,19 @@ public class AuthenticationService {
                     HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong while creating user: " + e
             );
         }
-        try {
-            if (imageFile == null) {
-                imageService.setDefaultProfilePic(savedUser.getUserId());
-            } else {
-                imageService.saveImage(imageFile, savedUser.getUserId());
-            }
-        } catch (Exception e) {
-            log.info("Error while saving image: " + e.getMessage());
-            imageService.setDefaultProfilePic(savedUser.getUserId());
-            throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong while saving image"
-            );
-        }
+//        try {
+//            if (imageFile == null) {
+//                imageService.setDefaultProfilePic(savedUser.getUserId());
+//            } else {
+//                imageService.saveImage(imageFile, savedUser.getUserId());
+//            }
+//        } catch (Exception e) {
+//            log.info("Error while saving image: " + e.getMessage());
+//            imageService.setDefaultProfilePic(savedUser.getUserId());
+//            throw new ResponseStatusException(
+//                    HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong while saving image"
+//            );
+//        }
         return getAccessTokenAuthDTO(savedUser.getEmail());
     }
 
