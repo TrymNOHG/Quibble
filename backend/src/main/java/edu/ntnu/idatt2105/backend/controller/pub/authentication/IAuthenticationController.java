@@ -11,6 +11,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 /**
  * This interface contains the methods of the AuthenticationController.
  */
@@ -75,7 +77,7 @@ public interface IAuthenticationController {
             @RequestParam("email") String email,
             @RequestParam(name = "image", required = false) MultipartFile imageFile,
             HttpServletResponse httpServletResponse
-    );
+    ) throws IOException;
 
     /**
      * Endpoint for refreshing the access token. This endpoint returns a new access token.
