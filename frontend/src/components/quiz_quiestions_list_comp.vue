@@ -121,11 +121,15 @@ export default {
       ]
     });
 
-    watch(editQuestion => {
-
-    })
-
+    watch(
+        () => editQuestion.value.type,
+        (newValue, oldValue) => {
+          // Logic to handle the change in editQuestion.type
+          console.log('editQuestion type changed from', oldValue, 'to', newValue);
+        }
+    );
     const deleteQuestion = async (question) => {
+      console.log("Question : ", question)
       const index = question_list.value.indexOf(question);
       if (index !== -1) {
         question_list.value.splice(index, 1);
@@ -164,16 +168,26 @@ export default {
           editQuestion.value.answer = '';
         }
       }
-      console.log("qwerqwer", editQuestion.value)
-      store.addQuestion(editQuestion.value);
-      question_list.value.push(editQuestion.value);
+      store.addQuestion(editQuestion.value).then(question => {
+        console.log("adding question: ", question)
+        // let lastQuestion = null;
+        //
+        // if (question.questions.length > 0) {
+        //   const sortedQuestions = question.questions.slice().sort((a, b) => b.questionId - a.questionId);
+        //   lastQuestion = sortedQuestions[0];
+        // }
+        // question_list.value.push(lastQuestion);
+      }).catch(error => {
+        console.log("error: ", error)
+      });
+
       console.log(question_list.value)
       addNewQuestion.value = false;
       edit.value = false;
     };
 
     const showEdit = (question) => {
-      console.log(question)
+      console.log("new question: ", question)
       editQuestion.value = { ...question };
       edit.value = true;
     };

@@ -149,7 +149,7 @@ export const useQuizStore = defineStore('storeQuiz', {
       try {
         console.log(searchQuery)
         const response = await fetchUserByUsername(searchQuery);
-        console.log(response)
+        console.log("UserDTOs:", response)
         return response;
       } catch (error) {
         console.error("Failed to load previous page:", error);
@@ -180,6 +180,7 @@ export const useQuizStore = defineStore('storeQuiz', {
     },
 
     async editQuestion(editedQuestion){
+      console.log("edited question: ", editedQuestion)
       console.log(editedQuestion.quizId)
       console.log(this.currentQuiz.quizId)
       const editQuestionDTO = {
@@ -191,9 +192,11 @@ export const useQuizStore = defineStore('storeQuiz', {
       }
 
       await patchQuestion(editQuestionDTO)
-          .then(responses => {
-            console.log(responses);
-            return responses;
+          .then(response => {
+            console.log("response:", response);
+            // this.setCurrentQuizById(editedQuestion.quizId);
+            this.currentQuiz = response
+            return response;
           }).catch(error => {
             console.warn("error", error);
           });
@@ -208,12 +211,7 @@ export const useQuizStore = defineStore('storeQuiz', {
         "choices": newQuestion.choices
       };
 
-      await addQuestion(questionCreateDTO)
-          .then(responses => {
-            console.log(responses);
-          }).catch(error => {
-            console.warn("error", error);
-          });
+      return await addQuestion(questionCreateDTO);
     },
 
     async addQuiz() {
