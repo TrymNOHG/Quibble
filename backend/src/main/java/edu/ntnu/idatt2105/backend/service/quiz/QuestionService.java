@@ -8,6 +8,7 @@ import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionCreateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionEditDTO;
 import edu.ntnu.idatt2105.backend.dto.websocket.AlternativeDTO;
 import edu.ntnu.idatt2105.backend.dto.websocket.SendAlternativesDTO;
+import edu.ntnu.idatt2105.backend.exception.UnauthorizedException;
 import edu.ntnu.idatt2105.backend.exception.notfound.NotFoundException;
 import edu.ntnu.idatt2105.backend.exception.notfound.QuestionNotFoundException;
 import edu.ntnu.idatt2105.backend.exception.notfound.QuizNotFoundException;
@@ -17,11 +18,14 @@ import edu.ntnu.idatt2105.backend.mapper.quiz.QuizMapper;
 import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
 import edu.ntnu.idatt2105.backend.model.quiz.question.MultipleChoice;
 import edu.ntnu.idatt2105.backend.model.quiz.question.Question;
+import edu.ntnu.idatt2105.backend.repo.quiz.QuizAuthorRepository;
 import edu.ntnu.idatt2105.backend.repo.quiz.QuizRepository;
 import edu.ntnu.idatt2105.backend.repo.quiz.question.MultipleChoiceRepository;
 import edu.ntnu.idatt2105.backend.repo.quiz.question.QuestionRepository;
+import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -33,8 +37,8 @@ import static edu.ntnu.idatt2105.backend.util.SortingUtil.sortListWithUuidSeed;
 /**
  * Service class for handling questions.
  *
- * @version 1.1 31.05.2021
- * @author brage
+ * @author Brage Halvorsen Kvamme, Trym Hamer Gudvangen
+ * @version 1.1 05.04.2024
  * @see Question
  */
 @Service
@@ -46,6 +50,8 @@ public class QuestionService {
     private final MultipleChoiceRepository multipleChoiceRepository;
     private final QuizMapper quizMapper;
     Logger LOGGER = Logger.getLogger(QuestionService.class.getName());
+    private final QuizAuthorRepository quizAuthorRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public QuestionDTO getQuestionDTO(long questionId, UUID hostUUID) {
@@ -101,10 +107,9 @@ public class QuestionService {
      * @return The new quiz.
      */
     @Transactional
-    public QuizLoadDTO addQuestion(QuestionCreateDTO questionCreateDTO) {
-        //TODO: check that user is editing question they are authorized to.
-        // Might be a little unnecessary to send the whole quiz again...
-        //Check if Quiz exist
+    public QuizLoadDTO addQuestion(QuestionCreateDTO questionCreateDTO, String email) {
+        authorizeOwnerOrCollaborator(questionCreateDTO.quizId(), email);
+
         LOGGER.info("Attempting to retrieve quiz");
         Quiz quiz = quizRepository.findById(
                 questionCreateDTO.quizId()
@@ -145,8 +150,9 @@ public class QuestionService {
      * @return                  The quiz as a QuizLoadDTO.
      */
     @Transactional
-    public QuizLoadDTO editQuestion(QuestionEditDTO questionEditDTO) {
-        //TODO: check that user is editing question they are authorized to.
+    public QuizLoadDTO editQuestion(QuestionEditDTO questionEditDTO, String email) {
+        authorizeOwnerOrCollaborator(questionEditDTO.quizId(), email);
+
         LOGGER.info("Attempting to retrieve quiz");
         Quiz quiz = quizRepository.findById(questionEditDTO.quizId())
                 .orElseThrow(() -> new QuizNotFoundException(questionEditDTO.quizId().toString()));
@@ -192,11 +198,11 @@ public class QuestionService {
      * This method deletes a question from the database.
      * @param questionId    The question's id.
      */
-    public void deleteQuestion(Long questionId) {
-        LOGGER.info("Deleting question with id: " + questionId);
-        //TODO: Check if owner
+    public void deleteQuestion(Long questionId, String email) {
         Question question = questionRepository.findById(questionId)
                         .orElseThrow(() -> new QuestionNotFoundException("Question with id: " + questionId));
+        authorizeOwnerOrCollaborator(question.getQuiz().getQuizId(), email);
+        LOGGER.info("Deleting question with id: " + questionId);
         questionRepository.delete(question);
     }
 
@@ -207,12 +213,15 @@ public class QuestionService {
      * @param questionId              The question to be added under.
      */
     private void addMultipleChoiceAlternative(MultipleChoiceCreateDTO multipleChoiceCreateDTO, Long questionId) {
+        LOGGER.info("Finding question to add alternative to.");
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new NotFoundException("Question"));
 
         MultipleChoice multipleChoice = MultipleChoiceMapper.INSTANCE.multipleChoiceCreateDTOToMultipleChoice(multipleChoiceCreateDTO);
         multipleChoice.setQuestion(question);
+
         multipleChoiceRepository.save(multipleChoice);
+        LOGGER.info("Multiple choice saved.");
     }
 
     /**
@@ -221,6 +230,7 @@ public class QuestionService {
      * @param multipleChoiceDTO The new information for the multiple choice alternative.
      */
     private void editMultipleChoiceAlternative(MultipleChoiceDTO multipleChoiceDTO) {
+        LOGGER.info("Editing multiple choice alternative.");
         MultipleChoice multipleChoice = multipleChoiceRepository.findById(multipleChoiceDTO.multipleChoiceId())
                 .orElseThrow(() -> new QuestionNotFoundException("Multiple choice : "
                         + multipleChoiceDTO.multipleChoiceId()));
@@ -228,6 +238,56 @@ public class QuestionService {
         multipleChoice.setCorrect(multipleChoiceDTO.isCorrect());
 
         multipleChoiceRepository.save(multipleChoice);
+        LOGGER.info("Edits have been saved.");
+    }
+
+    /**
+     * This method authorizes a user with owner or collaborator privileges.
+     * @param quizId    The id of the quiz.
+     * @param email     The email of the user.
+     */
+    private void authorizeOwnerOrCollaborator(Long quizId, String email) {
+        LOGGER.info("Checking authorization of " + email);
+        Long userId = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException(email)).getUserId();
+
+        if (!isOwnerOrCollaborator(quizId, userId)) {
+            throw new UnauthorizedException(email);
+        }
+        LOGGER.info("User is authorized.");
+    }
+
+    /**
+     * This method checks whether a user is the owner/admin of a quiz.
+     * @param quizId    The id of the quiz.
+     * @param userId    The id of the user.
+     * @return          Status of whether is owner.
+     */
+    private boolean isOwner(Long quizId, Long userId) {
+        Quiz quiz = quizRepository.findById(quizId)
+                .orElseThrow(() -> new QuizNotFoundException(quizId.toString()));
+        return quiz.getAdmin().getUserId().equals(userId);
+    }
+
+    /**
+     * This method checks whether a user is a collaborator of a quiz.
+     * @param quizId    The id of the quiz.
+     * @param userId    The id of the user.
+     * @return          Status of whether is collaborator.
+     */
+    private boolean isCollaborator(Long quizId, Long userId) {
+        return quizAuthorRepository.findQuizAuthorByQuizQuizIdAndUserUserId(quizId, userId)
+                .isPresent();
+    }
+
+    /**
+     * This method checks whether is a user is either an owner or collaborator of a quiz.
+     * @param quizId    The id of the quiz.
+     * @param userId    The id of the user.
+     * @return          Status whether user is owner or collaborator.
+     */
+    private boolean isOwnerOrCollaborator(Long quizId, Long userId) {
+        return isOwner(quizId, userId) || isCollaborator(quizId, userId);
     }
 
 
