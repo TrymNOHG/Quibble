@@ -66,7 +66,6 @@ public class AuthenticationController implements IAuthenticationController {
     public ResponseEntity<AuthenticationResponseDTO> getAccessTokenFromRefreshToken(
             @CookieValue(value = "refresh_token", defaultValue = "") String refreshToken
     ){
-        logger.info("Qwerqwer");
         return ResponseEntity.ok()
 //                .header(HttpHeaders.SET_COOKIE)
                 .body(authenticationService.getAccessTokenFromRefreshToken(refreshToken));

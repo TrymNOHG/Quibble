@@ -197,15 +197,11 @@ public class ImageService {
      *
      * @param userId The id of the user with an image to be loaded.
      */
-    public void setDefaultProfilePic(Long userId) {
-        try {
+    public void setDefaultProfilePic(Long userId) throws IOException {
             Random random = new Random();
             Files.copy(Paths.get(STORAGE_DIRECTORY+"/default-"+random.nextInt(1, 6)),
                     Paths.get(STORAGE_DIRECTORY+"/"+userId),
                     StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     /**

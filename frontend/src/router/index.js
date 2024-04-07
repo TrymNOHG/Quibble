@@ -2,11 +2,11 @@ import { createRouter, createWebHistory } from 'vue-router'
 import LoginView from "@/views/LoginView.vue";
 import RegisterView from "@/views/RegisterView.vue";
 import TheWelcomeComponent from "@/components/TheWelcomeComponent.vue";
-import Quiz_comp from "@/components/QuizPlaing/Quiz_comp.vue";
 import HomePageView from "@/views/HomePageView.vue";
 import CurrentQuizView from "@/views/CurrentQuizView.vue";
 import {useUserStore} from "@/stores/counter.js";
 import ProfileView from "@/views/Profile/PrivateProfileView.vue";
+import singleplayerView from "@/views/QuizPlaying/SingleplayerView.vue";
 import multiplayerHostView from "@/views/QuizPlaying/MultiplayerHostView.vue";
 import CreateQuizView from "@/views/CreateQuizView.vue";
 import multiplayerPlayerView from "@/views/QuizPlaying/MultiplayerPlayerView.vue";
@@ -54,7 +54,7 @@ const router = createRouter({
       {
           path: '/quiz',
           name: 'quiz',
-          component: Quiz_comp,
+          component: TheWelcomeComponent,
           meta: { requiresAuth: false }
       },
       {
@@ -76,11 +76,17 @@ const router = createRouter({
           meta: { requiresAuth: true }
         },
       {
+        path: '/quiz/singleplayer',
+        name: 'singleplayer',
+        component: singleplayerView,
+        meta: { requiresAuth: true }
+      },
+      {
           path: '/quiz/game/:gameId',
           name: 'GameClient',
           component: multiplayerPlayerView,
-          props: true, // Allows the route parameter (gameId) to be passed as a prop to the component
-          meta: { requiresAuth: false } // Adjust based on whether you want this route to require authentication
+          props: true,
+          meta: { requiresAuth: false }
       },
   ]
 })

@@ -311,6 +311,7 @@ public class SocketService {
                     "waitForQuestion", "The question has started. Look at the screen!"
             );
         } else {
+            server.getRoomOperations(game.getCode()).sendEvent("quizId", game.getQuiz().getQuizId());
             server.getRoomOperations(game.getCode()).sendEvent("gameEnded", "The game has ended");
             server.getRoomOperations(game.getCode()).sendEvent("quizId", game.getQuiz().getQuizId());
             quizHistoryService.addHistory(game.getPlayers(), game.getQuiz());
