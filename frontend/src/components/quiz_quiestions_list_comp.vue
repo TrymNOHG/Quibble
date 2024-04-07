@@ -124,7 +124,6 @@ export default {
     watch(
         () => editQuestion.value.type,
         (newValue, oldValue) => {
-          // Logic to handle the change in editQuestion.type
          if(String(newValue).toUpperCase() === "MULTIPLE_CHOICE") {
            editQuestion.value.choices = [
              { alternative: 'Option 1', isCorrect: false, questionId:  editQuestion.value.questionId},
@@ -196,7 +195,7 @@ export default {
     };
 
     const showEdit = (question) => {
-      console.log("new question: ", question)
+      console.log("editing question: ", question)
       editQuestion.value = { ...question };
       edit.value = true;
     };

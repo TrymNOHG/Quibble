@@ -102,7 +102,7 @@ export const useQuizStore = defineStore('storeQuiz', {
         quizDescription: "",
         adminId: null,
         feedback: [],
-        collaborators: Set,
+        collaborators: [],
         categories: [],
         questions: [
           {
@@ -251,6 +251,7 @@ export const useQuizStore = defineStore('storeQuiz', {
 
 
     async setCurrentQuizById(quiz) {
+      console.log("current quiz", quiz)
       this.currentQuiz = quiz;
       if (useUserStore().user.userId === this.currentQuiz.adminId){
         this.isAuth = true;
@@ -276,8 +277,8 @@ export const useQuizStore = defineStore('storeQuiz', {
       };
       await addCollaborator(quizAuthorDTO)
           .then(response => {
-            console.log(response)
-            this.currentQuiz.collaborators.push(author)
+            console.log("Collaborator:", response)
+            this.currentQuiz.collaborators.push(response)
           }).catch(error => {
             console.warn("error", error)
           })
@@ -401,7 +402,9 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
         "quizId": quiz.quizId,
         "keywords": quiz.keywords
       };
-      await addKeyword(keywordsDTO);
+      if(quiz.keywords && quiz.keywords.length !== 0 && quiz.quizId !== null) {
+        await addKeyword(keywordsDTO);
+      }
 
       this.templateQuiz.keywords = [];
 

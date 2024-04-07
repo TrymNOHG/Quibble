@@ -104,6 +104,7 @@ export default {
         categories: Set,
         questions: Set,
         keywords: Set,
+        choices: [],
       })
     },
     isAuthor: null,
