@@ -121,13 +121,15 @@ export default {
         { alternative: 'Option 4', isCorrect: false }
       ]
     });
-/*
+
     watch(
         () => editQuestion.value.type,
         (newValue, oldValue) => {
           console.log(oldValue)
           if(String(newValue).toUpperCase() === "MULTIPLE_CHOICE") {
-            console.log("hello")
+            if (editQuestion.value.choices && editQuestion.value.choices.length !== 0) {
+              return;
+            }
             editQuestion.value.choices = [
               {multipleChoiceId: null, alternative: 'Option 1', isCorrect: false, questionId:  editQuestion.value.questionId},
               {multipleChoiceId: null, alternative: 'Option 2', isCorrect: false, questionId:  editQuestion.value.questionId},
@@ -139,8 +141,6 @@ export default {
           }
         }
     );
-
- */
 
     const deleteQuestion = async (question) => {
       console.log("Question : ", question)

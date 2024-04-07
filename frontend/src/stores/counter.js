@@ -11,7 +11,7 @@ import {
   addQuestion,
   createQuiz,
   deleteQuestionById,
-  deleteQuizById, fetchCategories, fetchFilteredQuizzes, fetchMyQuizzes,
+  deleteQuizById, fetchAllQuizzesByUser, fetchCategories, fetchFilteredQuizzes,
   patchQuestion,
   removeCollaborator,
   updateQuiz
@@ -135,10 +135,10 @@ export const useQuizStore = defineStore('storeQuiz', {
 
     async loadMyQuizzes() {
       try {
-        const response = await fetchMyQuizzes();
-        console.log(response)
-        this.allQuizzes = [ ...response ];
-        return this.allQuizzes;
+        const userId = useUserStore().user.userId;
+        console.log(userId)
+        const response = await fetchAllQuizzesByUser(userId);
+        return response;
       } catch (error) {
         console.error("Failed to load previous page:", error);
       }

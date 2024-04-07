@@ -18,21 +18,22 @@ export const fetchQuizzes = async (page, size) => {
 export const fetchFilteredQuizzes = async (quizFilterDTO) => {
     try {
         const response = await axios.post(`${BASE_URL_PUB}/getFiltered`, quizFilterDTO);
-        console.log(response)
         return response.data.content;
     } catch (error) {
         throw error.response ? error.response.data : error.message;
     }
 };
 
-export const fetchMyQuizzes = async (page, size) => {
+export const fetchAllQuizzesByUser = async (userId) => {
     try {
-        const response = await axios.get(`${BASE_URL_PRIV}/get?page=${page}&size=${size}`, {
+        console.log("hello")
+        const response = await axios.get(`${BASE_URL_PUB}/getUserQuiz?userId=${userId}`, {
             headers: {
                 Authorization: `Bearer ${await sessionToken()}`,
-            }
+            },
         });
-        return response.data.content;
+        console.log(response.data.quizzes)
+        return response.data.quizzes;
     } catch (error) {
         throw error.response ? error.response.data : error.message;
     }

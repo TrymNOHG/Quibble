@@ -14,6 +14,10 @@ import org.springframework.lang.Nullable;
  * @version 1.0 24.03.2024
  */
 @Builder
-public record QuizAuthorLoadDTO(@NonNull Long quizAuthorId, @NonNull Long quizId,
-                                @NonNull Long userId, @Nullable String username) {
+public record QuizAuthorLoadDTO(
+        @NonNull Long quizAuthorId,
+        @NonNull Long quizId,
+        @NonNull Long userId,
+        @Nullable String username
+) {
 }
