@@ -43,7 +43,7 @@ public class QuizController implements IQuizController{
 
     @Override
     public ResponseEntity<QuizLoadDTO> createQuiz(@NonNull String quizName, @NonNull Authentication authentication) {
-        logger.info("Authenicating user: " + authentication.getName());
+        logger.info("Authenticating user: " + authentication.getName());
         return ResponseEntity.ok(quizService.createQuiz(quizName, authentication.getName()));
     }
 
@@ -109,19 +109,19 @@ public class QuizController implements IQuizController{
 
     @Override
     public ResponseEntity<QuizCategoryLoadDTO> addCategory(@NonNull QuizCategoryCreateDTO quizCategoryCreateDTO, @NonNull Authentication authentication) {
-        QuizCategoryLoadDTO quizCategoryLoadDTO = quizService.addQuizCategory(quizCategoryCreateDTO);
+        QuizCategoryLoadDTO quizCategoryLoadDTO = quizService.addQuizCategory(quizCategoryCreateDTO, authentication.getName());
         return ResponseEntity.ok(quizCategoryLoadDTO);
     }
 
     @Override
     public ResponseEntity<QuizCategoryLoadMultDTO> addCategories(@NonNull QuizCategoryCreateMultDTO quizCategoryCreateMultDTO, @NonNull Authentication authentication) {
-        QuizCategoryLoadMultDTO quizCategoryLoadMultDTO = quizService.addQuizCategories(quizCategoryCreateMultDTO);
+        QuizCategoryLoadMultDTO quizCategoryLoadMultDTO = quizService.addQuizCategories(quizCategoryCreateMultDTO, authentication.getName());
         return ResponseEntity.ok(quizCategoryLoadMultDTO);
     }
 
     @Override
     public ResponseEntity<Object> deleteQuizCategory(@NonNull Long quizCategoryId, @NonNull Authentication authentication) {
-        quizService.removeQuizCategory(quizCategoryId);
+        quizService.removeQuizCategory(quizCategoryId, authentication.getName());
         return ResponseEntity.ok("Successful Deletion");
     }
 }
