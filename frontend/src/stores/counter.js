@@ -3,7 +3,7 @@ import {
   fetchUserByUsername,
   getUser
 } from "@/services/UserService.js";
-import {createQuizImage} from "@/services/ImageService.js";
+import {saveFile} from "@/services/ImageService.js";
 import {getPictureFromID} from "@/services/ImageService.js";
 
 import {
@@ -11,7 +11,7 @@ import {
   addQuestion,
   createQuiz,
   deleteQuestionById,
-  deleteQuizById, fetchCategories, fetchFilteredQuizzes,
+  deleteQuizById, fetchCategories, fetchFilteredQuizzes, fetchMyQuizzes,
   fetchQuizzes,
   patchQuestion,
   removeCollaborator,
@@ -134,9 +134,9 @@ export const useQuizStore = defineStore('storeQuiz', {
       }
     },
 
-    async loadMyQuizzes(quizFilterDTO) {
+    async loadMyQuizzes() {
       try {
-        const response = await fetchQuizzes(quizFilterDTO);
+        const response = await fetchMyQuizzes();
         console.log(response)
         this.allQuizzes = [ ...response ];
         return this.allQuizzes;
@@ -373,11 +373,11 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
         "quizId" : createdQuiz.quizId,
         "quizImage": this.templateQuiz.Image
       }
-      await createQuizImage(imgDTO)
+      await saveFile(imgDTO)
           .then(response => {
             console.log(response)
           }).catch(error => {
-            console.warn("Error creating quiz:", error);
+            console.warn("Error saving img:", error);
           });
 
       const addQuestionPromises = [];

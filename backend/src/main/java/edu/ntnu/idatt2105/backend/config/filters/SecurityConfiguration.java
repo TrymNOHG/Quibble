@@ -191,6 +191,7 @@ public class SecurityConfiguration {
         return httpSecurity
                 .securityMatcher(new AntPathRequestMatcher(API_ENDPOINT_STRING+PUBLIC+"/auth/signup/**"))
                 .authorizeHttpRequests(a -> a.anyRequest().permitAll())
+                .formLogin(withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .build();
     }
