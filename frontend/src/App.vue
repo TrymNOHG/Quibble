@@ -21,7 +21,7 @@
             <font-awesome-icon class="icon" icon="fa-solid fa-play" />
           </li>
         </router-link>
-        <router-link  v-show="isAuthenticated" to="/quiz">
+        <router-link  v-show="isAuthenticated" to="/myquiz">
           <li>
             <font-awesome-icon class="icon" icon="fa-solid fa-puzzle-piece"/>
           </li>

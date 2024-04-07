@@ -97,7 +97,6 @@ import QuestionCreateList from "@/components/create_quiz/question-create-list.vu
 import {downloadQuizCSV, uploadQuestionsFromCSV} from "@/features/QuizCSV"
 import router from "@/router/index.js";
 import Quiz_info_comp from "@/components/quiz_info_comp.vue";
-import router from "@/router/index.js";
 
 
 export default {
