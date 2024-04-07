@@ -28,13 +28,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 public class JWTTokenServiceTest {
 
-
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private JWTTokenGenerationService jwtTokenGenerationService;
-
     @Autowired
     private JWTTokenService jwtTokenService;
 

@@ -24,6 +24,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 /**
  * This interface outlines the various functionality the private endpoint for quiz's should have.
  *
@@ -53,7 +55,7 @@ public interface IQuizController {
     }
     )
     ResponseEntity<QuizLoadDTO> createQuiz(@PathVariable @NonNull String quizName,
-                                           @NonNull Authentication authentication);
+                                           @NonNull Authentication authentication) throws IOException;
 
     @PatchMapping(
             value="/update",

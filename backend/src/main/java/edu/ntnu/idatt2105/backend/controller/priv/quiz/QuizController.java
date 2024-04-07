@@ -21,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
@@ -42,7 +43,7 @@ public class QuizController implements IQuizController{
     Logger logger = Logger.getLogger(QuizController.class.getName());
 
     @Override
-    public ResponseEntity<QuizLoadDTO> createQuiz(@NonNull String quizName, @NonNull Authentication authentication) {
+    public ResponseEntity<QuizLoadDTO> createQuiz(@NonNull String quizName, @NonNull Authentication authentication) throws IOException {
         logger.info("Authenticating user: " + authentication.getName());
         return ResponseEntity.ok(quizService.createQuiz(quizName, authentication.getName()));
     }

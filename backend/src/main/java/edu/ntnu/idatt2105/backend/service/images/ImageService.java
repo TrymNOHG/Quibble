@@ -166,11 +166,13 @@ public class ImageService {
      */
     private void createFile(MultipartFile file, String filename) throws IOException {
         if (!VALID_FILES.contains(file.getContentType())) {
+            log.info("Invalid Path Extension.");
             throw new InvalidPathException(Objects.requireNonNull(file.getContentType()),"Invalid Path Extension.");
         }
         Path newFilePath = Paths.get(STORAGE_DIRECTORY+"/"+filename);
         log.info("qwerqwer" + newFilePath);
         try {
+            log.info("Saving file");
             Files.copy(file.getInputStream(), newFilePath, StandardCopyOption.REPLACE_EXISTING);
         } catch (Exception e) {
             log.warn(e.getMessage());
@@ -193,13 +195,27 @@ public class ImageService {
     }
 
     /**
+     * Sets the default quiz picture for a quiz.
+     *
+     * @param quizId The id of the quiz with an image to be loaded.
+     * @throws IOException If the image could not be loaded.
+     */
+    public void setDefaultQuizPic(Long quizId) throws IOException {
+        log.info("Setting default quiz picture for quiz " + quizId);
+        Files.copy(Paths.get(STORAGE_DIRECTORY+"/default-q"),
+                Paths.get(STORAGE_DIRECTORY+"/q"+quizId),
+                StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    /**
      * Sets the default profile picture for a user.
      *
      * @param userId The id of the user with an image to be loaded.
      */
     public void setDefaultProfilePic(Long userId) throws IOException {
+        log.info("Setting default profile picture for user " + userId);
             Random random = new Random();
-            Files.copy(Paths.get(STORAGE_DIRECTORY+"/default-"+random.nextInt(1, 6)),
+            Files.copy(Paths.get(STORAGE_DIRECTORY+"/default-"+random.nextInt(1, 10)),
                     Paths.get(STORAGE_DIRECTORY+"/"+userId),
                     StandardCopyOption.REPLACE_EXISTING);
     }
