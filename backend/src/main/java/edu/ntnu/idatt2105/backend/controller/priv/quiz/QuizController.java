@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -92,19 +91,19 @@ public class QuizController implements IQuizController{
     public ResponseEntity<QuizLoadDTO> addQuestion(@NonNull QuestionCreateDTO questionCreateDTO, @NonNull Authentication authentication) {
         //TODO: check that user is owner or collaborator
         //TODO: make method that checks if user is owner or collaborator of quiz.
-        QuizLoadDTO quizLoadDTO = questionService.addQuestion(questionCreateDTO);
+        QuizLoadDTO quizLoadDTO = questionService.addQuestion(questionCreateDTO, authentication.getName());
         return ResponseEntity.ok(quizLoadDTO);
     }
 
     @Override
     public ResponseEntity<QuizLoadDTO> editQuestion(@NonNull QuestionEditDTO questionEditDTO, @NonNull Authentication authentication) {
-        QuizLoadDTO quizLoadDTO = questionService.editQuestion(questionEditDTO);
+        QuizLoadDTO quizLoadDTO = questionService.editQuestion(questionEditDTO, authentication.getName());
         return ResponseEntity.ok(quizLoadDTO);
     }
 
     @Override
     public ResponseEntity<Object> deleteQuestion(@NonNull Long questionId, @NonNull Authentication authentication) {
-        questionService.deleteQuestion(questionId);
+        questionService.deleteQuestion(questionId, authentication.getName());
         return ResponseEntity.ok("Successful Deletion");
     }
 
