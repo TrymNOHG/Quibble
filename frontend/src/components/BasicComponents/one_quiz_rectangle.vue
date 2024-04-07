@@ -3,7 +3,7 @@
     <router-link :to="'/quiz/current'" @click="setCurrentQuiz()">
       <div class="card">
         <div class="content">
-          <img class="card_image" :src="quiz.Image" alt="quiz image"/>
+          <img :src="getPictureURL()" class="card_image" alt="quiz image" />
           <div class="information">
             <h4 class="quiz-name">{{ quiz.quizName }}</h4>
             <p class="quiz-details">{{$t("quiz_card.QUESTIONS_LABEL")}}: {{ quiz.questions.length }}</p>
@@ -17,12 +17,13 @@
 <script>
 import {useQuizStore} from "@/stores/counter.js";
 import {getCurrentInstance} from "vue";
+import {getPictureFromID} from "@/services/ImageService.js";
 export default {
   props: {
     quiz: {
       type: Object,
       default: () => ({
-        QuizId: Number,
+        quizId: Number,
         quizName: String,
         quizDifficulty: String,
         quizDescription: String,
@@ -32,7 +33,6 @@ export default {
         categories: Set,
         questions: Set,
         keywords: Set,
-        Image: String,
       })
     }
   },
@@ -45,8 +45,14 @@ export default {
       emit("setCurrentQuiz", props.quiz)
     }
 
+    const getPictureURL = () => {
+      const id =`Q${props.quiz.quizId}`
+      return getPictureFromID(id);
+    }
+
     return {
       setCurrentQuiz,
+      getPictureURL,
       quizStore,
     }
   },

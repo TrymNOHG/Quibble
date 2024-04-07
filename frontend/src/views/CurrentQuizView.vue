@@ -25,6 +25,7 @@ import {useQuizStore, useUserStore} from "@/stores/counter.js";
 import {onMounted, ref} from "vue";
 import Quiz_quiestions_list_comp from "@/components/quiz_quiestions_list_comp.vue";
 import Quiz_info_comp from "@/components/quiz_info_comp.vue";
+import {getPictureFromID} from "@/services/ImageService.js";
 
 
 const store = useQuizStore();
@@ -34,7 +35,6 @@ const userStore = useUserStore();
 let isAuthor = ref(true);
 let isEditor = ref(true);
 let quizAuthors = ref(store.currentQuiz.collaborators === null ? [] : store.currentQuiz.collaborators);
-
 
 onMounted( () => {
   isAuthor.value = store.isAdmin(store.currentQuiz.adminId)

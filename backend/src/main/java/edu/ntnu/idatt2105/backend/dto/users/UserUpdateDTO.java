@@ -14,6 +14,10 @@ import org.springframework.web.multipart.MultipartFile;
  * @param showFeedback      The new showFeedback status.
  */
 @Builder
-public record UserUpdateDTO(@NonNull Long userId, @Nullable String username, @Nullable MultipartFile profilePicture,
-                            @Nullable Boolean showActivity, @Nullable Boolean showFeedback) {
+public record UserUpdateDTO(
+        @NonNull Long userId,
+        @Nullable String username,
+        @Nullable MultipartFile profilePicture,
+        @Nullable Boolean showActivity,
+        @Nullable Boolean showFeedback) {
 }

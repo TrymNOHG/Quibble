@@ -24,6 +24,8 @@ import PrivateProfileComponent from "@/components/Profile/PrivateProfileComponen
 import {useUserStore} from "@/stores/counter.js"; // Ensure this matches your imported component file name
 import {updateUser, updateUserShowActivity, updateUserShowFeedback} from "@/services/UserService.js";
 import router from "@/router/index.js";
+import {deleteQuizById} from "@/services/QuizService.js";
+import {getPictureFromID} from "@/services/ImageService.js";
 
 export default {
   name: "ProfileView",
@@ -35,9 +37,25 @@ export default {
       console.log(useUserStore().getUserData)
       return useUserStore().getUserData
     },
-    handleUpdateUserProfile(userData) {
-      console.log("Updating user profile with:", userData);
-      // Implement your logic here to update the user profile
+    async handleUpdateUserProfile(userData) {
+      const store = useUserStore();
+      const user = store.getUserData;
+      console.log(userData)
+
+      let userUpdateDTO = new FormData();
+      userUpdateDTO.append('userId', user.userId);
+      userUpdateDTO.append('username', userData.username);
+      userUpdateDTO.append('showActivity', user.showActivity);
+      userUpdateDTO.append('showFeedback', user.showFeedback);
+
+      await updateUser(userUpdateDTO)
+          .then(response => {
+            console.log(response)
+          }).catch(error => {
+            console.warn("error", error)
+          })
+      await store.fetchUserData();
+      await router.push("/profile");
     },
 
     handleUpdatePassword(passwordData) {
@@ -62,6 +80,11 @@ export default {
 
     },
 
+    getPictureURL() {
+      const id =`Q${quiz.quizId}`
+      return getPictureFromID(id);
+    },
+
     handleDeletePicture(pictureUrl) {
       console.log("Deleting picture:", pictureUrl);
       // Implement your logic here to delete the profile picture
@@ -69,7 +92,7 @@ export default {
 
     handleToggleEdit(editState) {
       console.log("Toggling edit state to:", editState);
-      // Additional logic can be implemented if needed
+      this.isEditing = editState; // Ensure this line is correctly updating the isEditing state
     },
 
     handleToggleChangePassword(changePasswordState) {
@@ -104,7 +127,7 @@ export default {
     },
 
     handleDeleteUser() {
-      outer.push("/");
+      router.push("/");
       console.log("Deleting user account");
       // Implement your logic here to delete the user account
     },
