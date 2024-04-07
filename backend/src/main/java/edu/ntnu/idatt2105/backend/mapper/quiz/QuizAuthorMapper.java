@@ -21,6 +21,7 @@ public interface QuizAuthorMapper {
         return QuizAuthorLoadAllDTO.builder().collaborators(authorLoadDTOS).build();
     }
 
+    @Mapping(target = "username", source = "quizAuthor.user.username")
     @Mapping(target = "userId", source = "quizAuthor.user.userId")
     @Mapping(target = "quizId", source = "quizAuthor.quiz.quizId")
     @Mapping(target = "quizAuthorId", source = "quizAuthor.quizAuthorId")
