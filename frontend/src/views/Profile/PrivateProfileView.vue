@@ -60,7 +60,7 @@ export default {
 
     handleUpdatePassword(passwordData) {
       console.log("Updating password with:", passwordData);
-      // Implement your logic here to update the password
+      // Implement logic here to update the password
     },
 
     handleLogout() {

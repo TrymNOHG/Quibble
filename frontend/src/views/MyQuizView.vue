@@ -20,14 +20,13 @@ import One_quiz_rectangle from "@/components/BasicComponents/one_quiz_rectangle.
 import {useQuizStore} from "@/stores/counter.js";
 
 let displayedQuizzes = ref([]);
-let page = ref(0);
 const store = useQuizStore();
 const quizStore = useQuizStore();
 const categories = quizStore.category_list;
 
 
 onMounted(async () => {
-  await store.loadMyQuizzes;
+  await store.loadMyQuizzes();
 });
 
 </script>

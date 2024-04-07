@@ -53,6 +53,7 @@ public class QuizController implements IQuizController{
     @Override
     public ResponseEntity<Page<QuizLoadDTO>> getQuizzes(@NonNull QuizFilterDTO quizFilterDTO) {
         Page<QuizLoadDTO> quizLoadPage = quizService.getFilteredQuizzes(quizFilterDTO);
+        log.info("HEIPA, " + quizLoadPage.toString());
         return ResponseEntity.ok(quizLoadPage);
     }
 }

@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 /**
  * Service class for managing different instances of the Game class.
  *
- * @version 1.0 31.03.2021
+ * @version 1.1 07.04.2021
  * @author Brage Halvorsen Kvamme
  * @see Game
  */
@@ -46,12 +46,12 @@ public class GameService {
     private String generateRandomCode() {
         String code;
         do {
-            code = random.ints(48, 123)
-                    .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+            code = random.ints(48, 91) // Adjust the upper bound to 91 because the upper limit is exclusive
+                    .filter(i -> (i <= 57 || i >= 65)) // Remove check for lowercase letters
                     .limit(4) // Change this to increase the length of the code
                     .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                     .toString();
-        } while (rooms.containsKey(code));
+        } while (rooms.containsKey(code)); // Ensure the generated code is not already used
         return code;
     }
 

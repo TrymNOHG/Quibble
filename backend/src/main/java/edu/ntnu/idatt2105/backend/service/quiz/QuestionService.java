@@ -24,11 +24,13 @@ import edu.ntnu.idatt2105.backend.repo.quiz.question.MultipleChoiceRepository;
 import edu.ntnu.idatt2105.backend.repo.quiz.question.QuestionRepository;
 import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -175,6 +177,7 @@ public class QuestionService {
 
         if (questionEditDTO.type() != null) {
             question.setQuestionType(questionEditDTO.type());
+            deleteChoices(questionEditDTO.questionId());
         }
 
         LOGGER.info("Saving question to database.");
@@ -184,8 +187,19 @@ public class QuestionService {
         if (questionEditDTO.choices() != null) {
             LOGGER.info("Editing multiple choices.");
             for (MultipleChoiceDTO choice : questionEditDTO.choices()) {
-                editMultipleChoiceAlternative(choice);
+                //TODO: check if there.
+                if(choice.multipleChoiceId() == null) {
+                    MultipleChoiceCreateDTO multipleChoiceCreateDTO = MultipleChoiceCreateDTO
+                            .builder()
+                            .isCorrect(choice.isCorrect())
+                            .alternative(choice.alternative())
+                            .build();
+                    addMultipleChoiceAlternative(multipleChoiceCreateDTO, question.getQuestionId());
+                } else {
+                    editMultipleChoiceAlternative(choice);
+                }
             }
+            LOGGER.info("Choices edited.");
         }
 
         LOGGER.info("Retrieving newest quiz.");
@@ -231,6 +245,9 @@ public class QuestionService {
      */
     private void editMultipleChoiceAlternative(MultipleChoiceDTO multipleChoiceDTO) {
         LOGGER.info("Editing multiple choice alternative.");
+        if (multipleChoiceDTO.multipleChoiceId() == null){
+            throw new NullPointerException("Multiple choice id should not be null.");
+        }
         MultipleChoice multipleChoice = multipleChoiceRepository.findById(multipleChoiceDTO.multipleChoiceId())
                 .orElseThrow(() -> new QuestionNotFoundException("Multiple choice : "
                         + multipleChoiceDTO.multipleChoiceId()));
@@ -255,6 +272,18 @@ public class QuestionService {
             throw new UnauthorizedException(email);
         }
         LOGGER.info("User is authorized.");
+    }
+
+    /**
+     * This method deletes the choices associated with a given question.
+     * @param questionId    The id of the question.
+     */
+    private void deleteChoices(Long questionId) {
+        LOGGER.info("Finding choices for a given question.");
+        Set<MultipleChoice> quizChoices = multipleChoiceRepository.findMultipleChoicesByQuestionQuestionId(questionId)
+                .orElseThrow(() -> new QuestionNotFoundException(questionId.toString()));
+        LOGGER.info("Deleting all of the choices.");
+        multipleChoiceRepository.deleteAll(quizChoices);
     }
 
     /**

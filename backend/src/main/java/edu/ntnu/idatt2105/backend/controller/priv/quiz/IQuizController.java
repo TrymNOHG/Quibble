@@ -8,11 +8,13 @@ import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryLoadMultDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorLoadDTO;
+import edu.ntnu.idatt2105.backend.dto.quiz.keyword.QuizKeywordsCreateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionCreateDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionEditDTO;
 import edu.ntnu.idatt2105.backend.model.category.QuizCategory;
 import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
 import edu.ntnu.idatt2105.backend.model.quiz.QuizAuthor;
+import edu.ntnu.idatt2105.backend.model.quiz.QuizKeyword;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -23,6 +25,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 /**
  * This interface outlines the various functionality the private endpoint for quiz's should have.
@@ -53,7 +57,7 @@ public interface IQuizController {
     }
     )
     ResponseEntity<QuizLoadDTO> createQuiz(@PathVariable @NonNull String quizName,
-                                           @NonNull Authentication authentication);
+                                           @NonNull Authentication authentication) throws IOException;
 
     @PatchMapping(
             value="/update",
@@ -265,6 +269,45 @@ public interface IQuizController {
     }
     )
     ResponseEntity<Object> deleteQuizCategory(@PathVariable @NonNull Long quizCategoryId, @NonNull Authentication authentication);
+
+
+    /**
+     * This method adds a new keywords to a quiz.
+     *
+     * @return ResponseEntity showing whether the operation was successful.
+     */
+    @PostMapping(
+            value="/create/keywords",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @Operation(summary = "This method adds a new keywords to a given quiz")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful addition of keywords.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = QuizKeyword.class)) }),
+            @ApiResponse(responseCode = "403", description = "Unauthorized addition of categories.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = QuizKeyword.class)) })
+    }
+    )
+    ResponseEntity<Object> addKeywords(@RequestBody @NonNull QuizKeywordsCreateDTO quizKeywordsCreateDTO, @NonNull Authentication authentication);
+
+
+    @DeleteMapping(
+            value="/delete/keyword/{quizKeywordId}"
+    )
+    @Operation(summary = "This method deletes a keyword of a given quiz")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful deletion of keyword.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = QuizKeyword.class)) }),
+            @ApiResponse(responseCode = "403", description = "Unauthorized deletion of keyword.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = QuizKeyword.class)) })
+    }
+    )
+    ResponseEntity<Object> deleteQuizKeyword(@PathVariable @NonNull Long quizKeywordId, @NonNull Authentication authentication);
 
 
 }

@@ -26,11 +26,11 @@ export default {
     const categories = ref([])
 
     const saveQuiz = async (question_list) => {
-      let questionList = question_list.question_list
+      quiz.questions = question_list.question_list
       let categoryIds = store.templateQuiz.categories.map(category => category.categoryId)
 
       try {
-        await store.createQuiz(questionList);
+        await store.createQuiz(quiz);
 
         let categoriesDTO = {
           quizId : store.templateQuiz.quizId,
@@ -38,8 +38,7 @@ export default {
         }
         console.log("caters", categoriesDTO)
         await addCategories(categoriesDTO)
-        setTimeout(()=> {}, 500);
-        await router.push('/home');
+        setTimeout(async ()=> {await router.push('/home');}, 500);
       } catch (error) {
         console.error(error);
       }

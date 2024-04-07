@@ -1,5 +1,6 @@
 package edu.ntnu.idatt2105.backend.controller.priv.feedback;
 
+import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadAllDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.feedback.QuizFeedbackDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.feedback.QuizFeedbackLoadAllDTO;
@@ -46,7 +47,7 @@ public interface IFeedbackController {
     }
     )
     ResponseEntity<String> addFeedback(@RequestBody @NonNull QuizFeedbackDTO newFeedback,
-                                                @NonNull Authentication authentication);
+                                       @NonNull Authentication authentication);
 
     /**
      * This method updates the feedback for a quiz.
@@ -92,7 +93,7 @@ public interface IFeedbackController {
     }
     )
     ResponseEntity<String> deleteFeedback(@PathVariable @NonNull Long quizId,
-                                               @NonNull Authentication authentication);
+                                          @NonNull Authentication authentication);
 
     /**
      * This method gets the feedback for a quiz.
@@ -101,11 +102,8 @@ public interface IFeedbackController {
      * @param authentication The authentication object.
      * @return ResponseEntity showing whether the operation was successful.
      */
-    @GetMapping(
-            value="/get/{quizId}",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
+    @GetMapping(value="/get/{quizId}",
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "This method gets the feedback for a quiz.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful retrieval of feedback.",
@@ -118,4 +116,18 @@ public interface IFeedbackController {
     )
     ResponseEntity<QuizFeedbackLoadAllDTO> getFeedbacks(@PathVariable @NonNull Long quizId,
                                                         @NonNull Authentication authentication);
+
+    @GetMapping(value="/get-own",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "This method gets the feedback for a quiz. Return only your own feedbacks.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful retrieval of feedback.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = QuizFeedbackLoadAllDTO.class)) }),
+            @ApiResponse(responseCode = "403", description = "Unauthorized retrieval of feedback.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class)) })
+    }
+    )
+    ResponseEntity<QuizFeedbackLoadAllDTO> getOwnFeedback(@NonNull Authentication authentication);
 }

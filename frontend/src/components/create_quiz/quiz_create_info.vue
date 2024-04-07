@@ -80,6 +80,8 @@ import {onMounted, ref} from "vue";
 import Tag_list from "@/components/create_quiz/tag_list.vue";
 import {useQuizCreateStore, useQuizStore} from "@/stores/counter.js";
 import {getAllCategories} from "@/services/CategoryService.js";
+import { removeKeyword } from "@/services/QuizService.js";
+
 
 export default {
   components: { Tag_list },

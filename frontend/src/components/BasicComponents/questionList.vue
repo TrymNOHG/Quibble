@@ -19,7 +19,7 @@
               class="icon_edit"
               id="add"
               icon="fa-solid fa-pen-to-square"
-              @click="editQuestion()"
+              @click="editQuestion(q)"
               v-if="isAuth || isEditor"
           />
           <font-awesome-icon
@@ -52,13 +52,12 @@ export default {
     }
   },
 
-  setup() {
+  setup(props) {
     const store = useQuizStore();
     const showPopupProp = ref(false);
     const {emit} = getCurrentInstance();
     const isAuth = ref(store.isAdmin(store.currentQuiz.adminId));
     const isEditor = ref(store.isEditor);
-
     const deleteQuestion = (question) => {
       emit("deleteQuestion", question);
       showPopupProp.value = false;
@@ -68,9 +67,8 @@ export default {
       showPopupProp.value = false;
     };
 
-    const editQuestion = (question) => {
-      console.log(question);
-      emit("editQuestion", question);
+    const editQuestion = () => {
+      emit("editQuestion");
     };
 
     return {

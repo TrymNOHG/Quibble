@@ -41,7 +41,7 @@ public class ImageController implements IImageController {
 
 
     @Override
-    public ResponseEntity<String> saveFile(
+    public ResponseEntity<String> saveQuizImage(
             @RequestParam("quizId") Long quizId,
             @RequestParam(name = "image", required = false) MultipartFile imageFile,
             @NonNull Authentication authentication
