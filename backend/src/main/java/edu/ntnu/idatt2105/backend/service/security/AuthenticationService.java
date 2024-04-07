@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -87,7 +88,7 @@ public class AuthenticationService {
     @Transactional
     public AuthenticationResponseDTO registerUser(UserRegisterDTO userRegistrationDto,
                                                   HttpServletResponse httpServletResponse, MultipartFile imageFile
-    ) {
+    ) throws IOException {
         if (userRegistrationDto.username().length() < 3 || userRegistrationDto.username().length() > 64
                 || userRegistrationDto.password().length() < 8 || userRegistrationDto.password().length() > 64) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,

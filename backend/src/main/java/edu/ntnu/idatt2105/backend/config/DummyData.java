@@ -158,7 +158,6 @@ public class DummyData implements CommandLineRunner {
         QuizCategory quizCategory = QuizCategory.builder().quiz(quiz).category(category).build();
 
         quizCategoryRepository.save(quizCategory);
-
     }
 
     private Set<Category> createListOfCategories(String[] categoryNames) {

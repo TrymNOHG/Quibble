@@ -53,12 +53,6 @@
           @click="deleteQuiz()">
         {{ $t('buttons.DELETE_QUIZ') }}
       </button>
-      <button
-          class="btn"
-          v-if="!isAuthor & !isEditor"
-          @click="addToMyquiz()">
-        Add to MyQuiz
-      </button>
       <div id="download_div">
         <font-awesome-icon
             id="download"
@@ -271,6 +265,10 @@ export default {
 
 
 <style scoped>
+#csvFileInput {
+  width: 100px
+}
+
 #download_div{
   width: 35px;
   display: flex;

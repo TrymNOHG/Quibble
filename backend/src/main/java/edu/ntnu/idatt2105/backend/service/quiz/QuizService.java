@@ -67,11 +67,31 @@ public class QuizService {
     private final CategoryRepository categoryRepository;
     private final QuizCategoryRepository quizCategoryRepository;
 
-    @Transactional
     public Quiz getQuizById(long quizId) {
         return quizRepository.findById(quizId)
                 .orElseThrow(() -> new IllegalArgumentException("Quiz with id " + quizId + " not found"));
     }
+
+    /**
+     * This method retrieves all the quizzes a user has.
+     * @param userId    The id of the user.
+     * @return          The quiz load all data transfer object.
+     */
+    public QuizLoadAllDTO getAllQuizzesByUser(Long userId) {
+        LOGGER.info("Looking for user.");
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException(userId.toString()));
+        LOGGER.info("User found.");
+
+        Set<QuizLoadDTO> userQuizzes = user.getQuizzesOwned()
+                .stream()
+                .map(quizMapper::quizToQuizLoadDTO)
+                .collect(Collectors.toSet());
+
+        LOGGER.info("All quizzes from the user has been retrieved.");
+        return QuizLoadAllDTO.builder().quizzes(userQuizzes).build();
+    }
+
 
     @Transactional
     public QuizLoadDTO createQuiz(String quizName, String adminEmail) {

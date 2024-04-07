@@ -1,14 +1,30 @@
+import sessionToken from "@/features/SessionToken.js";
+import axios from "axios";
+
 const BASE_URL = "http://localhost:8080/api/v1"
 
 export const getPictureFromID =  (id) => {
     return `${BASE_URL}/public/image/${id}`;
 };
 
-export const createQuizImage = (imgDTO) => {
-    console.log(imgDTO);
-    return `${BASE_URL}/public/image/${id}`;
-}
+export const saveFile = async (imgDTO) => {
+    try {
+        const imageFile = new FormData();
+        imageFile.append('quizId', imgDTO.quizId);
+        imageFile.append('image', imgDTO.quizImage);
 
+        const response = await axios.post(`${BASE_URL}/private/image/quiz/save`,
+            imageFile, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                Authorization: `Bearer ${await sessionToken()}`,
+            }
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response ? error.response.data : error.message;
+    }
+};
 
 
 

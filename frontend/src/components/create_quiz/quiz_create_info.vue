@@ -87,14 +87,12 @@ export default {
   setup() {
     const showPopup = ref(false);
     const store = useQuizCreateStore();
-    const quizStore = useQuizStore();
     const template_quiz = ref(store.templateQuiz);
     const template_tags = ref([]);
     const categories = ref([])
     getAllCategories().then(response => {
       categories.value = response
     })
-    console.log("Qweqwer", categories)
     const chosenCategory = ref([false, false, false, false, false]);
     const choice = ref("Category");
     const newKeyword = ref({ keywordId: null, keyword: '' });
