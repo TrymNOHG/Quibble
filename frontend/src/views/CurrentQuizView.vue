@@ -9,6 +9,7 @@
         @deleteAuthor="deleteAuthor"
         @saveEdit="saveEdit"
         @addAuthor="addAuthor"
+        :img="getPictureURL"
     />
 
     <quiz_quiestions_list_comp
@@ -25,6 +26,7 @@ import {useQuizStore, useUserStore} from "@/stores/counter.js";
 import {onMounted, ref} from "vue";
 import Quiz_quiestions_list_comp from "@/components/quiz_quiestions_list_comp.vue";
 import Quiz_info_comp from "@/components/quiz_info_comp.vue";
+import {getPictureFromID} from "@/services/ImageService.js";
 
 
 const store = useQuizStore();
@@ -39,6 +41,11 @@ onMounted( () => {
   isAuthor.value = store.isAdmin(store.currentQuiz.adminId)
   checkEditor();
 });
+
+const getPictureURL = () => {
+  const id = `Q${quiz.quizId}`
+  return getPictureFromID(id);
+};
 
 const checkEditor = () => {
   isEditor.value = quizAuthors.value.some(author => author.userId === userStore.user.userId);
