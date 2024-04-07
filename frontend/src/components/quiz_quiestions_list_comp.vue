@@ -206,7 +206,7 @@ export default {
     }
 
     const routeSinglePlayer = () => {
-      router.push('/path-to-single-player'); // replace with your actual path
+      router.push('/quiz/singleplayer'); // replace with your actual path
     };
 
     const routeMultiPlayer = () => {

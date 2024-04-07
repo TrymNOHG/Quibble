@@ -15,7 +15,7 @@
       <div v-for="(choice, index) in question.options" :key="index"
            class="answer-card"
            :class="{ 'flip': showAnswers && !isMultiplayerClient, 'correct': isMultiplayerClient ? false : choice.isCorrect && showAnswers, 'incorrect': isMultiplayerClient ? false : !choice.isCorrect && showAnswers }"
-           @click="selectAnswer(choice.alternative)">
+           @click="selectAnswer(choice)">
         <div class="card-front">{{ choice.alternative }}</div>
         <!-- Card back content hidden for multiplayer clients -->
         <div class="card-back" v-if="!isMultiplayerClient">
@@ -98,27 +98,27 @@ export default {
       emit('timerDone'); // Emitting an event for the parent component
     };
 
-    const isCorrect = (index) => {
-      return index === correctAnswer.value;
-      //todo fix
-    };
 
     const selectAnswer = (choice) => {
+      console.log("isSinglePlayer", props.isSinglePlayer)
+      console.log("isMultiplayerClient", props.isMultiplayerClient)
+      console.log("showAnswers", showAnswers.value)
+
       if (!props.isSinglePlayer && !props.isMultiplayerClient || showAnswers.value) return;
 
       stopTimer();
       selectedAnswer.value = choice;
       showAnswers.value = true;
       if (props.isMultiplayerClient) {
-        emit('answerSelected', choice);
+        emit('answerSelected', choice.alternative);
         return;
       }
-      if (isCorrect(choice)) {
+      if (choice.isCorrect) {
         correctSound.play().catch((e) => console.error('Error playing sound:', e));
-        emit('answerSelected', true);
+        emit('answerSelected', true, timeLeft.value);
       } else {
         wrongSound.play().catch((e) => console.error('Error playing sound:', e));
-        emit('answerSelected', false);
+        emit('answerSelected', false, timeLeft.value);
       }
     };
 

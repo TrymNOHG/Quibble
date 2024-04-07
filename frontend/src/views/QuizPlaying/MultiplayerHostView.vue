@@ -2,9 +2,9 @@
   <div class="game-host">
     <h1>{{quizName}}</h1> <!todo quiz name>
 
-    <basic_button v-if="!gameStarted && !gameCode" @click="createGame" :button_text="$t('createGame')"></basic_button>
+    <basic_button class="large-button" v-if="!gameStarted && !gameCode" @click="createGame" :button_text="$t('createGame')"></basic_button>
     <p v-else> Game Code: {{ gameCode }}</p>
-    <basic_button v-if="gameCode && !gameStarted" @click="startGame":button_text="$t('startGame')"></basic_button>
+    <basic_button class="large-button" v-if="gameCode && !gameStarted" @click="startGame":button_text="$t('startGame')"></basic_button>
 
     <!-- Show current question or game code -->
     <scoreComponent
@@ -205,7 +205,10 @@ export default {
         getScoreBoard()
         // wait 6 seconds
         setTimeout(() => {
+
           showScoreboard.value = true;
+          currentQuestion.value = null;
+
         }, 5000);
 
         // You can implement score updating or transitioning to the next question here
@@ -246,5 +249,22 @@ export default {
   flex-direction: column;
   align-items: center;
   gap: 20px;
+}
+.large-button {
+  min-width: 150px;
+  max-width: 250px;/* Minimum width for the button */
+  padding: 15px 30px; /* Larger padding for better touch */
+  font-size: 1rem; /* Larger font size for better readability */
+  cursor: pointer; /* To indicate the button is clickable */
+  border: none; /* Assuming you don't want a border, but style as needed */
+  border-radius: 8px; /* Rounded corners */
+  background-color: #673AB7; /* Purple background to match your theme */
+  color: white; /* Text color */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional: Adds a shadow for depth */
+  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.large-button:hover {
+  background-color: #5e34b1; /* Slightly darker purple on hover for feedback */
 }
 </style>

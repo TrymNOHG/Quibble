@@ -1,31 +1,27 @@
 <template>
   <div class="flashcard-container">
-    <!-- Question Card -->
-    <div class="question-card">
+    <div class="question-card" v-if="!isMultiplayerClient">
       <div class="card-content" v-html="question.question"></div>
     </div>
-
-    <!-- Temp button to show answers for demo purposes -->
     <div class="progress-bar-container">
       <div class="progress-bar" :style="{width: progressBarWidth + '%'}"></div>
     </div>
-
-    <!-- Answer Cards Container for True or False -->
     <div class="answers-container">
+      <!-- Modified to include multiplayer mode checks -->
       <div class="answer-card true-card"
-           :class="{'flip': showAnswers, 'correct': isCorrect(true), 'incorrect': !isCorrect(true)}"
+           :class="{'flip': showAnswers && !isMultiplayerClient, 'correct': isMultiplayerClient ? false : isCorrect(true) && showAnswers, 'incorrect': isMultiplayerClient ? false : !isCorrect(true) && showAnswers}"
            @click="selectAnswer(true)">
         <div class="card-front">True</div>
-        <div class="card-back">
+        <div class="card-back" v-if="!isMultiplayerClient">
           <span v-if="isCorrect(true)">✓</span>
           <span v-else>✕</span>
         </div>
       </div>
       <div class="answer-card false-card"
-           :class="{'flip': showAnswers, 'correct': isCorrect(false), 'incorrect': !isCorrect(false)}"
+           :class="{'flip': showAnswers && !isMultiplayerClient, 'correct': isMultiplayerClient ? false : isCorrect(false) && showAnswers, 'incorrect': isMultiplayerClient ? false : !isCorrect(false) && showAnswers}"
            @click="selectAnswer(false)">
         <div class="card-front">False</div>
-        <div class="card-back">
+        <div class="card-back" v-if="!isMultiplayerClient">
           <span v-if="isCorrect(false)">✓</span>
           <span v-else>✕</span>
         </div>
@@ -33,7 +29,6 @@
     </div>
   </div>
 </template>
-
 
 <script>
 import { ref, watch, onMounted, onUnmounted } from 'vue';
@@ -46,7 +41,7 @@ export default {
     },
     isSinglePlayer: {
       type: Boolean,
-      default: true
+      default: false
     },
     showAnswersProp: {
       type: Boolean,
@@ -54,8 +49,12 @@ export default {
     },
     duration: {
       type: Number,
-      default: 90 // Set default duration of the timer in seconds
-    }
+      default: 90
+    },
+    isMultiplayerClient: { // Added prop for multiplayer client
+      type: Boolean,
+      default: false
+    },
   },
   setup(props, { emit }) {
     const showAnswers = ref(props.showAnswersProp);
@@ -63,7 +62,6 @@ export default {
     const correctAnswer = ref(props.question.answer === "true");
     const timeLeft = ref(props.duration);
     const progressBarWidth = ref(100);
-
     const timer = ref(null);
 
     const isCorrect = (choice) => {
@@ -71,16 +69,22 @@ export default {
     };
 
     const selectAnswer = (choice) => {
-      if (!props.isSinglePlayer || showAnswers.value) return;
+      // Adjusted for multiplayer mode
+      if (!props.isSinglePlayer && !props.isMultiplayerClient || showAnswers.value) return;
 
       selectedAnswer.value = choice;
       showAnswers.value = true;
       stopTimer();
 
-      if (isCorrect(choice)) {
-        emit('answerSelected', true);
+      if (!props.isMultiplayerClient) {
+        if (isCorrect(choice)) {
+          emit('answerSelected', true, timeLeft.value);
+        } else {
+          emit('answerSelected', false, timeLeft.value);
+        }
       } else {
-        emit('answerSelected', false);
+        // For multiplayer clients, handle differently or emit different event
+        emit('answerSelected', choice);
       }
     };
 
@@ -108,10 +112,8 @@ export default {
 
     watch(() => props.showAnswersProp, (newValue) => {
       showAnswers.value = newValue;
-      if (newValue) {
-        stopTimer();
-        emit('timerDone');
-      }
+      stopTimer()
+      emit('timerDone');
     });
 
     onMounted(() => {
@@ -130,7 +132,8 @@ export default {
       selectAnswer,
       isCorrect,
       startTimer,
-      stopTimer
+      stopTimer,
+      handleTimeOut,
     };
   }
 };
@@ -186,7 +189,9 @@ export default {
   font-weight: bold;
   align-items: center;
   justify-content: center;
+  transform-style: preserve-3d;
   display: flex;
+  transition: transform 0.6s;
   position: relative;
   box-sizing: border-box; /* Include padding and border in the width */
   margin: 0 10px; /* Optional margin for spacing between cards */

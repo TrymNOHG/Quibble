@@ -8,12 +8,22 @@ class GameService {
     }
 
     // Connects to the WebSocket server
-    connect() {
+    async connect() {
         this.socket = io(this.serverUrl);
 
-        this.socket.on('connect', () => {
-            console.log('Connected to the game server');
+        await new Promise((resolve, reject) => {
+            this.socket.on('connect', () => {
+                console.log('Connected to the game server');
+                resolve(); // Resolve the promise when connected
+            });
+
+            // Optionally handle the connection error
+            this.socket.on('connect_error', (error) => {
+                console.log('Connection failed', error);
+                reject(error); // Reject the promise on connection error
+            });
         });
+
 
         // Handle other global events, like disconnection or server-wide messages
         this.socket.on('disconnect', () => {
