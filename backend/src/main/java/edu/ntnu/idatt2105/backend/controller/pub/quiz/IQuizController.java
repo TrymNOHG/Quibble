@@ -67,6 +67,20 @@ public interface IQuizController {
     ResponseEntity<Page<QuizLoadDTO>> getQuizzes(@RequestParam(defaultValue = "0") int page,
                                                  @RequestParam(defaultValue = "20") int size);
 
+    @GetMapping(
+            value="/getUserQuiz"
+    )
+    @Operation(summary = "This method retrieves a  of quizzes.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful retrieval of quizzes.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Quiz.class)) }),
+            @ApiResponse(responseCode = "500", description = "Server error while retrieving quizzes.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Quiz.class)) })
+    }
+    )
+    ResponseEntity<QuizLoadAllDTO> fetchAllQuizzesByUser(@RequestParam @NonNull Long userId);
 
     /**
      * This method retrieves a page of quizzes.

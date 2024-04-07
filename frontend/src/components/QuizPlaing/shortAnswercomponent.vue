@@ -1,39 +1,39 @@
 <template>
   <div class="flashcard-container">
     <!-- Question Card -->
-    <div class="question-card">
-      <div class="card-content" v-html="question.question"></div>
+    <div v-if="!isMultiplayerClient" class="question-card">
+      <div  class="card-content" v-html="question.question"></div>
     </div>
 
-    <!-- Input for Short Answer (hidden in single-player mode) -->
-    <div v-if="isSinglePlayer" class="answer-input-container">
-      <input v-model="userAnswer" type="text" placeholder="Type your answer here" />
-      <button @click="submitAnswer">Submit</button>
+    <div class="progress-bar-container">
+      <div class="progress-bar" :style="{width: progressBarWidth + '%'}"></div>
     </div>
 
-    <!-- Correct Answer Display (only in single-player mode) -->
-    <div v-if="isSinglePlayer" class="correct-answer-container">
-      <div class="correct-answer">{{ question.answer }}</div>
+    <!-- Input for Short Answer -->
+    <!-- Include multiplayer check to potentially hide input in client view mode -->
+    <div v-if="isSinglePlayer || isMultiplayerClient" class="answer-input-container">
+      <input v-model="userAnswer" type="text" placeholder="Type your answer here" :disabled="showAnswersProp"/>
+      <button @click="submitAnswer" :disabled="showAnswersProp">Submit</button>
     </div>
+
+
+
+
 
     <!-- Feedback -->
-    <div v-if="showFeedback &&  isSinglePlayer" :class="{'correct-feedback': isAnswerCorrect, 'incorrect-feedback': !isAnswerCorrect}">
+    <div v-if="showFeedback && isSinglePlayer" :class="{'correct-feedback': isAnswerCorrect, 'incorrect-feedback': !isAnswerCorrect}">
       <p>{{ feedbackMessage }}</p>
     </div>
 
-    <!-- Multiplayer Feedback -->
+
     <div v-if="!isSinglePlayer && showAnswersProp" class="multiplayer-feedback-container">
       <div class="multiplayer-feedback">
         The correct answer is: <strong>{{ question.answer }}</strong>. <br>
       </div>
     </div>
-
-    <!-- Progress Bar -->
-    <div class="progress-bar-container">
-      <div class="progress-bar" :style="{width: progressBarWidth + '%'}"></div>
-    </div>
   </div>
 </template>
+
 
 <script>
 import {ref, watch, onMounted, onUnmounted} from 'vue';
@@ -51,7 +51,11 @@ export default {
     showAnswersProp: {
       type: Boolean,
       default: false
-    }
+    },
+    isMultiplayerClient: { // Added prop for multiplayer client
+      type: Boolean,
+      default: false
+    },
   },
   setup(props, { emit, expose }) {
     const userAnswer = ref('');
@@ -104,14 +108,24 @@ export default {
 
     // Submit answer function
     const submitAnswer = () => {
-      stopTimer(); // Stop the timer when the user submits an answer
+      // Stop the timer when the user submits an answer
+      stopTimer();
       showFeedback.value = true;
-      if (userAnswer.value.toLowerCase() === props.question.answer.toLowerCase()) {
-        isAnswerCorrect.value = true;
-        feedbackMessage.value = "Correct! 🎉";
+
+      // Check if it's a single-player game or the client is not in multiplayer mode
+      if (props.isSinglePlayer) {
+        const answerCorrect = userAnswer.value.toLowerCase() === props.question.answer.toLowerCase();
+        isAnswerCorrect.value = answerCorrect;
+        feedbackMessage.value = answerCorrect ? "Correct! 🎉" : `Incorrect! The correct answer is: ${props.question.answer}`;
+
+        // Emit the result along with the time left if it's not a multiplayer client view
+        if (!props.isMultiplayerClient) {
+          emit('answerSelected', answerCorrect, timeLeft.value);
+        }
       } else {
-        isAnswerCorrect.value = false;
-        feedbackMessage.value = `Incorrect! The correct answer is: ${props.question.answer}`;
+        // For multiplayer clients, handle submission differently or emit a different event
+        // This could involve emitting the answer directly for validation elsewhere
+        emit('answerSelected', userAnswer.value);
       }
     };
 
@@ -130,17 +144,7 @@ export default {
 
 <style scoped>
 /* Styles adjusted for visibility and adding correct answer animation */
-.correct-answer-container {
-  margin-bottom: 20px;
-  padding: 20px;
-  background: #4CAF50; /* Green background to indicate correctness */
-  color: white; /* White text for better contrast */
-  border-radius: 15px;
-  width: 80%;
-  max-width: 600px;
-  opacity: 0;
-  animation: fadeIn 2s forwards;
-}
+
 
 @keyframes fadeIn {
   to {
@@ -168,6 +172,20 @@ export default {
 
 .answer-input-container {
   margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.answer-input-container input{
+  width: 100%;
+  margin: 10px;
+
+}
+
+.answer-input-container button{
+  width: 100%;
+  margin: 10px;
+
 }
 
 input[type="text"] {

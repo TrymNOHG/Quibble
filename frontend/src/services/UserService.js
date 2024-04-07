@@ -38,6 +38,7 @@ export const registerUser = async (userRegisterDTO) => {
         formData.append(key, userRegisterDTO[key]);
     }
     return axios.post(`${BASE_URL}/public/auth/signup`, formData, {
+        withCredentials: true,
         headers: {
             'Content-Type': 'multipart/form-data'
         }
@@ -67,6 +68,7 @@ export const fetchUserByUsername = async (username) => {
         throw error.response ? error.response.data : error.message;
     }
 };
+
 
 // Public Endpoints
 

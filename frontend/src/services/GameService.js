@@ -8,12 +8,22 @@ class GameService {
     }
 
     // Connects to the WebSocket server
-    connect() {
+    async connect() {
         this.socket = io(this.serverUrl);
 
-        this.socket.on('connect', () => {
-            console.log('Connected to the game server');
+        await new Promise((resolve, reject) => {
+            this.socket.on('connect', () => {
+                console.log('Connected to the game server');
+                resolve(); // Resolve the promise when connected
+            });
+
+            // Optionally handle the connection error
+            this.socket.on('connect_error', (error) => {
+                console.log('Connection failed', error);
+                reject(error); // Reject the promise on connection error
+            });
         });
+
 
         // Handle other global events, like disconnection or server-wide messages
         this.socket.on('disconnect', () => {
@@ -21,6 +31,10 @@ class GameService {
         });
 
         // Add handlers for other events sent by the server as needed
+    }
+
+    disconnect() {
+        this.socket.disconnect();
     }
 
     // Create a new game
@@ -43,6 +57,14 @@ class GameService {
 
     checkGameExists(gameCode, callback) {
         this.socket.emit('checkGameExists', gameCode, callback);
+    }
+
+    onbeginAnswering(callback) {
+        this.socket.on('beginAnswering', callback);
+    }
+
+    answerQuestion(ansertdto, callback) {
+        this.socket.emit('answerQuestion', ansertdto, callback);
     }
 
     // Start the game (host only)
@@ -68,18 +90,33 @@ class GameService {
     }
 
     // Submit an answer to the current question
-    answerQuestion(gameCode, jwt, answer, callback) {
-        this.socket.emit('answerQuestion', { gameCode, jwt, answer }, callback);
+    onWaitForQuestion(callback) {
+        this.socket.on('waitForQuestion', callback);
+
     }
 
-    onbeginAnswering(callback) {
-        this.socket.on('beginAnswering', callback);
-    }
+
 
     onGameEnded(callback) {
         this.socket.on('gameEnded', callback);
     }
 
+    onQuizId(callback) {
+        this.socket.on('quizId', callback);
+    }
+
+    onGameDoesNotExist(callback) {
+        this.socket.on('gameDoesNotExist', callback);
+    }
+
+    onGameExists(callback) {
+       this.socket.on('gameExists', callback);
+    }
+
+
+    onYourScore(callback) {
+        this.socket.on('yourScore', callback);
+    }
     // Listen for updates about the game, like scores, current question, etc.
 
 
@@ -111,7 +148,6 @@ class GameService {
     onPlayerLeft(callback) {
         this.socket.on('playerLeft', callback);
     }
-
 
 
     onAnswerRevealed(callback) {

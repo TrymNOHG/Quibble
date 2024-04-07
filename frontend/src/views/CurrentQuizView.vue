@@ -46,11 +46,13 @@ const checkEditor = () => {
 };
 
 const deleteAuthor = (author) => {
+  console.log("author", author)
   store.deleteAuth(author);
 };
 
 const addAuthor = async (author) => {
-  quizAuthors = await store.addAuthor(author);
+  await store.addAuthor(author);
+  quizAuthors = await store.currentQuiz.collaborators;
 };
 
 const saveEdit = async (quizUpdateDTO) => {

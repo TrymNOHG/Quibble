@@ -17,7 +17,7 @@ import {
     faHouse,
     faUserCircle, faCirclePlus, faMagnifyingGlass, faBars,
     faPenToSquare, faTrash, faAdd, faPlay, faPlus, faDownload,
-    faUpload
+    faUpload, faRightToBracket
 } from "@fortawesome/free-solid-svg-icons";
 
 library.add(
@@ -34,7 +34,8 @@ library.add(
     faPlay,
     faPlus,
     faDownload,
-    faUpload
+    faUpload,
+    faRightToBracket
 )
 
 

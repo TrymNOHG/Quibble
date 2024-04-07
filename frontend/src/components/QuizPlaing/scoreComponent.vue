@@ -11,7 +11,7 @@
     <div class="score-list">
       <div v-for="(player, index) in players" :key="player.username" class="score-item">
         <span class="player-number">{{ index + 1 }}</span>
-        <img :src="player.profilePicture" class="player-image" alt="Player Profile" />
+        <img :src="getPictureURL(player.imageId)" class="player-image" alt="Player Profile" />
         <span class="player-name">{{ player.username }}</span>
         <span class="player-score">{{ player.score }}</span>
       </div>
@@ -20,6 +20,9 @@
 </template>
 
 <script>
+import {getPictureFromID} from "@/services/ImageService.js";
+
+
 export default {
   props: {
     players: Array,
@@ -42,13 +45,17 @@ export default {
           this.$emit('countdownEnded');
         }
       }, 1000);
-    }
+    },
+    getPictureURL(id) {
+      return getPictureFromID(id);
+    },
   },
   mounted() {
     if (!this.gameEnded) {
       this.startCountdown();
     }
-  }
+  },
+
 }
 </script>
 

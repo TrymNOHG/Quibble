@@ -11,7 +11,7 @@
     </router-link>
     <nav>
       <ul>
-        <router-link to="/home">
+        <router-link v-show="isAuthenticated" to="/home">
           <li>
               <font-awesome-icon class="icon" icon="fa-solid fa-home"/>
           </li>
@@ -21,19 +21,20 @@
             <font-awesome-icon class="icon" icon="fa-solid fa-play" />
           </li>
         </router-link>
-        <router-link to="/myquiz">
+        <router-link  v-show="isAuthenticated" to="/myquiz">
           <li>
             <font-awesome-icon class="icon" icon="fa-solid fa-puzzle-piece"/>
           </li>
         </router-link>
-        <router-link to="/create">
+        <router-link v-show="isAuthenticated" to="/create">
           <li>
             <font-awesome-icon class="icon" icon="fa-solid fa-circle-plus" />
           </li>
         </router-link>
         <router-link to="/profile">
           <li>
-            <font-awesome-icon class="icon" icon="fa-solid fa-circle-user" />
+            <font-awesome-icon v-if="isAuthenticated" class="icon" icon="fa-solid fa-circle-user" />
+            <font-awesome-icon v-else class="icon" icon="fa-solid fa-right-to-bracket" />
           </li>
         </router-link>
         <div class="language" @click="changeLang()">{{ language }}</div>
@@ -48,6 +49,7 @@ import TheWelcomeComponent from "@/components/TheWelcomeComponent.vue";
 import {ref, computed} from "vue";
 import {useI18n} from "vue-i18n";
 import {useRoute} from "vue-router";
+import {useUserStore} from "@/stores/counter.js";
 
 export default {
   components: { TheWelcomeComponent },
@@ -80,11 +82,15 @@ export default {
      }
    };
 
+    const store = useUserStore();
+    const isAuthenticated = computed(() => store.isAuth);
+
    return {
      language,
      changeLang,
      headerText,
-     isOnRoot
+     isOnRoot,
+     isAuthenticated
    }
   }
 }

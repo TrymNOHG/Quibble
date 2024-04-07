@@ -102,7 +102,7 @@ export const useQuizStore = defineStore('storeQuiz', {
         quizDescription: "",
         adminId: null,
         feedback: [],
-        collaborators: Set,
+        collaborators: [],
         categories: [],
         questions: [
           {
@@ -149,7 +149,7 @@ export const useQuizStore = defineStore('storeQuiz', {
       try {
         console.log(searchQuery)
         const response = await fetchUserByUsername(searchQuery);
-        console.log(response)
+        console.log("UserDTOs:", response)
         return response;
       } catch (error) {
         console.error("Failed to load previous page:", error);
@@ -180,6 +180,7 @@ export const useQuizStore = defineStore('storeQuiz', {
     },
 
     async editQuestion(editedQuestion){
+      console.log("edited question: ", editedQuestion)
       console.log(editedQuestion.quizId)
       console.log(this.currentQuiz.quizId)
       const editQuestionDTO = {
@@ -187,16 +188,22 @@ export const useQuizStore = defineStore('storeQuiz', {
         "questionId": editedQuestion.questionId,
         "question": editedQuestion.question,
         "type": editedQuestion.type,
-        "choices": editedQuestion.choices
+        "choices": editedQuestion.choices,
+        "answer" : editedQuestion.answer
       }
 
+
       await patchQuestion(editQuestionDTO)
-          .then(responses => {
-            console.log(responses);
-            return responses;
+          .then(response => {
+            console.log("response:", response);
+            // this.setCurrentQuizById(editedQuestion.quizId);
+            this.currentQuiz = response
+            return response;
           }).catch(error => {
             console.warn("error", error);
           });
+
+      return editQuestionDTO
     },
 
     async addQuestion(newQuestion){
@@ -208,12 +215,7 @@ export const useQuizStore = defineStore('storeQuiz', {
         "choices": newQuestion.choices
       };
 
-      await addQuestion(questionCreateDTO)
-          .then(responses => {
-            console.log(responses);
-          }).catch(error => {
-            console.warn("error", error);
-          });
+      return await addQuestion(questionCreateDTO);
     },
 
     async addQuiz() {
@@ -249,6 +251,7 @@ export const useQuizStore = defineStore('storeQuiz', {
 
 
     async setCurrentQuizById(quiz) {
+      console.log("current quiz", quiz)
       this.currentQuiz = quiz;
       if (useUserStore().user.userId === this.currentQuiz.adminId){
         this.isAuth = true;
@@ -274,8 +277,8 @@ export const useQuizStore = defineStore('storeQuiz', {
       };
       await addCollaborator(quizAuthorDTO)
           .then(response => {
-            console.log(response)
-            this.currentQuiz.collaborators.push(author)
+            console.log("Collaborator:", response)
+            this.currentQuiz.collaborators.push(response)
           }).catch(error => {
             console.warn("error", error)
           })
@@ -324,11 +327,7 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
             quizId: null,
             question: "Are you 21 years old?",
             answer: "true",
-            type: "true_false",
-            choices: [
-              {alternative: "true", isCorrect: true},
-              {alternative: "false", isCorrect: false}
-            ]
+            type: "true_false"
           },
           {
             quizId: null,
@@ -350,11 +349,11 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
   },
 
   actions: {
-    async createQuiz(questions) {
+    async createQuiz(quiz) {
       let createdQuiz = null;
-      this.templateQuiz.questions = questions.value;
+      this.templateQuiz.questions = quiz.questions;
 
-      await createQuiz(this.templateQuiz.quizName)
+      await createQuiz(quiz.quizName)
           .then(response => {
             createdQuiz = response;
             this.templateQuiz.quizId = response.quizId
@@ -365,13 +364,13 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
       const quizUpdateDTO = {
         "quizId": this.templateQuiz.quizId,
         "newName": createdQuiz.quizName,
-        "newDescription": this.templateQuiz.quizDescription,
-        "difficulty": this.templateQuiz.quizDifficulty.toUpperCase(),
+        "newDescription": quiz.quizDescription,
+        "difficulty": quiz.quizDifficulty.toUpperCase(),
       };
 
       const imgDTO = {
         "quizId" : createdQuiz.quizId,
-        "quizImage": this.templateQuiz.Image
+        "quizImage": quiz.Image
       }
       await saveFile(imgDTO)
           .then(response => {
@@ -399,24 +398,15 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
             console.warn("Error adding questions:", error);
           });
 
-      const addKeywordPromises = [];
-      this.templateQuiz.keywords.forEach(keyword => {
-        console.log(keyword)
-        const keywordDTO = {
-          "quizId": this.templateQuiz.quizId,
-          "keywordName": keyword
-        };
-        //TODO: her lages det keywords. Dette funker ikke trym
-        addKeywordPromises.push(addKeyword(keywordDTO));
-      });
-      this.templateQuiz.keywords = [];
+      const keywordsDTO = {
+        "quizId": quiz.quizId,
+        "keywords": quiz.keywords
+      };
+      if(quiz.keywords && quiz.keywords.length !== 0 && quiz.quizId !== null) {
+        await addKeyword(keywordsDTO);
+      }
 
-      await Promise.all(addKeywordPromises)
-          .then(responses => {
-            console.log("Keywords added:", responses);
-          }).catch(error => {
-            console.warn("Error adding keywords:", error);
-          });
+      this.templateQuiz.keywords = [];
 
       const addCategoryPromises = [];
       this.templateQuiz.categories.forEach(category => {
@@ -443,6 +433,59 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
             console.warn("Error updating quiz:", error);
           });
     },
+    generateTemplate() {
+      return {
+        quizId: null,
+            quizName: "TemplateQuiz",
+            quizDifficulty: "Easy",
+            quizDescription: "Template quiz, change the quiz as wanted",
+            admin_id: null,
+            feedbacks: [],
+            collaborators: [],
+            categories: [],
+            questions: [
+          {
+            quizId: null,
+            question: "What is your question?",
+            answer: "John",
+            type: "multiple_choice",
+            choices: [
+              { alternative: "pencil", isCorrect: false},
+              { alternative: "book", isCorrect: false},
+              { alternative: "John", isCorrect: true},
+              { alternative: "quiz", isCorrect: false}
+            ]
+          },
+          {
+            quizId: null,
+            question: "Are you 21 years old?",
+            answer: "true",
+            type: "true_false",
+            choices: [
+              {alternative: "true", isCorrect: true},
+              {alternative: "false", isCorrect: false}
+            ]
+          },
+          {
+            quizId: null,
+            question: "What is in the center of the Milky Way?",
+            answer: "Black Hole",
+            type: "multiple_choice",
+            choices: [
+              { alternative: "Sun", isCorrect: false },
+              { alternative: "Earth", isCorrect: false },
+              { alternative: "Venus", isCorrect: false },
+              { alternative: "Black Hole", isCorrect: true }
+            ]
+          },
+        ],
+            keywords: [],
+            Image: "https://via.placeholder.com/150",
+      }
+    },
+    resetTemplate() {
+      this.templateQuiz = this.generateTemplate();
+    }
   },
   persist: {
     storage: sessionStorage

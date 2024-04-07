@@ -44,8 +44,8 @@
   </div>
   <div class="comp">
     <div class="buttons">
-      <button>{{ $t('buttons.ONE_PLAYER') }}</button>
-      <button>{{ $t('buttons.MULTI_PLAYER') }}</button>
+      <button @click="routeSinglePlayer">{{ $t('buttons.ONE_PLAYER') }}</button>
+      <button @click="routeMultiPlayer">{{ $t('buttons.MULTI_PLAYER') }}</button>
       <button
           class="btn"
           to="/home"
@@ -85,12 +85,13 @@
 
 <script>
 import QuestionList from "@/components/BasicComponents/questionList.vue";
-import { ref } from "vue";
+import {ref, watch} from "vue";
 import { useQuizStore } from "@/stores/counter.js";
 import QuestionCreateList from "@/components/create_quiz/question-create-list.vue";
 import {downloadQuizCSV, uploadQuestionsFromCSV} from "@/features/QuizCSV"
 import router from "@/router/index.js";
 import Quiz_info_comp from "@/components/quiz_info_comp.vue";
+
 
 export default {
   components: {Quiz_info_comp, QuestionCreateList, QuestionList },
@@ -120,7 +121,23 @@ export default {
       ]
     });
 
+    watch(
+        () => editQuestion.value.type,
+        (newValue, oldValue) => {
+         if(String(newValue).toUpperCase() === "MULTIPLE_CHOICE") {
+           editQuestion.value.choices = [
+             { alternative: 'Option 1', isCorrect: false, questionId:  editQuestion.value.questionId},
+             { alternative: 'Option 2', isCorrect: false, questionId:  editQuestion.value.questionId },
+             { alternative: 'Option 3', isCorrect: false, questionId:  editQuestion.value.questionId },
+             { alternative: 'Option 4', isCorrect: false, questionId:  editQuestion.value.questionId }
+           ]
+         } else {
+           editQuestion.value.choices = null;
+         }
+        }
+    );
     const deleteQuestion = async (question) => {
+      console.log("Question : ", question)
       const index = question_list.value.indexOf(question);
       if (index !== -1) {
         question_list.value.splice(index, 1);
@@ -159,16 +176,26 @@ export default {
           editQuestion.value.answer = '';
         }
       }
-      console.log("qwerqwer", editQuestion.value)
-      store.addQuestion(editQuestion.value);
-      question_list.value.push(editQuestion.value);
+      store.addQuestion(editQuestion.value).then(question => {
+        console.log("adding question: ", question)
+        let lastQuestion = null;
+
+        if (question.questions.length > 0) {
+          const sortedQuestions = question.questions.slice().sort((a, b) => b.questionId - a.questionId);
+          lastQuestion = sortedQuestions[0];
+        }
+        question_list.value.push(lastQuestion);
+      }).catch(error => {
+        console.log("error: ", error)
+      });
+
       console.log(question_list.value)
       addNewQuestion.value = false;
       edit.value = false;
     };
 
     const showEdit = (question) => {
-      console.log(question)
+      console.log("editing question: ", question)
       editQuestion.value = { ...question };
       edit.value = true;
     };
@@ -184,7 +211,12 @@ export default {
       }
 
       try {
-        await store.editQuestion(editQuestion.value);
+        console.log("Edit question: ", editQuestion.value)
+        await store.editQuestion(editQuestion.value).then(editedQuestionDTO => {
+          question_list.value.splice(index, 1, editedQuestionDTO);
+        }).catch(error => {
+          console.log(error)
+        })
         edit.value = false;
       } catch (error) {
         console.error('Error editing question:', error);
@@ -231,6 +263,14 @@ export default {
       //TODO: add questions
     }
 
+    const routeSinglePlayer = () => {
+      router.push('/quiz/singleplayer'); // replace with your actual path
+    };
+
+    const routeMultiPlayer = () => {
+      router.push('/quiz/multiplayer'); // replace with your actual path
+    };
+
     return {
       addNew,
       cancelCreate,
@@ -245,7 +285,9 @@ export default {
       editQuestion,
       addNewQuestion,
       downloadQuiz,
-      importQuestions
+      importQuestions,
+      routeSinglePlayer,
+      routeMultiPlayer
     }
   }
 }
