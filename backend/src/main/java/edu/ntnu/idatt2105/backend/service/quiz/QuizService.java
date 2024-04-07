@@ -8,6 +8,7 @@ import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.category.QuizCategoryLoadMultDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.collaborator.QuizAuthorLoadDTO;
+import edu.ntnu.idatt2105.backend.exception.UnauthorizedException;
 import edu.ntnu.idatt2105.backend.exception.notfound.CategoryNotFoundException;
 import edu.ntnu.idatt2105.backend.mapper.category.CategoryMapper;
 import edu.ntnu.idatt2105.backend.mapper.quiz.QuizAuthorMapper;
@@ -26,8 +27,6 @@ import edu.ntnu.idatt2105.backend.repo.category.CategoryRepository;
 import edu.ntnu.idatt2105.backend.repo.category.QuizCategoryRepository;
 import edu.ntnu.idatt2105.backend.repo.quiz.QuizAuthorRepository;
 import edu.ntnu.idatt2105.backend.repo.quiz.QuizRepository;
-import edu.ntnu.idatt2105.backend.repo.quiz.question.MultipleChoiceRepository;
-import edu.ntnu.idatt2105.backend.repo.quiz.question.QuestionRepository;
 import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
 import edu.ntnu.idatt2105.backend.service.security.AuthenticationService;
 import edu.ntnu.idatt2105.backend.specification.quiz.QuizSpecification;
@@ -62,9 +61,7 @@ public class QuizService {
 
     private final QuizRepository quizRepository;
     private final UserRepository userRepository;
-    private final QuestionRepository questionRepository;
     private final QuizMapper quizMapper;
-    private final MultipleChoiceRepository multipleChoiceRepository;
     private final QuizAuthorRepository quizAuthorRepository;
     private final AuthenticationService authenticationService;
     private final CategoryRepository categoryRepository;
@@ -254,10 +251,12 @@ public class QuizService {
      * @param quizCategoryCreateDTO     The data transfer object for quiz category creation.
      * @return                          A DTO containing the information of the saved quiz category.
      */
-    public QuizCategoryLoadDTO addQuizCategory(QuizCategoryCreateDTO quizCategoryCreateDTO) {
+    public QuizCategoryLoadDTO addQuizCategory(QuizCategoryCreateDTO quizCategoryCreateDTO, String email) {
         LOGGER.info("Attempting to find quiz.");
         Quiz quiz = quizRepository.findById(quizCategoryCreateDTO.quizId())
                 .orElseThrow(() -> new QuizNotFoundException(quizCategoryCreateDTO.quizId().toString()));
+
+        authorizeOwnerOrCollaborator(quizCategoryCreateDTO.quizId(), email);
 
         LOGGER.info("Quiz found. Attempting to find category.");
         Category category = categoryRepository.findById(quizCategoryCreateDTO.categoryId())
@@ -280,7 +279,7 @@ public class QuizService {
      * @param quizCategoryCreateMultDTO     All the categories to save.
      * @return                              All the saved quiz categories as a DTO.
      */
-    public QuizCategoryLoadMultDTO addQuizCategories(QuizCategoryCreateMultDTO quizCategoryCreateMultDTO){
+    public QuizCategoryLoadMultDTO addQuizCategories(QuizCategoryCreateMultDTO quizCategoryCreateMultDTO, String email){
         LOGGER.info("Adding all the quiz categories.");
         Set<QuizCategoryLoadDTO> quizCategoryLoadDTOS = new HashSet<>();
         for(Long categoryId : quizCategoryCreateMultDTO.categoryIds()) {
@@ -288,7 +287,7 @@ public class QuizService {
                     .builder()
                             .categoryId(categoryId)
                             .quizId(quizCategoryCreateMultDTO.quizId())
-                    .build()));
+                    .build(), email));
         }
         LOGGER.info("All quiz categories are saved.");
         return QuizCategoryLoadMultDTO.builder().quizCategories(quizCategoryLoadDTOS).build();
@@ -310,13 +309,15 @@ public class QuizService {
      * This method removes a category from a quiz.
      * @param quizCategoryId   The id of the quiz category.
      */
-    public void removeQuizCategory(Long quizCategoryId) {
-        //TODO: check that the user trying to remove the collaborator can.
+    public void removeQuizCategory(Long quizCategoryId, String email) {
         LOGGER.info("Looking for quiz category.");
         QuizCategory quizCategory = quizCategoryRepository
                 .findById(quizCategoryId)
                 .orElseThrow(() -> new CategoryNotFoundException("QuizCategory Id: " + quizCategoryId));
         LOGGER.info("Quiz category found.");
+
+        authorizeOwnerOrCollaborator(quizCategory.getQuiz().getQuizId(), email);
+
         quizCategoryRepository.delete(quizCategory);
         LOGGER.info("Quiz category removed.");
     }
@@ -334,5 +335,56 @@ public class QuizService {
         LOGGER.info("Quiz found. Looking for collaborators.");
         return quiz.getCollaborators();
     }
+
+
+    /**
+     * This method authorizes a user with owner or collaborator privileges.
+     * @param quizId    The id of the quiz.
+     * @param email     The email of the user.
+     */
+    private void authorizeOwnerOrCollaborator(Long quizId, String email) {
+        LOGGER.info("Checking authorization of " + email);
+        Long userId = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException(email)).getUserId();
+
+        if (!isOwnerOrCollaborator(quizId, userId)) {
+            throw new UnauthorizedException(email);
+        }
+        LOGGER.info("User is authorized.");
+    }
+
+    /**
+     * This method checks whether a user is the owner/admin of a quiz.
+     * @param quizId    The id of the quiz.
+     * @param userId    The id of the user.
+     * @return          Status of whether is owner.
+     */
+    private boolean isOwner(Long quizId, Long userId) {
+        Quiz quiz = quizRepository.findById(quizId)
+                .orElseThrow(() -> new QuizNotFoundException(quizId.toString()));
+        return quiz.getAdmin().getUserId().equals(userId);
+    }
+
+    /**
+     * This method checks whether a user is a collaborator of a quiz.
+     * @param quizId    The id of the quiz.
+     * @param userId    The id of the user.
+     * @return          Status of whether is collaborator.
+     */
+    private boolean isCollaborator(Long quizId, Long userId) {
+        return quizAuthorRepository.findQuizAuthorByQuizQuizIdAndUserUserId(quizId, userId)
+                .isPresent();
+    }
+
+    /**
+     * This method checks whether is a user is either an owner or collaborator of a quiz.
+     * @param quizId    The id of the quiz.
+     * @param userId    The id of the user.
+     * @return          Status whether user is owner or collaborator.
+     */
+    private boolean isOwnerOrCollaborator(Long quizId, Long userId) {
+        return isOwner(quizId, userId) || isCollaborator(quizId, userId);
+    }
+
 
 }
