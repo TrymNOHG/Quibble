@@ -125,7 +125,16 @@ export default {
         () => editQuestion.value.type,
         (newValue, oldValue) => {
           // Logic to handle the change in editQuestion.type
-          console.log('editQuestion type changed from', oldValue, 'to', newValue);
+         if(String(newValue).toUpperCase() === "MULTIPLE_CHOICE") {
+           editQuestion.value.choices = [
+             { alternative: 'Option 1', isCorrect: false, questionId:  editQuestion.value.questionId},
+             { alternative: 'Option 2', isCorrect: false, questionId:  editQuestion.value.questionId },
+             { alternative: 'Option 3', isCorrect: false, questionId:  editQuestion.value.questionId },
+             { alternative: 'Option 4', isCorrect: false, questionId:  editQuestion.value.questionId }
+           ]
+         } else {
+           editQuestion.value.choices = null;
+         }
         }
     );
     const deleteQuestion = async (question) => {
@@ -170,13 +179,13 @@ export default {
       }
       store.addQuestion(editQuestion.value).then(question => {
         console.log("adding question: ", question)
-        // let lastQuestion = null;
-        //
-        // if (question.questions.length > 0) {
-        //   const sortedQuestions = question.questions.slice().sort((a, b) => b.questionId - a.questionId);
-        //   lastQuestion = sortedQuestions[0];
-        // }
-        // question_list.value.push(lastQuestion);
+        let lastQuestion = null;
+
+        if (question.questions.length > 0) {
+          const sortedQuestions = question.questions.slice().sort((a, b) => b.questionId - a.questionId);
+          lastQuestion = sortedQuestions[0];
+        }
+        question_list.value.push(lastQuestion);
       }).catch(error => {
         console.log("error: ", error)
       });
@@ -203,7 +212,12 @@ export default {
       }
 
       try {
-        await store.editQuestion(editQuestion.value);
+        console.log("Edit question: ", editQuestion.value)
+        await store.editQuestion(editQuestion.value).then(editedQuestionDTO => {
+          question_list.value.splice(index, 1, editedQuestionDTO);
+        }).catch(error => {
+          console.log(error)
+        })
         edit.value = false;
       } catch (error) {
         console.error('Error editing question:', error);

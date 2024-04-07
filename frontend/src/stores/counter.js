@@ -188,8 +188,10 @@ export const useQuizStore = defineStore('storeQuiz', {
         "questionId": editedQuestion.questionId,
         "question": editedQuestion.question,
         "type": editedQuestion.type,
-        "choices": editedQuestion.choices
+        "choices": editedQuestion.choices,
+        "answer" : editedQuestion.answer
       }
+
 
       await patchQuestion(editQuestionDTO)
           .then(response => {
@@ -200,6 +202,8 @@ export const useQuizStore = defineStore('storeQuiz', {
           }).catch(error => {
             console.warn("error", error);
           });
+
+      return editQuestionDTO
     },
 
     async addQuestion(newQuestion){
@@ -322,11 +326,7 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
             quizId: null,
             question: "Are you 21 years old?",
             answer: "true",
-            type: "true_false",
-            choices: [
-              {alternative: "true", isCorrect: true},
-              {alternative: "false", isCorrect: false}
-            ]
+            type: "true_false"
           },
           {
             quizId: null,
@@ -441,6 +441,59 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
             console.warn("Error updating quiz:", error);
           });
     },
+    generateTemplate() {
+      return {
+        quizId: null,
+            quizName: "TemplateQuiz",
+            quizDifficulty: "Easy",
+            quizDescription: "Template quiz, change the quiz as wanted",
+            admin_id: null,
+            feedbacks: [],
+            collaborators: [],
+            categories: [],
+            questions: [
+          {
+            quizId: null,
+            question: "What is your question?",
+            answer: "John",
+            type: "multiple_choice",
+            choices: [
+              { alternative: "pencil", isCorrect: false},
+              { alternative: "book", isCorrect: false},
+              { alternative: "John", isCorrect: true},
+              { alternative: "quiz", isCorrect: false}
+            ]
+          },
+          {
+            quizId: null,
+            question: "Are you 21 years old?",
+            answer: "true",
+            type: "true_false",
+            choices: [
+              {alternative: "true", isCorrect: true},
+              {alternative: "false", isCorrect: false}
+            ]
+          },
+          {
+            quizId: null,
+            question: "What is in the center of the Milky Way?",
+            answer: "Black Hole",
+            type: "multiple_choice",
+            choices: [
+              { alternative: "Sun", isCorrect: false },
+              { alternative: "Earth", isCorrect: false },
+              { alternative: "Venus", isCorrect: false },
+              { alternative: "Black Hole", isCorrect: true }
+            ]
+          },
+        ],
+            keywords: [],
+            Image: "https://via.placeholder.com/150",
+      }
+    },
+    resetTemplate() {
+      this.templateQuiz = this.generateTemplate();
+    }
   },
   persist: {
     storage: sessionStorage
