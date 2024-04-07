@@ -143,7 +143,7 @@ public class ImageService {
          */
     @Transactional
     public void saveQuizImage(MultipartFile file, long quizId) throws IOException {
-        createFile(file, "q"+quizId);
+        createFile(file, "Q"+quizId);
     }
 
     /**
@@ -203,7 +203,7 @@ public class ImageService {
     public void setDefaultQuizPic(Long quizId) throws IOException {
         log.info("Setting default quiz picture for quiz " + quizId);
         Files.copy(Paths.get(STORAGE_DIRECTORY+"/default-q"),
-                Paths.get(STORAGE_DIRECTORY+"/q"+quizId),
+                Paths.get(STORAGE_DIRECTORY+"/Q"+quizId),
                 StandardCopyOption.REPLACE_EXISTING);
     }
 
