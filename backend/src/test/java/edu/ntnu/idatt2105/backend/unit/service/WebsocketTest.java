@@ -39,6 +39,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
@@ -72,8 +73,7 @@ public class WebsocketTest {
     private JWTTokenGenerationService jwtTokenGenerationService;
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private ImageService imageService;
+
     @Autowired
     private QuizRepository quizRepository;
     @Autowired
@@ -85,6 +85,8 @@ public class WebsocketTest {
     @Autowired
     private QuizHistoryService quizHistoryService;
 
+    @MockBean
+    private ImageService imageService;
     @MockBean
     private SocketIOServer server;
     @MockBean
@@ -106,7 +108,7 @@ public class WebsocketTest {
     // This took way to long haha
     @BeforeEach
     @Transactional
-    public void setUp() {
+    public void setUp() throws IOException {
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken("test@test.test", null, Collections.emptyList());
         SecurityContext securityContext = SecurityContextHolder.createEmptyContext();

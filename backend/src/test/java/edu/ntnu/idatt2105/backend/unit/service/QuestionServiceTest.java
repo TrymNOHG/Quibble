@@ -8,6 +8,7 @@ import edu.ntnu.idatt2105.backend.dto.quiz.question.QuestionEditDTO;
 import edu.ntnu.idatt2105.backend.model.quiz.question.QuestionType;
 import edu.ntnu.idatt2105.backend.model.users.User;
 import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
+import edu.ntnu.idatt2105.backend.service.images.ImageService;
 import edu.ntnu.idatt2105.backend.service.quiz.QuestionService;
 import edu.ntnu.idatt2105.backend.service.quiz.QuizService;
 import jakarta.transaction.Transactional;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,6 +26,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -44,14 +47,13 @@ class QuestionServiceTest {
     @Autowired
     private QuestionService questionService;
 
+    @MockBean
+    private ImageService imageService;
+
 
     @BeforeEach
     public void setUp() {
-        UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken("test@test.test", null, Collections.emptyList());
-        SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
-        securityContext.setAuthentication(authentication);
-        SecurityContextHolder.setContext(securityContext);
+
 
         userRepository.save(
                 User.builder()
@@ -64,7 +66,7 @@ class QuestionServiceTest {
 
     @Test
     @Transactional
-    void Create_question_test() {
+    void Create_question_test() throws IOException {
         QuizLoadDTO quizLoadDTO = quizService.createQuiz("test quiz", "test@test.test");
         questionService.addQuestion(QuestionCreateDTO.builder()
                 .question("test question")
@@ -77,7 +79,7 @@ class QuestionServiceTest {
     }
 
     @Test
-    void Get_question_dto_test() {
+    void Get_question_dto_test() throws IOException {
         QuizLoadDTO quizLoadDTO = quizService.createQuiz("test quiz", "test@test.test");
         quizLoadDTO = questionService.addQuestion(QuestionCreateDTO.builder()
                 .question("test question")
@@ -92,7 +94,7 @@ class QuestionServiceTest {
     }
 
     @Test
-    void Edit_question_test() {
+    void Edit_question_test() throws IOException {
         QuizLoadDTO quizLoadDTO = quizService.createQuiz("test quiz", "test@test.test");
         quizLoadDTO = questionService.addQuestion(QuestionCreateDTO.builder()
                 .question("test question")
@@ -115,7 +117,7 @@ class QuestionServiceTest {
     }
 
     @Test
-    void Delete_question_test() {
+    void Delete_question_test() throws IOException {
         quizService.createQuiz("test quiz", "test@test.test");
         questionService.addQuestion(QuestionCreateDTO.builder()
                 .question("test question")
@@ -128,7 +130,7 @@ class QuestionServiceTest {
     }
 
     @Test
-    void Add_multiple_choice_question_test() {
+    void Add_multiple_choice_question_test() throws IOException {
         quizService.createQuiz("test quiz", "test@test.test");
         questionService.addQuestion(QuestionCreateDTO.builder()
                 .question("test question")

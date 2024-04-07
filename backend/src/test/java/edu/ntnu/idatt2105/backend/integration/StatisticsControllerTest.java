@@ -5,6 +5,7 @@ import edu.ntnu.idatt2105.backend.dto.quiz.history.QuizHistoryLoadAllDTO;
 import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
 import edu.ntnu.idatt2105.backend.model.users.User;
 import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
+import edu.ntnu.idatt2105.backend.service.images.ImageService;
 import edu.ntnu.idatt2105.backend.service.quiz.QuizHistoryService;
 import edu.ntnu.idatt2105.backend.service.quiz.QuizService;
 import edu.ntnu.idatt2105.backend.service.security.JWTTokenGenerationService;
@@ -12,10 +13,12 @@ import edu.ntnu.idatt2105.backend.util.Player;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
@@ -24,6 +27,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -52,12 +56,14 @@ public class StatisticsControllerTest {
     private QuizService quizService;
     @Autowired
     private QuizHistoryService quizHistoryService;
+    @MockBean
+    private ImageService imageService;
 
     private String jwt;
 
     @Transactional
     @BeforeEach
-    void setUp() {
+    void setUp() throws IOException {
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken("test@test.test", null, Collections.emptyList());
         SecurityContext securityContext = SecurityContextHolder.createEmptyContext();

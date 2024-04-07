@@ -27,8 +27,9 @@ import java.util.logging.Logger;
 /**
  * Filter that checks if the request has a valid JWT token.
  *
- * @version 1.1 29.03.2024
+ * @version 1.2 31.03.2024
  * @author Brage Halvorsen Kvamme
+ * @author Trym Hamer Gudvangen
  */
 @RequiredArgsConstructor
 public class JWTFilterChain extends OncePerRequestFilter {

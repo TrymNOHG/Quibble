@@ -32,6 +32,7 @@ import edu.ntnu.idatt2105.backend.repo.quiz.QuizAuthorRepository;
 import edu.ntnu.idatt2105.backend.repo.quiz.QuizKeywordRepository;
 import edu.ntnu.idatt2105.backend.repo.quiz.QuizRepository;
 import edu.ntnu.idatt2105.backend.repo.users.UserRepository;
+import edu.ntnu.idatt2105.backend.service.images.ImageService;
 import edu.ntnu.idatt2105.backend.service.security.AuthenticationService;
 import edu.ntnu.idatt2105.backend.specification.quiz.QuizSpecification;
 import jakarta.transaction.Transactional;
@@ -45,6 +46,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -71,6 +73,7 @@ public class QuizService {
     private final AuthenticationService authenticationService;
     private final CategoryRepository categoryRepository;
     private final QuizCategoryRepository quizCategoryRepository;
+    private final ImageService imageService;
 
     public Quiz getQuizById(long quizId) {
         return quizRepository.findById(quizId)
@@ -99,7 +102,7 @@ public class QuizService {
 
 
     @Transactional
-    public QuizLoadDTO createQuiz(String quizName, String adminEmail) {
+    public QuizLoadDTO createQuiz(String quizName, String adminEmail) throws IOException {
         User admin = userRepository.findByEmail(adminEmail)
                 .orElseThrow(() -> new IllegalArgumentException("User with email " + adminEmail + " not found"));
         authenticationService.verifyUserId(admin.getUserId());
@@ -109,6 +112,7 @@ public class QuizService {
                 .difficulty(Difficulty.EASY)
                 .build();
         quiz = quizRepository.save(quiz);
+        imageService.setDefaultQuizPic(quiz.getQuizId());
         return QuizLoadDTO.builder()
                 .quizId(quiz.getQuizId())
                 .quizName(quiz.getQuizName())
