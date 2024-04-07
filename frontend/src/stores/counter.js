@@ -3,7 +3,7 @@ import {
   fetchUserByUsername,
   getUser
 } from "@/services/UserService.js";
-import {createQuizImage} from "@/services/ImageService.js";
+import {saveFile} from "@/services/ImageService.js";
 import {getPictureFromID} from "@/services/ImageService.js";
 
 import {
@@ -373,11 +373,11 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
         "quizId" : createdQuiz.quizId,
         "quizImage": this.templateQuiz.Image
       }
-      await createQuizImage(imgDTO)
+      await saveFile(imgDTO)
           .then(response => {
             console.log(response)
           }).catch(error => {
-            console.warn("Error creating quiz:", error);
+            console.warn("Error saving img:", error);
           });
 
       const addQuestionPromises = [];

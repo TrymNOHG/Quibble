@@ -53,12 +53,6 @@
           @click="deleteQuiz()">
         {{ $t('buttons.DELETE_QUIZ') }}
       </button>
-      <button
-          class="btn"
-          v-if="!isAuthor & !isEditor"
-          @click="addToMyquiz()">
-        Add to MyQuiz
-      </button>
       <div id="download_div">
         <font-awesome-icon
             id="download"

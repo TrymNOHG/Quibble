@@ -27,7 +27,8 @@ public interface IImageController {
         )
         ResponseEntity<String> saveFile(
                 @RequestParam("quizId") Long quizId,
-                @RequestParam(name = "image", required = false) MultipartFile imageFile,
+                @RequestParam(name = "image", required = false)
+                MultipartFile imageFile,
                 @NonNull Authentication authentication
         ) throws IOException;
 
