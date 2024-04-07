@@ -48,7 +48,13 @@ public class FeedbackController implements IFeedbackController {
     }
 
     @Override
-    public ResponseEntity<QuizFeedbackLoadAllDTO> getFeedbacks(@PathVariable @NonNull Long quizId, @NonNull Authentication authentication) {
+    public ResponseEntity<QuizFeedbackLoadAllDTO> getFeedbacks(@PathVariable @NonNull Long quizId,
+                                                               @NonNull Authentication authentication) {
         return new ResponseEntity<>(feedbackService.getFeedbacks(quizId), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<QuizFeedbackLoadAllDTO> getOwnFeedback(@NonNull Authentication authentication) {
+        return new ResponseEntity<>(feedbackService.getOwnFeedback(authentication), HttpStatus.OK);
     }
 }

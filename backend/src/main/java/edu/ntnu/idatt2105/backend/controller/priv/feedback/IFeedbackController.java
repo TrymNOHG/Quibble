@@ -1,5 +1,6 @@
 package edu.ntnu.idatt2105.backend.controller.priv.feedback;
 
+import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadAllDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.QuizLoadDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.feedback.QuizFeedbackDTO;
 import edu.ntnu.idatt2105.backend.dto.quiz.feedback.QuizFeedbackLoadAllDTO;
@@ -118,4 +119,21 @@ public interface IFeedbackController {
     )
     ResponseEntity<QuizFeedbackLoadAllDTO> getFeedbacks(@PathVariable @NonNull Long quizId,
                                                         @NonNull Authentication authentication);
+
+    @GetMapping(
+            value="/get",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @Operation(summary = "This method gets the feedback for a quiz. Return only your own feedbacks.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful retrieval of feedback.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = QuizFeedback.class)) }),
+            @ApiResponse(responseCode = "403", description = "Unauthorized retrieval of feedback.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = QuizFeedback.class)) })
+    }
+    )
+    ResponseEntity<QuizFeedbackLoadAllDTO> getOwnFeedback(@NonNull Authentication authentication);
 }
