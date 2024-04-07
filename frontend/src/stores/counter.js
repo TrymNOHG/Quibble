@@ -348,11 +348,11 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
   },
 
   actions: {
-    async createQuiz(questions) {
+    async createQuiz(quiz) {
       let createdQuiz = null;
-      this.templateQuiz.questions = questions.value;
+      this.templateQuiz.questions = quiz.questions;
 
-      await createQuiz(this.templateQuiz.quizName)
+      await createQuiz(quiz.quizName)
           .then(response => {
             createdQuiz = response;
             this.templateQuiz.quizId = response.quizId
@@ -363,13 +363,13 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
       const quizUpdateDTO = {
         "quizId": this.templateQuiz.quizId,
         "newName": createdQuiz.quizName,
-        "newDescription": this.templateQuiz.quizDescription,
-        "difficulty": this.templateQuiz.quizDifficulty.toUpperCase(),
+        "newDescription": quiz.quizDescription,
+        "difficulty": quiz.quizDifficulty.toUpperCase(),
       };
 
       const imgDTO = {
         "quizId" : createdQuiz.quizId,
-        "quizImage": this.templateQuiz.Image
+        "quizImage": quiz.Image
       }
       await saveFile(imgDTO)
           .then(response => {
@@ -397,24 +397,13 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
             console.warn("Error adding questions:", error);
           });
 
-      const addKeywordPromises = [];
-      this.templateQuiz.keywords.forEach(keyword => {
-        console.log(keyword)
-        const keywordDTO = {
-          "quizId": this.templateQuiz.quizId,
-          "keywordName": keyword
-        };
-        //TODO: her lages det keywords. Dette funker ikke trym
-        addKeywordPromises.push(addKeyword(keywordDTO));
-      });
-      this.templateQuiz.keywords = [];
+      const keywordsDTO = {
+        "quizId": quiz.quizId,
+        "keywords": quiz.keywords
+      };
+      await addKeyword(keywordsDTO);
 
-      await Promise.all(addKeywordPromises)
-          .then(responses => {
-            console.log("Keywords added:", responses);
-          }).catch(error => {
-            console.warn("Error adding keywords:", error);
-          });
+      this.templateQuiz.keywords = [];
 
       const addCategoryPromises = [];
       this.templateQuiz.categories.forEach(category => {
