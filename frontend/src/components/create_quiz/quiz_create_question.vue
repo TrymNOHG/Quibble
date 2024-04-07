@@ -196,7 +196,6 @@ export default {
 
     const uploadQuiz = async (file) => {
       try{
-        console.log("Uploading Quiz")
         let quizCreateDTO = await createQuizCreateDTOFromCSV(file)
         for (let quest of quizCreateDTO.questions) {
           newQuestion.value = {
@@ -210,8 +209,6 @@ export default {
           addNewQuestion.value = true;
           await createQuestion()
         }
-        //TODO: change all values currently being display
-        console.log(quizCreateDTO)
       } catch (error) {
         console.log(error)
       }
@@ -257,9 +254,6 @@ export default {
       this.selectedQuestions = [];
       const childComponents = this.$refs.questionItems;
       console.log(childComponents)
-      // for(let comp in childComponents) {
-      //   comp.deselect("deselect");
-      // }
     }
   }
 };

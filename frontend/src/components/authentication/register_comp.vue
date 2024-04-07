@@ -68,6 +68,9 @@ URL = {https://github.com/tomasbera/SmartMat/blob/main/frontend/src/components/A
         <div v-if="errors && errors['conf_password']" class="error-message">
           {{ errors["conf_password"] }}
         </div>
+        <p>
+          {{submitMessage}}
+        </p>
         <basic_button
             class="submit_button"
             @click="submit"

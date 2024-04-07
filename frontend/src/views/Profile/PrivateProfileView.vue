@@ -65,10 +65,7 @@ export default {
       userUpdateDTO.append('profilePicture', file);
       updateUser(userUpdateDTO).then(r => {
         useUserStore().fetchUserData()
-      }).catch(e => {
-        //TODO: handle error.
-      });
-
+      }).catch(e => {});
     },
 
     getPictureURL() {
@@ -78,12 +75,11 @@ export default {
 
     handleDeletePicture(pictureUrl) {
       console.log("Deleting picture:", pictureUrl);
-      // Implement your logic here to delete the profile picture
     },
 
     handleToggleEdit(editState) {
       console.log("Toggling edit state to:", editState);
-      this.isEditing = editState; // Ensure this line is correctly updating the isEditing state
+      this.isEditing = editState;
     },
 
     handleUpdateShowActivity(showActivity) {
@@ -94,9 +90,7 @@ export default {
       }
       updateUser(userUpdateDTO).then(r => {
         useUserStore().setShowActivity(showActivity)
-      }).catch(e => {
-        //TODO: handle error.
-      });
+      }).catch(e => {});
     },
 
     handleUpdateShowFeedbackOnProfile(showFeedback) {
@@ -107,9 +101,7 @@ export default {
       }
       updateUser(userUpdateDTO).then(r => {
         useUserStore().setShowFeedback(showFeedback)
-      }).catch(e => {
-        //TODO: handle error.
-      });
+      }).catch(e => {});
     },
   },
 };

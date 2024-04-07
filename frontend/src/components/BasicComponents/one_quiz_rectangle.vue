@@ -47,7 +47,6 @@ export default {
 
     const getPictureURL = () => {
       const id =`Q${props.quiz.quizId}`
-      console.log(getPictureFromID(id))
       return getPictureFromID(id);
     }
 

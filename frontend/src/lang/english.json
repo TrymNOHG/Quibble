@@ -84,6 +84,7 @@
   },
 
   "new_question": {
+    "edit": "Selected Question",
     "title": "New Question",
     "question_label": "Question Name",
     "type_label": "Question Type",

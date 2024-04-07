@@ -2,7 +2,7 @@
   <div class="modal-overlay" v-if="addNewQuestion || edit">
     <div class="popup">
       <div class="popup-content">
-        <h2>{{ $t('new_question.title') }}</h2>
+        <h2>{{ $t('new_question.edit') }}</h2>
         <div class="popup_input">
           <label for="question">{{ $t('new_question.question_label') }}:</label>
           <input class="input" type="text" v-model="editQuestion.question" id="question">
@@ -106,7 +106,6 @@ export default {
     const addNewQuestion = ref(false);
     const edit = ref(false);
     let question_list = ref(store.currentQuiz.questions);
-    console.log("questionList", question_list)
 
     const editQuestion = ref({
       quizId: null,
@@ -125,7 +124,6 @@ export default {
     watch(
         () => editQuestion.value.type,
         (newValue, oldValue) => {
-          console.log(oldValue)
           if(String(newValue).toUpperCase() === "MULTIPLE_CHOICE") {
             if (editQuestion.value.choices && editQuestion.value.choices.length !== 0) {
               return;
@@ -143,7 +141,6 @@ export default {
     );
 
     const deleteQuestion = async (question) => {
-      console.log("Question : ", question)
       const index = question_list.value.indexOf(question);
       if (index !== -1) {
         question_list.value.splice(index, 1);
@@ -183,7 +180,6 @@ export default {
         }
       }
       store.addQuestion(editQuestion.value).then(question => {
-        console.log("adding question: ", question)
         let lastQuestion = null;
 
         if (question.questions.length > 0) {
@@ -240,7 +236,6 @@ export default {
     };
 
     const downloadQuiz = () => {
-      console.log("Qwer")
       downloadQuizCSV(store.currentQuiz, store.currentQuiz.quizName)
     }
 
@@ -259,7 +254,6 @@ export default {
         addNewQuestion.value = true;
         await createQuestion()
       }
-      //TODO: add questions
     }
 
     const routeSinglePlayer = () => {
