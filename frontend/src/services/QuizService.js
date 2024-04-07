@@ -187,20 +187,6 @@ export const addCategories = async (categoriesDTO) => {
     }
 };
 
-export const deleteCategory = async (quizCategoryId, quizId) => {
-    try {
-        const response = await axios.delete(`${BASE_URL_PRIV}/delete/category/${quizCategoryId}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${await sessionToken()}`,
-                }
-            });
-        return response.data;
-    } catch (error) {
-        throw error.response ? error.response.data : error.message;
-    }
-};
-
 export const addKeyword = async (keywordDTO) => {
     try {
         const response = await axios.post(`${BASE_URL_PRIV}/create/keywords`,
