@@ -59,7 +59,14 @@ public class AuthenticationController implements IAuthenticationController {
                 userRegisterDTO, httpServletResponse, imageFile
         );
         logger.info("Sign-up Process Completed.");
-        return ResponseEntity.ok(authenticationResponseDTO);
+        return ResponseEntity.ok().header("Access-Control-Allow-Credentials", "true")
+                .header("Access-Control-Allow-Origin", "http://localhost:5173")
+                .body(authenticationResponseDTO);
+    }
+
+    @Override
+    public ResponseEntity<AuthenticationResponseDTO> signup(Long userId, HttpServletResponse httpServletResponse) {
+        return ResponseEntity.ok(null);
     }
 
     @Override

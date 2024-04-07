@@ -6,7 +6,9 @@ import io.swagger.annotations.ApiResponses;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -70,7 +72,10 @@ public interface IAuthenticationController {
             description = """
                     Registers a new user and returns the access and refresh tokens. The access token is returned in the response body, and the refresh token is returned as a cookie. Provide user registration details in the request body.
                     """)
-    @PostMapping(value = "/signup", consumes = {"multipart/form-data"})
+    @PostMapping(value = "/signup",
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
     ResponseEntity<AuthenticationResponseDTO> signup(
             @RequestParam("username") String username,
             @RequestParam("password") String password,
@@ -78,6 +83,20 @@ public interface IAuthenticationController {
             @RequestParam(name = "image", required = false) MultipartFile imageFile,
             HttpServletResponse httpServletResponse
     ) throws IOException;
+
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "User registered successfully"),
+            @ApiResponse(code = 400, message = "Bad Request"),
+    })
+    @Operation(summary = "Register a new user",
+            description = """
+                    Registers a new user and returns the access and refresh tokens. The access token is returned in the response body, and the refresh token is returned as a cookie. Provide user registration details in the request body.
+                    """)
+    @GetMapping(value = "/signup")
+    ResponseEntity<AuthenticationResponseDTO> signup(
+            @Nullable Long userId,
+            HttpServletResponse httpServletResponse
+    );
 
     /**
      * Endpoint for refreshing the access token. This endpoint returns a new access token.

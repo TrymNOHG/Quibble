@@ -103,6 +103,4 @@ public interface IQuizController {
     ResponseEntity<Page<QuizLoadDTO>> getQuizzes(@RequestBody @NonNull QuizFilterDTO quizFilterDTO);
 
 
-
-
 }
