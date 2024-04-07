@@ -1,10 +1,10 @@
 <template>
   <div class="game-host">
-    <h1>{{quizName}}</h1> <!todo quiz name>
+    <h1>{{ quizName }}</h1> <!-- Adjusted todo: quiz name -->
 
-    <basic_button class="large-button" v-if="!gameStarted && !gameCode" @click="createGame" :button_text="$t('createGame')"></basic_button>
-    <p v-else> Game Code: {{ gameCode }}</p>
-    <basic_button class="large-button" v-if="gameCode && !gameStarted" @click="startGame":button_text="$t('startGame')"></basic_button>
+    <basic_button class="large-button" v-if="!gameStarted && !gameCode" @click="createGame" :button_text="createGameText"></basic_button>
+    <p v-else> {{ gameCodeText }}: {{ gameCode }}</p>
+    <basic_button class="large-button" v-if="gameCode && !gameStarted" @click="startGame" :button_text="startGameText"></basic_button>
 
     <!-- Show current question or game code -->
     <scoreComponent
@@ -13,7 +13,6 @@
         :gameEnded="gameEnded"
         @countdownEnded="handleScoreDone"
     />
-
 
     <div v-else-if="gameStarted && currentQuestion">
       <PreviewQuestion
@@ -45,12 +44,13 @@
       />
     </div>
     <!-- Show player list -->
-    <playerPreviewComponent :players="players" v-if="players.length > 0 && !gameStarted" />
+    <playerPreviewComponent :players="players" v-if="playerlength > 0 && !gameStarted" />
   </div>
 </template>
 
+
 <script>
-import {ref, onMounted, onUnmounted, onBeforeUnmount} from 'vue';
+import {ref, onMounted, onUnmounted, onBeforeUnmount, computed} from 'vue';
 import gameService from "@/services/GameService.js";
 import sessionToken from "@/features/SessionToken.js";
 import PreviewQuestion from "@/components/QuizPlaing/PreviewQuestion.vue";
@@ -62,6 +62,7 @@ import playerPreviewComponent from "@/components/QuizPlaing/playerPreviewCompone
 import {useQuizStore} from "@/stores/counter.js";
 import router from "@/router/index.js";
 import TruthOrFalseComponent from "@/components/QuizPlaing/TruthOrFalseComponent.vue";
+import {useI18n} from "vue-i18n";
 
 
 
@@ -76,7 +77,7 @@ export default {
     TruthOrFalseComponent
   },
   setup() {
-    const quizName = ref("Quiz Name"); // todo get quiz name
+    const quizName = ref("Quiz Name");
     const gameCode = ref(null);
     const gameStarted = ref(false);
     const gameEnded = ref(false);
@@ -88,6 +89,13 @@ export default {
     const scores = ref([]);
     const quizId = ref(null)// Holds the scores to be displayed
     const store = useQuizStore();
+    const {t} = useI18n();
+
+    const createGameText = computed(() => t('createGame'));
+    const gameCodeText = computed(() => t('gameCode'));
+    const startGameText = computed(() => t('startGame'));
+    const playerlength = computed(() => players.length);
+
 
 
     if (!store.currentQuiz) {
@@ -237,7 +245,11 @@ export default {
         scores,
         handleScoreDone,
         gameEnded,
-        quizName
+        quizName,
+        createGameText,
+        gameCodeText,
+        startGameText,
+        playerlength
       };
     }
 };

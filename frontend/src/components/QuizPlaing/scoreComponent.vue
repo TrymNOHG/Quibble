@@ -1,8 +1,7 @@
 <template>
   <div class="score-container">
-    <h2>Player Scores</h2>
-    <!-- Countdown Timer Display -->
-    <div v-if="!gameEnded" class="countdown-timer">Time left: {{ countdown }}</div>
+    <h2>{{ playerScoresTitle }}</h2>    <!-- Countdown Timer Display -->
+    <div v-if="!gameEnded" class="countdown-timer">{{timetranslation}} {{ countdown }}</div>
     <div v-else class="fireworks">
       <div class="firework"></div>
       <div class="firework"></div>
@@ -21,6 +20,8 @@
 
 <script>
 import {getPictureFromID} from "@/services/ImageService.js";
+import {useI18n} from "vue-i18n";
+import {computed} from "vue";
 
 
 export default {
@@ -55,7 +56,16 @@ export default {
       this.startCountdown();
     }
   },
+  setup() {
+    const {t} = useI18n();
 
+    const playerScoresTitle = computed(() => t('quiz_client.playerScores'));
+    const timetranslation = computed(() => t('quiz_client.timeLeft'));
+    return {t,
+    playerScoresTitle,
+    timetranslation,
+    };
+  },
 }
 </script>
 

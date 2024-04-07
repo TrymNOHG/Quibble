@@ -12,7 +12,9 @@
     "USERNAME": "Username",
     "PASSWORD": "Password",
     "SEARCH": "Search ...",
-    "CONFIRM_PASSWORD": "Confirm Password"
+    "CONFIRM_PASSWORD": "Confirm Password",
+    "NAME": "Name",
+    "SUBMIT": "Submit"
   },
   "buttons": {
     "ONE_PLAYER": "One Player",
@@ -94,6 +96,48 @@
     "cancel_button": "Cancel",
     "create_quiz_button": "Create Quiz",
     "edit_button": "Edit"
-  }
+  },
+
+  "quiz_client": {
+    "select_avatar": "Select Your Avatar",
+    "enter_name" : "Please enter your name to join the game:",
+    "join_game": "Join Game",
+    "feedback_title": "Feedback",
+    "feedback_rating": "Rating",
+    "feedback_text": "Your Feedback",
+    "submit_feedback": "Submit Feedback",
+    "game_joined": "Game has been joined. Get ready!",
+    "game_ended" : "The game has ended. Your final score is",
+    "waiting_for_question" : "Waiting for the next question... stay tuned!",
+    "waiting_for_answer" : "Waiting for the answer to be revealed...",
+    "correct_answer": "You answered correctly! \uD83C\uDF89",
+    "incorrect_answer" : "You answered incorrectly. \uD83D\uDE1E",
+    "your_score" : "Your total score: ",
+    "player_preview" : "Players Joined:",
+    "questionPreview" : "Question Preview",
+    "answerIn" : "seconds left to preview the question.",
+    "playerScores" : "Player Scores",
+    "timeUp": "The time is up! The correct answer was: ",
+    "incorrect_answer2": "Wrong! The correct answer is:",
+    "answer" : "The correct answer is: ",
+    "timeLeft" : "Time left: "
+  },
+
+  "single_player": {
+    "gameOver" : "Game Over!",
+    "finalScore" : "Your Final Score:",
+    "feedbackTitle" : "Your feedback is appreciated!",
+    "feedback_text": "Your Feedback:"
+  },
+
+  "true_false": {
+    "true": "True",
+    "false": "False"
+  },
+
+  "gameCode" : "Game Code",
+  "startGame" : "Start Game",
+  "createGame" : "Create Game"
+
 }
 

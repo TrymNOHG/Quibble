@@ -11,9 +11,9 @@
 
     <!-- Input for Short Answer -->
     <!-- Include multiplayer check to potentially hide input in client view mode -->
-    <div v-if="isSinglePlayer || isMultiplayerClient" class="answer-input-container">
-      <input v-model="userAnswer" type="text" placeholder="Type your answer here" :disabled="showAnswersProp"/>
-      <button @click="submitAnswer" :disabled="showAnswersProp">Submit</button>
+    <div v-if="(isSinglePlayer || isMultiplayerClient) && !showAnswersProp " class="answer-input-container">
+      <input v-model="userAnswer" type="text" :placeholder="t('new_question.answer_label')" :disabled="showAnswersProp"/>
+      <button @click="submitAnswer" :disabled="showAnswersProp">{{submitButtonLabel}}</button>
     </div>
 
 
@@ -27,8 +27,7 @@
 
 
     <div v-if="!isSinglePlayer && showAnswersProp" class="multiplayer-feedback-container">
-      <div class="multiplayer-feedback">
-        The correct answer is: <strong>{{ question.answer }}</strong>. <br>
+      <div class="multiplayer-feedback"> {{multiplayerFeedbackMessage}}:<strong>{{ question.answer }}</strong>. <br>
       </div>
     </div>
   </div>
@@ -36,7 +35,11 @@
 
 
 <script>
-import {ref, watch, onMounted, onUnmounted} from 'vue';
+import {ref, watch, onMounted, onUnmounted, computed} from 'vue';
+import correctSoundFile from "@/assets/sound/correct.mp3";
+import wrongSoundFile from "@/assets/sound/wrong.mp3";
+import timerSoundFile from "@/assets/sound/timer.mp3";
+import {useI18n} from "vue-i18n";
 
 export default {
   props: {
@@ -66,9 +69,28 @@ export default {
     const progressBarWidth = ref(100);
     const timer = ref(null);
 
+
+    const {t} = useI18n();
+
+    const answerPlaceholder = computed(() => t('new_question.answer_label'));
+    const submitButtonLabel = computed(() => t('placeholders.SUBMIT'));
+    const multiplayerFeedbackMessage = computed(() => t('quiz_client.answer'));
+
+    const correctSound = new Audio(correctSoundFile);
+    const wrongSound = new Audio(wrongSoundFile);
+    const timerSound = new Audio(timerSoundFile);
+
+    // ...existing setup logic
+
+    const playSound = (sound) => {
+      sound.currentTime = 0; // Reset the sound to start
+      sound.play()
+    };
+
     // Start the timer when the component is mounted
     onMounted(() => {
       startTimer();
+      if (!props.isMultiplayerClient) playSound(timerSound);
     });
 
     // Clean up the timer when the component is unmounted
@@ -77,6 +99,7 @@ export default {
     });
 
     watch(() => props.showAnswersProp, (newValue) => {
+      if (newValue)
       stopTimer()
       emit('timerDone');
     });
@@ -95,14 +118,17 @@ export default {
 
     const stopTimer = () => {
       clearInterval(timer.value);
+      timerSound.pause();
     };
 
     const handleTimeOut = () => {
       stopTimer();
       // Handle what happens when the timer runs out
       showFeedback.value = true;
-      feedbackMessage.value = `Time's up! The correct answer was: ${props.question.answer}`;
+      feedbackMessage.value = `${t('quiz_client.timeUp')} ${props.question.answer}.`;
+      //add tranlation on the line above: feedbackMessage.value = t('quiz_client.timeUp', {answer: props.question.answer});
       isAnswerCorrect.value = false;
+      playSound(wrongSound);
       emit('timerDone');
     };
 
@@ -116,10 +142,17 @@ export default {
       if (props.isSinglePlayer) {
         const answerCorrect = userAnswer.value.toLowerCase() === props.question.answer.toLowerCase();
         isAnswerCorrect.value = answerCorrect;
-        feedbackMessage.value = answerCorrect ? "Correct! 🎉" : `Incorrect! The correct answer is: ${props.question.answer}`;
-
+        feedbackMessage.value = t('quiz_client.correct_answer');
+        if (!answerCorrect) {
+          feedbackMessage.value = `${t('quiz_client.incorrect_answer2')} ${props.question.answer}.`;
+        }
         // Emit the result along with the time left if it's not a multiplayer client view
         if (!props.isMultiplayerClient) {
+          if (answerCorrect) {
+            playSound(correctSound);
+          } else {
+            playSound(wrongSound);
+          }
           emit('answerSelected', answerCorrect, timeLeft.value);
         }
       } else {
@@ -135,7 +168,11 @@ export default {
       isAnswerCorrect,
       feedbackMessage,
       submitAnswer,
-      progressBarWidth // Expose progressBarWidth to the template
+      progressBarWidth,
+      t,
+      answerPlaceholder,
+      submitButtonLabel,
+      multiplayerFeedbackMessage
     };
   }
 };

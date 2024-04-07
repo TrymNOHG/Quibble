@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginView from "@/views/LoginView.vue";
 import RegisterView from "@/views/RegisterView.vue";
-import TheWelcomeComponent from "@/components/TheWelcomeComponent.vue";
+//import TheWelcomeComponent from "@/components/TheWelcomeComponent.vue";
+const TheWelcomeComponent = () => import("@/components/TheWelcomeComponent.vue");
 import HomePageView from "@/views/HomePageView.vue";
 import CurrentQuizView from "@/views/CurrentQuizView.vue";
 import {useUserStore} from "@/stores/counter.js";

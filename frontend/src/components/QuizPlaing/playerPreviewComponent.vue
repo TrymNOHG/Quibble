@@ -1,6 +1,6 @@
 <template>
   <div class="players-container">
-    <h2>Players Joined</h2>
+    <h2>{{ playerPreviewTitle }}</h2>
     <div class="player-grid">
       <div v-for="player in players" :key="player.username" class="player-card">
         <img :src="getPictureURL(player.profilePicture)" class="player-avatar" alt="Player Profile" />
@@ -10,8 +10,11 @@
   </div>
 </template>
 
+
 <script>
 import { getPictureFromID } from "@/services/ImageService.js";
+import {useI18n} from "vue-i18n";
+import {computed} from "vue";
 
 export default {
   props: {
@@ -21,6 +24,14 @@ export default {
     getPictureURL(id) {
       return getPictureFromID(id);
     },
+  },
+  setup() {
+    const {t} = useI18n();
+    const playerPreviewTitle = computed(() => t('quiz_playing.player_preview'));
+    return {t,
+      playerPreviewTitle
+
+    };
   },
 };
 </script>

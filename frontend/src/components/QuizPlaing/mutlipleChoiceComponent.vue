@@ -31,6 +31,9 @@
 
 <script>
 import {ref, watch, onMounted, onUnmounted} from 'vue';
+import correctSoundFile from "@/assets/sound/correct.mp3"
+import wrongSoundFile from "@/assets/sound/wrong.mp3"
+import timerSoundFile from "@/assets/sound/timer.mp3"
 
 export default {
   props: {
@@ -64,13 +67,16 @@ export default {
       emit('timerDone');
     });
 
-    const correctSound = new Audio("src/assets/sound/correct.mp3");
-    const wrongSound = new Audio("src/assets/sound/wrong.mp3");
-    const timerSound = new Audio("src/assets/sound/timer.mp3");
+
+
+
+    const correctSound = new Audio(correctSoundFile);
+    const wrongSound = new Audio(wrongSoundFile);
+    const timerSound = new Audio(timerSoundFile);
 
     const playTimerSound = () => {
       timerSound.currentTime = 0;
-      timerSound.play().catch((e) => console.error('Error playing sound:', e));
+      timerSound.play()
     };
 
     const stopTimer = () => {
@@ -92,10 +98,11 @@ export default {
 
     const handleTimeOut = () => {
       stopTimer();
-      //wrongSound.currentTime = 0; // Ensure the sound starts from the beginning
-      //wrongSound.play().catch((e) => console.error('Error playing sound:', e));
-      //showAnswers.value = true;
-      emit('timerDone'); // Emitting an event for the parent component
+      wrongSound.currentTime = 0; // Ensure the sound starts from the beginning
+      wrongSound.play()
+      showAnswers.value = true;
+      emit('timerDone');
+      console.log("ligma")// Emitting an event for the parent component
     };
 
 
@@ -114,10 +121,10 @@ export default {
         return;
       }
       if (choice.isCorrect) {
-        correctSound.play().catch((e) => console.error('Error playing sound:', e));
+        correctSound.play()
         emit('answerSelected', true, timeLeft.value);
       } else {
-        wrongSound.play().catch((e) => console.error('Error playing sound:', e));
+        wrongSound.play()
         emit('answerSelected', false, timeLeft.value);
       }
     };
@@ -137,8 +144,7 @@ export default {
 
     onMounted(() => {
       startTimer();
-      playTimerSound();
-
+      if (!props.isMultiplayerClient) playTimerSound();
       correctSound.loop = false;
       wrongSound.loop = false;
       timerSound.loop = false;

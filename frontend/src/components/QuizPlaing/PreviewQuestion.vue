@@ -1,10 +1,10 @@
 <template>
   <div v-if="showPreview" class="preview-container">
     <div class="question-preview">
-      <h3 class="preview-heading">Question Preview</h3>
+      <h3 class="preview-heading">{{ questionPreviewTitle }}</h3>
       <div class="card-content">{{ question.question }}</div>
       <div class="answer-instruction">
-        seconds left to preview the question.
+        {{ answerInstructionText }}
       </div>
       <div class="countdown-circle">{{ countdown }}</div>
     </div>
@@ -16,6 +16,9 @@
 
 
 <script>
+import {useI18n} from "vue-i18n";
+import {computed} from "vue";
+
 export default {
   props: ['question'],
   data() {
@@ -51,6 +54,15 @@ export default {
   },
   beforeDestroy() {
     clearInterval(this.intervalId);
+  },
+  setup() {
+    const { t } = useI18n();
+    const questionPreviewTitle = computed(() => t('quiz_client.questionPreview'));
+    const answerInstructionText = computed(() => t('quiz_client.answerIn'));
+    return { t,
+      questionPreviewTitle,
+      answerInstructionText,
+    };
   },
 }
 </script>

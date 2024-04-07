@@ -3,7 +3,7 @@
     <h1>{{ currentQuiz.quizName }}</h1>
 
     <div v-if="!gameStarted">
-      <basic-button @click="startGame" :button_text="'Start Game'" class="large-button"></basic-button>
+      <basic-button @click="startGame" :button_text="startGameText" class="large-button"></basic-button>
     </div>
 
     <!-- Display score component with countdown here -->
@@ -11,9 +11,9 @@
         v-if="showScoreComponent"
         :player="user"
         :score="score"
-        @countdownEnded="handleCountdownEnded">
+        @countdownEnded="handleCountdownEnded"
+    >
     </ScoreComponentOnePlayer>
-
 
     <PreviewQuestion
         v-else-if="previewPhase"
@@ -26,20 +26,21 @@
                  :question="currentQuestion"
                  :isSinglePlayer="true"
                  @answerSelected="handleAnswer"
-                 :showAnswersProp="showAnswers">
-
+                 :showAnswersProp="showAnswers"
+                 @timerDone="timeOut"
+      >
       </component>
     </div>
 
     <div v-if="gameEnded" class="game-end-feedback">
-      <h2>Game Over!</h2>
-      <p class="final-score">Your Final Score: {{ score }}</p>
+      <h2>{{ gameOverTitle }}</h2>
+      <p class="final-score">{{ finalScoreText }} {{ score }}</p>
 
       <!-- Feedback Form -->
       <div v-if="showFeedbackForm" class="feedback-form-container">
-        <h3>Your feedback is appreciated!</h3>
+        <h3>{{ feedbackTitle }}</h3>
         <form @submit.prevent="submitFeedback">
-          <label for="stars">Rating:</label>
+          <label for="stars">{{ feedbackRatingLabel }}</label>
           <select id="stars" v-model="feedback.stars">
             <option value="5">⭐⭐⭐⭐⭐</option>
             <option value="4">⭐⭐⭐⭐</option>
@@ -48,15 +49,13 @@
             <option value="1">⭐</option>
           </select>
 
-          <label for="feedbackText">Feedback:</label>
+          <label for="feedbackText">{{ feedbackTextLabel }}</label>
           <textarea id="feedbackText" v-model="feedback.feedbackText" placeholder="Your feedback..."></textarea>
 
-          <basic-button :button_text="'Submit Feedback'" @click="submitFeedback" class="feedback-button"></basic-button>
+          <basic-button :button_text="submitFeedbackText" @click="submitFeedback" class="feedback-button"></basic-button>
         </form>
       </div>
     </div>
-
-
   </div>
 </template>
 
@@ -72,7 +71,8 @@ import router from "@/router/index.js";
 import ScoreComponentOnePlayer from "@/components/QuizPlaing/scoreComponentOnePlayer.vue";
 import PreviewQuestion from "@/components/QuizPlaing/PreviewQuestion.vue"; // Add this line
 import { addHistoricalEvent } from "@/services/HistoryService.js";
-import {addFeedback} from "@/services/feedbackService.js"; // Import the service function
+import {addFeedback} from "@/services/feedbackService.js";
+import {useI18n} from "vue-i18n"; // Import the service function
 
 export default {
   components: {
@@ -84,6 +84,7 @@ export default {
     ScoreComponentOnePlayer
   },
   setup() {
+    const {t} = useI18n();
     const store = useQuizStore();
     const userStore = useUserStore();
     const user = computed(() => userStore.user);
@@ -91,6 +92,14 @@ export default {
     if (!store.currentQuiz) {
       router.push('/home');
     }
+
+    const startGameText = computed(() => 'Start Game'); // Assuming static text or you can use t function for translation
+    const gameOverTitle = computed(() => t('single_player.gameOver'));
+    const finalScoreText = computed(() => t('single_player.finalScore'));
+    const feedbackTitle = computed(() => t('single_player.feedbackTitle'));
+    const feedbackRatingLabel = computed(() => t('quiz_client.feedback_rating'));
+    const feedbackTextLabel = computed(() => t('quiz_client.feedback_text'));
+    const submitFeedbackText = computed(() => 'Submit Feedback')
 
     const currentQuiz = computed(() => store.currentQuiz);
     const gameStarted = ref(false);
@@ -219,6 +228,14 @@ export default {
       showScoreComponent.value = false;
     };
 
+    const timeOut = () => {
+      console.log("Time out")
+      showAnswers.value = true;
+      setTimeout(() => {
+        showScoreComponent.value = true;
+      }, 2000);
+    };
+
     const handlePreviewEnd = () => {
       previewPhase.value = false;
     };
@@ -259,7 +276,16 @@ export default {
       handlePreviewEnd,
       showFeedbackForm,
       feedback,
-      submitFeedback
+      submitFeedback,
+      timeOut,
+      t,
+      startGameText,
+      gameOverTitle,
+      finalScoreText,
+      feedbackTitle,
+      feedbackRatingLabel,
+      feedbackTextLabel,
+      submitFeedbackText,
     };
   }
 };
