@@ -17,6 +17,9 @@ import java.io.IOException;
 
 /**
  * This interface contains the methods of the AuthenticationController.
+ *
+ * @author Trym Hamer Gudvangen, Brage Halvorsen Kvamme
+ * @version 1.1 05.04.2024
  */
 public interface IAuthenticationController {
 

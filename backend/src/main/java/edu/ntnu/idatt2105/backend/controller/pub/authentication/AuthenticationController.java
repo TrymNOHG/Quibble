@@ -74,7 +74,6 @@ public class AuthenticationController implements IAuthenticationController {
             @CookieValue(value = "refresh_token", defaultValue = "") String refreshToken
     ){
         return ResponseEntity.ok()
-//                .header(HttpHeaders.SET_COOKIE)
                 .body(authenticationService.getAccessTokenFromRefreshToken(refreshToken));
     }
 }

@@ -62,7 +62,6 @@ export const fetchUserByUsername = async (username) => {
                 Authorization: `Bearer ${await sessionToken()}`,
             }
         });
-        console.log(response.data)
         return response.data;
     } catch (error) {
         throw error.response ? error.response.data : error.message;
@@ -92,7 +91,6 @@ export const getUser = async () => {
 //      'showFeedback' : null
 // }
 export const updateUser = async (userUpdateDTO) => {
-    console.log(userUpdateDTO)
     return axios.patch(`${BASE_URL}/private/users/update`,
         userUpdateDTO,
         {
@@ -105,7 +103,6 @@ export const updateUser = async (userUpdateDTO) => {
 
 
 export const updateUserShowActivity = async (newShowActivity) => {
-    console.log(newShowActivity)
     return axios.patch(`${BASE_URL}/private/users/update/showActivity`, newShowActivity, {
         headers: {
             Authorization: `Bearer ${await sessionToken()}`,

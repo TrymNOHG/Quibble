@@ -12,6 +12,12 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * This controller contains the endpoints for handling private statistics information.
+ *
+ * @author Brage Halvorsen Kvamme
+ * @version 1.0 05.04.2024
+ */
 @RestController("statisticsController")
 @EnableAutoConfiguration
 @RequiredArgsConstructor

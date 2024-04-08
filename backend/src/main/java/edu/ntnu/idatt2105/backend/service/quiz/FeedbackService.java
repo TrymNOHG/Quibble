@@ -23,6 +23,12 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * This service contains the logic for feedback.
+ *
+ * @author Brage Halvorsen Kvamme
+ * @version 1.0 04.04.2024
+ */
 @RequiredArgsConstructor
 @Service
 @Slf4j
@@ -32,6 +38,11 @@ public class FeedbackService {
     private final AuthenticationService authenticationService;
     private final QuizService quizService;
 
+    /**
+     * This method handles the logic of adding a feedback to a quiz.
+     * @param newFeedback   The new feedback to add.
+     * @return              A string giving the status.
+     */
     @Transactional
     public String addFeedback(QuizFeedbackDTO newFeedback) {
         log.info("Adding feedback.");
@@ -121,6 +132,11 @@ public class FeedbackService {
                 .build();
     }
 
+    /**
+     * This method handles the logic of retrieving one's own feedback.
+     * @param authentication    An authentication object.
+     * @return                  The feedback for a quiz as a DTO.
+     */
     @Transactional
     public QuizFeedbackLoadAllDTO getOwnFeedback(Authentication authentication) {
         User user = authenticationService.getLoggedInUser();

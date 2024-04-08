@@ -125,7 +125,7 @@ public class AuthenticationService {
                     HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong while creating user: " + e
             );
         }
-        imageService.setDefaultProfilePic(savedUser.getUserId());
+        //imageService.setDefaultProfilePic(savedUser.getUserId());
         return getAccessTokenAuthDTO(savedUser.getEmail());
     }
 

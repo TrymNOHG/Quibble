@@ -116,6 +116,7 @@ export default {
   border-radius: 5px;
   background: white;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  width: 350px;
 }
 
 .pin_input {

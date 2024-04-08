@@ -36,7 +36,6 @@ export default {
           quizId : store.templateQuiz.quizId,
           categoryIds : categoryIds
         }
-        console.log("caters", categoriesDTO)
         await addCategories(categoriesDTO)
         setTimeout(async ()=> {await router.push('/home');}, 500);
       } catch (error) {
@@ -45,7 +44,6 @@ export default {
     }
 
     const addCategory = (category) => {
-      console.log("Adding category: ", category)
       categories.value.push(category)
     }
 

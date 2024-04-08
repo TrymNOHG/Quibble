@@ -1,3 +1,8 @@
+/*
+AUTHOR = {Tomas Beranek, Eilert Wegner Hansen, Beka Dan},
+TITLE = {Systemutvikling 2, Smartmat},
+URL = {https://github.com/tomasbera/SmartMat/blob/main/frontend/src/components/Authentication/RegisterComponent.vue}
+*/
 <template>
   <div class="submit_form">
     <h2>{{ $t('titles.LOGIN') }}</h2>
@@ -102,8 +107,6 @@ export default {
             if (response !== undefined) {
               store.setToken(response.data.token);
               store.setTokenExpires(response.data.token_expiration);
-              console.log(response.data.token_expiration)
-              console.log(store.tokenExpired)
               await store.fetchUserData();
               await router.push("/home");
             }

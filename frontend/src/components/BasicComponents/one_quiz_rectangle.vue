@@ -42,12 +42,12 @@ export default {
     const { emit } = getCurrentInstance();
 
     const setCurrentQuiz = () => {
+      quizStore.currentQuiz = props.quiz
       emit("setCurrentQuiz", props.quiz)
     }
 
     const getPictureURL = () => {
       const id =`Q${props.quiz.quizId}`
-      console.log(getPictureFromID(id))
       return getPictureFromID(id);
     }
 

@@ -26,13 +26,11 @@ export const fetchFilteredQuizzes = async (quizFilterDTO) => {
 
 export const fetchAllQuizzesByUser = async (userId) => {
     try {
-        console.log("hello")
         const response = await axios.get(`${BASE_URL_PUB}/getUserQuiz?userId=${userId}`, {
             headers: {
                 Authorization: `Bearer ${await sessionToken()}`,
             },
         });
-        console.log(response.data.quizzes)
         return response.data.quizzes;
     } catch (error) {
         throw error.response ? error.response.data : error.message;
@@ -110,7 +108,6 @@ export const deleteQuestionById = async (questionId) => {
 };
 
 export const patchQuestion = async (questionEditDTO) => {
-    console.log("right before axios", questionEditDTO)
     try {
         const response = await axios.patch(`${BASE_URL_PRIV}/edit/question`,
             questionEditDTO, {
@@ -118,7 +115,6 @@ export const patchQuestion = async (questionEditDTO) => {
                     Authorization: `Bearer ${await sessionToken()}`,
                 }
             });
-        console.log("axios repsonse", response.data);
         return response.data;
     } catch (error) {
         throw error.response ? error.response.data : error.message;
@@ -133,7 +129,6 @@ export const addCollaborator = async (quizAuthorDTO) => {
                     Authorization: `Bearer ${await sessionToken()}`,
                 }
             });
-        console.log(response);
         return response.data;
     } catch (error) {
         throw error.response ? error.response.data : error.message;
@@ -155,7 +150,6 @@ export const removeCollaborator = async (authorId) => {
 };
 
 export const addCategory = async (QuizCategoryCreateDTO) => {
-    console.log(QuizCategoryCreateDTO)
     try {
         const response = await axios.post(`${BASE_URL_PRIV}/create/category`,
             QuizCategoryCreateDTO, {
@@ -163,7 +157,6 @@ export const addCategory = async (QuizCategoryCreateDTO) => {
                     Authorization: `Bearer ${await sessionToken()}`,
                 }
             });
-        console.log("cat  ", response.data)
         return response.data;
     } catch (error) {
         throw error.response ? error.response.data : error.message;
@@ -187,20 +180,6 @@ export const addCategories = async (categoriesDTO) => {
     }
 };
 
-export const deleteCategory = async (quizCategoryId, quizId) => {
-    try {
-        const response = await axios.delete(`${BASE_URL_PRIV}/delete/category/${quizCategoryId}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${await sessionToken()}`,
-                }
-            });
-        return response.data;
-    } catch (error) {
-        throw error.response ? error.response.data : error.message;
-    }
-};
-
 export const addKeyword = async (keywordDTO) => {
     try {
         const response = await axios.post(`${BASE_URL_PRIV}/create/keywords`,
@@ -209,7 +188,6 @@ export const addKeyword = async (keywordDTO) => {
                     Authorization: `Bearer ${await sessionToken()}`,
                 }
             });
-        console.log("key  ", response.data)
         return response.data;
     } catch (error) {
         throw error.response ? error.response.data : error.message;
@@ -223,7 +201,6 @@ export const removeKeyword = async (quizKeywordId) => {
                     Authorization: `Bearer ${await sessionToken()}`,
                 }
             });
-        console.log(response.data)
         return response.data;
     } catch (error) {
         throw error.response ? error.response.data : error.message;

@@ -7,9 +7,24 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * This class contains logic surrounding the sorting of UUID seeds. This functionality is necessary for the
+ * multiplayer mode.
+ *
+ * @author Brage Halvorsen Kvamme
+ * @version 1.0 07.04.2024
+ */
 public class SortingUtil {
+
+    /**
+     * This method sorts the list with UUID seeds.
+     * @param list          The list containing UUIDs.
+     * @param uuid          The UUID.
+     * @param keyExtractor  The function for extracting.
+     * @return              A sorted list.
+     * @param <T>           The type of list.
+     */
     public static <T> List<T> sortListWithUuidSeed(List<T> list, UUID uuid, Function<T, String> keyExtractor) {
-        // Create a comparator that uses a Random object seeded with the UUID and element-specific seed
         Comparator<T> comparator = (o1, o2) -> {
             Random random1 = new Random(
                     uuid.hashCode() + keyExtractor.apply(o1).hashCode()
@@ -20,7 +35,6 @@ public class SortingUtil {
             return Long.compare(random1.nextLong(), random2.nextLong());
         };
 
-        // Sort the list using the comparator
         return list.stream()
                 .sorted(comparator)
                 .collect(Collectors.toList());

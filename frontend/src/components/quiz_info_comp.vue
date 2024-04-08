@@ -151,7 +151,7 @@ export default {
         collaboratorList.value = [];
         let temp_list = await filteredUsers();
         temp_list.users.forEach(user => {
-          if (user.userId !== useUserStore().user.userId) {
+          if (user.userId !== useUserStore().user.userId && !props.quiz.collaborators.some(u => u.userId === user.userId)) {
             collaboratorList.value.push(user);
           }
         });
@@ -163,7 +163,6 @@ export default {
 
     const filteredUsers = async () => {
       try {
-        console.log(searchQuery.value)
         return await store.filterAuthor(searchQuery.value);
       } catch (error) {
         console.error('Error editing question:', error);
@@ -183,6 +182,7 @@ export default {
       emit("addAuthor", author);
       quizAuthorDTO.username = '';
       showPopup.value = false;
+      searchQuery.value = ''
     };
 
     const closePopup = () => {

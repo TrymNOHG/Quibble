@@ -20,16 +20,13 @@ export default async function sessionToken() {
         throw new Error("Session token cannot be null. Login in again.");
     }
 
-    console.log(useUserStore().tokenExpired)
     //if sesstion token is expired, get a new one
     if (useUserStore().tokenExpired) {
-        const balls = await getNewAccessToken(sessionToken);
-        console.log("balls")
-        console.log(balls);
-        useUserStore().setToken(balls.data.token);
-        useUserStore().setTokenExpires(balls.data.token_expiration);
+        const token = await getNewAccessToken(sessionToken);
+        useUserStore().setToken(token.data.token);
+        useUserStore().setTokenExpires(token.data.token_expiration);
 
-        if (balls.data.accessToken === null) {
+        if (token.data.accessToken === null) {
             useUserStore().logoutUser();
             await router.push("/login");
             throw new Error("Session token expired. Login in again.");

@@ -18,6 +18,7 @@ import edu.ntnu.idatt2105.backend.mapper.quiz.QuizMapper;
 import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
 import edu.ntnu.idatt2105.backend.model.quiz.question.MultipleChoice;
 import edu.ntnu.idatt2105.backend.model.quiz.question.Question;
+import edu.ntnu.idatt2105.backend.model.quiz.question.QuestionType;
 import edu.ntnu.idatt2105.backend.repo.quiz.QuizAuthorRepository;
 import edu.ntnu.idatt2105.backend.repo.quiz.QuizRepository;
 import edu.ntnu.idatt2105.backend.repo.quiz.question.MultipleChoiceRepository;
@@ -55,6 +56,12 @@ public class QuestionService {
     private final QuizAuthorRepository quizAuthorRepository;
     private final UserRepository userRepository;
 
+    /**
+     * This method retrieves a question based on id for web sockets multiplayer.
+     * @param questionId        The id of the question.
+     * @param hostUUID          The UUID of the host.
+     * @return                  The question as a DTO.
+     */
     @Transactional
     public QuestionDTO getQuestionDTO(long questionId, UUID hostUUID) {
         Question question = questionRepository.findById(questionId).orElseThrow();
@@ -69,12 +76,17 @@ public class QuestionService {
                                 .map(MultipleChoiceMapper.INSTANCE::multipleChoiceToMultipleChoiceDTO)
                                 .toList(),
                         hostUUID,
-                        MultipleChoiceDTO::alternative // Assuming MultipleChoiceDTO has a getAlternative method
+                        MultipleChoiceDTO::alternative
                 ))
                 .build();
     }
 
-    // Adjust the getAlternatives method similarly
+    /**
+     * This method retrieves the different alternatives for a question given the question id.
+     * @param questionId    The id of the question.
+     * @param hostUUID      The host UUID.
+     * @return              The alternative as a DTO.
+     */
     @Transactional
     public SendAlternativesDTO getAlternatives(long questionId, UUID hostUUID) {
         Question question = questionRepository.findById(questionId).orElseThrow();
@@ -91,6 +103,11 @@ public class QuestionService {
                 .build();
     }
 
+    /**
+     * THis method retrieves the correct answer given a question id.
+     * @param questionId    The question id.
+     * @return              The correct answer.
+     */
     @Transactional
     public String getCorrectAnswer(Long questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow();
@@ -177,7 +194,9 @@ public class QuestionService {
 
         if (questionEditDTO.type() != null) {
             question.setQuestionType(questionEditDTO.type());
-            deleteChoices(questionEditDTO.questionId());
+            if(questionEditDTO.type() != QuestionType.MULTIPLE_CHOICE) {
+                deleteChoices(questionEditDTO.questionId());
+            }
         }
 
         LOGGER.info("Saving question to database.");
@@ -187,7 +206,6 @@ public class QuestionService {
         if (questionEditDTO.choices() != null) {
             LOGGER.info("Editing multiple choices.");
             for (MultipleChoiceDTO choice : questionEditDTO.choices()) {
-                //TODO: check if there.
                 if(choice.multipleChoiceId() == null) {
                     MultipleChoiceCreateDTO multipleChoiceCreateDTO = MultipleChoiceCreateDTO
                             .builder()

@@ -32,7 +32,6 @@ public class HistoryController implements IHistoryController{
 
     @Override
     public ResponseEntity<QuizLoadDTO> getAllHistoricalEvent(@NonNull Long userId, @NonNull Authentication authentication) {
-        // Could add a check of user preferences to see if historical events should be viewable.
         return null;
     }
 }

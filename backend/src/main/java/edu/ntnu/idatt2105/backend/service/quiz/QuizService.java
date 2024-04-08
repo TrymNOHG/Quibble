@@ -40,6 +40,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -72,6 +73,11 @@ public class QuizService {
     private final CategoryRepository categoryRepository;
     private final QuizCategoryRepository quizCategoryRepository;
 
+    /**
+     * This method retrieves a quiz given the quiz id.
+     * @param quizId    The id of the quiz.
+     * @return          The quiz model.
+     */
     public Quiz getQuizById(long quizId) {
         return quizRepository.findById(quizId)
                 .orElseThrow(() -> new IllegalArgumentException("Quiz with id " + quizId + " not found"));
@@ -97,7 +103,12 @@ public class QuizService {
         return QuizLoadAllDTO.builder().quizzes(userQuizzes).build();
     }
 
-
+    /**
+     * This method allows for the creation of quiz.
+     * @param quizName      The name of the quiz.
+     * @param adminEmail    The email of the person trying to create the quiz.
+     * @return              The quiz load DTO.
+     */
     @Transactional
     public QuizLoadDTO createQuiz(String quizName, String adminEmail) {
         User admin = userRepository.findByEmail(adminEmail)
@@ -149,8 +160,15 @@ public class QuizService {
         Pageable pageable = PageRequest.of(quizFilterDTO.pageNumber(),quizFilterDTO.pageSize());
         LOGGER.info("Finding page based on specification.");
         Page<Quiz> quizPage = quizRepository.findAll(QuizSpecification.filterQuizzes(quizFilterDTO), pageable);
+
+        Set<Long> uniqueQuizIds = new HashSet<>();
+
+        List<Quiz> uniqueQuizzes = quizPage.getContent().stream()
+                .filter(quiz -> uniqueQuizIds.add(quiz.getQuizId()))
+                .collect(Collectors.toList());
+
         LOGGER.info("Page found. Creating QuizLoadDTOPage and responding.");
-        return quizMapper.quizPageToQuizLoadDTOPage(quizPage);
+        return quizMapper.quizPageToQuizLoadDTOPage(new PageImpl<>(uniqueQuizzes, pageable, uniqueQuizzes.size()));
     }
 
     /**

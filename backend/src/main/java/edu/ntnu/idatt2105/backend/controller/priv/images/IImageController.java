@@ -15,6 +15,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+/**
+ * This interface contains an outline of the endpoints involved in the image logic.
+ *
+ * @author Brage Halvorsen Kvamme, Trym Hamer Gudvangen
+ * @version 1.0 03.04.2024
+ */
 public interface IImageController {
 
         @PostMapping("/quiz/save")

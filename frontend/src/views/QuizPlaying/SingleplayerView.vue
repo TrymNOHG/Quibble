@@ -88,7 +88,6 @@ export default {
     const store = useQuizStore();
     const userStore = useUserStore();
     const user = computed(() => userStore.user);
-    console.log(store.currentQuiz)
     if (!store.currentQuiz) {
       router.push('/home');
     }

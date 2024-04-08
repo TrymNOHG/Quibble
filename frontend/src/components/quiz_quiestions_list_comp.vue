@@ -2,7 +2,7 @@
   <div class="modal-overlay" v-if="addNewQuestion || edit">
     <div class="popup">
       <div class="popup-content">
-        <h2>{{ $t('new_question.title') }}</h2>
+        <h2>{{ $t('new_question.edit') }}</h2>
         <div class="popup_input">
           <label for="question">{{ $t('new_question.question_label') }}:</label>
           <input class="input" type="text" v-model="editQuestion.question" id="question">
@@ -106,7 +106,6 @@ export default {
     const addNewQuestion = ref(false);
     const edit = ref(false);
     let question_list = ref(store.currentQuiz.questions);
-    console.log("questionList", question_list)
 
     const editQuestion = ref({
       quizId: null,
@@ -125,7 +124,6 @@ export default {
     watch(
         () => editQuestion.value.type,
         (newValue, oldValue) => {
-          console.log(oldValue)
           if(String(newValue).toUpperCase() === "MULTIPLE_CHOICE") {
             if (editQuestion.value.choices && editQuestion.value.choices.length !== 0) {
               return;
@@ -143,7 +141,6 @@ export default {
     );
 
     const deleteQuestion = async (question) => {
-      console.log("Question : ", question)
       const index = question_list.value.indexOf(question);
       if (index !== -1) {
         question_list.value.splice(index, 1);
@@ -160,7 +157,7 @@ export default {
       try {
         await store.deleteCurrentQuiz();
         setTimeout(() => {
-        }, 500);
+        }, 50);
         await router.push('/home');
       } catch (error) {
         console.error(error);
@@ -183,7 +180,6 @@ export default {
         }
       }
       store.addQuestion(editQuestion.value).then(question => {
-        console.log("adding question: ", question)
         let lastQuestion = null;
 
         if (question.questions.length > 0) {
@@ -195,19 +191,12 @@ export default {
         console.log("error: ", error)
       });
 
-      console.log(question_list.value)
       addNewQuestion.value = false;
       edit.value = false;
     };
 
     const showEdit = (question) => {
-      // Make a deep copy of the question object
-      const newQuestion = JSON.parse(JSON.stringify(question));
-
-      // Update editQuestion value
-      editQuestion.value = newQuestion;
-
-      // Set edit to true to open the edit modal
+      editQuestion.value = { ...question };
       edit.value = true;
     };
 
@@ -246,13 +235,11 @@ export default {
     };
 
     const downloadQuiz = () => {
-      console.log("Qwer")
       downloadQuizCSV(store.currentQuiz, store.currentQuiz.quizName)
     }
 
     const importQuestions = async (event) => {
       let questions = await uploadQuestionsFromCSV(event)
-      console.log(questions)
       for (let quest of questions) {
         editQuestion.value = {
           quizId: null,
@@ -265,7 +252,6 @@ export default {
         addNewQuestion.value = true;
         await createQuestion()
       }
-      //TODO: add questions
     }
 
     const routeSinglePlayer = () => {

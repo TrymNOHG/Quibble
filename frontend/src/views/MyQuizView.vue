@@ -8,6 +8,7 @@
           v-for="(quiz, index) in displayedQuizzes"
           :key="index"
           :quiz="quiz"
+          @setCurrentQuiz=""
       />
     </div>
     <div id="inf_scroll"/>
@@ -26,7 +27,7 @@ const categories = quizStore.category_list;
 
 
 onMounted(async () => {
-  await store.loadMyQuizzes();
+  displayedQuizzes.value = await store.loadMyQuizzes();
 });
 
 </script>

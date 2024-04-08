@@ -1,21 +1,23 @@
 package edu.ntnu.idatt2105.backend.controller.pub.images;
 
-import edu.ntnu.idatt2105.backend.dto.images.ImageLoadDTO;
-import edu.ntnu.idatt2105.backend.model.users.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import lombok.NonNull;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.io.IOException;
 
+/**
+ * This interface outlines the public endpoints related to images.
+ *
+ * @author Brage Halvorsen Kvamme
+ * @version 1.1 06.04.2024
+ */
 public interface IImageController {
 
         @GetMapping("/{image}")

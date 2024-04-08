@@ -16,9 +16,11 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring")
 public interface QuizMapper {
 
-    //TODO: multiple quizzes
-
-
+    /**
+     * This method converts between the quiz model and the quiz load DTO.
+     * @param quiz  The quiz model.
+     * @return      The resulting quiz load DTO.
+     */
     default QuizLoadDTO quizToQuizLoadDTO(Quiz quiz) {
         return QuizLoadDTO
                 .builder()

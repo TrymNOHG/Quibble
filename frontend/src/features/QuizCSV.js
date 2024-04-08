@@ -11,7 +11,6 @@ export const createQuizCreateDTOFromCSV = async (event) => {
         reader.onload = (e) => {
             const csvFile = e.target.result;
             const lines = csvFile.split("\n");
-            console.log(lines)
 
             let quizCreateDTO = {
                 quizName: null,
@@ -52,7 +51,6 @@ export const createQuizCreateDTOFromCSV = async (event) => {
             }
 
 
-            // console.log(quizCreateDTO)
             resolve(quizCreateDTO);
         };
 
@@ -102,7 +100,6 @@ export const uploadQuestionsFromCSV = async (event) => {
                 i -= 1;
             }
 
-            // console.log(quizCreateDTO)
             resolve(questions);
         };
 
@@ -131,7 +128,6 @@ export const downloadQuizCSV = (quizCreateDTO, fileName) => {
     if(quizCreateDTO === null){
         throw Error("Invalid quiz DTO")
     }
-    console.log(quizCreateDTO.quizName)
     const lines = []
     lines[0] = [quizCreateDTO.quizName.replace(",", ""),
         quizCreateDTO.quizDescription.replace(",", ""),
@@ -158,8 +154,6 @@ export const downloadQuizCSV = (quizCreateDTO, fileName) => {
         }
 
     }
-    console.log(lines)
-    console.log(quizCreateDTO)
     const csvData = lines.join("\n")
     downloadCSV(csvData, fileName)
 }

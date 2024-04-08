@@ -82,6 +82,7 @@
   },
 
   "new_question": {
+    "edit": "Valgt Spørsmål",
     "title": "Nytt Spørsmål",
     "question_label": "Spørsmålsnavn",
     "type_label": "Spørsmålstype",
