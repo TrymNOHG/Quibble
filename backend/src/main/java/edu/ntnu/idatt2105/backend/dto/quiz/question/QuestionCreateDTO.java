@@ -8,12 +8,12 @@ import org.springframework.lang.Nullable;
 import java.util.Set;
 
 /**
- * This record
- * @param quizId
- * @param question
- * @param answer
- * @param type
- * @param choices
+ * This record provides the data transfer object for question creation.
+ * @param quizId        The id of the quiz.
+ * @param question      The question.
+ * @param answer        The answer.
+ * @param type          The type.
+ * @param choices       The choices.
  */
 @Builder
 public record QuestionCreateDTO(@NonNull Long quizId,

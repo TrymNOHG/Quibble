@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
-// has all the same properties as JoinGameDTO, but is used for submitting answers
 
 /**
  * DTO for submitting an answer. This is used when a user wants to submit an answer to a question.
