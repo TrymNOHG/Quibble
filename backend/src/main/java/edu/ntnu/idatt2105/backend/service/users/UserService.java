@@ -57,7 +57,7 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository
-                .findByEmail(email) // FindByEmail is used as the username in the authentication object is the email.
+                .findByEmail(email)
                 .map(UserConfig::new)
                 .orElseThrow(() -> new UsernameNotFoundException("User " + email + " not found"));
     }
@@ -197,7 +197,6 @@ public class UserService implements UserDetailsService {
      * @param userId The id of the user.
      */
     public void deleteUser(Long userId) throws IOException {
-        // TODO: Check that user is actually user.
         userRepository.deleteById(userId);
         imageService.removeImage(userId);
     }

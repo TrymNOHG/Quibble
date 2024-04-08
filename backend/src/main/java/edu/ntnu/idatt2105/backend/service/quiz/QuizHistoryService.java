@@ -20,6 +20,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * This service class handles the logic for the quiz history.
+ *
+ * @author Brage Halvorsen Kvamme, Trym Hamer Gudvangen
+ * @version 1.0 05.04.2024
+ */
 @Service
 @RequiredArgsConstructor
 public class QuizHistoryService {

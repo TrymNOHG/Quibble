@@ -56,6 +56,12 @@ public class QuestionService {
     private final QuizAuthorRepository quizAuthorRepository;
     private final UserRepository userRepository;
 
+    /**
+     * This method retrieves a question based on id for web sockets multiplayer.
+     * @param questionId        The id of the question.
+     * @param hostUUID          The UUID of the host.
+     * @return                  The question as a DTO.
+     */
     @Transactional
     public QuestionDTO getQuestionDTO(long questionId, UUID hostUUID) {
         Question question = questionRepository.findById(questionId).orElseThrow();
@@ -70,12 +76,17 @@ public class QuestionService {
                                 .map(MultipleChoiceMapper.INSTANCE::multipleChoiceToMultipleChoiceDTO)
                                 .toList(),
                         hostUUID,
-                        MultipleChoiceDTO::alternative // Assuming MultipleChoiceDTO has a getAlternative method
+                        MultipleChoiceDTO::alternative
                 ))
                 .build();
     }
 
-    // Adjust the getAlternatives method similarly
+    /**
+     * This method retrieves the different alternatives for a question given the question id.
+     * @param questionId    The id of the question.
+     * @param hostUUID      The host UUID.
+     * @return              The alternative as a DTO.
+     */
     @Transactional
     public SendAlternativesDTO getAlternatives(long questionId, UUID hostUUID) {
         Question question = questionRepository.findById(questionId).orElseThrow();
@@ -92,6 +103,11 @@ public class QuestionService {
                 .build();
     }
 
+    /**
+     * THis method retrieves the correct answer given a question id.
+     * @param questionId    The question id.
+     * @return              The correct answer.
+     */
     @Transactional
     public String getCorrectAnswer(Long questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow();

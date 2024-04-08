@@ -46,12 +46,12 @@ public class GameService {
     private String generateRandomCode() {
         String code;
         do {
-            code = random.ints(48, 91) // Adjust the upper bound to 91 because the upper limit is exclusive
-                    .filter(i -> (i <= 57 || i >= 65)) // Remove check for lowercase letters
-                    .limit(4) // Change this to increase the length of the code
+            code = random.ints(48, 91)
+                    .filter(i -> (i <= 57 || i >= 65))
+                    .limit(4)
                     .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                     .toString();
-        } while (rooms.containsKey(code)); // Ensure the generated code is not already used
+        } while (rooms.containsKey(code));
         return code;
     }
 
@@ -136,13 +136,11 @@ public class GameService {
             if (game.getAnonymousPlayers().containsKey(uuid)) {
                 String username = game.getAnonymousPlayers().get(uuid).getUsername();
                 if (game.getAnonymousPlayers().remove(uuid) != null) {
-                    // Player was removed, return the game's code
                     return Pair.of(entry.getKey(), username);
                 }
             }
 
         }
-        // No player removed, return null
         return null;
     }
 

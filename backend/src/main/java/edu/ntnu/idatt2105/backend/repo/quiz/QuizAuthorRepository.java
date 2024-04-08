@@ -16,6 +16,12 @@ import java.util.Optional;
 @Repository
 public interface QuizAuthorRepository extends JpaRepository<QuizAuthor, Long>, JpaSpecificationExecutor<QuizAuthor> {
 
+    /**
+     * This method finds a quiz author based on a quiz id and user id.
+     * @param quiz_quizId  The id of the quiz.
+     * @param user_userId  The id of the user.
+     * @return             An optional for quiz author.
+     */
     Optional<QuizAuthor> findQuizAuthorByQuizQuizIdAndUserUserId(Long quiz_quizId, Long user_userId);
 
 }

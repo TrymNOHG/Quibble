@@ -36,7 +36,6 @@ public class QuizSpecification {
                 predicate = criteriaBuilder.and(predicate, root.get("categories").get("category").get("categoryName").in(quizFilterDTO.categories()));
             }
 
-            //TODO: make filtering based on keywords better. Maybe use fuzzy or just to order the quizzes retrieved from the rest.
             if (quizFilterDTO.keywords() != null && !quizFilterDTO.keywords().isEmpty()) {
                 predicate = criteriaBuilder.and(predicate, root.get("keywords").get("keyword").in(quizFilterDTO.keywords()));
             }

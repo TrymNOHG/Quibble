@@ -73,6 +73,11 @@ public class QuizService {
     private final CategoryRepository categoryRepository;
     private final QuizCategoryRepository quizCategoryRepository;
 
+    /**
+     * This method retrieves a quiz given the quiz id.
+     * @param quizId    The id of the quiz.
+     * @return          The quiz model.
+     */
     public Quiz getQuizById(long quizId) {
         return quizRepository.findById(quizId)
                 .orElseThrow(() -> new IllegalArgumentException("Quiz with id " + quizId + " not found"));
@@ -98,7 +103,12 @@ public class QuizService {
         return QuizLoadAllDTO.builder().quizzes(userQuizzes).build();
     }
 
-
+    /**
+     * This method allows for the creation of quiz.
+     * @param quizName      The name of the quiz.
+     * @param adminEmail    The email of the person trying to create the quiz.
+     * @return              The quiz load DTO.
+     */
     @Transactional
     public QuizLoadDTO createQuiz(String quizName, String adminEmail) {
         User admin = userRepository.findByEmail(adminEmail)
