@@ -20,8 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 public interface IUserController {
 
-    // Load basic info, Find user by search, register
-
     /**
      * This method retrieves user's through fuzzy searching by username.
      *

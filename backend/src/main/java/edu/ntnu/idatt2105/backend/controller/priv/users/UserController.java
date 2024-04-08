@@ -51,7 +51,6 @@ public class UserController implements IUserController{
 
     @Override
     public ResponseEntity<String> deleteUser(Authentication authentication) {
-        //TODO: fill in.
         return null;
     }
 
@@ -60,23 +59,5 @@ public class UserController implements IUserController{
         UserLoadDTO userLoadDTO = userService.getUserLoadDTOByEmail(authentication.getName());
         return ResponseEntity.ok(userLoadDTO);
     }
-
-//    @Override
-//    public ResponseEntity<Object> updateUserShowActivity(boolean newShowActivity, @NonNull Authentication authentication) throws FileSystemException {
-//        log.info("qwerqwer");
-//        userService.updateUser(UserUpdateDTO.builder().showActivity(newShowActivity).build());
-//        return ResponseEntity.ok("User Updated.");
-//    }
-//
-//    @Override
-//    public ResponseEntity<Object> updateUserShowFeedback(boolean newShowFeedback, @NonNull Authentication authentication) throws FileSystemException {
-//        userService.updateUser(UserUpdateDTO.builder().showActivity(newShowFeedback).build());
-//        return ResponseEntity.ok("User Updated.");
-//    }
-
-
-    // Update, delete
-
-    // CRUD
 
 }

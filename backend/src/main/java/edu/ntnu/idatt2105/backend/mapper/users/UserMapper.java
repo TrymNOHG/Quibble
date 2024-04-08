@@ -20,6 +20,11 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
+    /**
+     * This method converts between the user model to the user load DTO.
+     * @param user  The user model to convert.
+     * @return      The resulting user load DTO.
+     */
     default UserLoadDTO userToUserLoadDTO(User user) {
         return UserLoadDTO.builder()
                 .userId(user.getUserId())

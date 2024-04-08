@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 public interface IQuizController {
 
-    // Load quiz, Load multiple quiz by search, load collaborators, Load single question
     /**
      * This method retrieves all quizzes.
      *
