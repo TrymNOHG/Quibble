@@ -10,6 +10,13 @@ import org.springframework.security.access.AccessDeniedException;
 public class UnauthorizedException extends AccessDeniedException {
 
     /**
+     * A default constructor for unauthorized actions.
+     */
+    public UnauthorizedException() {
+        super("Unauthorized access to user.");
+    }
+
+    /**
      * This constructor creates an exception for unauthorized actions.
      * @param username  The username being used to perform the actions.
      */
@@ -26,11 +33,6 @@ public class UnauthorizedException extends AccessDeniedException {
         super(msg, cause);
     }
 
-    /**
-     * A default constructor for unauthorized actions.
-     */
-    public UnauthorizedException() {
-        super("Unauthorized access to user.");
-    }
+
 
 }

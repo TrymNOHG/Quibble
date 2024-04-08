@@ -18,7 +18,7 @@
 
 <script>
 import PrivateProfileComponent from "@/components/Profile/PrivateProfileComponent.vue";
-import {useUserStore} from "@/stores/counter.js"; // Ensure this matches your imported component file name
+import {useUserStore} from "@/stores/counter.js";
 import {updateUser} from "@/services/UserService.js";
 import router from "@/router/index.js";
 import {getPictureFromID} from "@/services/ImageService.js";

@@ -21,6 +21,8 @@ import java.util.Map;
  *  and a ResponseEntity containing the details surrounding the error is returned.
  *
  * @author Trym Hamer Gudvangen
+ * Source: Heavily Inspired by Trym Hamer Gudvangen
+ * @link  <a href="https://github.com/TrymNOHG/smartfood/blob/development/backend/src/main/java/edu/ntnu/idatt2106_2023_06/backend/exception/ControllerAdvisor.java">...</a>
  */
 @RestControllerAdvice
 public class ControllerAdvisor extends ResponseEntityExceptionHandler {

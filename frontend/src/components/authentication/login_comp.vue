@@ -107,8 +107,6 @@ export default {
             if (response !== undefined) {
               store.setToken(response.data.token);
               store.setTokenExpires(response.data.token_expiration);
-              console.log(response.data.token_expiration)
-              console.log(store.tokenExpired)
               await store.fetchUserData();
               await router.push("/home");
             }

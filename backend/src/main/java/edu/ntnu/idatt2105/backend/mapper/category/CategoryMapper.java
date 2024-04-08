@@ -20,6 +20,11 @@ public interface CategoryMapper {
 
     CategoryMapper INSTANCE = Mappers.getMapper(CategoryMapper.class);
 
+    /**
+     * This method converts between categories to multiple category DTO.
+     * @param categories    The category models to convert.
+     * @return              The multiple category DTO.
+     */
     default MultipleCategoryDTO categoriesToMultipleCategoryDTO(List<Category> categories) {
         return MultipleCategoryDTO
                 .builder()
@@ -27,6 +32,11 @@ public interface CategoryMapper {
                 .build();
     }
 
+    /**
+     * This method converts a category model to category DTO.
+     * @param category  Category object.
+     * @return          Category DTO.
+     */
     CategoryDTO categoryToCategoryDTO(Category category);
 
 }

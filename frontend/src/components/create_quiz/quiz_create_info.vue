@@ -3,7 +3,7 @@
     <h1 class="header_txt">{{ $t('quiz_details.header_txt') }}</h1>
     <div class="quiz-info">
       <div class="img">
-        <input class="img_input" type="file" @change="handleImageUpload">
+        <input class="img_input" type="file" @change="handleImageUpload" accept="image/jpeg, image/png">
         <div class="image_container">
           <img v-if="template_quiz.Image" :src="template_quiz.Image" :alt="$t('quiz_details.image_label')" class="uploaded-image">
         </div>
@@ -80,7 +80,6 @@ import {onMounted, ref} from "vue";
 import Tag_list from "@/components/create_quiz/tag_list.vue";
 import {useQuizCreateStore, useQuizStore} from "@/stores/counter.js";
 import {getAllCategories} from "@/services/CategoryService.js";
-import { removeKeyword } from "@/services/QuizService.js";
 
 
 export default {

@@ -8,9 +8,16 @@ package edu.ntnu.idatt2105.backend.exception.notfound;
  */
 public class CategoryNotFoundException extends NotFoundException{
 
+    /**
+     * Default constructor for category not found.
+     */
     public CategoryNotFoundException() {
     }
 
+    /**
+     * Constructor for category not found with message.
+     * @param message   Additional information.
+     */
     public CategoryNotFoundException(String message) {
         super(message);
     }

@@ -17,7 +17,11 @@ public interface QuizKeywordMapper {
 
     QuizKeywordMapper INSTANCE = Mappers.getMapper(QuizKeywordMapper.class);
 
-
+    /**
+     * This method converts between the quiz keyword model and the quiz keyword load DTO.
+     * @param quizKeyword   The quiz keyword model object.
+     * @return              The resulting quiz keyword load DTO.
+     */
     @Mapping(target = "quizId", source = "quizKeyword.quiz.quizId")
     @Mapping(target = "keywordId", source = "quizKeyword.quizKeywordId")
     QuizKeywordLoadDTO quizKeywordToQuizKeywordLoadDTO(QuizKeyword quizKeyword);
