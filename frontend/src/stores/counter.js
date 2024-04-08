@@ -436,10 +436,7 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
             question: "Are you 21 years old?",
             answer: "true",
             type: "true_false",
-            choices: [
-              {alternative: "true", isCorrect: true},
-              {alternative: "false", isCorrect: false}
-            ]
+            choices: null
           },
           {
             quizId: null,

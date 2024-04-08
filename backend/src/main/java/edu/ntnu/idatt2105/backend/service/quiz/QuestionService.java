@@ -18,6 +18,7 @@ import edu.ntnu.idatt2105.backend.mapper.quiz.QuizMapper;
 import edu.ntnu.idatt2105.backend.model.quiz.Quiz;
 import edu.ntnu.idatt2105.backend.model.quiz.question.MultipleChoice;
 import edu.ntnu.idatt2105.backend.model.quiz.question.Question;
+import edu.ntnu.idatt2105.backend.model.quiz.question.QuestionType;
 import edu.ntnu.idatt2105.backend.repo.quiz.QuizAuthorRepository;
 import edu.ntnu.idatt2105.backend.repo.quiz.QuizRepository;
 import edu.ntnu.idatt2105.backend.repo.quiz.question.MultipleChoiceRepository;
@@ -177,7 +178,9 @@ public class QuestionService {
 
         if (questionEditDTO.type() != null) {
             question.setQuestionType(questionEditDTO.type());
-            deleteChoices(questionEditDTO.questionId());
+            if(questionEditDTO.type() != QuestionType.MULTIPLE_CHOICE) {
+                deleteChoices(questionEditDTO.questionId());
+            }
         }
 
         LOGGER.info("Saving question to database.");
@@ -187,7 +190,6 @@ public class QuestionService {
         if (questionEditDTO.choices() != null) {
             LOGGER.info("Editing multiple choices.");
             for (MultipleChoiceDTO choice : questionEditDTO.choices()) {
-                //TODO: check if there.
                 if(choice.multipleChoiceId() == null) {
                     MultipleChoiceCreateDTO multipleChoiceCreateDTO = MultipleChoiceCreateDTO
                             .builder()

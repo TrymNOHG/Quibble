@@ -6,6 +6,6 @@ public class QuestionNotFoundException extends NotFoundException {
     }
 
     public QuestionNotFoundException(String message) {
-        super("Question");
+        super("Question: " + message);
     }
 }
