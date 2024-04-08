@@ -159,7 +159,6 @@ export default {
     };
 
     const showEdit = (question) => {
-      console.log(question)
       newQuestion.value.question = question.question;
       newQuestion.value.answer = question.answer;
       newQuestion.value.type = question.type;
@@ -177,7 +176,6 @@ export default {
       if (index !== -1) {
         question_list.value.splice(index, 1);
       }
-      console.log(question_list)
     };
 
     const addEdit = () => {
@@ -224,7 +222,6 @@ export default {
       } else {
         selectedQuestions.value = selectedQuestions.value.filter(q => q !== e.question);
       }
-      console.log(selectedQuestions.value)
     }
 
 
@@ -247,13 +244,11 @@ export default {
   },
   methods: {
     deleteSelectedQuestions(){
-      console.log(this.selectedQuestions)
       for(let question of this.selectedQuestions) {
         this.deleteQuestion(question)
       }
       this.selectedQuestions = [];
       const childComponents = this.$refs.questionItems;
-      console.log(childComponents)
     }
   }
 };

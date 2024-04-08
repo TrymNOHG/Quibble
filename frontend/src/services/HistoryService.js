@@ -11,7 +11,6 @@ export const addHistoricalEvent = async (historicalEventDTO) => {
                     Authorization: `Bearer ${await sessionToken()}`,
                 }
             });
-        console.log(response.data);
         return response.data;
     } catch (error) {
         throw error.response ? error.response.data : error.message;
@@ -25,7 +24,6 @@ export const getAllHistoricalEvents = async (userId) => {
                 Authorization: `Bearer ${await sessionToken()}`,
             }
         });
-        console.log(response.data);
         return response.data;
     } catch (error) {
         throw error.response ? error.response.data : error.message;

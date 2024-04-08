@@ -191,7 +191,6 @@ export default {
         console.log("error: ", error)
       });
 
-      console.log(question_list.value)
       addNewQuestion.value = false;
       edit.value = false;
     };
@@ -241,7 +240,6 @@ export default {
 
     const importQuestions = async (event) => {
       let questions = await uploadQuestionsFromCSV(event)
-      console.log(questions)
       for (let quest of questions) {
         editQuestion.value = {
           quizId: null,

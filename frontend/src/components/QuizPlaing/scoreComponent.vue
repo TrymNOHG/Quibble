@@ -41,7 +41,6 @@ export default {
           this.countdown -= 1;
         } else {
           clearInterval(intervalId);
-          console.log(this.players);
           // Optional: Emit an event when countdown ends to trigger the next action
           this.$emit('countdownEnded');
         }

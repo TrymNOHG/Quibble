@@ -9,7 +9,6 @@ export const getAllCategories = async () => {
                 headers: {
                 }
             });
-        console.log(response.data)
         return response.data.categories;
     } catch (error) {
         throw error.response ? error.response.data : error.message;

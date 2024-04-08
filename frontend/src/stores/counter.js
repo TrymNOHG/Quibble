@@ -205,10 +205,9 @@ export const useQuizStore = defineStore('storeQuiz', {
     },
 
     async deleteQuestion(question_id) {
-      console.log(question_id)
       await deleteQuestionById(question_id)
           .then(response => {
-            console.log(response)
+            // console.log(response)
           }).catch(error => {
             console.warn("error", error)
           })
@@ -395,14 +394,14 @@ export const useQuizCreateStore = defineStore('storeQuizCreate', {
 
       await Promise.all(addCategoryPromises)
           .then(responses => {
-            console.log("Categories added:", responses);
+            // console.log("Categories added:", responses);
           }).catch(error => {
             console.warn("Error adding categories:", error);
           });
 
       await updateQuiz(quizUpdateDTO)
           .then(response => {
-            console.log(response);
+            // console.log(response);
             createdQuiz = response;
           }).catch(error => {
             console.warn("Error updating quiz:", error);

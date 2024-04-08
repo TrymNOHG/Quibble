@@ -30,13 +30,12 @@ export default {
   methods: {
     loadUserData() {
       // useUserStore().fetchUserData()
-      console.log(useUserStore().getUserData)
+      // console.log(useUserStore().getUserData)
       return useUserStore().getUserData
     },
     async handleUpdateUserProfile(userData) {
       const store = useUserStore();
       const user = store.getUserData;
-      console.log(userData)
 
 
       let userUpdateDTO = new FormData();
@@ -50,7 +49,7 @@ export default {
 
       await updateUser(userUpdateDTO)
           .then(response => {
-            console.log(response)
+            // console.log(response)
           }).catch(error => {
             console.warn("error", error)
           })

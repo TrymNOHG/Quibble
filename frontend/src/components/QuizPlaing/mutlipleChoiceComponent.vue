@@ -102,15 +102,10 @@ export default {
       wrongSound.play()
       showAnswers.value = true;
       emit('timerDone');
-      console.log("ligma")// Emitting an event for the parent component
     };
 
 
     const selectAnswer = (choice) => {
-      console.log("isSinglePlayer", props.isSinglePlayer)
-      console.log("isMultiplayerClient", props.isMultiplayerClient)
-      console.log("showAnswers", showAnswers.value)
-
       if (!props.isSinglePlayer && !props.isMultiplayerClient || showAnswers.value) return;
 
       stopTimer();
