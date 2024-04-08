@@ -160,7 +160,7 @@ export default {
       try {
         await store.deleteCurrentQuiz();
         setTimeout(() => {
-        }, 500);
+        }, 50);
         await router.push('/home');
       } catch (error) {
         console.error(error);

@@ -8,6 +8,7 @@
           v-for="(quiz, index) in displayedQuizzes"
           :key="index"
           :quiz="quiz"
+          @setCurrentQuiz=""
       />
     </div>
     <div id="inf_scroll"/>

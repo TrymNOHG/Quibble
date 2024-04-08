@@ -42,6 +42,7 @@ export default {
     const { emit } = getCurrentInstance();
 
     const setCurrentQuiz = () => {
+      quizStore.currentQuiz = props.quiz
       emit("setCurrentQuiz", props.quiz)
     }
 
