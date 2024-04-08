@@ -2,15 +2,12 @@
   <div>
     <private-profile-component
         @updateUserProfile="handleUpdateUserProfile"
-        @updatePassword="handleUpdatePassword"
         @logout="handleLogout"
         @changeProfilePicture="handleChangePicture"
         @deleteProfilePicture="handleDeletePicture"
         @toggleEdit="handleToggleEdit"
-        @toggleChangePassword="handleToggleChangePassword"
         @updateShowActivity="handleUpdateShowActivity"
         @updateShowFeedbackOnProfile="handleUpdateShowFeedbackOnProfile"
-        @deleteUser="handleDeleteUser"
         :profile-data="loadUserData()"
     />
   </div>
@@ -22,9 +19,8 @@
 <script>
 import PrivateProfileComponent from "@/components/Profile/PrivateProfileComponent.vue";
 import {useUserStore} from "@/stores/counter.js"; // Ensure this matches your imported component file name
-import {updateUser, updateUserShowActivity, updateUserShowFeedback} from "@/services/UserService.js";
+import {updateUser} from "@/services/UserService.js";
 import router from "@/router/index.js";
-import {deleteQuizById} from "@/services/QuizService.js";
 import {getPictureFromID} from "@/services/ImageService.js";
 
 export default {
@@ -58,11 +54,6 @@ export default {
       await router.push("/profile");
     },
 
-    handleUpdatePassword(passwordData) {
-      console.log("Updating password with:", passwordData);
-      // Implement logic here to update the password
-    },
-
     handleLogout() {
       useUserStore().logoutUser()
       router.push("/");
@@ -74,10 +65,7 @@ export default {
       userUpdateDTO.append('profilePicture', file);
       updateUser(userUpdateDTO).then(r => {
         useUserStore().fetchUserData()
-      }).catch(e => {
-        //TODO: handle error.
-      });
-
+      }).catch(e => {});
     },
 
     getPictureURL() {
@@ -87,17 +75,11 @@ export default {
 
     handleDeletePicture(pictureUrl) {
       console.log("Deleting picture:", pictureUrl);
-      // Implement your logic here to delete the profile picture
     },
 
     handleToggleEdit(editState) {
       console.log("Toggling edit state to:", editState);
-      this.isEditing = editState; // Ensure this line is correctly updating the isEditing state
-    },
-
-    handleToggleChangePassword(changePasswordState) {
-      console.log("Toggling change password state to:", changePasswordState);
-      // Additional logic can be implemented if needed
+      this.isEditing = editState;
     },
 
     handleUpdateShowActivity(showActivity) {
@@ -108,9 +90,7 @@ export default {
       }
       updateUser(userUpdateDTO).then(r => {
         useUserStore().setShowActivity(showActivity)
-      }).catch(e => {
-        //TODO: handle error.
-      });
+      }).catch(e => {});
     },
 
     handleUpdateShowFeedbackOnProfile(showFeedback) {
@@ -121,17 +101,8 @@ export default {
       }
       updateUser(userUpdateDTO).then(r => {
         useUserStore().setShowFeedback(showFeedback)
-      }).catch(e => {
-        //TODO: handle error.
-      });
+      }).catch(e => {});
     },
-
-    handleDeleteUser() {
-      router.push("/");
-      console.log("Deleting user account");
-      // Implement your logic here to delete the user account
-    },
-
   },
 };
 </script>

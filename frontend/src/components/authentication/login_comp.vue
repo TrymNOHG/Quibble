@@ -1,3 +1,8 @@
+/*
+AUTHOR = {Tomas Beranek, Eilert Wegner Hansen, Beka Dan},
+TITLE = {Systemutvikling 2, Smartmat},
+URL = {https://github.com/tomasbera/SmartMat/blob/main/frontend/src/components/Authentication/RegisterComponent.vue}
+*/
 <template>
   <div class="submit_form">
     <h2>{{ $t('titles.LOGIN') }}</h2>

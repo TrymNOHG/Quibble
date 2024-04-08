@@ -163,7 +163,6 @@ export default {
 
     const filteredUsers = async () => {
       try {
-        console.log(searchQuery.value)
         return await store.filterAuthor(searchQuery.value);
       } catch (error) {
         console.error('Error editing question:', error);

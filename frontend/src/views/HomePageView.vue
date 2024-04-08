@@ -68,17 +68,6 @@ async function loadQuizzes() {
     const d = (difficulty_selected.value === []) ? null : difficulty_selected.value;
     const c = (category_selected.value === []) ? null : category_selected.value;
 
-    // class QuizFilterDTO {
-    //   constructor(name, categories, pageSize, pageNumber) {
-    //     this.name = name;
-    //     this.categories = categories;
-    //     this.pageSize = pageSize;
-    //     this.pageNumber = pageNumber;
-    //   }
-    // }
-    //
-    // const quizFilterDTO = new QuizFilterDTO(s, c.map(category => category.categoryName), 12, page.value)
-
     const quizFilterDTO = {
       "name": s,
       "difficulties": d.map(diff => String(diff).toUpperCase()),
@@ -121,7 +110,6 @@ async function getNextQuiz() {
 }
 
 async function handleSearchInput() {
-  console.log(searchInput.value)
   try {
     displayedQuizzes.value = loadQuizzes().value;
   } catch (e) {
