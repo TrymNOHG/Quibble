@@ -8,13 +8,13 @@
         </label>
         <input id="fileInput" type="file" @change="onProfilePictureChange" style="display: none;"
                accept="image/jpeg, image/png"/>
-        <img
-            v-show="profileData.profilePicture !== defaultProfilePicture"
-            class="deleteIcon"
-            src="@/assets/images/delete-icn.svg"
-            alt="Delete"
-            @click="onDeleteProfilePicture"
-        />
+<!--        <img-->
+<!--            v-show="profileData.profilePicture !== defaultProfilePicture"-->
+<!--            class="deleteIcon"-->
+<!--            src="@/assets/images/delete-icn.svg"-->
+<!--            alt="Delete"-->
+<!--            @click="onDeleteProfilePicture"-->
+<!--        />-->
       </div>
     </div>
 
@@ -30,8 +30,8 @@
         <label for="toggle-feedback">Show Feedback on Profile:</label>
         <input id="toggle-feedback" type="checkbox" v-model="showFeedbackOnProfile" class="toggle-input" />
       </div>
-      <BasicButton class="basic-button edit-btn" @click="toggleEdit(true)" :button_text="$t('edit')"/>
-      <BasicButton class="basic-button logout-btn" @click="logout" :button_text="$t('Logout')"/>
+      <BasicButton class="basic-button edit-btn" @click="toggleEdit(true)" :button_text="$t('Edit')"/>
+      <BasicButton class="basic-button logout-btn" @click="logout" :button_text="$t('Log out')"/>
 
     </div>
 
@@ -51,11 +51,6 @@
         <label for="username">Username</label>
         <input id="username" v-model="username" type="text" required />
         <div v-if="errors.username" class="error-message">{{ errors.username }}</div>
-      </div>
-      <div class="input-box">
-        <label for="email">Email</label>
-        <input id="email" v-model="email" type="email" required />
-        <div v-if="errors.email" class="error-message">{{ errors.email }}</div>
       </div>
       <div class="button-container">
         <BasicButton class="basic-button" type="submit" @click="submitForm" :button_text="'Save Changes'"/>
@@ -124,6 +119,10 @@ export default {
 
     // Form submission handling
     const submitForm = handleSubmit(values => {
+      values = {
+        username: values.username === props.profileData.username ? null : values.username,
+        email: values.email === props.profileData.email ? null : values.email
+      }
       emit('updateUserProfile', values);
       toggleEdit();
     });
@@ -226,7 +225,7 @@ export default {
 
 .user-profile {
   max-width: 600px;
-  margin: 0 auto;
+  margin: 2% auto 0;
   padding: 1rem;
   background-color: #f8f8f8;
   border-radius: 10px;
@@ -292,8 +291,10 @@ h1 {
 }
 
 .info-section {
-  display: grid;
+  display: flex;
   gap: 0.5rem;
+  flex-direction: column;
+  align-items: center;
 }
 
 .user-profile p {

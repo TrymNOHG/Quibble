@@ -38,9 +38,13 @@ export default {
       const user = store.getUserData;
       console.log(userData)
 
+
       let userUpdateDTO = new FormData();
       userUpdateDTO.append('userId', user.userId);
-      userUpdateDTO.append('username', userData.username);
+      if (userData.username !== null) {
+        userUpdateDTO.append('username', userData.username);
+      }
+      userUpdateDTO.append('email', user.email);
       userUpdateDTO.append('showActivity', user.showActivity);
       userUpdateDTO.append('showFeedback', user.showFeedback);
 
